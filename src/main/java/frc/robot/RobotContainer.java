@@ -46,66 +46,66 @@ public class RobotContainer {
    * Converts driver input into a field-relative ChassisSpeeds that is controlled
    * by angular velocity.
    */
-  // SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-  //     () -> driverXbox.getLeftY() * -1,
-  //     () -> driverXbox.getLeftX() * -1)
-  //     .withControllerRotationAxis(driverXbox::getRightX)
-  //     .deadband(OperatorConstants.DEADBAND)
-  //     .scaleTranslation(0.8)
-  //     .allianceRelativeControl(true);
-
-  // /**
-  //  * Clone's the angular velocity input stream and converts it to a fieldRelative
-  //  * input stream.
-  //  */
-  // SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(driverXbox::getRightX,
-  //     driverXbox::getRightY)
-  //     .headingWhile(true);
-
-  // /**
-  //  * Clone's the angular velocity input stream and converts it to a robotRelative
-  //  * input stream.
-  //  */
-  // SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
-  //     .allianceRelativeControl(false);
-
-  // SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
-  //     () -> -driverXbox.getLeftY(),
-  //     () -> -driverXbox.getLeftX())
-  //     .withControllerRotationAxis(() -> driverXbox.getRawAxis(
-  //         2))
-  //     .deadband(OperatorConstants.DEADBAND)
-  //     .scaleTranslation(0.8)
-  //     .allianceRelativeControl(true);
-  // // Derive the heading axis with math!
-  // SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
-  //     .withControllerHeadingAxis(() -> Math.sin(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2),
-  //         () -> Math.cos(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2))
-  //     .headingWhile(true).translationHeadingOffset(true).translationHeadingOffset(Rotation2d.fromDegrees(0));
-
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-  () -> driverJoystick.getY() * -1,
-  () -> driverJoystick.getX() * -1)
-  .withControllerRotationAxis(driverJoystick::getTwist)
-  .deadband(OperatorConstants.DEADBAND)
-  .scaleTranslation(0.8)
-  .allianceRelativeControl(true);
+      () -> driverXbox.getLeftY() * -1,
+      () -> driverXbox.getLeftX() * -1)
+      .withControllerRotationAxis(driverXbox::getRightX)
+      .deadband(OperatorConstants.DEADBAND)
+      .scaleTranslation(0.8)
+      .allianceRelativeControl(true);
+
+  /**
+   * Clone's the angular velocity input stream and converts it to a fieldRelative
+   * input stream.
+   */
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(driverXbox::getRightX,
+      driverXbox::getRightY)
+      .headingWhile(true);
+
+  /**
+   * Clone's the angular velocity input stream and converts it to a robotRelative
+   * input stream.
+   */
+  SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
+      .allianceRelativeControl(false);
+
+  SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
+      () -> -driverXbox.getLeftY(),
+      () -> -driverXbox.getLeftX())
+      .withControllerRotationAxis(() -> driverXbox.getRawAxis(
+          2))
+      .deadband(OperatorConstants.DEADBAND)
+      .scaleTranslation(0.8)
+      .allianceRelativeControl(true);
+  // Derive the heading axis with math!
+  SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
+      .withControllerHeadingAxis(() -> Math.sin(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2),
+          () -> Math.cos(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2))
+      .headingWhile(true).translationHeadingOffset(true).translationHeadingOffset(Rotation2d.fromDegrees(0));
+
+//   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
+//   () -> driverJoystick.getY() * -1,
+//   () -> driverJoystick.getX() * -1)
+//   .withControllerRotationAxis(driverJoystick::getTwist)
+//   .deadband(OperatorConstants.DEADBAND)
+//   .scaleTranslation(0.8)
+//   .allianceRelativeControl(true);
 
 
 
 
-SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
-  () -> -driverJoystick.getY(),
-  () -> -driverJoystick.getX())
-  .withControllerRotationAxis(() -> driverJoystick.getTwist())
-  .deadband(OperatorConstants.DEADBAND)
-  .scaleTranslation(0.8)
-  .allianceRelativeControl(true);
-// Derive the heading axis with math!
-SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
-  .withControllerHeadingAxis(() -> Math.sin(driverJoystick.getTwist() * Math.PI) * (Math.PI * 2),
-      () -> Math.cos(driverJoystick.getTwist() * Math.PI) * (Math.PI * 2))
-  .headingWhile(true).translationHeadingOffset(true).translationHeadingOffset(Rotation2d.fromDegrees(0));
+// SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
+//   () -> -driverJoystick.getY(),
+//   () -> -driverJoystick.getX())
+//   .withControllerRotationAxis(() -> driverJoystick.getTwist())
+//   .deadband(OperatorConstants.DEADBAND)
+//   .scaleTranslation(0.8)
+//   .allianceRelativeControl(true);
+// // Derive the heading axis with math!
+// SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
+//   .withControllerHeadingAxis(() -> Math.sin(driverJoystick.getTwist() * Math.PI) * (Math.PI * 2),
+//       () -> Math.cos(driverJoystick.getTwist() * Math.PI) * (Math.PI * 2))
+//   .headingWhile(true).translationHeadingOffset(true).translationHeadingOffset(Rotation2d.fromDegrees(0));
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -131,18 +131,18 @@ SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
    * Flight joysticks}.
    */
   private void configureBindings() {
-    //Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
+    Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-   // Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveRobotOriented);
-    //Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(
-    //    driveDirectAngle);
+    Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveRobotOriented);
+    Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(
+        driveDirectAngle);
     Command driveFieldOrientedDirectAngleKeyboard = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
     Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
     Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleKeyboard);
 
     if (RobotBase.isSimulation()) {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     } else {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     }
@@ -176,7 +176,7 @@ SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
       // );
 
     }
-    /* if (DriverStation.isTest()) {
+    if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
@@ -192,8 +192,8 @@ SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
-    } */
-    if (DriverStation.isTest()) {
+    }
+/*     if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
       driverJoystick.button(12).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
@@ -209,7 +209,7 @@ SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
       driverJoystick.button(4).whileTrue(drivebase.centerModulesCommand());
       driverJoystick.button(1).onTrue(Commands.none());
       driverJoystick.button(6).onTrue(Commands.none());
-    }
+    } */
 
   }
 
