@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -35,6 +36,8 @@ public class RobotContainer {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);
+  final CommandJoystick driverJoystick = new CommandJoystick(1);
+
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve/neo"));
@@ -80,6 +83,30 @@ public class RobotContainer {
           () -> Math.cos(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2))
       .headingWhile(true).translationHeadingOffset(true).translationHeadingOffset(Rotation2d.fromDegrees(0));
 
+//   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
+//   () -> driverJoystick.getY() * -1,
+//   () -> driverJoystick.getX() * -1)
+//   .withControllerRotationAxis(driverJoystick::getTwist)
+//   .deadband(OperatorConstants.DEADBAND)
+//   .scaleTranslation(0.8)
+//   .allianceRelativeControl(true);
+
+
+
+
+// SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
+//   () -> -driverJoystick.getY(),
+//   () -> -driverJoystick.getX())
+//   .withControllerRotationAxis(() -> driverJoystick.getTwist())
+//   .deadband(OperatorConstants.DEADBAND)
+//   .scaleTranslation(0.8)
+//   .allianceRelativeControl(true);
+// // Derive the heading axis with math!
+// SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
+//   .withControllerHeadingAxis(() -> Math.sin(driverJoystick.getTwist() * Math.PI) * (Math.PI * 2),
+//       () -> Math.cos(driverJoystick.getTwist() * Math.PI) * (Math.PI * 2))
+//   .headingWhile(true).translationHeadingOffset(true).translationHeadingOffset(Rotation2d.fromDegrees(0));
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -115,7 +142,7 @@ public class RobotContainer {
         driveDirectAngleKeyboard);
 
     if (RobotBase.isSimulation()) {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     } else {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     }
@@ -138,7 +165,7 @@ public class RobotContainer {
                   Units.degreesToRadians(360),
                   Units.degreesToRadians(180))));
       driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
+      //driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
       driverXbox.button(2).whileTrue(
           Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
               () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
@@ -161,11 +188,28 @@ public class RobotContainer {
     } else {
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driverXbox.start().whileTrue(Commands.none());
-      driverXbox.back().whileTrue(Commands.none());
+      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
     }
+/*     if (DriverStation.isTest()) {
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
+
+      driverJoystick.button(12).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverJoystick.button(11).whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
+      driverJoystick.button(3).onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverJoystick.button(4).whileTrue(drivebase.centerModulesCommand());
+      driverJoystick.button(1).onTrue(Commands.none());
+      driverJoystick.button(6).onTrue(Commands.none());
+    } else {
+      driverJoystick.button(12).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverJoystick.button(11).whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
+      driverJoystick.button(3).onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverJoystick.button(4).whileTrue(drivebase.centerModulesCommand());
+      driverJoystick.button(1).onTrue(Commands.none());
+      driverJoystick.button(6).onTrue(Commands.none());
+    } */
 
   }
 
