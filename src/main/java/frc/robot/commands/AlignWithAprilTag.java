@@ -3,12 +3,31 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
+import java.util.Optional;
 
+import javax.sound.sampled.TargetDataLine;
+
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.PhotonUtils;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.simulation.VisionSystemSim;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.Vision;
+import frc.robot.subsystems.swervedrive.Vision.Cameras;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AlignWithAprilTag extends Command {
   /** Creates a new AlignWithAprilTag. */
+  private Vision VisionSubsytem;
+  private SwerveSubsystem swerveSubsystem;
+  private Cameras cameras;
   public AlignWithAprilTag() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -19,7 +38,25 @@ public class AlignWithAprilTag extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    Optional<PhotonPipelineResult> result = cameras.getBestResult();
+    if (result.isPresent()){
+      PhotonTrackedTarget target = result.get().getBestTarget();
+      if (target !=null) {
+        Optional<EstimatedRobotPose> optionalPose = cameras.getEstimatedGlobalPose();
+        if (optionalPose.isPresent()) {
+          double targetHeight = 1.0; // Height of the AprilTag in meters
+          double cameraHeight = 1.0; // Height of the camera in meters
+          double cameraPitch = Math.toRadians(10); // Pitch angle of the camera in radians
+          double targetPitch = Math.toRadians(target.getPitch()); // Pitch angle to the target
+          double distance = PhotonUtils.calculateDistanceToTargetMeters(cameraHeight, targetHeight, cameraPitch, targetPitch);
+          double yaw = target.getYaw();
+        }
+
+      }
+    }
+
+  }
 
   // Called once the command ends or is interrupted.
   @Override
