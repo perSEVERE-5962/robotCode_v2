@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Robot;
 import java.awt.Desktop;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -78,6 +79,10 @@ public class Vision {
    * Field from {@link swervelib.SwerveDrive#field}
    */
   private Field2d field2d;
+
+  List<PoseObservation> poseObservations = new LinkedList<>();
+
+  private final List<Short> tagIds = new ArrayList<>();
 
   /**
    * Constructor for the Vision class.
@@ -599,26 +604,83 @@ public class Vision {
     }
 
   }
-  public Pose2d targetPose(Cameras C){
- 
-    PhotonCamera camera =C.camera;
-    var result = camera.getLatestResult();
+  public static record PoseObservation(
+    double timestamp, Pose3d pose, double ambiguity, int tagCount, double averageTagDistance) {
+}
+  public List<PoseObservation> getObservations(Cameras camera, Transform3d robotToCamera){
+
+    Optional<PhotonPipelineResult> optionalResult = camera.getLatestResult();
+    if (optionalResult.isEmpty() || !optionalResult.get().hasTargets()) {
+      return poseObservations;  // No vision data
+  }
+    PhotonPipelineResult result = optionalResult.get();
     List<PhotonTrackedTarget> targets = result.getTargets();
     targets.sort(PhotonTargetSortMode.Highest.getComparator());
+    
 
+    if (result.multitagResult.isPresent()) {
+      var multitagResult = result.multitagResult.get();
+      Transform3d fieldToCamera = multitagResult.estimatedPose.best;
+      Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
 
-    var tagPose= fieldLayout.getTagPose(targets.get(0).fiducialId);
+      Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
 
-    Transform3d fieldTotarget = new Transform3d(tagPose.get().getTranslation(),tagPose.get().getRotation());
+if (poseEst.isEmpty()) return poseObservations; // No data to log
 
-    Matrix<N2, N1> vector=new Matrix<>(N2.instance, N1.instance);
-vector.set(0, 0, 3.0);
-vector.set(1, 0, 3.0);
-Translation2d translation=new Translation2d(vector.get(0,0),vector.get(1,0));
-Rotation2d rotation=new Rotation2d(Math.atan2(vector.get(1,0), vector.get(0, 0)));
+      EstimatedRobotPose estimated = poseEst.get();
+      Pose3d robotPose = estimated.estimatedPose;
+      double totalTagDistance = 0.0;
+      for (var target : result.targets) {
+          totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
+      }
+      poseObservations.add(
+                        new PoseObservation(
+                                result.getTimestampSeconds(), // Timestamp
+                                robotPose, // 3D pose estimate
+                                multitagResult.estimatedPose.ambiguity, // Ambiguity
+                                multitagResult.fiducialIDsUsed.size(), // Tag count
+                                totalTagDistance / result.targets.size() // Average tag distance
+                        ));
 
+    }
+  
+  else if (!result.targets.isEmpty()) {
+    var target = result.targets.get(0);
 
-    return new Pose2d();
-  }
+    // Calculate robot pose
+    var tagPose = fieldLayout.getTagPose(target.fiducialId);
+    if (tagPose.isPresent()) {
+        Transform3d fieldToTarget = new Transform3d(tagPose.get().getTranslation(),
+                tagPose.get().getRotation());
+        Transform3d cameraToTarget = target.bestCameraToTarget;
+        Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
+        Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
+
+        Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
+        
+
+      if (poseEst.isEmpty()){
+        return poseObservations;
+      }  // No data to log
+
+        EstimatedRobotPose estimated = poseEst.get();
+        Pose3d robotPose = estimated.estimatedPose;
+
+        tagIds.add((short) target.getFiducialId());
+        poseObservations.add(
+                new PoseObservation(
+                        result.getTimestampSeconds(), // Timestamp
+                        robotPose, // 3D pose estimate
+                        target.poseAmbiguity, // Ambiguity
+                        1, // Tag count
+                        cameraToTarget.getTranslation().getNorm() // Average tag distance
+                        
+      
+                ));
+    }
+}
+return poseObservations;
 
 }
+}
+
