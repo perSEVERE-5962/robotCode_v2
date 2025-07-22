@@ -8,6 +8,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -625,36 +626,22 @@ public class Vision {
 
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
 
-if (poseEst.isEmpty()) return poseObservations; // No data to log
+    Pose3d fieldTotarget = new Pose3d(tagPose.get().getTranslation(),tagPose.get().getRotation());
 
-      EstimatedRobotPose estimated = poseEst.get();
-      Pose3d robotPose = estimated.estimatedPose;
-      double totalTagDistance = 0.0;
-      for (var target : result.targets) {
-          totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
-      }
-      poseObservations.add(
-                        new PoseObservation(
-                                result.getTimestampSeconds(), // Timestamp
-                                robotPose, // 3D pose estimate
-                                multitagResult.estimatedPose.ambiguity, // Ambiguity
-                                multitagResult.fiducialIDsUsed.size(), // Tag count
-                                totalTagDistance / result.targets.size() // Average tag distance
-                        ));
+    Matrix<N2, N1> vector=new Matrix<>(N2.instance, N1.instance);
+vector.set(0, 0, 3.0);
+vector.set(1, 0, 3.0);
+Translation2d translation=new Translation2d(vector);
+Rotation2d rotation=new Rotation2d(Math.atan2(vector.get(1,0), vector.get(0, 0)));
 
     }
   
   else if (!result.targets.isEmpty()) {
     var target = result.targets.get(0);
 
-    // Calculate robot pose
-    var tagPose = fieldLayout.getTagPose(target.fiducialId);
-    if (tagPose.isPresent()) {
-        Transform3d fieldToTarget = new Transform3d(tagPose.get().getTranslation(),
-                tagPose.get().getRotation());
-        Transform3d cameraToTarget = target.bestCameraToTarget;
-        Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
-        Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
+
+    return new Pose2d();
+  }
 
         Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
         
