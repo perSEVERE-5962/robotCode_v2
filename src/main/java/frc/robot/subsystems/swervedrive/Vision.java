@@ -8,6 +8,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -604,83 +605,26 @@ public class Vision {
     }
 
   }
-  public static record PoseObservation(
-    double timestamp, Pose3d pose, double ambiguity, int tagCount, double averageTagDistance) {
+
+public Pose2d targetPose(Cameras C){
+ 
+  PhotonCamera camera =C.camera;
+  var result = camera.getLatestResult();
+  List<PhotonTrackedTarget> targets = result.getTargets();
+  targets.sort(PhotonTargetSortMode.Highest.getComparator());
+
+
+  Pose2d targetPose = fieldLayout.getTagPose(targets.get(0).getFiducialId()).get().toPose2d();
+
+
+
+Transform2d offset=new Transform2d(0.5, 0.0, Rotation2d.fromDegrees(10.0));
+
+
+  return targetPose.plus(offset);
 }
-  public List<PoseObservation> getObservations(Cameras camera, Transform3d robotToCamera){
 
-    Optional<PhotonPipelineResult> optionalResult = camera.getLatestResult();
-    if (optionalResult.isEmpty() || !optionalResult.get().hasTargets()) {
-      return poseObservations;  // No vision data
-  }
-    PhotonPipelineResult result = optionalResult.get();
-    List<PhotonTrackedTarget> targets = result.getTargets();
-    targets.sort(PhotonTargetSortMode.Highest.getComparator());
-    
-
-    if (result.multitagResult.isPresent()) {
-      var multitagResult = result.multitagResult.get();
-      Transform3d fieldToCamera = multitagResult.estimatedPose.best;
-      Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
-
-      Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
-
-if (poseEst.isEmpty()) return poseObservations; // No data to log
-
-      EstimatedRobotPose estimated = poseEst.get();
-      Pose3d robotPose = estimated.estimatedPose;
-      double totalTagDistance = 0.0;
-      for (var target : result.targets) {
-          totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
-      }
-      poseObservations.add(
-                        new PoseObservation(
-                                result.getTimestampSeconds(), // Timestamp
-                                robotPose, // 3D pose estimate
-                                multitagResult.estimatedPose.ambiguity, // Ambiguity
-                                multitagResult.fiducialIDsUsed.size(), // Tag count
-                                totalTagDistance / result.targets.size() // Average tag distance
-                        ));
-
-    }
-  
-  else if (!result.targets.isEmpty()) {
-    var target = result.targets.get(0);
-
-    // Calculate robot pose
-    var tagPose = fieldLayout.getTagPose(target.fiducialId);
-    if (tagPose.isPresent()) {
-        Transform3d fieldToTarget = new Transform3d(tagPose.get().getTranslation(),
-                tagPose.get().getRotation());
-        Transform3d cameraToTarget = target.bestCameraToTarget;
-        Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
-        Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
-
-        Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
-        
-
-      if (poseEst.isEmpty()){
-        return poseObservations;
-      }  // No data to log
-
-        EstimatedRobotPose estimated = poseEst.get();
-        Pose3d robotPose = estimated.estimatedPose;
-
-        tagIds.add((short) target.getFiducialId());
-        poseObservations.add(
-                new PoseObservation(
-                        result.getTimestampSeconds(), // Timestamp
-                        robotPose, // 3D pose estimate
-                        target.poseAmbiguity, // Ambiguity
-                        1, // Tag count
-                        cameraToTarget.getTranslation().getNorm() // Average tag distance
-                        
-      
-                ));
-    }
-}
-return poseObservations;
 
 }
-}
+
 
