@@ -8,14 +8,17 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTablesJNI;
@@ -25,12 +28,14 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Robot;
 import java.awt.Desktop;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonTargetSortMode;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.PhotonUtils;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -75,6 +80,10 @@ public class Vision {
    * Field from {@link swervelib.SwerveDrive#field}
    */
   private Field2d field2d;
+
+  List<PoseObservation> poseObservations = new LinkedList<>();
+
+  private final List<Short> tagIds = new ArrayList<>();
 
   /**
    * Constructor for the Vision class.
@@ -176,6 +185,7 @@ public class Vision {
     return poseEst;
   }
 
+  
   /**
    * Filter pose via the ambiguity and find best estimate between all of the
    * camera's throwing out distances more than
@@ -305,7 +315,7 @@ public class Vision {
   /**
    * Camera Enum to select each camera
    */
-  enum Cameras {
+  public enum Cameras {
     /**
      * Left Camera
      */
@@ -596,4 +606,25 @@ public class Vision {
 
   }
 
+public Pose2d targetPose(Cameras C){
+ 
+  PhotonCamera camera =C.camera;
+  var result = camera.getLatestResult();
+  List<PhotonTrackedTarget> targets = result.getTargets();
+  targets.sort(PhotonTargetSortMode.Highest.getComparator());
+
+
+  Pose2d targetPose = fieldLayout.getTagPose(targets.get(0).getFiducialId()).get().toPose2d();
+
+
+
+Transform2d offset=new Transform2d(0.5, 0.0, Rotation2d.fromDegrees(10.0));
+
+
+  return targetPose.plus(offset);
 }
+
+
+}
+
+
