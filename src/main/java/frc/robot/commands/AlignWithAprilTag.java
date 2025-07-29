@@ -17,6 +17,8 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -28,23 +30,25 @@ public class AlignWithAprilTag extends Command {
   /** Creates a new AlignWithAprilTag. */
   private Vision VisionSubsytem;
   private SwerveSubsystem swerveSubsystem;
-  //private Cameras cameras;
+  private Pose2d targetPose2d;
+  private Cameras cameras;
   public AlignWithAprilTag() {
     // Use addRequirements() here to declare subsystem dependencies.
+    
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     swerveSubsystem = RobotContainer.getInstance().getSwerveSubsystem();
-    
+  targetPose2d= VisionSubsytem.targetPose(cameras.RIGHT_CAM);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     
-        
+    swerveSubsystem.driveToPose(targetPose2d);
 
     
   }

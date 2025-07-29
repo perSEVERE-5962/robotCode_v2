@@ -81,7 +81,7 @@ public class Vision {
    */
   private Field2d field2d;
 
-  List<PoseObservation> poseObservations = new LinkedList<>();
+ 
 
   private final List<Short> tagIds = new ArrayList<>();
 
