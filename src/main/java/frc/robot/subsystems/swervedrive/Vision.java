@@ -8,6 +8,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -352,9 +353,8 @@ public class Vision {
       Transform3d fieldToCamera = multitagResult.estimatedPose.best;
       Transform3d fieldToRobot = fieldToCamera.plus(camera.getRobotToCamera().inverse());
 
-      Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
+  Pose2d targetPose = fieldLayout.getTagPose(targets.get(0).getFiducialId()).get().toPose2d();
 
-if (poseEst.isEmpty()) return poseObservations; // No data to log
 
       EstimatedRobotPose estimated = poseEst.get();
       Pose3d robotPose = estimated.estimatedPose;
@@ -390,12 +390,9 @@ if (poseEst.isEmpty()) return poseObservations; // No data to log
         Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
         Transform3d fieldToRobot = fieldToCamera.plus(camera.getRobotToCamera().inverse());
 
-        Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
-        
+  return targetPose.plus(offset);
+}
 
-      if (poseEst.isEmpty()){
-        return poseObservations;
-      }  // No data to log
 
         EstimatedRobotPose estimated = poseEst.get();
         Pose3d robotPose = estimated.estimatedPose;
@@ -413,10 +410,7 @@ if (poseEst.isEmpty()) return poseObservations; // No data to log
                 ));
     }
 }
-return poseObservations;
 
-}
-}
 
 
 
