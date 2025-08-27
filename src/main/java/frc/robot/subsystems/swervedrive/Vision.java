@@ -285,9 +285,25 @@ public class Vision {
       // }
     }
   }
-  private Cameras getbestCamera(){
-    return Cameras.CENTER_CAM;
+  public Cameras getbestCamera(int id){
+    PhotonTrackedTarget bestTarget = null;
+    Cameras bestCamEnum = null;
+
+    for (Cameras c: Cameras.values()){
+      Optional<PhotonPipelineResult> optionalResult = c.getLatestResult();
+      
+      if (optionalResult.isPresent() && optionalResult.get().hasTargets()) {
+        for (var target : optionalResult.get().getTargets()) {
+          if (target.getFiducialId() == id){
+            if (bestTarget == null || target.getArea() > bestTarget.getArea()) {
+              bestTarget = target;
+              bestCamEnum = c;          }
+          }
+      }   
+    }
   }
+  return bestCamEnum; // can be null if no camera sees the target
+}
   /**
    * Update the {@link Field2d} to include tracked targets/
    */
@@ -318,7 +334,7 @@ public class Vision {
 }
   
   public List<PoseObservation> getObservations(){
-    Cameras camera = getbestCamera();
+    Cameras camera = getbestCamera(2);
     Optional<PhotonPipelineResult> optionalResult = camera.getLatestResult();
 
     if (optionalResult.isEmpty() || !optionalResult.get().hasTargets()) {
