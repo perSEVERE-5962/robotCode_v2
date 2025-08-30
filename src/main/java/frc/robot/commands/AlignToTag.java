@@ -24,33 +24,35 @@ public class AlignToTag extends Command {
   private SwerveSubsystem swerveSubsystem;
   private Cameras camera;
   private Cameras lastBestCamera = null;
+  private int desiredTagId;
 
   /** Creates a new AlignToTag. */
-  public AlignToTag(SwerveSubsystem swerve, Cameras camera) {
+  public AlignToTag(SwerveSubsystem swerve, int desiredTagId) {
     visionSubsystem = swerve.getVision();
-    
+    this.desiredTagId = desiredTagId;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Cameras bestCam = visionSubsystem.getbestCamera(desiredTagId); // call here
+    if (bestCam != null) {
+      lastBestCamera = bestCam; // update last seen camera
+      System.out.println("Best camera: " + bestCam);}
+   if (lastBestCamera != null) {
+      System.out.println("Using last known camera: " + lastBestCamera);
+  } else {
+      System.out.println("No camera sees tag yet");
   }
+  }
+
+  
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Cameras bestCam = visionSubsystem.getbestCamera(5); // call here
-      if (bestCam != null) {
-        lastBestCamera = bestCam; // update last seen camera
-        System.out.println("Best camera: " + bestCam);}
-     if (lastBestCamera != null) {
-        System.out.println("Using last known camera: " + lastBestCamera);
-    } else {
-        System.out.println("No camera sees tag yet");
-    }
-    }
-  
+  }
 
   // Called once the command ends or is interrupted.
   @Override
