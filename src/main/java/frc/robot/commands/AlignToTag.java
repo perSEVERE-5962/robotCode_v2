@@ -3,51 +3,54 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
-import java.util.Optional;
 
-import javax.sound.sampled.TargetDataLine;
+import java.util.List;
+import java.util.function.Supplier;
 
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.PhotonUtils;
-import org.photonvision.simulation.PhotonCameraSim;
-import org.photonvision.simulation.SimCameraProperties;
-import org.photonvision.simulation.VisionSystemSim;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
-import frc.robot.subsystems.swervedrive.Vision.Cameras;
+import frc.robot.Cameras;
+import frc.robot.subsystems.swervedrive.Vision.PoseObservation;
+import swervelib.SwerveDrive;
+
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class AlignWithAprilTag extends Command {
-  /** Creates a new AlignWithAprilTag. */
-  private Vision VisionSubsytem;
+public class AlignToTag extends Command {
+  private Vision visionSubsystem;
   private SwerveSubsystem swerveSubsystem;
-  //private Cameras cameras;
-  public AlignWithAprilTag() {
+  private Cameras camera;
+  private Cameras lastBestCamera = null;
+
+  /** Creates a new AlignToTag. */
+  public AlignToTag(SwerveSubsystem swerve, Cameras camera) {
+    visionSubsystem = swerve.getVision();
+    
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    swerveSubsystem = RobotContainer.getInstance().getSwerveSubsystem();
-    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-        
-
-    
-  }
+    Cameras bestCam = visionSubsystem.getbestCamera(5); // call here
+      if (bestCam != null) {
+        lastBestCamera = bestCam; // update last seen camera
+        System.out.println("Best camera: " + bestCam);}
+     if (lastBestCamera != null) {
+        System.out.println("Using last known camera: " + lastBestCamera);
+    } else {
+        System.out.println("No camera sees tag yet");
+    }
+    }
+  
 
   // Called once the command ends or is interrupted.
   @Override
@@ -59,3 +62,4 @@ public class AlignWithAprilTag extends Command {
     return false;
   }
 }
+
