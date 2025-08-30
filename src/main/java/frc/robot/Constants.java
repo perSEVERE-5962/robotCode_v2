@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
 
@@ -50,8 +51,19 @@ public final class Constants {
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT = 6;
   }
-  public static class PhotonvisionConstants {
+  public static class AlignConstants {
+    public static int kPID_XKP = 1;
+    public static int kPID_XKI = 1;
+    public static int kPID_XKD = 1;
 
+    public static int kPID_YKP = 1;
+    public static int kPID_YKI = 1;
+    public static int kPID_YKD = 1;
+
+    public static int kPID_TKP = 1;
+    public static int kPID_TKI = 1;
+    public static int kPID_TKD = 1;
     
+        
   }
 }

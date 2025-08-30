@@ -73,6 +73,9 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   private Vision vision;
 
+  
+
+  
   private SwerveSubsystem instance;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -137,6 +140,8 @@ public class SwerveSubsystem extends SubsystemBase {
             Rotation2d.fromDegrees(0)));
   }
 
+
+  
   /**
    * Setup the photon vision class.
    */
