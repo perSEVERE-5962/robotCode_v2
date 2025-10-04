@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
-import frc.robot.subsystems.swervedrive.Vision.Cameras;
+import frc.robot.Cameras;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Target;
@@ -73,6 +73,9 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   private Vision vision;
 
+  
+
+  
   private SwerveSubsystem instance;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -137,6 +140,8 @@ public class SwerveSubsystem extends SubsystemBase {
             Rotation2d.fromDegrees(0)));
   }
 
+
+  
   /**
    * Setup the photon vision class.
    */
