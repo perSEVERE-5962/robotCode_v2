@@ -48,11 +48,11 @@ public final class Constants {
         
         
         public static final Transform2d REEF_LEFT_OFFSET =
-                new Transform2d(new Translation2d(0.75, 3.0), Rotation2d.fromDegrees(180));
+                new Transform2d(new Translation2d(0.56, 1.0), Rotation2d.fromDegrees(180));
 
         
         public static final Transform2d REEF_RIGHT_OFFSET =
-                new Transform2d(new Translation2d(0.75, -3.0), Rotation2d.fromDegrees(180));
+                new Transform2d(new Translation2d(0.56, -1.0), Rotation2d.fromDegrees(180));
     }
   public static class OperatorConstants {
 
