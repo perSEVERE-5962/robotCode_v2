@@ -9,6 +9,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -20,7 +21,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -30,6 +33,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 
 import java.io.File;
+import java.util.function.BooleanSupplier;
 
 import swervelib.SwerveDrive;
 import swervelib.SwerveInputStream;
@@ -49,9 +53,9 @@ public class RobotContainer {
   final CommandJoystick driverJoystick = new CommandJoystick(1);
   private final SendableChooser<Command> autoChooser;
   
+  private boolean useLeftOffset = true;
 
   private static RobotContainer instance;
-  
 
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
@@ -158,6 +162,9 @@ public class RobotContainer {
    * Flight joysticks}.
    */
   private void configureBindings() {
+    
+    driverXbox.y().onTrue(Commands.runOnce(() -> toggleOffset()));
+
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveRobotOriented);
@@ -191,6 +198,9 @@ public class RobotContainer {
                   Units.degreesToRadians(360),
                   Units.degreesToRadians(180))));
       driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+       // Button B
+      driverXbox.button(3).onTrue(Commands.runOnce(() ->toggleOffset()));     
+           
       //driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
       driverXbox.button(2).whileTrue(
           Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
@@ -200,7 +210,7 @@ public class RobotContainer {
       // drivebase.driveToPose(
       // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
       // );
-
+      
     }
     if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
@@ -213,7 +223,11 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
       
-      driverXbox.a().onTrue(new AlignToTag(drivebase, 5));
+      driverXbox.a().onTrue(Commands.runOnce(() -> {
+        // this code runs WHEN THE BUTTON IS PRESSED, not at startup
+        Command alignSequence = driveToTag(9).andThen(new AlignToTag(drivebase, 9, chosenOffset()));
+        alignSequence.schedule();
+    }));
       driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
@@ -250,6 +264,35 @@ public class RobotContainer {
     return autoChooser.getSelected();      
   }
 
+  public Command driveToTag(int tagId) {
+    Transform2d offset = new Transform2d(
+        new Translation2d(0.75, 0.0),  // 0.75 meters in front of tag
+        Rotation2d.fromDegrees(180)    // face tag
+    );
+  
+    Pose2d targPose = Vision.getAprilTagPose(tagId, offset);
+    if (targPose == null) {
+        SmartDashboard.putString("driveToTag", "Tag " + tagId + " not found");
+        return new InstantCommand(); // do nothing
+    }
+  
+    return drivebase.driveToPose(targPose);
+  }
+  public Transform2d chosenOffset() {
+    if (useLeftOffset) {
+      return Constants.VisionOffsets.REEF_LEFT_OFFSET;
+  } else {
+      return Constants.VisionOffsets.REEF_RIGHT_OFFSET;
+  }
+}
+  public boolean getUseLeftOffset() {
+    return useLeftOffset;
+}
+public void toggleOffset() {
+  useLeftOffset = !useLeftOffset;
+}
+
+  
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
   }
@@ -265,4 +308,11 @@ public class RobotContainer {
 
     return instance;
   }
+
+  public Cameras getBestCamera(int id) {
+    // Replace this with the actual logic to get the best camera
+    return visionSubsystem.getbestCamera(id);
+}
+
+
 }
