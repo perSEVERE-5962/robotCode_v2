@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -41,7 +44,16 @@ public final class Constants {
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
+ public static final class VisionOffsets {
+        
+        
+        public static final Transform2d REEF_LEFT_OFFSET =
+                new Transform2d(new Translation2d(0.56, 1.0), Rotation2d.fromDegrees(180));
 
+        
+        public static final Transform2d REEF_RIGHT_OFFSET =
+                new Transform2d(new Translation2d(0.56, -1.0), Rotation2d.fromDegrees(180));
+    }
   public static class OperatorConstants {
 
     // Joystick Deadband
@@ -49,5 +61,9 @@ public final class Constants {
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT = 6;
+  }
+  public static class PhotonvisionConstants {
+
+    
   }
 }
