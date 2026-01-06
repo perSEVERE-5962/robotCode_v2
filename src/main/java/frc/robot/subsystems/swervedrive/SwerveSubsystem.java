@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
-import frc.robot.subsystems.swervedrive.Vision.Cameras;
+import frc.robot.Cameras;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -43,6 +43,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 import org.photonvision.targeting.PhotonPipelineResult;
+
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -62,11 +63,13 @@ public class SwerveSubsystem extends SubsystemBase {
   /**
    * Enable vision odometry updates while driving.
    */
-  private final boolean visionDriveTest = false;
+  private final boolean visionDriveTest = true;
   /**
    * PhotonVision class to keep an accurate odometry.
    */
   private Vision vision;
+
+  private SwerveSubsystem instance;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -136,6 +139,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void setupPhotonVision() {
     vision = new Vision(swerveDrive::getPose, swerveDrive.field);
+
   }
 
   @Override
@@ -144,7 +148,10 @@ public class SwerveSubsystem extends SubsystemBase {
     if (visionDriveTest) {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
+      vision.updateVisionField();
+
     }
+
   }
 
   @Override
@@ -716,4 +723,9 @@ public class SwerveSubsystem extends SubsystemBase {
   public SwerveDrive getSwerveDrive() {
     return swerveDrive;
   }
+
+  public Vision getVision() {
+    return vision;
+  }
+
 }

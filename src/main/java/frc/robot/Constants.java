@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -42,6 +45,15 @@ public final class Constants {
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
 
+  public static final class VisionOffsets {
+
+    public static final Transform2d REEF_LEFT_OFFSET = new Transform2d(new Translation2d(0.4, 0.15),
+        Rotation2d.fromDegrees(180));
+
+    public static final Transform2d REEF_RIGHT_OFFSET = new Transform2d(new Translation2d(0.4, 0.15),
+        Rotation2d.fromDegrees(180));
+  }
+
   public static class OperatorConstants {
 
     // Joystick Deadband
@@ -49,5 +61,78 @@ public final class Constants {
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT = 6;
+  }
+
+  public static class PhotonvisionConstants {
+
+    /*
+     * depoy order for Json files of swerve modules
+     * frontleft,
+     * frontright,
+     * backleft,
+     * backright
+     */
+  }
+
+  public static final class ArmConstants {
+    public static final int kArmID = 52;
+
+    public static final double kP = 8;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kIz = 0;
+    public static final double kFF = 0;
+
+    public static final double kMaxOutput = 0.4;
+    public static final double kMinOutput = -0.4;
+    public static final float kLowerSoftLimit = 0.195f;
+    public static final float kUpperSoftLimit = 0.9f;
+
+  }
+
+  public static final class IntakeConstants {
+    public static final int kIntakeID = 60;
+    public static final int kFollowerID = 61;
+
+    public static final double kP = 8;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kIz = 0;
+    public static final double kFF = 0;
+
+    public static final double kMaxOutput = 0.4;
+    public static final double kMinOutput = -0.4;
+    public static final float kLowerSoftLimit = 0.195f;
+    public static final float kUpperSoftLimit = 0.9f;
+
+  }
+
+  public static final class MBLinearSlideConstants {
+    public static final int kWristID = 51;// 53
+
+    // PID
+    // L1 was 15, 0, 0.1
+    public static final double kP = 8;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kIz = 0;
+    public static final double kFF = 0;
+
+    // feedforward
+    public static final double ks = 0.0;
+    public static final double kv = 0.0;
+    public static final double kPostionConversionFactor = 0; // (end angle - start angle) / value at end angle
+
+    // Limits
+    public static final double kMaxOutput = 0.4; // extend?
+    public static final double kMinOutput = -0.4; // retract ?
+    public static final float kLowerSoftLimit = 0.195f;// 0; // kReverse
+    public static final float kUpperSoftLimit = 0.9f;// 30.5f; // kForward
+    public static final float kL1Limit = 1.5f;
+    public static final float kL2Limit = 1.6f;
+    public static final float kL3Limit = 1.9f;
+    public static final float kIntakeLimit = 2.0f;
+    // Offsets
+    public static final double koffSet = 0.0;
   }
 }
