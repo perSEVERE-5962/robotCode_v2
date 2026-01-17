@@ -6,11 +6,11 @@ package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -48,8 +48,9 @@ public class Actuator extends SubsystemBase {
                 .i(I)
                 .d(D)
                 .outputRange(MinOutput, MaxOutput)
-                .velocityFF(FF)
-                .iZone(Iz);
+                .iZone(Iz)
+                .feedForward
+                .kV(12.0 * FF);
         if (useThroughBoreEncoder == true) {
             absoluteEncoder = armMotor.getAbsoluteEncoder();
         } else {
@@ -96,7 +97,7 @@ public class Actuator extends SubsystemBase {
     }
 
     public void moveToPositionWithPID(double position) {
-        armMotor.getClosedLoopController().setReference(position, SparkMax.ControlType.kPosition);
+        armMotor.getClosedLoopController().setSetpoint(position, SparkMax.ControlType.kPosition);
     }
 
     public void move(double speed) {
