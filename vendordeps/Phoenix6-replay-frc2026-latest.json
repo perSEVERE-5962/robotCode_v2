@@ -1,9 +1,5 @@
 {
-<<<<<<<< HEAD:vendordeps/Phoenix6-replay-frc2026-latest.json
     "fileName": "Phoenix6-replay-frc2026-latest.json",
-========
-    "fileName": "Phoenix6-replay-26.1.0.json",
->>>>>>>> origin/YAGSL-Kfir:vendordeps/Phoenix6-replay-26.1.0.json
     "name": "CTRE-Phoenix (v6) Replay",
     "version": "26.1.0",
     "frcYear": "2026",
