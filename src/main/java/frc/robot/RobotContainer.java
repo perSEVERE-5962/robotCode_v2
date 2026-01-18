@@ -63,7 +63,7 @@ public class RobotContainer {
       "swerve/neo"));
    // Initialize the vision subsystem
 
-   private final Field2d field = new Field2d();
+  private final Field2d field = new Field2d();
 
   public final Vision visionSubsystem = new Vision(drivebase::getPose, field);
   /**
@@ -218,7 +218,7 @@ public class RobotContainer {
 
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().onTrue(Commands.none());
       driverXbox.rightBumper().onTrue(Commands.none());
@@ -228,11 +228,11 @@ public class RobotContainer {
         // this code runs WHEN THE BUTTON IS PRESSED, not at startup
         Command alignSequence = driveToTag(13).andThen(new AlignToTag(drivebase, 13, chosenOffset()));//run with timeout incase tag is lost,
         CommandScheduler.getInstance().schedule(alignSequence);
-      driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
+        driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+        driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+        driverXbox.back().whileTrue(drivebase.centerModulesCommand());
+        driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+        //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
       }));
     }
 /*     if (DriverStation.isTest()) {
@@ -278,26 +278,27 @@ public class RobotContainer {
   
     return drivebase.driveToPose(targPose);
   }
+
   public Transform2d chosenOffset() {
     if (useLeftOffset) {
       return Constants.VisionOffsets.REEF_LEFT_OFFSET;
-  } else {
+    } else {
       return Constants.VisionOffsets.REEF_RIGHT_OFFSET;
+    }
   }
-}
   public boolean getUseLeftOffset() {
     return useLeftOffset;
-}
-public void toggleOffset() {
-  useLeftOffset = !useLeftOffset;
-}
+  }
+  public void toggleOffset() {
+    useLeftOffset = !useLeftOffset;
+  }
 
   
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
   }
 
-  public SwerveSubsystem getSwerveSubsystem(){
+  public SwerveSubsystem getSwerveSubsystem() {
     return drivebase;
   }
 

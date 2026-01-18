@@ -32,7 +32,7 @@ import java.util.List;
 public class AlignToTag extends Command {
   private Vision visionSubsystem;
   private SwerveSubsystem swerveSubsystem;
-private Cameras camera;
+  private Cameras camera;
   private int desiredTag;
   private PhotonTrackedTarget target;
   private Transform2d offset;
@@ -41,31 +41,31 @@ private Cameras camera;
   Pose2d targetPose;
  
   private final ProfiledPIDController xPID =
-  new ProfiledPIDController(
-      4.0, 0.0, 0.0,
-      new TrapezoidProfile.Constraints(
-          3.0,   // max velocity(for tuning)
-          3.0    // max accelleration(for tuning)
-      )
-  );
+      new ProfiledPIDController(
+          4.0, 0.0, 0.0,
+          new TrapezoidProfile.Constraints(
+              3.0,   // max velocity(for tuning)
+              3.0    // max accelleration(for tuning)
+          )
+      );
 
-private final ProfiledPIDController yPID =
-  new ProfiledPIDController(
-      4.0, 0.0, 0.0,
-      new TrapezoidProfile.Constraints(
-          3.0,
-          3.0
-      )
-  );
+  private final ProfiledPIDController yPID =
+      new ProfiledPIDController(
+          4.0, 0.0, 0.0,
+          new TrapezoidProfile.Constraints(
+              3.0,
+              3.0
+          )
+      );
 
-private final ProfiledPIDController rotationPID =
-  new ProfiledPIDController(
-      4.0, 0.0, 0.0,
-      new TrapezoidProfile.Constraints(
-          Math.toRadians(180), 
-          Math.toRadians(360)  
-      )
-  );
+  private final ProfiledPIDController rotationPID =
+      new ProfiledPIDController(
+          4.0, 0.0, 0.0,
+          new TrapezoidProfile.Constraints(
+              Math.toRadians(180), 
+              Math.toRadians(360)  
+          )
+      );
   private final double posTol = 0.07; //7 cm
   private final double angTol = Math.toRadians(2); // 2 degrees
  
@@ -92,13 +92,13 @@ private final ProfiledPIDController rotationPID =
   @Override
   public void initialize() {
   
-        camera = visionSubsystem.getbestCamera(desiredTag);
-        hasTarget = false;
+    camera = visionSubsystem.getbestCamera(desiredTag);
+    hasTarget = false;
 
-        Pose2d pose = swerveSubsystem.getPose();
-        xPID.reset(pose.getX());
-        yPID.reset(pose.getY());
-        rotationPID.reset(pose.getRotation().getRadians());
+    Pose2d pose = swerveSubsystem.getPose();
+    xPID.reset(pose.getX());
+    yPID.reset(pose.getY());
+    rotationPID.reset(pose.getRotation().getRadians());
 
   }
 
@@ -112,13 +112,13 @@ private final ProfiledPIDController rotationPID =
       hasTarget = false;
       SmartDashboard.putBoolean("AlignToReef/HasTarget", false);
       return;
-  }
+    }
     
-  List<PhotonPipelineResult> results = camera.resultsList;
-  target = null;
+    List<PhotonPipelineResult> results = camera.resultsList;
+    target = null;
 
-  for (int i = 0; i < results.size(); i++) {
-    PhotonPipelineResult result = results.get(i);
+    for (int i = 0; i < results.size(); i++) {
+      PhotonPipelineResult result = results.get(i);
       if (result.hasTargets()) {
         for (int j = 0; i < result.getTargets().size(); j++) {
           PhotonTrackedTarget trackedTarget = result.getTargets().get(i); {
@@ -127,12 +127,12 @@ private final ProfiledPIDController rotationPID =
                   break;
               }
           }
-          if (target != null){
-              break;
+          if (target != null) {
+            break;
+          }
+        }
       }
-  }
-}
-  }
+    }
   
 
 
@@ -142,50 +142,50 @@ private final ProfiledPIDController rotationPID =
       hasTarget = false;
       SmartDashboard.putBoolean("AlignToReef/HasTarget", false);
       return;
-  }
+    }
 
   
     
     Transform3d cameraToTarget = target.getBestCameraToTarget();
-if (cameraToTarget == null) {
-  swerveSubsystem.drive(new ChassisSpeeds(0, 0, 0));
-  hasTarget = false;
-  return;
-}
+    if (cameraToTarget == null) {
+      swerveSubsystem.drive(new ChassisSpeeds(0, 0, 0));
+      hasTarget = false;
+      return;
+    }
 
-hasTarget = true;
+    hasTarget = true;
 
 
-// Calculate tag pose using 3D solver data + current robot pose
-Pose2d currentRobotPose = swerveSubsystem.getPose();
-Transform3d robotToCamera = camera.getRobotToCamera();
-Transform3d robotToTarget = robotToCamera.plus(cameraToTarget);
+    // Calculate tag pose using 3D solver data + current robot pose
+    Pose2d currentRobotPose = swerveSubsystem.getPose();
+    Transform3d robotToCamera = camera.getRobotToCamera();
+    Transform3d robotToTarget = robotToCamera.plus(cameraToTarget);
 
-Pose3d currentRobotPose3d = new Pose3d(
-    currentRobotPose.getX(), 
-    currentRobotPose.getY(), 
-    0, 
-    new edu.wpi.first.math.geometry.Rotation3d(0, 0, currentRobotPose.getRotation().getRadians())
-);
+    Pose3d currentRobotPose3d = new Pose3d(
+        currentRobotPose.getX(), 
+        currentRobotPose.getY(), 
+        0, 
+        new edu.wpi.first.math.geometry.Rotation3d(0, 0, currentRobotPose.getRotation().getRadians())
+    );
 
-Pose3d calculatedTagPose3d = currentRobotPose3d.plus(robotToTarget);
-Pose2d calculatedTagPose2d = calculatedTagPose3d.toPose2d();
-Pose2d calculatedTargetPose = calculatedTagPose2d.transformBy(offset);
+    Pose3d calculatedTagPose3d = currentRobotPose3d.plus(robotToTarget);
+    Pose2d calculatedTagPose2d = calculatedTagPose3d.toPose2d();
+    Pose2d calculatedTargetPose = calculatedTagPose2d.transformBy(offset);
 
 
     targetPose = calculatedTargetPose;
-      Pose2d currentPose = swerveSubsystem.getPose();
+    Pose2d currentPose = swerveSubsystem.getPose();
 
         
-        double xSpeed = xPID.calculate(currentPose.getX(), targetPose.getX());
-        double ySpeed = yPID.calculate(currentPose.getY(), targetPose.getY());
+    double xSpeed = xPID.calculate(currentPose.getX(), targetPose.getX());
+    double ySpeed = yPID.calculate(currentPose.getY(), targetPose.getY());
         
-        double rotSpeed = rotationPID.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+    double rotSpeed = rotationPID.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
 
-        swerveSubsystem.driveFieldOriented(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed));
+    swerveSubsystem.driveFieldOriented(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed));
    
 
-}
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -200,7 +200,7 @@ Pose2d calculatedTargetPose = calculatedTagPose2d.transformBy(offset);
       && xPID.atGoal()
       && yPID.atGoal()
       && rotationPID.atGoal();
-}
+  }
 }
 
 

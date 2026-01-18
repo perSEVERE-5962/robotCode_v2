@@ -730,7 +730,7 @@ public class SwerveSubsystem extends SubsystemBase {
     return swerveDrive;
   }
 
-  public Vision getVision(){
+  public Vision getVision() {
     return vision;
   }
 

@@ -43,16 +43,15 @@ public final class Constants {
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
- public static final class VisionOffsets {
+  public static final class VisionOffsets {
         
-        
-        public static final Transform2d REEF_LEFT_OFFSET =
+    public static final Transform2d REEF_LEFT_OFFSET =
                 new Transform2d(new Translation2d(0.0, 0.0), Rotation2d.fromDegrees(180));
 
         
-        public static final Transform2d REEF_RIGHT_OFFSET =
+    public static final Transform2d REEF_RIGHT_OFFSET =
                 new Transform2d(new Translation2d(0.0, 0.0), Rotation2d.fromDegrees(180));
-    }
+  }
   public static class OperatorConstants {
 
     // Joystick Deadband
@@ -71,7 +70,7 @@ public final class Constants {
     backright
      */ 
   }
-  public static class CANDeviceIDs {
+  public static final class CANDeviceIDs {
     public static final int kIndexerID = 53;
   }
 }
