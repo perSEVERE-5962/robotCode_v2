@@ -247,7 +247,7 @@ public class RobotContainer {
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
-      }));
+      };
     }
 /*     if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
@@ -267,7 +267,7 @@ public class RobotContainer {
       driverJoystick.button(6).onTrue(Commands.none());
     } */
 
-  }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -350,5 +350,6 @@ private Rotation2d getScoringSide() {
     return BLUE_SCORING_SIDE;
   }
 }
-
 }
+
+
