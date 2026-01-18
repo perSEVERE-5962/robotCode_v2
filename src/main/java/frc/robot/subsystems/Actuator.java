@@ -22,7 +22,7 @@ public class Actuator extends SubsystemBase {
     private SparkMaxConfig motorConfig;
     private RelativeEncoder armEncoder;
     private SparkAbsoluteEncoder absoluteEncoder;
-    private boolean useThroughBoreEncoder = false;
+    private boolean useThroughBoreEncoder;
 
     public Actuator(int ID, double P, double I, double D, double MinOutput, double MaxOutput, double FF, double Iz,
             float kUpperSoftLimit, float kLowerSoftLimit, boolean inverted, boolean useThroughBoreEncoder,
@@ -32,9 +32,6 @@ public class Actuator extends SubsystemBase {
         motorConfig = new SparkMaxConfig();
 
         motorConfig.inverted(inverted);
-        // Reach needs to be inverted
-        // Wrist should not be inverted
-        // Pivot should not be inverted
         motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
         motorConfig.smartCurrentLimit(40);
         FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
@@ -48,8 +45,8 @@ public class Actuator extends SubsystemBase {
                 .i(I)
                 .d(D)
                 .outputRange(MinOutput, MaxOutput)
-                .iZone(Iz)
-                .feedForward
+                .iZone(Iz);
+        motorConfig.closedLoop.feedForward
                 .kV(12.0 * FF);
         if (useThroughBoreEncoder == true) {
             absoluteEncoder = armMotor.getAbsoluteEncoder();
@@ -73,14 +70,6 @@ public class Actuator extends SubsystemBase {
 
     }
 
-    public void periodic() {
-        // nothing here
-        motorConfig.closedLoop
-                .p(getP())
-                .i(getI())
-                .d(getD());
-    }
-
     public double getPosition() {
         if (useThroughBoreEncoder == true) {
             if (absoluteEncoder == null) {
@@ -96,24 +85,14 @@ public class Actuator extends SubsystemBase {
 
     }
 
+    /* -1 <= position <= 1 */
     public void moveToPositionWithPID(double position) {
         armMotor.getClosedLoopController().setSetpoint(position, SparkMax.ControlType.kPosition);
     }
 
+    /* -1.0 <= speed <= 1.0 */
     public void move(double speed) {
         armMotor.set(speed);
-    }
-
-    public double getP() {
-        return 0;
-    }
-
-    public double getI() {
-        return 0;
-    }
-
-    public double getD() {
-        return 0;
     }
 
     public SparkMax getArmMotor() {
