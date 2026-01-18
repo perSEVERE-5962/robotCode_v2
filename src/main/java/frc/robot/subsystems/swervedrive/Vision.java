@@ -4,8 +4,13 @@ import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import java.util.List;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
@@ -27,6 +32,8 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Cameras;
 import frc.robot.Robot;
+import frc.robot.Constants.FieldConstants;
+
 import java.awt.Desktop;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -48,7 +55,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import swervelib.SwerveInputStream;
 import swervelib.SwerveDrive;
-
+import frc.robot.Constants;
 
 /**
  * Example PhotonVision class to aid in the pursuit of accurate odometry. Taken
@@ -60,8 +67,7 @@ public class Vision {
   /**
    * April Tag Field Layout of the year.
    */
-  public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(
-      AprilTagFields.kDefaultField);
+  
   /**
    * Ambiguity defined as a value between (0,1). Used in
    * {@link Vision#filterPose}.
@@ -102,7 +108,7 @@ public class Vision {
 
     if (Robot.isSimulation()) {
       visionSim = new VisionSystemSim("Vision");
-      visionSim.addAprilTags(fieldLayout);
+      visionSim.addAprilTags(FieldConstants.FIELD_LAYOUT);
 
       for (Cameras c : Cameras.values()) {
         c.addToVisionSim(visionSim);
@@ -122,11 +128,11 @@ public class Vision {
    * @return The target pose of the AprilTag.
    */
   public static Pose2d getAprilTagPose(int aprilTag, Transform2d robotOffset) {
-    Optional<Pose3d> aprilTagPose3d = fieldLayout.getTagPose(aprilTag);
+    Optional<Pose3d> aprilTagPose3d = FieldConstants.FIELD_LAYOUT.getTagPose(aprilTag);
     if (aprilTagPose3d.isPresent()) {
       return aprilTagPose3d.get().toPose2d().transformBy(robotOffset);
     } else {
-      throw new RuntimeException("Cannot get AprilTag " + aprilTag + " from field " + fieldLayout.toString());
+      throw new RuntimeException("Cannot get AprilTag " + aprilTag + " from field " + FieldConstants.FIELD_LAYOUT.toString());
     }
 
   }
@@ -205,7 +211,7 @@ public class Vision {
    * @return Distance
    */
   public double getDistanceFromAprilTag(int id) {
-    Optional<Pose3d> tag = fieldLayout.getTagPose(id);
+    Optional<Pose3d> tag = FieldConstants.FIELD_LAYOUT.getTagPose(id);
     return tag.map(pose3d -> PhotonUtils.getDistanceToPose(currentPose.get(), pose3d.toPose2d())).orElse(-1.0);
   }
 
@@ -296,8 +302,8 @@ public class Vision {
 
     List<Pose2d> poses = new ArrayList<>();
     for (PhotonTrackedTarget target : targets) {
-      if (fieldLayout.getTagPose(target.getFiducialId()).isPresent()) {
-        Pose2d targetPose = fieldLayout.getTagPose(target.getFiducialId()).get().toPose2d();
+      if (FieldConstants.FIELD_LAYOUT.getTagPose(target.getFiducialId()).isPresent()) {
+        Pose2d targetPose = FieldConstants.FIELD_LAYOUT.getTagPose(target.getFiducialId()).get().toPose2d();
         poses.add(targetPose);
       }
     }

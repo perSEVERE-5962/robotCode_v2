@@ -63,16 +63,16 @@ public enum Cameras {
   RIGHT_CAM("right",
       new Rotation3d(0, 0, 0),
       new Translation3d(0,0,0),
-          VecBuilder.fill(0.3, 0.3, 0.6), VecBuilder.fill(0.1, 0.1, 0.2));
+          VecBuilder.fill(0.3, 0.3, 0.6), VecBuilder.fill(0.1, 0.1, 0.2)),
   /**
    * Center Camera
    */
-  // CENTER_CAM("center",
-  //     new Rotation3d(0, Units.degreesToRadians(18), 0),
-  //     new Translation3d(Units.inchesToMeters(-4.628),
-  //         Units.inchesToMeters(-10.687),
-  //         Units.inchesToMeters(16.129)),
-  //     VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+  CENTER_CAM("center",
+      new Rotation3d(0, Units.degreesToRadians(18), 0),
+      new Translation3d(Units.inchesToMeters(-4.628),
+          Units.inchesToMeters(-10.687),
+          Units.inchesToMeters(16.129)),
+      VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
   /**
    * Latency alert to use when high latency is detected.
@@ -146,8 +146,8 @@ public enum Cameras {
     // https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
     robotToCamTransform = new Transform3d(robotToCamTranslation, robotToCamRotation);
 
-    poseEstimator = new PhotonPoseEstimator(Vision.fieldLayout,
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+    poseEstimator = new PhotonPoseEstimator(Constants.FieldConstants.FIELD_LAYOUT, 
+    PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
         robotToCamTransform);
     poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
