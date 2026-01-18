@@ -39,9 +39,7 @@ public final class Constants {
   // 0);
   // public static final PIDConstants ANGLE_PID = new PIDConstants(0.4, 0, 0.01);
   // }
-public static final class CANDeviceIDs{
-  public static final int kShooterID = 51;
-}
+
   public static final class DrivebaseConstants {
 
     // Hold time on motor brakes when disabled
@@ -91,7 +89,12 @@ public static final class HubScoringConstants {
      */ 
   }
   public static final class CANDeviceIDs {
-    public static final int kIndexerID = 53;
+    public static final int kIndexerID = 50;
+    public static final int kShooterID = 52;
   }
-}
 
+  public static final class MotorConstants {
+    public static final double DESIRED_SHOOTER_SPEED = 1.0;
+    public static final double DESIRED_INDEXER_SPEED = 0.5;
+}
+}

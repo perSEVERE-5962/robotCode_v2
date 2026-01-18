@@ -5,11 +5,11 @@ import frc.robot.subsystems.Shooter;
 
 public class MoveShooter extends Command {
   private Shooter shooter;
-  private double pos;
   
-  public MoveShooter(double pos) {
+  
+  public MoveShooter(double speed) {
     shooter = Shooter.getInstance();
-    this.pos = pos;
+    
 
     addRequirements(shooter);
   }
@@ -21,7 +21,7 @@ public class MoveShooter extends Command {
 
   @Override
   public void execute() {
-    shooter.moveToPositionWithPID(pos);
+    shooter.runShooter(1.0);
   }
 
   @Override
@@ -31,7 +31,7 @@ public class MoveShooter extends Command {
 
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 
 }
