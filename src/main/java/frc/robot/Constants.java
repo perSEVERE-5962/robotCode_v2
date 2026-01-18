@@ -71,5 +71,7 @@ public final class Constants {
     backright
      */ 
   }
-
+  public static class CANDeviceIDs {
+    public static final int kIndexerID = 53;
+  }
 }
