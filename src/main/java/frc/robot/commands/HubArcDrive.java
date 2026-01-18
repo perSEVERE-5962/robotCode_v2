@@ -10,9 +10,14 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.util.HubScoringUtil;
+
+import static frc.robot.Constants.HubScoringConstants.BLUE_SCORING_SIDE;
+import static frc.robot.Constants.HubScoringConstants.RED_SCORING_SIDE;
+
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Pose2d;
 
 
 
@@ -47,11 +52,15 @@ import java.util.function.Supplier;
 
   @Override
   public void initialize() {
-   
+    
+  isFinished();
   }
 
   @Override
    public void execute() {
+       
+
+  
     // joystick input for movement
     double strafeStrength = strafeInput.getAsDouble();
     
@@ -129,6 +138,16 @@ import java.util.function.Supplier;
 
   @Override
   public boolean isFinished() {
-    return false;
+    Pose2d pose = swerve.getPose();
+  if(scoringSide ==RED_SCORING_SIDE&& pose.getX()>4.611){
+    System.out.print("Wrong side");
+    return true;
+    
+   }
+   else if(scoringSide ==BLUE_SCORING_SIDE&& pose.getX()<11.901424){
+    System.out.print("Wrong side");
+    return true;
+   }
+   return false;
   }
 }
