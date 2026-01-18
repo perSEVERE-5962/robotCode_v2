@@ -15,7 +15,6 @@ import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.spark.config.SparkBaseConfig;
 
 public class Actuator extends SubsystemBase {
     private SparkMax armMotor;
@@ -32,12 +31,12 @@ public class Actuator extends SubsystemBase {
         motorConfig = new SparkMaxConfig();
 
         motorConfig.inverted(inverted);
-        motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
+        motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
         motorConfig.smartCurrentLimit(40);
+
         FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
         if (useThroughBoreEncoder == true) {
             feedBackSensor = FeedbackSensor.kAbsoluteEncoder;
-
         }
         motorConfig.closedLoop
                 .feedbackSensor(feedBackSensor)

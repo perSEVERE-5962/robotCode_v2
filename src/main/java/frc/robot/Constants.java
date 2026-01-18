@@ -90,6 +90,8 @@ public static final class HubScoringConstants {
     backright
      */ 
   }
-
+  public static class CANDeviceIDs {
+    public static final int kIndexerID = 53;
+  }
 }
 
