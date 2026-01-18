@@ -28,15 +28,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AlignToTag;
-import frc.robot.commands.DriveToHub;
-import frc.robot.commands.HubArcDrive;
-
 //import frc.robot.commands.AlignWithAprilTag;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import swervelib.SwerveInputStream;
-import static frc.robot.Constants.HubScoringConstants.*;
-import edu.wpi.first.wpilibj.DriverStation;
 
 import java.io.File;
 import java.util.function.BooleanSupplier;
@@ -119,8 +114,6 @@ public class RobotContainer {
 //   .deadband(OperatorConstants.DEADBAND)
 //   .scaleTranslation(0.8)
 //   .allianceRelativeControl(true);
-
-
 
 
 
@@ -230,39 +223,15 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
       
-    //   driverXbox.a().onTrue(Commands.runOnce(() -> {
-    //     // this code runs WHEN THE BUTTON IS PRESSED, not at startup
-    //     Command alignSequence = driveToTag(13);//run with timeout incase tag is lost,
-    //     alignSequence.schedule();
-        
-    // }));
-    driverXbox.a().onTrue(
-    new DriveToHub(
-      drivebase, 
-      getHubCenter(), 
-      SCORING_DISTANCE, 
-      getScoringSide(), 
-      SCORING_ARC_WIDTH_DEGREES
-    )
-    
-      );
-      
-    driverXbox.leftBumper().toggleOnTrue(
-  new HubArcDrive(
-    drivebase,
-    driverXbox::getLeftX,
-    getHubCenter(),
-    SCORING_DISTANCE,
-    getScoringSide()
-  )
-);
-    
-    
-  
+      driverXbox.a().onTrue(Commands.runOnce(() -> {
+        // this code runs WHEN THE BUTTON IS PRESSED, not at startup
+        Command alignSequence = driveToTag(13).andThen(new AlignToTag(drivebase, 13, chosenOffset()));//run with timeout incase tag is lost,
+        alignSequence.schedule();
+    }));
       driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      //riverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
     }
 /*     if (DriverStation.isTest()) {
@@ -308,8 +277,13 @@ public class RobotContainer {
   
     return drivebase.driveToPose(targPose);
   }
-  
-
+  public Transform2d chosenOffset() {
+    if (useLeftOffset) {
+      return Constants.VisionOffsets.REEF_LEFT_OFFSET;
+  } else {
+      return Constants.VisionOffsets.REEF_RIGHT_OFFSET;
+  }
+}
   public boolean getUseLeftOffset() {
     return useLeftOffset;
 }
@@ -339,33 +313,5 @@ public void toggleOffset() {
     return visionSubsystem.getbestCamera(id);
 }
 
-private boolean isRedAlliance() {
-  var alliance = DriverStation.getAlliance();
-  
-  if (alliance.isPresent()) {
-    return alliance.get() == DriverStation.Alliance.Red;
-  }
-  
-  // Default to blue if no alliance data
-  return false;
-}
-private Translation2d getHubCenter() {
-  boolean isRedAlliance = isRedAlliance();
-  
-  if (isRedAlliance) {
-    return RED_HUB_CENTER;
-  } else {
-    return BLUE_HUB_CENTER;
-  }
-}
 
-private Rotation2d getScoringSide() {
-  boolean isRedAlliance = isRedAlliance();
-  
-  if (isRedAlliance) {
-    return RED_SCORING_SIDE;
-  } else {
-    return BLUE_SCORING_SIDE;
-  }
-}
 }
