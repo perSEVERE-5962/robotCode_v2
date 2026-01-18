@@ -172,7 +172,7 @@ public enum Cameras {
       cameraSim.enableDrawWireframe(true);
     }
   }
-  public Transform3d getRobotToCamera(){
+  public Transform3d getRobotToCamera() {
     return robotToCamTransform;
   }
   /**

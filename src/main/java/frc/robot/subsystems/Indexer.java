@@ -11,6 +11,7 @@ import frc.robot.Constants;
 public class Indexer extends SubsystemBase {
   private SparkMax motor;
   private SparkMaxConfig motorConfig;
+  private static Indexer instance;
 
   public Indexer() {
     motor = new SparkMax(Constants.CANDeviceIDs.kIndexerID, SparkLowLevel.MotorType.kBrushless);
@@ -26,5 +27,12 @@ public class Indexer extends SubsystemBase {
 
   public void move(double speed) {
     motor.set(speed);
+  }
+
+  public static Indexer getInstance() {
+    if (instance == null) {
+      instance = new Indexer();
+    }
+    return instance;
   }
 }

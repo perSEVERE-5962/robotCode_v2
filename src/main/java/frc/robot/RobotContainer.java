@@ -71,7 +71,7 @@ public class RobotContainer {
       "swerve/neo"));
    // Initialize the vision subsystem
 
-   private final Field2d field = new Field2d();
+  private final Field2d field = new Field2d();
 
   public final Vision visionSubsystem = new Vision(drivebase::getPose, field);
   /**
@@ -226,7 +226,7 @@ public class RobotContainer {
 
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().onTrue(Commands.none());
       driverXbox.rightBumper().onTrue(Commands.none());
@@ -295,17 +295,17 @@ public class RobotContainer {
 
   public boolean getUseLeftOffset() {
     return useLeftOffset;
-}
-public void toggleOffset() {
-  useLeftOffset = !useLeftOffset;
-}
+  }
+  public void toggleOffset() {
+    useLeftOffset = !useLeftOffset;
+  }
 
   
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
   }
 
-  public SwerveSubsystem getSwerveSubsystem(){
+  public SwerveSubsystem getSwerveSubsystem() {
     return drivebase;
   }
 
