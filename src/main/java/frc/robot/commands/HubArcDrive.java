@@ -99,7 +99,7 @@ import java.util.function.Supplier;
     
     double fieldVx = radialSpeed * radialX + tangentialSpeed * tangentialX;
     double fieldVy = radialSpeed * radialY + tangentialSpeed * tangentialY;
-    //compare desired heading vs wanted hearing
+    //compare desired heading vs wanted heading
     Rotation2d desiredHeading = Rotation2d.fromRadians(angleFromHub + Math.PI);
     double headingError = desiredHeading.minus(currentHeading).getRadians();//get error
     headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));//wrap error
@@ -116,7 +116,7 @@ import java.util.function.Supplier;
     
     //turn to robot oriented because the rotation and position is calculate around the robot
     ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        fieldVx, fieldVy, omega, currentHeading
+        fieldVx, fieldVy, headingSpeed, currentHeading
     );
     
     swerve.drive(speeds);

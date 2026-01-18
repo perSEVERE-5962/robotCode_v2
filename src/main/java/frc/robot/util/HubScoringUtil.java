@@ -39,7 +39,7 @@ public static Pose2d getClosestScoringPose(Translation2d robotPosition, Translat
         hubCenter.getY() + scoringDistance * Math.sin(targetAngle)
     );
     
-    // Robot should face toward the hub
+    // Robot should face toward the hub(opposite of direction on the angle is center of hub)
     Rotation2d targetRotation = Rotation2d.fromRadians(targetAngle + Math.PI);
     
     return new Pose2d(targetPosition, targetRotation);
