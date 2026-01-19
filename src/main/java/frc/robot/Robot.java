@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -78,6 +79,32 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("Match/EventName", DriverStation.getEventName());
     Logger.recordOutput("Match/Alliance", getAllianceString());
     Logger.recordOutput("Match/StationNumber", DriverStation.getLocation().orElse(0));
+  }
+
+  /**
+   * Logs system health data every cycle.
+   * Signals: BatteryVoltage, CAN stats, RIO voltages/temp, BrownedOut, RSLState
+   */
+  private void logSystemHealth() {
+    // Battery voltage
+    Logger.recordOutput("SystemHealth/BatteryVoltage", RobotController.getBatteryVoltage());
+
+    // CAN bus statistics
+    var canStatus = RobotController.getCANStatus();
+    Logger.recordOutput("SystemHealth/CANUtilization", canStatus.percentBusUtilization);
+    Logger.recordOutput("SystemHealth/CANTxErrors", canStatus.transmitErrorCount);
+    Logger.recordOutput("SystemHealth/CANRxErrors", canStatus.receiveErrorCount);
+    Logger.recordOutput("SystemHealth/CANBusOff", canStatus.busOffCount);
+
+    // roboRIO health
+    Logger.recordOutput("SystemHealth/RioCPUTemp", RobotController.getCPUTemp());
+    Logger.recordOutput("SystemHealth/Rio3V3Rail", RobotController.getVoltage3V3());
+    Logger.recordOutput("SystemHealth/Rio5VRail", RobotController.getVoltage5V());
+    Logger.recordOutput("SystemHealth/Rio6VRail", RobotController.getVoltage6V());
+
+    // System state
+    Logger.recordOutput("SystemHealth/BrownedOut", RobotController.isBrownedOut());
+    Logger.recordOutput("SystemHealth/RSLState", RobotController.getRSLState());
   }
 
   // ==================== LOGGING CONFIGURATION ====================
@@ -158,6 +185,9 @@ public class Robot extends LoggedRobot {
 
     // Log match state data every cycle
     logMatchData();
+
+    // Log system health data every cycle
+    logSystemHealth();
   }
 
   /**
