@@ -5,12 +5,17 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotContainer;
 import frc.robot.Cameras;
+
+// AdvantageKit imports for logging
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -19,7 +24,7 @@ import frc.robot.Cameras;
  * class or the package after creating this
  * project, you must also update the build.gradle file in the project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
 
   private static Robot instance;
   private Command m_autonomousCommand;
@@ -37,11 +42,43 @@ public class Robot extends TimedRobot {
   }
 
   /**
+   * Configures AdvantageKit logging.
+   * - Records build metadata for traceability
+   * - Sets up file logging (WPILOGWriter) to USB drive
+   * - Sets up NetworkTables publishing (NT4Publisher) for live dashboard
+   */
+  private void configureLogging() {
+    // Record build metadata for traceability in logs
+    Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+    Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+    Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+    Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+    Logger.recordMetadata("GitDirty", BuildConstants.DIRTY == 1 ? "true" : "false");
+
+    // Set up data receivers (where logged data goes)
+    if (isReal()) {
+      // Running on real robot: log to USB drive and publish to NetworkTables
+      Logger.addDataReceiver(new WPILOGWriter()); // Log to USB stick at /U/logs
+      Logger.addDataReceiver(new NT4Publisher()); // Publish to NetworkTables
+    } else {
+      // Running in simulation: log to local file and publish to NetworkTables
+      Logger.addDataReceiver(new WPILOGWriter("logs")); // Log to logs/ folder
+      Logger.addDataReceiver(new NT4Publisher());
+    }
+
+    // Start the logger - must be called after all configuration
+    Logger.start();
+  }
+
+  /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
    */
   @Override
   public void robotInit() {
+    // Configure AdvantageKit logging FIRST before anything else
+    configureLogging();
+
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
