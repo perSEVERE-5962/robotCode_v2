@@ -41,6 +41,47 @@ public class Robot extends LoggedRobot {
     return instance;
   }
 
+  // ==================== LOGGING HELPER METHODS ====================
+
+  /**
+   * Returns the current robot mode as a string.
+   */
+  private String getCurrentMode() {
+    if (isDisabled()) return "Disabled";
+    if (isAutonomous()) return "Autonomous";
+    if (isTeleop()) return "Teleop";
+    if (isTest()) return "Test";
+    return "Unknown";
+  }
+
+  /**
+   * Returns the alliance color as a string.
+   */
+  private String getAllianceString() {
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      return alliance.get().name();
+    }
+    return "Unknown";
+  }
+
+  /**
+   * Logs match state data every cycle.
+   * Signals: Match/Time, Mode, Enabled, FMSAttached, MatchNumber, EventName, Alliance, StationNumber
+   */
+  private void logMatchData() {
+    Logger.recordOutput("Match/Time", DriverStation.getMatchTime());
+    Logger.recordOutput("Match/Mode", getCurrentMode());
+    Logger.recordOutput("Match/Enabled", isEnabled());
+    Logger.recordOutput("Match/FMSAttached", DriverStation.isFMSAttached());
+    Logger.recordOutput("Match/MatchNumber", DriverStation.getMatchNumber());
+    Logger.recordOutput("Match/EventName", DriverStation.getEventName());
+    Logger.recordOutput("Match/Alliance", getAllianceString());
+    Logger.recordOutput("Match/StationNumber", DriverStation.getLocation().orElse(0));
+  }
+
+  // ==================== LOGGING CONFIGURATION ====================
+
   /**
    * Configures AdvantageKit logging.
    * - Records build metadata for traceability
@@ -114,7 +155,9 @@ public class Robot extends LoggedRobot {
     // robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    
+
+    // Log match state data every cycle
+    logMatchData();
   }
 
   /**
