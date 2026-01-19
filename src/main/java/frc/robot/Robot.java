@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotContainer;
 import frc.robot.Cameras;
+import frc.robot.util.ElasticUtil;
 
 // AdvantageKit imports for logging
 import org.littletonrobotics.junction.LoggedRobot;
@@ -220,6 +221,9 @@ public class Robot extends LoggedRobot {
     if (isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
+
+    // Send test notification to Elastic Dashboard
+    ElasticUtil.sendInfo("Robot", "Code initialized successfully");
   }
 
   /**
