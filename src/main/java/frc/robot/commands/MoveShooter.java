@@ -5,11 +5,11 @@ import frc.robot.subsystems.Shooter;
 
 public class MoveShooter extends Command {
   private Shooter shooter;
-  
+  private double speed;
   
   public MoveShooter(double speed) {
     shooter = Shooter.getInstance();
-    
+    this.speed = speed;
 
     addRequirements(shooter);
   }
@@ -21,7 +21,7 @@ public class MoveShooter extends Command {
 
   @Override
   public void execute() {
-    shooter.runShooter(1.0);
+    shooter.move(speed);
   }
 
   @Override
