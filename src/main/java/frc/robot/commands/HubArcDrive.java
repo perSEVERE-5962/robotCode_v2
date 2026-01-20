@@ -22,9 +22,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 
 
-
-
-  public class HubArcDrive extends Command {
+public class HubArcDrive extends Command {
 
   private final SwerveSubsystem swerve;
   private final DoubleSupplier strafeInput;
@@ -53,11 +51,10 @@ import edu.wpi.first.math.geometry.Pose2d;
   @Override
   public void initialize() {
     
-  isFinished();
   }
 
   @Override
-   public void execute() {
+  public void execute() {
        
 
   
@@ -139,15 +136,15 @@ import edu.wpi.first.math.geometry.Pose2d;
   @Override
   public boolean isFinished() {
     Pose2d pose = swerve.getPose();
-  if(scoringSide ==RED_SCORING_SIDE&& pose.getX()>4.611){
-    System.out.print("Wrong side");
-    return true;
+    if (scoringSide == RED_SCORING_SIDE && pose.getX() > 4.611) {
+      System.out.print("Wrong side");
+      return true;
     
-   }
-   else if(scoringSide ==BLUE_SCORING_SIDE&& pose.getX()<11.901424){
-    System.out.print("Wrong side");
-    return true;
-   }
-   return false;
+    }
+    else if (scoringSide == BLUE_SCORING_SIDE && pose.getX() < 11.901424) {
+      System.out.print("Wrong side");
+      return true;
+    }
+    return false;
   }
 }

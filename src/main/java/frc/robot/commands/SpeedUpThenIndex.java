@@ -18,6 +18,8 @@ public class SpeedUpThenIndex extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     shooter = Shooter.getInstance();
     indexer = Indexer.getInstance();
+
+    addRequirements(shooter, indexer);
   }
 
   // Called when the command is initially scheduled.
@@ -30,7 +32,7 @@ public class SpeedUpThenIndex extends Command {
   @Override
   public void execute() {
     new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_SPEED);
-    if(shooter.getMotorVelocity()==Constants.MotorConstants.DESIRED_SHOOTER_SPEED){
+    if (shooter.getMotorVelocity() == Constants.MotorConstants.DESIRED_SHOOTER_SPEED) {
       new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_SPEED);
     }
   }

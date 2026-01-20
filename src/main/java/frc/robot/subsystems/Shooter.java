@@ -18,14 +18,14 @@ import frc.robot.Constants;
 public class Shooter extends Actuator {
   private static Shooter instance;
 
-    private SparkMax shooterMotor;
+  private SparkMax shooterMotor;
 
   private RelativeEncoder shooterMotorEncoder;
-    private SparkMaxConfig motorConfig; 
+  private SparkMaxConfig motorConfig; 
 
 
   private Shooter() {
-    super(Constants.CANDeviceIDs.kShooterID, 1.0, 0, 0, 0, 1.0, 0.0,0,0,0,false,false, false);
+    super(Constants.CANDeviceIDs.kShooterID, 1.0, 0, 0, 0, 1.0, 0.0, 0, 0, 0, false, false, false);
     shooterMotor = new SparkMax(Constants.CANDeviceIDs.kShooterID, SparkLowLevel.MotorType.kBrushless);
     
     motorConfig = new SparkMaxConfig();
@@ -37,16 +37,11 @@ public class Shooter extends Actuator {
     shooterMotor.configure(motorConfig,ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  public void runShooter(double speed) {
-      shooterMotor.set(speed);
-  }
-
 
   public double getMotorVelocity() {
     double velocity = shooterMotorEncoder.getVelocity();
     return velocity;
   }
-
 
 
 
