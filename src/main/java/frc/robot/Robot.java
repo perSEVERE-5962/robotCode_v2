@@ -34,6 +34,10 @@ public class Robot extends LoggedRobot {
 
   private Timer disabledTimer;
 
+  // Loop timing tracking
+  private double lastLoopTimestamp = 0;
+  private int loopOverrunCount = 0;
+
   public Robot() {
     instance = this;
   }
@@ -107,6 +111,59 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("SystemHealth/RSLState", RobotController.getRSLState());
   }
 
+  // Track active commands via callbacks
+  private final java.util.Set<String> activeCommands = new java.util.LinkedHashSet<>();
+
+  /**
+   * Sets up command tracking callbacks.
+   * Called once during robotInit.
+   */
+  private void setupCommandLogging() {
+    CommandScheduler.getInstance().onCommandInitialize(command -> {
+      activeCommands.add(command.getName());
+    });
+    CommandScheduler.getInstance().onCommandFinish(command -> {
+      activeCommands.remove(command.getName());
+    });
+    CommandScheduler.getInstance().onCommandInterrupt(command -> {
+      activeCommands.remove(command.getName());
+    });
+  }
+
+  /**
+   * Logs active command data every cycle.
+   * Signals: Commands/ActiveList, Commands/ActiveCount
+   */
+  private void logCommands() {
+    String list = activeCommands.isEmpty() ? "none" : String.join(", ", activeCommands);
+    Logger.recordOutput("Commands/ActiveList", list);
+    Logger.recordOutput("Commands/ActiveCount", activeCommands.size());
+  }
+
+  /**
+   * Logs loop timing data every cycle.
+   * Tracks loop time in milliseconds and counts overruns (> 20ms).
+   * Signals: SystemHealth/LoopTimeMs, SystemHealth/LoopOverruns
+   */
+  private void logLoopTiming() {
+    double currentTimestamp = Timer.getFPGATimestamp();
+
+    // Calculate loop time (skip first cycle where lastLoopTimestamp is 0)
+    if (lastLoopTimestamp > 0) {
+      double loopTimeMs = (currentTimestamp - lastLoopTimestamp) * 1000.0;
+
+      // Check for overrun (> 20ms for 50Hz loop)
+      if (loopTimeMs > 20.0) {
+        loopOverrunCount++;
+      }
+
+      Logger.recordOutput("SystemHealth/LoopTimeMs", loopTimeMs);
+    }
+
+    Logger.recordOutput("SystemHealth/LoopOverruns", loopOverrunCount);
+    lastLoopTimestamp = currentTimestamp;
+  }
+
   // ==================== LOGGING CONFIGURATION ====================
 
   /**
@@ -147,6 +204,9 @@ public class Robot extends LoggedRobot {
     // Configure AdvantageKit logging FIRST before anything else
     configureLogging();
 
+    // Set up command tracking callbacks
+    setupCommandLogging();
+
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
@@ -174,6 +234,9 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotPeriodic() {
+    // Log loop timing at the start to measure time since last cycle
+    logLoopTiming();
+
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled
     // commands, running already-scheduled commands, removing finished or
@@ -188,6 +251,9 @@ public class Robot extends LoggedRobot {
 
     // Log system health data every cycle
     logSystemHealth();
+
+    // Log active commands every cycle
+    logCommands();
   }
 
   /**
