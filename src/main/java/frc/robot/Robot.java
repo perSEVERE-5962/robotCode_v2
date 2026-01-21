@@ -120,23 +120,19 @@ public class Robot extends LoggedRobot {
    * Signals: BatteryVoltage, CAN stats, RIO voltages/temp, BrownedOut, RSLState
    */
   private void logSystemHealth() {
-    // Battery voltage
     Logger.recordOutput("SystemHealth/BatteryVoltage", RobotController.getBatteryVoltage());
 
-    // CAN bus statistics
     var canStatus = RobotController.getCANStatus();
     Logger.recordOutput("SystemHealth/CANUtilization", canStatus.percentBusUtilization);
     Logger.recordOutput("SystemHealth/CANTxErrors", canStatus.transmitErrorCount);
     Logger.recordOutput("SystemHealth/CANRxErrors", canStatus.receiveErrorCount);
     Logger.recordOutput("SystemHealth/CANBusOff", canStatus.busOffCount);
 
-    // roboRIO health
     Logger.recordOutput("SystemHealth/RioCPUTemp", RobotController.getCPUTemp());
     Logger.recordOutput("SystemHealth/Rio3V3Rail", RobotController.getVoltage3V3());
     Logger.recordOutput("SystemHealth/Rio5VRail", RobotController.getVoltage5V());
     Logger.recordOutput("SystemHealth/Rio6VRail", RobotController.getVoltage6V());
 
-    // System state
     Logger.recordOutput("SystemHealth/BrownedOut", RobotController.isBrownedOut());
     Logger.recordOutput("SystemHealth/RSLState", RobotController.getRSLState());
   }
@@ -174,25 +170,21 @@ public class Robot extends LoggedRobot {
    * - Sets up NetworkTables publishing (NT4Publisher) for live dashboard
    */
   private void configureLogging() {
-    // Record build metadata for traceability in logs
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
     Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
     Logger.recordMetadata("GitDirty", BuildConstants.DIRTY == 1 ? "true" : "false");
 
-    // Set up data receivers (where logged data goes)
     if (isReal()) {
-      // Running on real robot: log to USB drive and publish to NetworkTables
-      Logger.addDataReceiver(new WPILOGWriter()); // Log to USB stick at /U/logs
-      Logger.addDataReceiver(new NT4Publisher()); // Publish to NetworkTables
+      Logger.addDataReceiver(new WPILOGWriter()); // /U/logs
+      Logger.addDataReceiver(new NT4Publisher());
     } else {
-      // Running in simulation: log to local file and publish to NetworkTables
-      Logger.addDataReceiver(new WPILOGWriter("logs")); // Log to logs/ folder
+      Logger.addDataReceiver(new WPILOGWriter("logs"));
       Logger.addDataReceiver(new NT4Publisher());
     }
 
-    // Start the logger - must be called after all configuration
+    // must be called after all configuration
     Logger.start();
   }
 
@@ -202,10 +194,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
-    // Configure AdvantageKit logging FIRST before anything else
-    configureLogging();
-
-    // Set up command tracking callbacks
+    configureLogging(); // must be first
     setupCommandLogging();
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
@@ -222,7 +211,6 @@ public class Robot extends LoggedRobot {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
 
-    // Send test notification to Elastic Dashboard
     ElasticUtil.sendInfo("Robot", "Code initialized successfully");
   }
 
@@ -238,8 +226,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotPeriodic() {
-    // Log loop timing at the start to measure time since last cycle
-    logLoopTiming();
+    logLoopTiming(); // must be first to measure actual loop time
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled
@@ -250,13 +237,8 @@ public class Robot extends LoggedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    // Log match state data every cycle
     logMatchData();
-
-    // Log system health data every cycle
     logSystemHealth();
-
-    // Log active commands every cycle
     logCommands();
   }
 
