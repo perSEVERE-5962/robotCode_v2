@@ -232,18 +232,17 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
       
-      driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES )
-    );
-    driverXbox.x().toggleOnTrue(
-  new HubArcDrive(drivebase,
-    driverXbox::getLeftX,
-    getHubCenter(),
-    SCORING_DISTANCE,
-    getScoringSide()
-  )
-);
+      driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
+      driverXbox.x().toggleOnTrue(
+        new HubArcDrive(drivebase,
+          driverXbox::getLeftX,
+          getHubCenter(),
+          SCORING_DISTANCE,
+          getScoringSide()
+        )
+      );
       //driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());

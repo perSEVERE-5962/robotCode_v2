@@ -26,7 +26,7 @@ public class MoveShooter extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    
+    shooter.move(0);
   }
 
   @Override
