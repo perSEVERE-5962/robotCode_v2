@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -32,6 +33,10 @@ import frc.robot.commands.AlignToTag;
 import frc.robot.commands.DriveToHub;
 import frc.robot.commands.HubArcDrive;
 //import frc.robot.commands.AlignWithAprilTag;
+import frc.robot.commands.DeployIntake;
+import frc.robot.commands.RetractIntake;
+import frc.robot.commands.MoveIntake;
+import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import swervelib.SwerveInputStream;
@@ -208,7 +213,7 @@ public class RobotContainer {
                   Units.degreesToRadians(180))));
       driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
        // Button B
-      driverXbox.button(3).onTrue(Commands.runOnce(() ->toggleOffset()));     
+      driverXbox.button(3).onTrue(Commands.runOnce(() -> toggleOffset()));     
            
       //driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
       driverXbox.button(2).whileTrue(
@@ -246,6 +251,9 @@ public class RobotContainer {
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
+      driverXbox.b().whileTrue(new SequentialCommandGroup(new DeployIntake(), new MoveIntake()))
+          .onFalse(new RetractIntake());
+      driverXbox.y().onTrue(new SpeedUpThenIndex());
     }
   }
 /*     if (DriverStation.isTest()) {
