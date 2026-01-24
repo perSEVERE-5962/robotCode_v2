@@ -246,8 +246,8 @@ public class RobotContainer {
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
-      };
     }
+  }
 /*     if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
@@ -319,36 +319,38 @@ public class RobotContainer {
   public Cameras getBestCamera(int id) {
     // Replace this with the actual logic to get the best camera
     return visionSubsystem.getbestCamera(id);
-}
-private boolean isRedAlliance() {
-  var alliance = DriverStation.getAlliance();
-  
-  if (alliance.isPresent()) {
-    return alliance.get() == DriverStation.Alliance.Red;
   }
-  
-  // Default to blue if no alliance data
-  return false;
-}
-private Translation2d getHubCenter() {
-  boolean isRedAlliance = isRedAlliance();
-  
-  if (isRedAlliance) {
-    return RED_HUB_CENTER;
-  } else {
-    return BLUE_HUB_CENTER;
-  }
-}
 
-private Rotation2d getScoringSide() {
-  boolean isRedAlliance = isRedAlliance();
+  private boolean isRedAlliance() {
+    var alliance = DriverStation.getAlliance();
+    
+    if (alliance.isPresent()) {
+      return alliance.get() == DriverStation.Alliance.Red;
+    }
   
-  if (isRedAlliance) {
-    return RED_SCORING_SIDE;
-  } else {
-    return BLUE_SCORING_SIDE;
+    // Default to blue if no alliance data
+    return false;
   }
-}
+
+  private Translation2d getHubCenter() {
+    boolean isRedAlliance = isRedAlliance();
+  
+    if (isRedAlliance) {
+      return RED_HUB_CENTER;
+    } else {
+      return BLUE_HUB_CENTER;
+    }
+  }
+
+  private Rotation2d getScoringSide() {
+    boolean isRedAlliance = isRedAlliance();
+  
+    if (isRedAlliance) {
+      return RED_SCORING_SIDE;
+    } else {
+      return BLUE_SCORING_SIDE;
+    }
+  }
 }
 
 

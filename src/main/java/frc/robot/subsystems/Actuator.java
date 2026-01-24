@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Actuator extends SubsystemBase {
     private SparkMax armMotor;
-    private SparkMaxConfig motorConfig;
     private RelativeEncoder armEncoder;
     private SparkAbsoluteEncoder absoluteEncoder;
     private boolean useThroughBoreEncoder;
@@ -28,7 +27,7 @@ public class Actuator extends SubsystemBase {
             boolean useSoftLimits) {
 
         armMotor = new SparkMax(ID, SparkLowLevel.MotorType.kBrushless);
-        motorConfig = new SparkMaxConfig();
+        SparkMaxConfig motorConfig = new SparkMaxConfig();
 
         motorConfig.inverted(inverted);
         motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);

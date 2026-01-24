@@ -21,7 +21,7 @@ public class Shooter extends Actuator {
   private SparkMax shooterMotor;
 
   private RelativeEncoder shooterMotorEncoder;
-  private SparkMaxConfig motorConfig; 
+  private SparkMaxConfig motorConfig;
 
 
   private Shooter() {

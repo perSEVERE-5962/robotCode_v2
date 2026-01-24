@@ -91,10 +91,15 @@ public static final class HubScoringConstants {
   public static final class CANDeviceIDs {
     public static final int kIndexerID = 50;
     public static final int kShooterID = 52;
+    public static final int kIntakeActuatorID = 999;
+    public static final int kIntakeID = 999;
   }
 
   public static final class MotorConstants {
     public static final double DESIRED_SHOOTER_SPEED = 1.0;
     public static final double DESIRED_INDEXER_SPEED = 0.5;
+    public static final double OUT_INTAKE_POS = 999;
+    public static final double IN_INTAKE_POS = 999;
+    public static final double DESIRED_INTAKE_SPEED = 999;
 }
 }
