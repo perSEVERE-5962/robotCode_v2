@@ -15,39 +15,32 @@ import com.revrobotics.sim.SparkMaxAlternateEncoderSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Shooter extends Actuator {
+public class Shooter extends SubsystemBase {
   private static Shooter instance;
 
-  private SparkMax shooterMotor;
-
-  private RelativeEncoder shooterMotorEncoder;
+  private SparkMax motor;
+  private RelativeEncoder motorEncoder;
   private SparkMaxConfig motorConfig;
 
-
   private Shooter() {
-    super(Constants.CANDeviceIDs.kShooterID, 1.0, 0, 0, 0, 1.0, 0.0, 0, 0, 0, false, false, false);
-    shooterMotor = new SparkMax(Constants.CANDeviceIDs.kShooterID, SparkLowLevel.MotorType.kBrushless);
+    motor = new SparkMax(Constants.CANDeviceIDs.kShooterID, SparkLowLevel.MotorType.kBrushless);
     
     motorConfig = new SparkMaxConfig();
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
     motorConfig.smartCurrentLimit(40);
     motorConfig.encoder.velocityConversionFactor(1);
-    shooterMotorEncoder = shooterMotor.getEncoder();
+    motorEncoder = motor.getEncoder();
     
-    shooterMotor.configure(motorConfig,ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    motor.configure(motorConfig,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-
   public double getMotorVelocity() {
-    double velocity = shooterMotorEncoder.getVelocity();
+    double velocity = motorEncoder.getVelocity();
     return velocity;
   }
 
-
-
-  @Override
-  public void periodic() {
-
+  public void move(double speed) {
+    motor.set(speed);
   }
 
   public static Shooter getInstance() {
