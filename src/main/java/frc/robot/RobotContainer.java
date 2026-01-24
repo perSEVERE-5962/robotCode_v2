@@ -33,9 +33,8 @@ import frc.robot.commands.AlignToTag;
 import frc.robot.commands.DriveToHub;
 import frc.robot.commands.HubArcDrive;
 //import frc.robot.commands.AlignWithAprilTag;
-import frc.robot.commands.DeployIntake;
 import frc.robot.commands.RetractIntake;
-import frc.robot.commands.MoveIntake;
+import frc.robot.commands.RunIntake;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
@@ -251,7 +250,7 @@ public class RobotContainer {
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
-      driverXbox.b().whileTrue(new SequentialCommandGroup(new DeployIntake(), new MoveIntake()))
+      driverXbox.b().whileTrue(new RunIntake())
           .onFalse(new RetractIntake());
       driverXbox.y().onTrue(new SpeedUpThenIndex());
     }
