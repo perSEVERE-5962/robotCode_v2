@@ -10,7 +10,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
-
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.*;
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean constants. This
@@ -26,11 +28,10 @@ import swervelib.math.Matter;
 public final class Constants {
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
-  public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED = Units.feetToMeters(14.5);
   // Maximum speed of the robot in meters per second, used to limit acceleration.
-
+  public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   // public static final class AutonConstants
   // {
   //
@@ -44,16 +45,12 @@ public final class Constants {
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
+  public static final class FieldConstants {
+    public static final AprilTagFieldLayout FIELD_LAYOUT = AprilTagFieldLayout.loadField(
+      AprilTagFields.k2026RebuiltAndymark);
 
-  public static final class VisionOffsets {
-
-    public static final Transform2d REEF_LEFT_OFFSET = new Transform2d(new Translation2d(0.4, 0.15),
-        Rotation2d.fromDegrees(180));
-
-    public static final Transform2d REEF_RIGHT_OFFSET = new Transform2d(new Translation2d(0.4, 0.15),
-        Rotation2d.fromDegrees(180));
+    public static final double DistanceToHub = 0.4;
   }
-
   public static class OperatorConstants {
 
     // Joystick Deadband
@@ -62,77 +59,57 @@ public final class Constants {
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT = 6;
   }
-
+  public static final class HubScoringConstants {
+  
+    // Hub positions on field (adjust based on your field layout)
+    public static final Translation2d RED_HUB_CENTER = new Translation2d(4.625594, 4.0);
+    public static final Translation2d BLUE_HUB_CENTER = new Translation2d(11.901424, 4.0); // Adjust for red side
+  
+    // Scoring parameters
+    public static final double SCORING_DISTANCE = 2.0; // meters from hub center
+    public static final double MAX_ARC_SPEED = 2.0; // max speed while driving along arc (m/s)
+  
+    // Valid scoring arc definition
+    public static final Rotation2d BLUE_SCORING_SIDE = Rotation2d.fromDegrees(0); // Faces +X
+    public static final Rotation2d RED_SCORING_SIDE = Rotation2d.fromDegrees(180); // Faces -X
+    public static final double SCORING_ARC_WIDTH_DEGREES = 90; // 180 = semicircle, 90 = quarter circle
+  
+    // Tolerances
+    public static final double POSITION_TOLERANCE = 0.05; // meters
+    public static final double ANGLE_TOLERANCE = 2.0; // degrees
+  }
   public static class PhotonvisionConstants {
 
     /*
-     * depoy order for Json files of swerve modules
-     * frontleft,
-     * frontright,
-     * backleft,
-     * backright
-     */
+    deploy order for Json files of swerve modules
+    frontleft,
+    frontright,
+    backleft,
+    backright
+     */ 
+  }
+  public static final class CANDeviceIDs {
+    public static final int kIndexerID = 50;
+    public static final int kShooterID = 52;
+    public static final int kIntakeActuatorID = 999;
+    public static final int kIntakeID = 999;
   }
 
-  public static final class ArmConstants {
-    public static final int kArmID = 52;
-
-    public static final double kP = 8;
-    public static final double kI = 0;
-    public static final double kD = 0;
-    public static final double kIz = 0;
-    public static final double kFF = 0;
-
-    public static final double kMaxOutput = 0.4;
-    public static final double kMinOutput = -0.4;
-    public static final float kLowerSoftLimit = 0.195f;
-    public static final float kUpperSoftLimit = 0.9f;
-
+  public static final class MotorConstants {
+    public static final double DESIRED_SHOOTER_SPEED = 1.0;
+    public static final double DESIRED_INDEXER_SPEED = 0.5;
+    public static final double OUT_INTAKE_POS = 999;
+    public static final double IN_INTAKE_POS = 999;
+    public static final double DESIRED_INTAKE_SPEED = 999;
   }
 
   public static final class IntakeConstants {
-    public static final int kIntakeID = 60;
-    public static final int kFollowerID = 61;
-
-    public static final double kP = 8;
-    public static final double kI = 0;
-    public static final double kD = 0;
-    public static final double kIz = 0;
-    public static final double kFF = 0;
-
-    public static final double kMaxOutput = 0.4;
-    public static final double kMinOutput = -0.4;
-    public static final float kLowerSoftLimit = 0.195f;
-    public static final float kUpperSoftLimit = 0.9f;
-
-  }
-
-  public static final class MBLinearSlideConstants {
-    public static final int kWristID = 51;// 53
-
-    // PID
-    // L1 was 15, 0, 0.1
-    public static final double kP = 8;
-    public static final double kI = 0;
-    public static final double kD = 0;
-    public static final double kIz = 0;
-    public static final double kFF = 0;
-
-    // feedforward
-    public static final double ks = 0.0;
-    public static final double kv = 0.0;
-    public static final double kPostionConversionFactor = 0; // (end angle - start angle) / value at end angle
-
-    // Limits
-    public static final double kMaxOutput = 0.4; // extend?
-    public static final double kMinOutput = -0.4; // retract ?
-    public static final float kLowerSoftLimit = 0.195f;// 0; // kReverse
-    public static final float kUpperSoftLimit = 0.9f;// 30.5f; // kForward
-    public static final float kL1Limit = 1.5f;
-    public static final float kL2Limit = 1.6f;
-    public static final float kL3Limit = 1.9f;
-    public static final float kIntakeLimit = 2.0f;
-    // Offsets
-    public static final double koffSet = 0.0;
+    public static final double P = 1.0;
+    public static final double I = 0.0;
+    public static final double D = 0.0;
+    public static final double MinOutput = -1.0;
+    public static final double MaxOutput = 1.0;
+    public static final double FF = 0.0;
+    public static final double Iz = 0.0;
   }
 }

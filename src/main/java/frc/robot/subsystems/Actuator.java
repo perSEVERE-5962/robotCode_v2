@@ -6,41 +6,36 @@ package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.spark.config.SparkBaseConfig;
 
 public class Actuator extends SubsystemBase {
     private SparkMax armMotor;
-    private SparkMaxConfig motorConfig;
     private RelativeEncoder armEncoder;
     private SparkAbsoluteEncoder absoluteEncoder;
-    private boolean useThroughBoreEncoder = false;
+    private boolean useThroughBoreEncoder;
 
     public Actuator(int ID, double P, double I, double D, double MinOutput, double MaxOutput, double FF, double Iz,
             float kUpperSoftLimit, float kLowerSoftLimit, boolean inverted, boolean useThroughBoreEncoder,
             boolean useSoftLimits) {
 
         armMotor = new SparkMax(ID, SparkLowLevel.MotorType.kBrushless);
-        motorConfig = new SparkMaxConfig();
+        SparkMaxConfig motorConfig = new SparkMaxConfig();
 
         motorConfig.inverted(inverted);
-        // Reach needs to be inverted
-        // Wrist should not be inverted
-        // Pivot should not be inverted
-        motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
+        motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
         motorConfig.smartCurrentLimit(40);
+
         FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
         if (useThroughBoreEncoder == true) {
             feedBackSensor = FeedbackSensor.kAbsoluteEncoder;
-
         }
         motorConfig.closedLoop
                 .feedbackSensor(feedBackSensor)
@@ -48,8 +43,9 @@ public class Actuator extends SubsystemBase {
                 .i(I)
                 .d(D)
                 .outputRange(MinOutput, MaxOutput)
-                .velocityFF(FF)
                 .iZone(Iz);
+        motorConfig.closedLoop.feedForward
+                .kV(12.0 * FF);
         if (useThroughBoreEncoder == true) {
             absoluteEncoder = armMotor.getAbsoluteEncoder();
         } else {
@@ -72,14 +68,6 @@ public class Actuator extends SubsystemBase {
 
     }
 
-    public void periodic() {
-        // nothing here
-        motorConfig.closedLoop
-                .p(getP())
-                .i(getI())
-                .d(getD());
-    }
-
     public double getPosition() {
         if (useThroughBoreEncoder == true) {
             if (absoluteEncoder == null) {
@@ -95,24 +83,14 @@ public class Actuator extends SubsystemBase {
 
     }
 
+    /* -1 <= position <= 1 */
     public void moveToPositionWithPID(double position) {
-        armMotor.getClosedLoopController().setReference(position, SparkMax.ControlType.kPosition);
+        armMotor.getClosedLoopController().setSetpoint(position, SparkMax.ControlType.kPosition);
     }
 
+    /* -1.0 <= speed <= 1.0 */
     public void move(double speed) {
         armMotor.set(speed);
-    }
-
-    public double getP() {
-        return 0;
-    }
-
-    public double getI() {
-        return 0;
-    }
-
-    public double getD() {
-        return 0;
     }
 
     public SparkMax getArmMotor() {
