@@ -32,7 +32,7 @@ public class HubArcDrive extends Command {
   private final Rotation2d scoringSide;
 
   //Command for drive mode where robot orbits around hub, maintaining distance and holding its rotation towards the center of hub,
-  //added compensation needed, discussed in https://www.chiefdelphi.com/t/a-note-on-optimal-driving-for-shoot-on-the-move/512979/11
+  //added compensation for robot velocity, discussed in https://www.chiefdelphi.com/t/a-note-on-optimal-driving-for-shoot-on-the-move/512979/11
   public HubArcDrive(SwerveSubsystem swerve, DoubleSupplier strafeInput, 
                      Translation2d hubCenter, double scoringDistance,
                      Rotation2d scoringSide) {
@@ -58,7 +58,6 @@ public class HubArcDrive extends Command {
   public void execute() {
     
     
-  
     // joystick input for movement
     double strafeStrength = strafeInput.getAsDouble();
     
@@ -106,19 +105,20 @@ public class HubArcDrive extends Command {
     
     double fieldVx = radialSpeed * radialX + tangentialSpeed * tangentialX;
     double fieldVy = radialSpeed * radialY + tangentialSpeed * tangentialY;
-    //compare desired heading vs wanted heading
- 
-    // Gentle limit
+    
   
     
-    //turn to robot oriented because the rotation and position is calculate around the robot
-    
+ //get robot velocity
     ChassisSpeeds robotVelocity = swerve.getFieldVelocity();
     Translation2d robotVel = new Translation2d(
         robotVelocity.vxMetersPerSecond,
         robotVelocity.vyMetersPerSecond
     );
-    double shooterVelocity = 10;//shooter.getMotorVelocity();
+    //get shooter velocity
+    double shooterVelocity = shooter.getMotorVelocity();
+    if(shooterVelocity<1){
+      shooterVelocity = 10;
+    }
     // Time for game piece to reach hub
     double timeToHub = scoringDistance / shooterVelocity;
     
@@ -127,7 +127,7 @@ public class HubArcDrive extends Command {
     Translation2d compensatedTarget = hubCenter.minus(velocityDrift);
     Translation2d toCompensatedTarget = compensatedTarget.minus(robotPos);
     Rotation2d compensatedAim = toCompensatedTarget.getAngle();
-    
+    //compare desired heading vs wanted heading
     // Heading control with velocity compensation, to compensate for the velocity of ball due to robot speed
     double headingError = compensatedAim.minus(currentHeading).getRadians();
     headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));
@@ -139,6 +139,8 @@ public class HubArcDrive extends Command {
         fieldVx, fieldVy, headingSpeed, currentHeading
     );
     swerve.drive(speeds);
+
+    
   }
 
   @Override
