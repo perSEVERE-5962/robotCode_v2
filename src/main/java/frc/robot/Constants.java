@@ -62,16 +62,16 @@ public final class Constants {
   public static final class HubScoringConstants {
   
     // Hub positions on field (adjust based on your field layout)
-    public static final Translation2d RED_HUB_CENTER = new Translation2d(4.625594, 4.0);
-    public static final Translation2d BLUE_HUB_CENTER = new Translation2d(11.901424, 4.0); // Adjust for red side
+    public static final Translation2d BLUE_HUB_CENTER = new Translation2d(4.625594, 4.0);
+    public static final Translation2d RED_HUB_CENTER = new Translation2d(11.901424, 4.0); // Adjust for red side
   
     // Scoring parameters
     public static final double SCORING_DISTANCE = 2.0; // meters from hub center
     public static final double MAX_ARC_SPEED = 2.0; // max speed while driving along arc (m/s)
   
     // Valid scoring arc definition
-    public static final Rotation2d BLUE_SCORING_SIDE = Rotation2d.fromDegrees(0); // Faces +X
-    public static final Rotation2d RED_SCORING_SIDE = Rotation2d.fromDegrees(180); // Faces -X
+    public static final Rotation2d BLUE_SCORING_SIDE = Rotation2d.fromDegrees(180); // Faces +X
+    public static final Rotation2d RED_SCORING_SIDE = Rotation2d.fromDegrees(0); // Faces -X
     public static final double SCORING_ARC_WIDTH_DEGREES = 90; // 180 = semicircle, 90 = quarter circle
   
     // Tolerances
@@ -91,16 +91,16 @@ public final class Constants {
   public static final class CANDeviceIDs {
     public static final int kIndexerID = 50;
     public static final int kShooterID = 52;
-    public static final int kIntakeActuatorID = 999;
-    public static final int kIntakeID = 999;
+    public static final int kIntakeActuatorID = 56;
+    public static final int kIntakeID = 55;
   }
 
   public static final class MotorConstants {
     public static final double DESIRED_SHOOTER_SPEED = 1.0;
     public static final double DESIRED_INDEXER_SPEED = 0.5;
-    public static final double OUT_INTAKE_POS = 999;
-    public static final double IN_INTAKE_POS = 999;
-    public static final double DESIRED_INTAKE_SPEED = 999;
+    public static final double OUT_INTAKE_POS = 1;
+    public static final double IN_INTAKE_POS = 1;
+    public static final double DESIRED_INTAKE_SPEED = 1;
   }
 
   public static final class IntakeConstants {
