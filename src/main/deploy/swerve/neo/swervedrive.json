@@ -6,9 +6,9 @@
   },
   "invertedIMU": false,
   "modules": [
-    "corner10_9999.json",
-    "corner20_9999.json",
-    "corner30_9999.json",
-    "corner40_9999.json"
+    "corner10.json",
+    "corner20.json",
+    "corner30.json",
+    "corner40.json"
   ]
 }
