@@ -10,7 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.util.HubScoringUtil;
-
+import frc.robot.subsystems.Shooter;
 import static frc.robot.Constants.HubScoringConstants.BLUE_SCORING_SIDE;
 import static frc.robot.Constants.HubScoringConstants.RED_SCORING_SIDE;
 
@@ -23,15 +23,16 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 
 public class HubArcDrive extends Command {
-
+  
   private final SwerveSubsystem swerve;
   private final DoubleSupplier strafeInput;
   private final Translation2d hubCenter;
   private final double scoringDistance;
-
+  private final Shooter shooter;
   private final Rotation2d scoringSide;
 
-
+  //Command for drive mode where robot orbits around hub, maintaining distance and holding its rotation towards the center of hub,
+  //added compensation for robot velocity, discussed in https://www.chiefdelphi.com/t/a-note-on-optimal-driving-for-shoot-on-the-move/512979/11
   public HubArcDrive(SwerveSubsystem swerve, DoubleSupplier strafeInput, 
                      Translation2d hubCenter, double scoringDistance,
                      Rotation2d scoringSide) {
@@ -39,7 +40,7 @@ public class HubArcDrive extends Command {
     this.strafeInput = strafeInput;
     this.hubCenter = hubCenter;
     this.scoringDistance = scoringDistance;
-    
+    this.shooter = Shooter.getInstance();
     this.scoringSide = scoringSide;
     
     
@@ -55,9 +56,8 @@ public class HubArcDrive extends Command {
 
   @Override
   public void execute() {
-       
-
-  
+    
+    
     // joystick input for movement
     double strafeStrength = strafeInput.getAsDouble();
     
@@ -105,27 +105,42 @@ public class HubArcDrive extends Command {
     
     double fieldVx = radialSpeed * radialX + tangentialSpeed * tangentialX;
     double fieldVy = radialSpeed * radialY + tangentialSpeed * tangentialY;
+    
+  
+    
+ //get robot velocity
+    ChassisSpeeds robotVelocity = swerve.getFieldVelocity();
+    Translation2d robotVel = new Translation2d(
+        robotVelocity.vxMetersPerSecond,
+        robotVelocity.vyMetersPerSecond
+    );
+    //get shooter velocity
+    double shooterVelocity = shooter.getMotorVelocity();
+    if(shooterVelocity<1){
+      shooterVelocity = 10;
+    }
+    // Time for game piece to reach hub
+    double timeToHub = scoringDistance / shooterVelocity;
+    
+    // velocity drift compensation, calculates distance the ball would drift due to do robot velocity, and calculated the new target, factoring in said drift.
+    Translation2d velocityDrift = robotVel.times(timeToHub);
+    Translation2d compensatedTarget = hubCenter.minus(velocityDrift);
+    Translation2d toCompensatedTarget = compensatedTarget.minus(robotPos);
+    Rotation2d compensatedAim = toCompensatedTarget.getAngle();
     //compare desired heading vs wanted heading
-    Rotation2d desiredHeading = Rotation2d.fromRadians(angleFromHub + Math.PI);
-    double headingError = desiredHeading.minus(currentHeading).getRadians();//get error
-    headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));//wrap error
-    
-    // P controller
-    double headingSpeed = headingError * 4.0; 
-    
-    // Add feedforward for smooth arc motion
+    // Heading control with velocity compensation, to compensate for the velocity of ball due to robot speed
+    double headingError = compensatedAim.minus(currentHeading).getRadians();
+    headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));
+    double headingSpeed = headingError*3;//tune pid
     headingSpeed += tangentialSpeed / scoringDistance;
-    
-    // Gentle limit
     double maxHeadingSpeed = swerve.getSwerveDrive().getMaximumChassisAngularVelocity();
-    headingSpeed = MathUtil.clamp(headingSpeed, -maxHeadingSpeed * 0.5, maxHeadingSpeed * 0.5);
-    
-    //turn to robot oriented because the rotation and position is calculate around the robot
+    headingSpeed = MathUtil.clamp(headingSpeed, -maxHeadingSpeed * 0.5, maxHeadingSpeed * 0.5);//clamp speeds for controlled turning
     ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
         fieldVx, fieldVy, headingSpeed, currentHeading
     );
-    
     swerve.drive(speeds);
+
+    
   }
 
   @Override
@@ -136,12 +151,12 @@ public class HubArcDrive extends Command {
   @Override
   public boolean isFinished() {
     Pose2d pose = swerve.getPose();
-    if (scoringSide == RED_SCORING_SIDE && pose.getX() > 4.611) {
+    if (scoringSide == BLUE_SCORING_SIDE && pose.getX() > 4.611) {
       System.out.print("Wrong side");
       return true;
     
     }
-    else if (scoringSide == BLUE_SCORING_SIDE && pose.getX() < 11.901424) {
+    else if (scoringSide == RED_SCORING_SIDE && pose.getX() < 11.901424) {
       System.out.print("Wrong side");
       return true;
     }
