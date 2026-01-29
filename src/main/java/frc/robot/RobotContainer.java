@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -32,6 +33,9 @@ import frc.robot.commands.AlignToTag;
 import frc.robot.commands.DriveToHub;
 import frc.robot.commands.HubArcDrive;
 //import frc.robot.commands.AlignWithAprilTag;
+import frc.robot.commands.RetractIntake;
+import frc.robot.commands.RunIntake;
+import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import swervelib.SwerveInputStream;
@@ -208,7 +212,7 @@ public class RobotContainer {
                   Units.degreesToRadians(180))));
       driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
        // Button B
-      driverXbox.button(3).onTrue(Commands.runOnce(() ->toggleOffset()));     
+      driverXbox.button(3).onTrue(Commands.runOnce(() -> toggleOffset()));     
            
       //driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
       driverXbox.button(2).whileTrue(
@@ -232,23 +236,25 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
       
-      driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES )
-    );
-    driverXbox.x().toggleOnTrue(
-  new HubArcDrive(drivebase,
-    driverXbox::getLeftX,
-    getHubCenter(),
-    SCORING_DISTANCE,
-    getScoringSide()
-  )
-);
+      driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
+      driverXbox.x().toggleOnTrue(
+        new HubArcDrive(drivebase,
+          driverXbox::getLeftX,
+          getHubCenter(),
+          SCORING_DISTANCE,
+          getScoringSide()
+        )
+      );
       //driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
-      };
+      driverXbox.b().whileTrue(new RunIntake())
+          .onFalse(new RetractIntake());
+      driverXbox.y().onTrue(new SpeedUpThenIndex());
     }
+  }
 /*     if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
@@ -320,36 +326,38 @@ public class RobotContainer {
   public Cameras getBestCamera(int id) {
     // Replace this with the actual logic to get the best camera
     return visionSubsystem.getbestCamera(id);
-}
-private boolean isRedAlliance() {
-  var alliance = DriverStation.getAlliance();
-  
-  if (alliance.isPresent()) {
-    return alliance.get() == DriverStation.Alliance.Red;
   }
-  
-  // Default to blue if no alliance data
-  return false;
-}
-private Translation2d getHubCenter() {
-  boolean isRedAlliance = isRedAlliance();
-  
-  if (isRedAlliance) {
-    return RED_HUB_CENTER;
-  } else {
-    return BLUE_HUB_CENTER;
-  }
-}
 
-private Rotation2d getScoringSide() {
-  boolean isRedAlliance = isRedAlliance();
+  private boolean isRedAlliance() {
+    var alliance = DriverStation.getAlliance();
+    
+    if (alliance.isPresent()) {
+      return alliance.get() == DriverStation.Alliance.Red;
+    }
   
-  if (isRedAlliance) {
-    return RED_SCORING_SIDE;
-  } else {
-    return BLUE_SCORING_SIDE;
+    // Default to blue if no alliance data
+    return false;
   }
-}
+
+  private Translation2d getHubCenter() {
+    boolean isRedAlliance = isRedAlliance();
+  
+    if (isRedAlliance) {
+      return RED_HUB_CENTER;
+    } else {
+      return BLUE_HUB_CENTER;
+    }
+  }
+
+  private Rotation2d getScoringSide() {
+    boolean isRedAlliance = isRedAlliance();
+  
+    if (isRedAlliance) {
+      return RED_SCORING_SIDE;
+    } else {
+      return BLUE_SCORING_SIDE;
+    }
+  }
 }
 
 

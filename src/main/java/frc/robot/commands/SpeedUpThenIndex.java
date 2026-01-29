@@ -5,6 +5,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Indexer;
 import frc.robot.Constants;
@@ -31,10 +33,9 @@ public class SpeedUpThenIndex extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_SPEED);
-    if (shooter.getMotorVelocity() == Constants.MotorConstants.DESIRED_SHOOTER_SPEED) {
-      new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_SPEED);
-    }
+    new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_SPEED).schedule();
+    final Command waitUntilSpeed = Commands.waitUntil(() -> shooter.getMotorVelocity() == Constants.MotorConstants.DESIRED_SHOOTER_SPEED);
+    new SequentialCommandGroup(waitUntilSpeed, new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_SPEED)).schedule();
   }
 
   // Called once the command ends or is interrupted.

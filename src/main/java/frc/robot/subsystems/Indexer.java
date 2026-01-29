@@ -18,8 +18,8 @@ public class Indexer extends SubsystemBase {
     motorConfig = new SparkMaxConfig();
 
     motorConfig
-      .inverted(true)
-      .idleMode(SparkMaxConfig.IdleMode.kBrake)
+      //.inverted(true)
+      .idleMode(SparkMaxConfig.IdleMode.kCoast)
       .smartCurrentLimit(40);
     
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
