@@ -13,14 +13,14 @@ public class Indexer extends SubsystemBase {
   private SparkMaxConfig motorConfig;
   private static Indexer instance;
 
-  public Indexer() {
+  private Indexer() {
     motor = new SparkMax(Constants.CANDeviceIDs.kIndexerID, SparkLowLevel.MotorType.kBrushless);
     motorConfig = new SparkMaxConfig();
 
     motorConfig
-      //.inverted(true)
+      .inverted(true)
       .idleMode(SparkMaxConfig.IdleMode.kCoast)
-      .smartCurrentLimit(40);
+      .smartCurrentLimit(20);
     
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
