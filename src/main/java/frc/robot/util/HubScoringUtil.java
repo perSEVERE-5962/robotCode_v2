@@ -11,9 +11,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 
-public class HubScoringUtil{
+public class HubScoringUtil {
 
-public static Pose2d getClosestScoringPose(Translation2d robotPosition, Translation2d hubCenter, 
+  public static Pose2d getClosestScoringPose(Translation2d robotPosition, Translation2d hubCenter, 
                                             double scoringDistance, Rotation2d scoringSide, double arcWidthDegrees) {
     
     Translation2d hubToRobot = robotPosition.minus(hubCenter); // calculates line from center of hub to the robot
@@ -45,15 +45,5 @@ public static Pose2d getClosestScoringPose(Translation2d robotPosition, Translat
     return new Pose2d(targetPosition, targetRotation);
   }
 
-  
 
-
-
-
-  
-  
 }
-
-
-
-
