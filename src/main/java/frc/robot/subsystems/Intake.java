@@ -13,7 +13,7 @@ public class Intake extends SubsystemBase {
   private SparkMaxConfig motorConfig;
   private static Intake instance;
 
-  public Intake() {
+  private Intake() {
     motor = new SparkMax(Constants.CANDeviceIDs.kIntakeID, SparkLowLevel.MotorType.kBrushless);
     motorConfig = new SparkMaxConfig();
 
