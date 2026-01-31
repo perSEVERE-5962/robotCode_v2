@@ -43,6 +43,8 @@ import frc.robot.Constants;
 import frc.robot.Constants.HubScoringConstants;
 import java.io.File;
 import java.util.function.BooleanSupplier;
+import frc.robot.commands.MoveIndexer;
+import frc.robot.commands.MoveShooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import swervelib.SwerveInputStream;
@@ -190,7 +192,7 @@ public class RobotContainer {
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     } else {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+      drivebase.setDefaultCommand(driveRobotOrientedAngularVelocity);
     }
 
     if (Robot.isSimulation()) {
@@ -236,23 +238,24 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
       
-      driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
-      driverXbox.x().toggleOnTrue(
-        new HubArcDrive(drivebase,
-          driverXbox::getLeftX,
-          getHubCenter(),
-          SCORING_DISTANCE,
-          getScoringSide()
-        )
-      );
+      // driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
+      // driverXbox.x().toggleOnTrue(
+      //   new HubArcDrive(drivebase,
+      //     driverXbox::getLeftX,
+      //     getHubCenter(),
+      //     SCORING_DISTANCE,
+      //     getScoringSide()
+      //   )
+      // );
       //driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
-      driverXbox.b().whileTrue(new RunIntake())
-          .onFalse(new RetractIntake());
-      driverXbox.y().onTrue(new SpeedUpThenIndex());
+      //driverXbox.b().whileTrue(new RunIntake())
+       //   .onFalse(new RetractIntake());
+      driverXbox.y().whileTrue(new MoveIndexer(.4));
+      driverXbox.a().whileTrue(new MoveShooter(.6));
     }
   }
 /*     if (DriverStation.isTest()) {
