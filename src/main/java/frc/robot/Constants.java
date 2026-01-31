@@ -66,7 +66,7 @@ public final class Constants {
     public static final Translation2d RED_HUB_CENTER = new Translation2d(11.901424, 4.0); // Adjust for red side
   
     // Scoring parameters
-    public static final double SCORING_DISTANCE = 2.0; // meters from hub center
+    public static final double SCORING_DISTANCE = 1.06; // meters from hub center
     public static final double MAX_ARC_SPEED = 2.0; // max speed while driving along arc (m/s)
   
     // Valid scoring arc definition
@@ -114,12 +114,12 @@ public final class Constants {
   }
 
   public static final class ShooterConstants {
-    public static final double P = 1.0;
+    public static final double P = 0.0001;//0.00005, 0.0001
     public static final double I = 0.0;
-    public static final double D = 0.0;
+    public static final double D = 0.00;
+    public static final double FF = 0.0000145;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0;
     public static final double Iz = 0.0;
   }
 }

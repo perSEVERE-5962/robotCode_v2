@@ -17,26 +17,31 @@ import frc.robot.Constants;
 
 public class Shooter extends Actuator {
   private static Shooter instance;
-  
+
   private SparkMax motor;
   private RelativeEncoder motorEncoder;
   private SparkMaxConfig motorConfig;
 
   private Shooter() {
     super(Constants.CANDeviceIDs.kShooterID, Constants.ShooterConstants.P, Constants.ShooterConstants.I, Constants.ShooterConstants.D, Constants.ShooterConstants.MinOutput, Constants.ShooterConstants.MaxOutput, Constants.ShooterConstants.FF, Constants.ShooterConstants.Iz, 0, 0, false, false, false);
+    motor = getArmMotor();
     
-    /*motorConfig = new SparkMaxConfig();
+    motorConfig = new SparkMaxConfig();
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
     motorConfig.smartCurrentLimit(40);
     motorConfig.encoder.velocityConversionFactor(1);
     motorEncoder = motor.getEncoder();
     
-    motor.configure(motorConfig,ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);*/
+    motor.configure(motorConfig,ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public double getMotorVelocity() {
     double velocity = motorEncoder.getVelocity();
     return velocity;
+  }
+
+  public void move(double speed) {
+    motor.set(speed);
   }
 
   public static Shooter getInstance() {

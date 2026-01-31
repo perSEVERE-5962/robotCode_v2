@@ -255,7 +255,7 @@ public class RobotContainer {
       //driverXbox.b().whileTrue(new RunIntake())
        //   .onFalse(new RetractIntake());
       driverXbox.y().whileTrue(new MoveIndexer(.4));
-      driverXbox.a().whileTrue(new MoveShooter(.6));
+      driverXbox.a().whileTrue(new MoveShooter(3730));
     }
   }
 /*     if (DriverStation.isTest()) {
