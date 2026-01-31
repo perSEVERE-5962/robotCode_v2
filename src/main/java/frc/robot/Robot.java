@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotContainer;
 import frc.robot.Cameras;
 import frc.robot.util.ElasticUtil;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 // AdvantageKit imports for logging
 import org.littletonrobotics.junction.LoggedRobot;
@@ -211,8 +213,8 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = RobotContainer.getInstance();
-
+   
+    
     // Create a timer to disable motor brake a few seconds after disable. This will
     // let the robot stop
     // immediately when disabled, but then also let it be pushed more
@@ -248,6 +250,10 @@ public class Robot extends LoggedRobot {
     // and running subsystem periodic() methods. This must be called from the
     // robot's periodic
     // block in order for anything in the Command-based framework to work.
+    NetworkTableInstance.getDefault()
+        .getTable("SmartDashboard")
+        .getEntry("robot/enabled");
+    m_robotContainer = RobotContainer.getInstance();
     CommandScheduler.getInstance().run();
 
     // Log match state data every cycle
