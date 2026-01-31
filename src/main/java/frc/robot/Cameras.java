@@ -4,34 +4,50 @@
 
 package frc.robot;
 
+
 import static edu.wpi.first.units.Units.Microseconds;
+import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.robot.Robot;
+import java.awt.Desktop;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonTargetSortMode;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.PhotonUtils;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import frc.robot.subsystems.swervedrive.Vision;
-
 /** Add your docs here. */
 public enum Cameras {
   /**
@@ -39,24 +55,24 @@ public enum Cameras {
    */
   LEFT_CAM("left",
       new Rotation3d(0, 0, 0),
-      new Translation3d(0.31, 0.17, 0.32),
+      new Translation3d(0.31,0.17,0.32),
       VecBuilder.fill(0.3, 0.3, 0.6), VecBuilder.fill(0.1, 0.1, 0.2)),
   /**
    * Right Camera
    */
   RIGHT_CAM("right",
       new Rotation3d(0, 0, 0),
-      new Translation3d(0, 0, 0),
-      VecBuilder.fill(0.3, 0.3, 0.6), VecBuilder.fill(0.1, 0.1, 0.2));
+      new Translation3d(0,0,0),
+          VecBuilder.fill(0.3, 0.3, 0.6), VecBuilder.fill(0.1, 0.1, 0.2));
   /**
    * Center Camera
    */
   // CENTER_CAM("center",
-  // new Rotation3d(0, Units.degreesToRadians(18), 0),
-  // new Translation3d(Units.inchesToMeters(-4.628),
-  // Units.inchesToMeters(-10.687),
-  // Units.inchesToMeters(16.129)),
-  // VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+  //     new Rotation3d(0, Units.degreesToRadians(18), 0),
+  //     new Translation3d(Units.inchesToMeters(-4.628),
+  //         Units.inchesToMeters(-10.687),
+  //         Units.inchesToMeters(16.129)),
+  //     VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
   /**
    * Latency alert to use when high latency is detected.
@@ -156,11 +172,9 @@ public enum Cameras {
       cameraSim.enableDrawWireframe(true);
     }
   }
-
   public Transform3d getRobotToCamera() {
     return robotToCamTransform;
   }
-
   /**
    * Add camera to {@link VisionSystemSim} for simulated photon vision.
    *
@@ -186,13 +200,13 @@ public enum Cameras {
     }
 
     PhotonPipelineResult bestResult = resultsList.get(0);
-    double amiguity = bestResult.getBestTarget().getPoseAmbiguity();
+    double ambiguity = bestResult.getBestTarget().getPoseAmbiguity();
     double currentAmbiguity = 0;
     for (PhotonPipelineResult result : resultsList) {
       currentAmbiguity = result.getBestTarget().getPoseAmbiguity();
-      if (currentAmbiguity < amiguity && currentAmbiguity > 0) {
+      if (currentAmbiguity < ambiguity && currentAmbiguity > 0) {
         bestResult = result;
-        amiguity = currentAmbiguity;
+        ambiguity = currentAmbiguity;
       }
     }
     return Optional.of(bestResult);
@@ -227,7 +241,7 @@ public enum Cameras {
   private void updateUnreadResults() {
     double mostRecentTimestamp = resultsList.isEmpty() ? 0.0 : resultsList.get(0).getTimestampSeconds();
     double currentTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
-    //double debounceTime = Milliseconds.of(15).in(Seconds);
+    double debounceTime = Milliseconds.of(15).in(Seconds);
     for (PhotonPipelineResult result : resultsList) {
       mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
     }
@@ -242,6 +256,9 @@ public enum Cameras {
     }
 
   }
+
+
+
 
   /**
    * The latest estimated robot pose on the field from vision data. This may be
