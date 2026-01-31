@@ -41,7 +41,12 @@ public class SpeedUpThenIndex extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    CommandScheduler.getInstance().schedule(new MoveShooter(0));
+    CommandScheduler.getInstance().schedule(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_SPEED));
+    final Command waitTime = Commands.waitSeconds(0.25);
+    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(waitTime, new MoveIndexer(0)));
+  }
 
   // Returns true when the command should end.
   @Override
