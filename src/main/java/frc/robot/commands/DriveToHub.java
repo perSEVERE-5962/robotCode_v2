@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -45,7 +46,7 @@ public class DriveToHub extends Command {
     
     //make command using pathplanner to drive to pose
     driveCommand = swerve.driveToPose(targetPose);
-    driveCommand.schedule();
+    CommandScheduler.getInstance().schedule(driveCommand);
   }
 
   @Override
