@@ -112,4 +112,14 @@ public final class Constants {
     public static final double FF = 0.0;
     public static final double Iz = 0.0;
   }
+
+  public static final class ShooterConstants {
+    public static final double P = 1.0;
+    public static final double I = 0.0;
+    public static final double D = 0.0;
+    public static final double MinOutput = -1.0;
+    public static final double MaxOutput = 1.0;
+    public static final double FF = 0.0;
+    public static final double Iz = 0.0;
+  }
 }
