@@ -122,7 +122,8 @@ private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoub
         fieldVx, fieldVy, headingSpeed, currentHeading
     );
     swerve.drive(speeds);
-    double shooterRPM = (targetShooterSpeed / (2.0 * Math.PI * WHEEL_RADIUS_METERS)) * 60.0;
+    //double totalLaunchSpeed = targetShooterSpeed / Math.cos(ShooterAngle!!!);
+    double shooterRPM = (targetShooterSpeed / (2.0 * Math.PI * WHEEL_RADIUS_METERS)) * 60.0;//replace with total launch speed
     shooter.moveToVelocityWithPID(shooterRPM);
  
   }
