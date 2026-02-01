@@ -13,6 +13,7 @@ import frc.robot.util.HubScoringUtil;
 import frc.robot.subsystems.Shooter;
 import static frc.robot.Constants.HubScoringConstants.BLUE_SCORING_SIDE;
 import static frc.robot.Constants.HubScoringConstants.RED_SCORING_SIDE;
+import edu.wpi.first.math.util.Units;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -115,8 +116,7 @@ public class HubArcDrive extends Command {
         robotVelocity.vyMetersPerSecond
     );
     //get shooter velocity
-    double shooterVelocity = shooter.getMotorVelocity();
-    if(shooterVelocity<1){
+    double shooterVelocity = (shooter.getMotorVelocity() / 60.0) * (2.0 * Math.PI * Units.inchesToMeters(2.0));    if(shooterVelocity<1){
       shooterVelocity = 10;
     }
     // Time for game piece to reach hub
