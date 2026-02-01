@@ -40,10 +40,6 @@ public class Shooter extends Actuator {
     return velocity;
   }
 
-  public void move(double speed) {
-    motor.set(speed);
-  }
-
   public static Shooter getInstance() {
     if (instance == null) {
       instance = new Shooter();
