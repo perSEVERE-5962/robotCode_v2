@@ -93,6 +93,7 @@ public final class Constants {
     public static final int kShooterID = 52;
     public static final int kIntakeActuatorID = 56;
     public static final int kIntakeID = 55;
+    public static final int kHangerID = 992;
   }
 
   public static final class MotorConstants {
@@ -101,6 +102,8 @@ public final class Constants {
     public static final double OUT_INTAKE_POS = 1;
     public static final double IN_INTAKE_POS = 1;
     public static final double DESIRED_INTAKE_SPEED = 1;
+    public static final double UP_HANGER_POS = 999;
+    public static final double DOWN_HANGER_POS = 999;
   }
 
   public static final class IntakeConstants {
