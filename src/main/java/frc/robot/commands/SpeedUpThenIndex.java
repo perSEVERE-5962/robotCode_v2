@@ -34,16 +34,16 @@ public class SpeedUpThenIndex extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    CommandScheduler.getInstance().schedule(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_SPEED));
-    final Command waitUntilSpeed = Commands.waitUntil(() -> shooter.getMotorVelocity() == Constants.MotorConstants.DESIRED_SHOOTER_SPEED);
-    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(waitUntilSpeed, new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_SPEED)));
+    CommandScheduler.getInstance().schedule(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
+    final Command waitUntilSpeed = Commands.waitUntil(() -> shooter.getMotorVelocity() == Constants.MotorConstants.DESIRED_SHOOTER_RPM);
+    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(waitUntilSpeed, new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM)));
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     CommandScheduler.getInstance().schedule(new MoveShooter(0));
-    CommandScheduler.getInstance().schedule(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_SPEED));
+    CommandScheduler.getInstance().schedule(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_RPM));
     final Command waitTime = Commands.waitSeconds(0.25);
     CommandScheduler.getInstance().schedule(new SequentialCommandGroup(waitTime, new MoveIndexer(0)));
   }

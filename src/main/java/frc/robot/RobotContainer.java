@@ -254,8 +254,9 @@ public class RobotContainer {
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
       //driverXbox.b().whileTrue(new RunIntake())
        //   .onFalse(new RetractIntake());
-      driverXbox.y().whileTrue(new MoveIndexer(.4));
+      driverXbox.y().whileTrue(new MoveIndexer(1500));
       driverXbox.a().whileTrue(new MoveShooter(3730));
+      driverXbox.x().onTrue(new SpeedUpThenIndex());
     }
   }
 /*     if (DriverStation.isTest()) {

@@ -97,8 +97,8 @@ public final class Constants {
   }
 
   public static final class MotorConstants {
-    public static final double DESIRED_SHOOTER_SPEED = 1.0;
-    public static final double DESIRED_INDEXER_SPEED = 0.5;
+    public static final double DESIRED_SHOOTER_RPM = 9999;
+    public static final double DESIRED_INDEXER_RPM = 9999;
     public static final double OUT_INTAKE_POS = 1;
     public static final double IN_INTAKE_POS = 1;
     public static final double DESIRED_INTAKE_SPEED = 1;
@@ -120,9 +120,29 @@ public final class Constants {
     public static final double P = 0.0001;//0.00005, 0.0001
     public static final double I = 0.0;
     public static final double D = 0.00;
-    public static final double FF = 0.0000145;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
+    public static final double FF = 0.0000145;
+    public static final double Iz = 0.0;
+  }
+
+  public static final class HangerConstants {
+    public static final double P = 1.0;
+    public static final double I = 0.0;
+    public static final double D = 0.0;
+    public static final double MinOutput = -1.0;
+    public static final double MaxOutput = 1.0;
+    public static final double FF = 0.0;
+    public static final double Iz = 0.0;
+  }
+
+  public static final class IndexerConstants {
+    public static final double P = 0.0;
+    public static final double I = 0.0;
+    public static final double D = 0.0;
+    public static final double MinOutput = -1.0;
+    public static final double MaxOutput = 1.0;
+    public static final double FF = 0.00001;
     public static final double Iz = 0.0;
   }
 }
