@@ -10,7 +10,7 @@ public class MoveShooter extends Command {
   public MoveShooter(double speed) {
     shooter = Shooter.getInstance();
     this.speed = speed;
-
+    
     addRequirements(shooter);
   }
 
@@ -21,7 +21,10 @@ public class MoveShooter extends Command {
 
   @Override
   public void execute() {
-    shooter.move(speed);
+    shooter.moveToVelocityWithPID(speed);
+    System.out.println(shooter.getMotorVelocity());
+
+
   }
 
   @Override
