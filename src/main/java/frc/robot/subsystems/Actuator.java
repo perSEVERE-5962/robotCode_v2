@@ -88,8 +88,8 @@ public class Actuator extends SubsystemBase {
         motor.getClosedLoopController().setSetpoint(position, SparkMax.ControlType.kPosition);
     }
 
-    public void moveToVelocityWithPID(double speed) {
-        armMotor.getClosedLoopController().setSetpoint(speed, SparkMax.ControlType.kVelocity);
+    public void moveToVelocityWithPID(double rpm) {
+        motor.getClosedLoopController().setSetpoint(rpm, SparkMax.ControlType.kVelocity);
     }
 
     /* -1.0 <= speed <= 1.0 */
