@@ -31,7 +31,8 @@ public class ShootOnTheMove extends Command {
   private final DoubleSupplier strafeInput;   
   private final Translation2d hubCenter;
 private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoubleTreeMap();
-  
+  private final InterpolatingDoubleTreeMap RPMMap = new InterpolatingDoubleTreeMap();
+
   public ShootOnTheMove(SwerveSubsystem swerve,
                         DoubleSupplier forwardInput,
                         DoubleSupplier strafeInput,
@@ -44,9 +45,12 @@ private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoub
 
     addRequirements(swerve);
     //distance and time
-    timeOfFlightMap.put(2.0, 0.40);
-    timeOfFlightMap.put(4.0, 0.75);
-    timeOfFlightMap.put(6.0, 1.10);
+    timeOfFlightMap.put(1.2, 2.0);
+    //distance and rpm, more effeicent and consistent than physics for testing and tuning
+    timeOfFlightMap.put(2.0, 3.0);
+    RPMMap.put(1.2, 3720.0);
+    RPMMap.put(2.0, 4000.0);
+
   }
   @Override
   public void initialize() {
@@ -66,63 +70,37 @@ private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoub
     );
 
     double distanceToHub = robotPos.getDistance(hubCenter);
-
+    System.out.println(distanceToHub);
 
      double timeOfFlight = timeOfFlightMap.get(distanceToHub);
-
+    double shooterRPM = 0;
     Translation2d compensatedTarget = hubCenter;  // will be refined each iteration
-    Translation2d shooterVecResult  = Translation2d.kZero;
-    double targetShooterSpeed = 0.0;    
-      for (int i = 0; i < 3; i++) {
+      for (int i = 0; i <= 3; i++) {
 
       // how far the piece drifts during flight due to robot motion 
       Translation2d drift = robotVel.times(timeOfFlight);
 
       //compensated target, pretty much creates a new target, and then with the drift, the ball will end up in the hub
       compensatedTarget = hubCenter.minus(drift);
+      double distanceToCompensated = robotPos.getDistance(compensatedTarget);
 
-      //vector from robot to compensated target
-      Translation2d toTarget = compensatedTarget.minus(robotPos);
-      double distToCompTarget = toTarget.getNorm();
-
-      timeOfFlight = timeOfFlightMap.get(distToCompTarget);
-      // required field-relative velocity of the piece
-      // The piece must travel toTarget in timeOfFlight seconds.
-      Translation2d requiredFieldVel = toTarget.times(1.0 / timeOfFlight);
-
-      //what the shooter itself must produce
-     
-      shooterVecResult = requiredFieldVel.minus(robotVel);
-      targetShooterSpeed = shooterVecResult.getNorm();
-
-      // shooter speed should never be zero or negative for division
-      if (targetShooterSpeed < 0.1) {
-        targetShooterSpeed = 10;
-      }
-
+      //get time of flight and rpm to compenate
+      timeOfFlight = timeOfFlightMap.get(distanceToCompensated);
+      shooterRPM = RPMMap.get(distanceToCompensated);
 
     }
 
-    Rotation2d compensatedAim = compensatedTarget.minus(robotPos).getAngle();
-
-    double headingError = compensatedAim.minus(currentHeading).getRadians();
-
-    headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));
-
-    double headingSpeed = headingError * 3;// tune pid
-    double maxHeadingSpeed = swerve.getSwerveDrive().getMaximumChassisAngularVelocity() * 0.6;
-    headingSpeed = MathUtil.clamp(headingSpeed, -maxHeadingSpeed, maxHeadingSpeed);
-
+    Rotation2d targetAngle = compensatedTarget.minus(robotPos).getAngle();
+    double headingError = MathUtil.angleModulus(targetAngle.minus(currentHeading).getRadians());
+    double headingSpeed = MathUtil.clamp(headingError * 2, -4, 4);
     double maxV  = swerve.getSwerveDrive().getMaximumChassisVelocity();
-    double fieldVx = forwardInput.getAsDouble() * maxV * 0.6;
-    double fieldVy = strafeInput.getAsDouble()  * maxV * 0.6;
-
-
+  
     ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        fieldVx, fieldVy, headingSpeed, currentHeading
+        forwardInput.getAsDouble() * maxV * 0.6, strafeInput.getAsDouble()  * maxV * 0.6, headingSpeed, currentHeading
     );
     swerve.drive(speeds);
-    double shooterRPM = (targetShooterSpeed / (2.0 * Math.PI * WHEEL_RADIUS_METERS)) * 60.0;
+   
+    System.out.println(shooterRPM);
     shooter.moveToVelocityWithPID(shooterRPM);
  
   }
