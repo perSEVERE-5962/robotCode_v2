@@ -5,10 +5,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class MoveIndexer extends Command {
   private Indexer indexer;
-  private double speed;
+  private double rpm;
   
-  public MoveIndexer(double speed) {
-    this.speed = speed;
+  public MoveIndexer(double rpm) {
+    this.rpm = rpm;
     indexer = Indexer.getInstance();
 
     addRequirements(indexer);
@@ -21,7 +21,7 @@ public class MoveIndexer extends Command {
 
   @Override
   public void execute() {
-    indexer.move(speed);
+    indexer.moveToVelocityWithPID(rpm);
   }
 
   @Override

@@ -17,8 +17,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Actuator extends SubsystemBase {
-    private SparkMax armMotor;
-    private RelativeEncoder armEncoder;
+    private SparkMax motor;
+    private RelativeEncoder encoder;
     private SparkAbsoluteEncoder absoluteEncoder;
     private boolean useThroughBoreEncoder;
 
@@ -26,7 +26,7 @@ public class Actuator extends SubsystemBase {
             float kUpperSoftLimit, float kLowerSoftLimit, boolean inverted, boolean useThroughBoreEncoder,
             boolean useSoftLimits) {
 
-        armMotor = new SparkMax(ID, SparkLowLevel.MotorType.kBrushless);
+        motor = new SparkMax(ID, SparkLowLevel.MotorType.kBrushless);
         SparkMaxConfig motorConfig = new SparkMaxConfig();
 
         motorConfig.inverted(inverted);
@@ -47,10 +47,10 @@ public class Actuator extends SubsystemBase {
         motorConfig.closedLoop.feedForward
                 .kV(12.0 * FF);
         if (useThroughBoreEncoder == true) {
-            absoluteEncoder = armMotor.getAbsoluteEncoder();
+            absoluteEncoder = motor.getAbsoluteEncoder();
         } else {
-            armEncoder = armMotor.getEncoder();
-            armEncoder.setPosition(0);
+            encoder = motor.getEncoder();
+            encoder.setPosition(0);
         }
 
         if (useSoftLimits == true) {
@@ -63,7 +63,7 @@ public class Actuator extends SubsystemBase {
 
             motorConfig.apply(softLimitConfig);
         }
-        armMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         this.useThroughBoreEncoder = useThroughBoreEncoder;
 
     }
@@ -75,29 +75,29 @@ public class Actuator extends SubsystemBase {
             }
             return absoluteEncoder.getPosition();
         } else {
-            if (armEncoder == null) {
+            if (encoder == null) {
                 return 0;
             }
-            return armEncoder.getPosition();
+            return encoder.getPosition();
         }
 
     }
 
     /* -1 <= position <= 1 */
     public void moveToPositionWithPID(double position) {
-        armMotor.getClosedLoopController().setSetpoint(position, SparkMax.ControlType.kPosition);
+        motor.getClosedLoopController().setSetpoint(position, SparkMax.ControlType.kPosition);
     }
 
-    public void moveToVelocityWithPID(double speed) {
-        armMotor.getClosedLoopController().setSetpoint(speed, SparkMax.ControlType.kVelocity);
+    public void moveToVelocityWithPID(double rpm) {
+        motor.getClosedLoopController().setSetpoint(rpm, SparkMax.ControlType.kVelocity);
     }
 
     /* -1.0 <= speed <= 1.0 */
     public void move(double speed) {
-        armMotor.set(speed);
+        motor.set(speed);
     }
 
-    public SparkMax getArmMotor() {
-        return armMotor;
+    public SparkMax getMotor() {
+        return motor;
     }
 }

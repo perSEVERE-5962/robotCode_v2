@@ -173,6 +173,7 @@ public class Robot extends LoggedRobot {
    * - Sets up file logging (WPILOGWriter) to USB drive
    * - Sets up NetworkTables publishing (NT4Publisher) for live dashboard
    */
+  @SuppressWarnings("unused")
   private void configureLogging() {
     // Record build metadata for traceability in logs
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);

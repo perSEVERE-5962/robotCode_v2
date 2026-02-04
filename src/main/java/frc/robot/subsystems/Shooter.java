@@ -24,7 +24,7 @@ public class Shooter extends Actuator {
 
   private Shooter() {
     super(Constants.CANDeviceIDs.kShooterID, Constants.ShooterConstants.P, Constants.ShooterConstants.I, Constants.ShooterConstants.D, Constants.ShooterConstants.MinOutput, Constants.ShooterConstants.MaxOutput, Constants.ShooterConstants.FF, Constants.ShooterConstants.Iz, 0, 0, false, false, false);
-    motor = getArmMotor();
+    motor = getMotor();
     
     motorConfig = new SparkMaxConfig();
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
@@ -38,10 +38,6 @@ public class Shooter extends Actuator {
   public double getMotorVelocity() {
     double velocity = motorEncoder.getVelocity();
     return velocity;
-  }
-
-  public void move(double speed) {
-    motor.set(speed);
   }
 
   public static Shooter getInstance() {
