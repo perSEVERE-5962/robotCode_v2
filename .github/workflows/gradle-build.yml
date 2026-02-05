@@ -29,24 +29,6 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: gradle
-      - name: Debug workspace & gradlew
-        run: |
-          echo "PWD: $(pwd)"
-          echo "Listing repo root:"
-          ls -la
-          echo "--- check gradlew existence ---"
-          if [ -f ./gradlew ]; then
-            echo "gradlew exists"
-            ls -la ./gradlew
-            file ./gradlew || true
-            echo "First line (showing CR/LF visibly):"
-            head -n 1 ./gradlew | sed -n l || true
-            echo "Shebang (raw):"
-            sed -n '1p' ./gradlew | od -c | sed -n '1,1p' || true
-          else
-            echo "gradlew not found at repo root"
-            exit 1
-          fi
 
       - name: Fix gradlew line endings & permissions (if needed)
         run: |
@@ -61,4 +43,4 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build --no-daemon --debug
+        run: ./gradlew build --no-daemon
