@@ -35,5 +35,3 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
-        env:
-          JAVA_HOME: ${{ steps.setup-java.outputs.java-home }}
