@@ -2,7 +2,8 @@
 /gradlew text eol=lf
 *.sh text eol=lf
 
-# Recommended: normalize other text files
-*.java text eol=lf
-*.xml text eol=lf
-*.json text eol=lf
+# Normalize source files in the repository but allow platform-native checkout
+# so Windows users can keep CRLF in their working tree if desired.
+*.java text=auto
+*.xml text=auto
+*.json text=auto
