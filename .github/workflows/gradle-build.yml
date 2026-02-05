@@ -1,0 +1,38 @@
+# Uses Eclipse Temurin (OpenJDK build) installed by actions/setup-java.
+# Temurin is distributed under the GNU General Public License, version 2,
+# with the Classpath Exception (GPLv2 + CPE).
+# See: https://openjdk.org/legal/gplv2+ce.html
+name: Gradle CI — Build
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        id: setup-java
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Ensure gradlew is executable
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build --no-daemon
+        env:
+          JAVA_HOME: ${{ steps.setup-java.outputs.java-home }}
