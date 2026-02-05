@@ -12,7 +12,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: 
+  workflow_dispatch:
   
 jobs:
   build:
@@ -30,10 +30,17 @@ jobs:
           java-version: '17'
           cache: gradle
 
+      - name: Fix gradlew line endings & permissions (if needed)
+        run: |
+          # remove CRLF if present and make executable
+          if [ -f ./gradlew ]; then
+            # safe LF conversion without requiring dos2unix
+            sed -i 's/\r$//' ./gradlew || true
+            chmod +x ./gradlew
+          fi
+          
       - name: Ensure gradlew is executable
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
-        env:
-          JAVA_HOME: ${{ steps.setup-java.outputs.java-home }}
