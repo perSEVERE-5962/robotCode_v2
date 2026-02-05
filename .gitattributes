@@ -1,0 +1,8 @@
+# Ensure wrapper and shell scripts keep LF line endings to work on POSIX systems
+/gradlew text eol=lf
+*.sh text eol=lf
+
+# Recommended: normalize other text files
+*.java text eol=lf
+*.xml text eol=lf
+*.json text eol=lf
