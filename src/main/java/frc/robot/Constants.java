@@ -68,7 +68,7 @@ public final class Constants {
     public static final Translation2d RED_HUB_CENTER = new Translation2d(11.901424, 4.0);
 
     // Scoring parameters
-    public static final double SCORING_DISTANCE = 1.06; // meters from hub center
+    public static final double SCORING_DISTANCE = 1.67; // meters from hub center
     public static final double MAX_ARC_SPEED = 2.0; // max speed while driving along arc (m/s)
 
     // Valid scoring arc definition
@@ -100,7 +100,7 @@ public final class Constants {
 
   public static final class MotorConstants {
     public static final double DESIRED_SHOOTER_RPM = 3730;
-    public static final double DESIRED_INDEXER_RPM = 8.4 * 3730/4;
+    public static final double DESIRED_INDEXER_RPM = 8* 3730/4;
     public static final double OUT_INTAKE_POS = 1;
     public static final double IN_INTAKE_POS = 1;
     public static final double DESIRED_INTAKE_SPEED = 1;

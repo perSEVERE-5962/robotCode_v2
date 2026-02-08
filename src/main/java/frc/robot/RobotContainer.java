@@ -38,6 +38,8 @@ import frc.robot.commands.RunIntake;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
+import frc.robot.telemetry.TelemetryManager;
+import frc.robot.util.DriverTuning;
 import swervelib.SwerveInputStream;
 import frc.robot.Constants;
 import frc.robot.Constants.HubScoringConstants;
@@ -47,8 +49,6 @@ import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.MoveShooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
-import frc.robot.telemetry.TelemetryManager;
-import frc.robot.util.DriverTuning;
 import swervelib.SwerveInputStream;
 import static frc.robot.Constants.HubScoringConstants.*;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -155,15 +155,6 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
-
-    // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
-    DriverTuning.initialize();
-
-    // Wire up telemetry references
-    TelemetryManager.getInstance().setVision(visionSubsystem);
-    TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
-    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), null);
-
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -172,6 +163,16 @@ public class RobotContainer {
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
+     
+    // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard) 
+    DriverTuning.initialize(); 
+ 
+    // Wire up telemetry references 
+    TelemetryManager.getInstance().setVision(visionSubsystem); 
+    TelemetryManager.getInstance().setSwerveSubsystem(drivebase); 
+    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), null); 
+ 
+
   }
 
   /**

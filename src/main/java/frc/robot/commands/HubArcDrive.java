@@ -8,16 +8,19 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.util.HubScoringUtil;
+import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 import static frc.robot.Constants.HubScoringConstants.BLUE_SCORING_SIDE;
 import static frc.robot.Constants.HubScoringConstants.RED_SCORING_SIDE;
 import edu.wpi.first.math.util.Units;
+import static frc.robot.Constants.MotorConstants;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-import edu.wpi.first.math.geometry.Pose3d;
+
+import frc.robot.subsystems.Indexer;
 import edu.wpi.first.math.geometry.Pose2d;
 
 
@@ -29,9 +32,10 @@ public class HubArcDrive extends Command {
   private final DoubleSupplier strafeInput;
   private final Translation2d hubCenter;
   private final double scoringDistance;
-  private final Shooter shooter;
+  private  Shooter shooter;
   private final Rotation2d scoringSide;
-
+  private Indexer indexer;
+  private static double headingError;
   //Command for drive mode where robot orbits around hub, maintaining distance and holding its rotation towards the center of hub,
   //added compensation for robot velocity, discussed in https://www.chiefdelphi.com/t/a-note-on-optimal-driving-for-shoot-on-the-move/512979/11
   public HubArcDrive(SwerveSubsystem swerve, DoubleSupplier strafeInput, 
@@ -43,9 +47,10 @@ public class HubArcDrive extends Command {
     this.scoringDistance = scoringDistance;
     this.shooter = Shooter.getInstance();
     this.scoringSide = scoringSide;
+    shooter = Shooter.getInstance();
+    indexer= Indexer.getInstance();
     
-    
-    addRequirements(swerve);
+    addRequirements(swerve, shooter);
   }
 
 
@@ -95,7 +100,7 @@ public class HubArcDrive extends Command {
       radialSpeed = 0;
     }
     //movement around the arc
-    double tangentialSpeed = strafeStrength * 2.0;
+    double tangentialSpeed = strafeStrength;
     
     // get x and y from distance to hub
     double radialX = Math.cos(angleFromHub);
@@ -106,7 +111,10 @@ public class HubArcDrive extends Command {
     
     double fieldVx = radialSpeed * radialX + tangentialSpeed * tangentialX;
     double fieldVy = radialSpeed * radialY + tangentialSpeed * tangentialY;
-    
+    double maxX = MathUtil.clamp(fieldVx,-swerve.getSwerveDrive().getMaximumChassisVelocity() *0.6,swerve.getSwerveDrive().getMaximumChassisVelocity()*0.6);//clamp speeds for controlled turning
+    double maxY = MathUtil.clamp(fieldVy,-swerve.getSwerveDrive().getMaximumChassisVelocity() *0.6,swerve.getSwerveDrive().getMaximumChassisVelocity()*0.6);//clamp speeds for controlled turning
+
+   
   
     
  //get robot velocity
@@ -116,11 +124,9 @@ public class HubArcDrive extends Command {
         robotVelocity.vyMetersPerSecond
     );
     //get shooter velocity
-    double shooterVelocity = (shooter.getMotorVelocity() / 60.0) * (2.0 * Math.PI * Units.inchesToMeters(2.0));    if(shooterVelocity<1){
-      shooterVelocity = 10;
-    }
+    
     // Time for game piece to reach hub
-    double timeToHub = scoringDistance / shooterVelocity;
+    double timeToHub =  1.2;//1.16 sec
     
     // velocity drift compensation, calculates distance the ball would drift due to do robot velocity, and calculated the new target, factoring in said drift.
     Translation2d velocityDrift = robotVel.times(timeToHub);
@@ -129,23 +135,34 @@ public class HubArcDrive extends Command {
     Rotation2d compensatedAim = toCompensatedTarget.getAngle();
     //compare desired heading vs wanted heading
     // Heading control with velocity compensation, to compensate for the velocity of ball due to robot speed
-    double headingError = compensatedAim.minus(currentHeading).getRadians();
+    headingError = compensatedAim.minus(currentHeading).getRadians();
     headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));
-    double headingSpeed = headingError*3;//tune pid
+    double headingSpeed = headingError*5.4;//tune pid
     headingSpeed += tangentialSpeed / scoringDistance;
     double maxHeadingSpeed = swerve.getSwerveDrive().getMaximumChassisAngularVelocity();
-    headingSpeed = MathUtil.clamp(headingSpeed, -maxHeadingSpeed * 0.5, maxHeadingSpeed * 0.5);//clamp speeds for controlled turning
+    headingSpeed = MathUtil.clamp(headingSpeed, -maxHeadingSpeed*0.4, maxHeadingSpeed*0.4);//clamp speeds for controlled turning
     ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        fieldVx, fieldVy, headingSpeed, currentHeading
+        maxX, maxY, headingSpeed, currentHeading
     );
-    swerve.drive(speeds);
 
+    swerve.drive(speeds);
+    System.out.println(headingError);
+    System.out.println("velocity:"+robotVelocity.vyMetersPerSecond);
+    double shooterSpeed=Constants.MotorConstants.DESIRED_SHOOTER_RPM+( Math.abs(robotVelocity.vyMetersPerSecond*300));
+    shooterSpeed = MathUtil.clamp(shooterSpeed, 0, 3800);
+    shooter.moveToVelocityWithPID(shooterSpeed);
+    System.out.println("shooter speed" + shooterSpeed);
     
-  }
+    
+    }
+    
+  
 
   @Override
   public void end(boolean interrupted) {
     swerve.drive(new ChassisSpeeds(0, 0, 0));
+    shooter.move(0);
+    indexer.move(0);
   }
 
   @Override
@@ -161,5 +178,14 @@ public class HubArcDrive extends Command {
       return true;
     }
     return false;
+  }
+
+  public static boolean checkHeadingError(){
+    if(headingError<.1&&headingError>-0.1){
+    return true;      
+    }
+    else{
+      return false;
+    }
   }
 }
