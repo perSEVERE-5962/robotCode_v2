@@ -49,6 +49,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import org.littletonrobotics.junction.Logger;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -154,9 +155,9 @@ public class SwerveSubsystem extends SubsystemBase {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
       vision.updateVisionField();
-
+      vision.updateTargetLock();
     }
-  
+    // Drive telemetry now handled by DriveTelemetry class
   }
 
   @Override

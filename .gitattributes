@@ -1,0 +1,9 @@
+# Ensure wrapper and shell scripts keep LF line endings to work on POSIX systems
+/gradlew text eol=lf
+*.sh text eol=lf
+
+# Normalize source files in the repository but allow platform-native checkout
+# so Windows users can keep CRLF in their working tree if desired.
+*.java text=auto
+*.xml text=auto
+*.json text=auto
