@@ -13,7 +13,7 @@ public final class BuildConstants {
     public static final String MAVEN_NAME = "robotcode2026-lab";
 
     /** Build timestamp (update manually or use gversion plugin) */
-    public static final String BUILD_DATE = "2026-02-01";
+    public static final String BUILD_DATE = "2026-01-19";
 
     /** Git commit SHA (update manually or use gversion plugin) */
     public static final String GIT_SHA = "unknown";
