@@ -3,6 +3,7 @@ package frc.robot.telemetry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.DeviceHealthConstants;
 
 /** Scoring readiness: composite ReadyToShoot from shooter + indexer + vision. */
 public class ScoringTelemetry implements SubsystemTelemetry {
@@ -18,8 +19,11 @@ public class ScoringTelemetry implements SubsystemTelemetry {
     private static final double SHIFT_4_START = 55.0;
     private static final double ENDGAME_START = 30.0;
 
-    // Current state
-    private boolean scoringAvailable = false;  // L5: Availability flag
+    // ReadyToShoot stays true through brief velocity dips during sustained fire.
+    // Manual time-based debounce (not WPILib Debouncer — that has wrong initial baseline).
+    private double readyFalseSince = 0;
+
+    private boolean scoringAvailable = false;
     private boolean shooterReady = false;
     private boolean indexerClear = false;
     private boolean visionLocked = false;
@@ -48,11 +52,9 @@ public class ScoringTelemetry implements SubsystemTelemetry {
 
     @Override
     public void update() {
-        // L5: Wrap in try-catch for crash protection
         try {
             double now = Timer.getFPGATimestamp();
 
-            // Check dependencies are available
             if (shooterTelemetry == null || indexerTelemetry == null || visionTelemetry == null) {
                 scoringAvailable = false;
                 setDefaultValues();
@@ -61,7 +63,6 @@ public class ScoringTelemetry implements SubsystemTelemetry {
 
             scoringAvailable = true;
 
-            // Get condition states from other telemetry classes
             shooterReady = shooterTelemetry.isAtSpeed();
             indexerClear = !indexerTelemetry.isJamDetected();
             visionLocked = visionTelemetry.isLockedOnTarget();
@@ -85,10 +86,20 @@ public class ScoringTelemetry implements SubsystemTelemetry {
                 timeToNextShiftSec = 0;
             }
 
-            // Composite signal
-            readyToShoot = shooterReady && indexerClear && visionLocked && hasBall && hubActive;
+            boolean rawReady = shooterReady && indexerClear && visionLocked && hasBall && hubActive;
+            if (rawReady) {
+                readyToShoot = true;
+                readyFalseSince = 0;
+            } else if (!readyToShoot) {
+                readyFalseSince = 0;
+            } else {
+                // Was true, conditions now false — hold true during debounce window
+                if (readyFalseSince == 0) readyFalseSince = now;
+                if ((now - readyFalseSince) >= DeviceHealthConstants.READY_TO_SHOOT_DEBOUNCE_SEC) {
+                    readyToShoot = false;
+                }
+            }
 
-            // Time tracking
             if (readyToShoot && !wasReady) {
                 readySinceTimestamp = now;
             }

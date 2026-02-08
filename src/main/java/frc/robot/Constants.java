@@ -180,6 +180,14 @@ public final class Constants {
     public static final double PRE_MATCH_FAIL_V = 12.0;
   }
 
+  /** CAN bus disconnect debounce and scoring readiness stabilization */
+  public static final class DeviceHealthConstants {
+    // Motor must report disconnected for this long before we flag it (filters CAN glitches)
+    public static final double DISCONNECT_DEBOUNCE_SEC = 0.5;
+    // ReadyToShoot stays true through brief velocity dips during sustained fire
+    public static final double READY_TO_SHOOT_DEBOUNCE_SEC = 0.15;
+  }
+
   /** Stall = high current + low velocity for debounce time */
   public static final class StallDetectionConstants {
     // Shooter stall thresholds

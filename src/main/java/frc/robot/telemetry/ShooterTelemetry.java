@@ -1,6 +1,8 @@
 package frc.robot.telemetry;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StallDetectionConstants;
 import frc.robot.subsystems.Shooter;
@@ -38,7 +40,6 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     private boolean wasAtSpeedBeforeShot = false;
     private boolean isRecoverySpinUp = false;
 
-    // Current state
     private double velocityRPM = 0;
     private double targetRPM = 0;
     private double velocityError = 0;
@@ -59,7 +60,9 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     private boolean pidTuningEvent = false;
     private double prevKP = -1, prevKI = -1, prevKD = -1, prevFF = -1;
 
-    // Device health
+    // Device health — debounced to filter CAN bus transients
+    private final Debouncer connectDebouncer = new Debouncer(
+        DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
     private boolean deviceConnected = false;
     private int deviceFaultsRaw = 0;
 
@@ -74,12 +77,10 @@ public class ShooterTelemetry implements SubsystemTelemetry {
 
     @Override
     public void update() {
-        // Re-acquire subsystem if null (handles init order issues)
         if (shooter == null) {
             shooter = Shooter.getInstance();
         }
 
-        // Still null? Log safe defaults and return
         if (shooter == null) {
             subsystemAvailable = false;
             setDefaultValues();
@@ -92,7 +93,6 @@ public class ShooterTelemetry implements SubsystemTelemetry {
         // Capture previous atSpeed state BEFORE updating (critical for shot detection)
         boolean wasAtSpeedBeforeUpdate = wasAtSpeed;
 
-        // All subsystem reads inside try-catch including isAtSpeed()
         try {
             velocityRPM = shooter.getVelocityRPM();
             targetRPM = shooter.getTargetRPM();
@@ -100,13 +100,13 @@ public class ShooterTelemetry implements SubsystemTelemetry {
             currentAmps = shooter.getOutputCurrent();
             temperatureCelsius = shooter.getTemperature();
             busVoltage = shooter.getBusVoltage();
-            atSpeed = shooter.isAtSpeed();  // Moved inside try-catch
+            atSpeed = shooter.isAtSpeed();
 
             // Device health
-            deviceConnected = true;
+            deviceConnected = connectDebouncer.calculate(true);
             deviceFaultsRaw = shooter.getStickyFaultsRaw();
         } catch (Throwable t) {
-            deviceConnected = false;
+            deviceConnected = connectDebouncer.calculate(false);
             deviceFaultsRaw = -1;
             setDefaultValues();
             return;

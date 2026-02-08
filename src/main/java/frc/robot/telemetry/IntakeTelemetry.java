@@ -2,6 +2,7 @@ package frc.robot.telemetry;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.StallDetectionConstants;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.EventMarker;
@@ -11,7 +12,6 @@ public class IntakeTelemetry implements SubsystemTelemetry {
     private Intake intake;  // Not final - can re-acquire if null
     private boolean subsystemAvailable = false;
 
-    // Constants
     private static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
     private static final double JAM_TIME_THRESHOLD_SECONDS = 0.25;
 
@@ -21,7 +21,6 @@ public class IntakeTelemetry implements SubsystemTelemetry {
     private boolean jamDetected = false;
     private int totalJamCount = 0;
 
-    // Current state
     private boolean running = false;
     private boolean wasRunning = false;
     private String direction = "STOPPED";
@@ -32,7 +31,9 @@ public class IntakeTelemetry implements SubsystemTelemetry {
 
     private double currentPerSpeedRatio = 0; // drag indicator
 
-    // Device health
+    // Device health — debounced to filter CAN bus transients
+    private final Debouncer connectDebouncer = new Debouncer(
+        DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
     private boolean deviceConnected = false;
     private int deviceFaultsRaw = 0;
 
@@ -47,12 +48,10 @@ public class IntakeTelemetry implements SubsystemTelemetry {
 
     @Override
     public void update() {
-        // Re-acquire subsystem if null
         if (intake == null) {
             intake = Intake.getInstance();
         }
 
-        // Still null? Log safe defaults and return
         if (intake == null) {
             subsystemAvailable = false;
             setDefaultValues();
@@ -71,10 +70,10 @@ public class IntakeTelemetry implements SubsystemTelemetry {
             velocityRPM = intake.getVelocityRPM();
 
             // Device health
-            deviceConnected = true;
+            deviceConnected = connectDebouncer.calculate(true);
             deviceFaultsRaw = intake.getStickyFaultsRaw();
         } catch (Throwable t) {
-            deviceConnected = false;
+            deviceConnected = connectDebouncer.calculate(false);
             deviceFaultsRaw = -1;
             setDefaultValues();
             return;

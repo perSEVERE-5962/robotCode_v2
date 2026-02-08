@@ -2,6 +2,7 @@ package frc.robot.telemetry;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.StallDetectionConstants;
 import frc.robot.subsystems.Indexer;
@@ -18,7 +19,6 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     private boolean jamDetected = false;
     private int totalJamCount = 0;
 
-    // Current state
     private boolean running = false;
     private boolean wasRunning = false;
     private String direction = "STOPPED";
@@ -34,7 +34,9 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     private boolean pidTuningEvent = false;
     private double prevKP = -1, prevKI = -1, prevKD = -1, prevFF = -1;
 
-    // Device health
+    // Device health — debounced to filter CAN bus transients
+    private final Debouncer connectDebouncer = new Debouncer(
+        DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
     private boolean deviceConnected = false;
     private int deviceFaultsRaw = 0;
 
@@ -49,12 +51,10 @@ public class IndexerTelemetry implements SubsystemTelemetry {
 
     @Override
     public void update() {
-        // Re-acquire subsystem if null
         if (indexer == null) {
             indexer = Indexer.getInstance();
         }
 
-        // Still null? Log safe defaults and return
         if (indexer == null) {
             subsystemAvailable = false;
             setDefaultValues();
@@ -73,10 +73,10 @@ public class IndexerTelemetry implements SubsystemTelemetry {
             actualSpeed = appliedOutput;
             velocityRPM = indexer.getVelocityRPM();
 
-            deviceConnected = true;
+            deviceConnected = connectDebouncer.calculate(true);
             deviceFaultsRaw = indexer.getStickyFaultsRaw();
         } catch (Throwable t) {
-            deviceConnected = false;
+            deviceConnected = connectDebouncer.calculate(false);
             deviceFaultsRaw = -1;
             setDefaultValues();
             return;

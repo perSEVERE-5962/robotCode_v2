@@ -1,5 +1,7 @@
 package frc.robot.telemetry;
 
+import edu.wpi.first.math.filter.Debouncer;
+import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.subsystems.IntakeActuator;
 
 /** IntakeActuator telemetry: position and motor health. */
@@ -9,7 +11,6 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
 
     private static final double POSITION_TOLERANCE = 0.05;
 
-    // Current state
     private double positionRotations = 0;
     private double targetPosition = 0;
     private boolean atTarget = false;
@@ -17,7 +18,9 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
     private double currentAmps = 0;
     private double temperatureCelsius = 0;
 
-    // Device health
+    // Device health — debounced to filter CAN bus transients
+    private final Debouncer connectDebouncer = new Debouncer(
+        DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
     private boolean deviceConnected = false;
     private int deviceFaultsRaw = 0;
 
@@ -27,12 +30,10 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
 
     @Override
     public void update() {
-        // Re-acquire subsystem if null
         if (intakeActuator == null) {
             intakeActuator = IntakeActuator.getInstance();
         }
 
-        // Still null? Log safe defaults and return
         if (intakeActuator == null) {
             subsystemAvailable = false;
             setDefaultValues();
@@ -50,10 +51,10 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
             temperatureCelsius = intakeActuator.getTemperature();
 
             // Device health
-            deviceConnected = true;
+            deviceConnected = connectDebouncer.calculate(true);
             deviceFaultsRaw = intakeActuator.getStickyFaultsRaw();
         } catch (Throwable t) {
-            deviceConnected = false;
+            deviceConnected = connectDebouncer.calculate(false);
             deviceFaultsRaw = -1;
             setDefaultValues();
         }
