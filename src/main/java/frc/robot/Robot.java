@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.RobotContainer;
-import frc.robot.Cameras;
 import frc.robot.util.ElasticUtil;
 
 // AdvantageKit imports for logging
@@ -30,7 +28,6 @@ public class Robot extends LoggedRobot {
 
   private static Robot instance;
   private Command m_autonomousCommand;
-  private Cameras cameras;
   private RobotContainer m_robotContainer;
 
   private Timer disabledTimer;

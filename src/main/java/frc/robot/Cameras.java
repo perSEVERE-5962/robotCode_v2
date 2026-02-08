@@ -9,39 +9,24 @@ import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.Robot;
-import java.awt.Desktop;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonTargetSortMode;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.PhotonUtils;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
@@ -172,9 +157,7 @@ public enum Cameras {
       cameraSim.enableDrawWireframe(true);
     }
   }
-  public Transform3d getRobotToCamera() {
-    return robotToCamTransform;
-  }
+
   /**
    * Add camera to {@link VisionSystemSim} for simulated photon vision.
    *
@@ -200,13 +183,13 @@ public enum Cameras {
     }
 
     PhotonPipelineResult bestResult = resultsList.get(0);
-    double ambiguity = bestResult.getBestTarget().getPoseAmbiguity();
+    double amiguity = bestResult.getBestTarget().getPoseAmbiguity();
     double currentAmbiguity = 0;
     for (PhotonPipelineResult result : resultsList) {
       currentAmbiguity = result.getBestTarget().getPoseAmbiguity();
-      if (currentAmbiguity < ambiguity && currentAmbiguity > 0) {
+      if (currentAmbiguity < amiguity && currentAmbiguity > 0) {
         bestResult = result;
-        ambiguity = currentAmbiguity;
+        amiguity = currentAmbiguity;
       }
     }
     return Optional.of(bestResult);
@@ -256,9 +239,6 @@ public enum Cameras {
     }
 
   }
-
-
-
 
   /**
    * The latest estimated robot pose on the field from vision data. This may be
@@ -337,6 +317,10 @@ public enum Cameras {
         curStdDevs = estStdDevs;
       }
     }
+  }
+
+  public Transform3d getRobotToCamera() {
+    return robotToCamTransform;
   }
 
 }

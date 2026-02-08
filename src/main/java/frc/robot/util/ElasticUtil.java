@@ -1,6 +1,5 @@
 package frc.robot.util;
 
-import frc.robot.util.Elastic;
 import frc.robot.util.Elastic.Notification;
 import frc.robot.util.Elastic.NotificationLevel;
 

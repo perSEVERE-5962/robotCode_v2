@@ -4,25 +4,18 @@
 
 package frc.robot.commands;
 
-import java.util.Optional;
-
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.Cameras;
-import frc.robot.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -38,7 +31,7 @@ public class AlignToTag extends Command {
   private Transform2d offset;
   //consider not stopping the robot when hastarget becomes false, allowing the robot to align using gyro.
   private boolean hasTarget = false;
-  Pose2d targetPose;
+  private Pose2d targetPose;
  
   private final ProfiledPIDController xPID =
       new ProfiledPIDController(
@@ -66,6 +59,7 @@ public class AlignToTag extends Command {
               Math.toRadians(360)  
           )
       );
+
   private final double posTol = 0.07; //7 cm
   private final double angTol = Math.toRadians(2); // 2 degrees
  
@@ -120,7 +114,7 @@ public class AlignToTag extends Command {
     for (int i = 0; i < results.size(); i++) {
       PhotonPipelineResult result = results.get(i);
       if (result.hasTargets()) {
-        for (int j = 0; i < result.getTargets().size(); j++) {
+        for (int j = 0; j < result.getTargets().size(); j++) {
           PhotonTrackedTarget trackedTarget = result.getTargets().get(i); {
               if (trackedTarget.getFiducialId() == desiredTag) {
                   target = trackedTarget; 

@@ -16,43 +16,27 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AlignToTag;
-import frc.robot.commands.DriveToHub;
-import frc.robot.commands.HubArcDrive;
-//import frc.robot.commands.AlignWithAprilTag;
-import frc.robot.commands.RetractIntake;
-import frc.robot.commands.RunIntake;
+//import frc.robot.commands.DriveToHub;
+//import frc.robot.commands.HubArcDrive;
+//import frc.robot.commands.RetractIntake;
+//import frc.robot.commands.RunIntake;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import swervelib.SwerveInputStream;
-import frc.robot.Constants;
-import frc.robot.Constants.HubScoringConstants;
 import java.io.File;
-import java.util.function.BooleanSupplier;
 import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.MoveShooter;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.swervedrive.Vision;
-import swervelib.SwerveInputStream;
-import static frc.robot.Constants.HubScoringConstants.*;
-import edu.wpi.first.wpilibj.DriverStation;
 
-import java.io.File;
-import java.util.function.BooleanSupplier;
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very
@@ -77,9 +61,6 @@ public class RobotContainer {
       "swerve/neo"));
    // Initialize the vision subsystem
 
-  private final Field2d field = new Field2d();
-
-  public final Vision visionSubsystem = new Vision(drivebase::getPose, field);
   /**
    * 
    * Converts driver input into a field-relative ChassisSpeeds that is controlled
@@ -213,9 +194,7 @@ public class RobotContainer {
                   Units.degreesToRadians(360),
                   Units.degreesToRadians(180))));
       driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-       // Button B
-      driverXbox.button(3).onTrue(Commands.runOnce(() -> toggleOffset()));     
-           
+      
       //driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
       driverXbox.button(2).whileTrue(
           Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
@@ -238,12 +217,12 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
       
-      // driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
+      // driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), Constants.HubScoringConstants.SCORING_DISTANCE, getScoringSide(), Constants.HubScoringConstants.SCORING_ARC_WIDTH_DEGREES));
       // driverXbox.x().toggleOnTrue(
       //   new HubArcDrive(drivebase,
       //     driverXbox::getLeftX,
       //     getHubCenter(),
-      //     SCORING_DISTANCE,
+      //     Constants.HubScoringConstants.SCORING_DISTANCE,
       //     getScoringSide()
       //   )
       // );
@@ -251,7 +230,7 @@ public class RobotContainer {
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
+      driverXbox.rightBumper().onTrue(Commands.none());
       //driverXbox.b().whileTrue(new RunIntake())
        //   .onFalse(new RetractIntake());
       driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM));
@@ -259,24 +238,6 @@ public class RobotContainer {
       driverXbox.x().onTrue(new SpeedUpThenIndex());
     }
   }
-/*     if (DriverStation.isTest()) {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
-
-      driverJoystick.button(12).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverJoystick.button(11).whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      driverJoystick.button(3).onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverJoystick.button(4).whileTrue(drivebase.centerModulesCommand());
-      driverJoystick.button(1).onTrue(Commands.none());
-      driverJoystick.button(6).onTrue(Commands.none());
-    } else {
-      driverJoystick.button(12).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverJoystick.button(11).whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      driverJoystick.button(3).onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverJoystick.button(4).whileTrue(drivebase.centerModulesCommand());
-      driverJoystick.button(1).onTrue(Commands.none());
-      driverJoystick.button(6).onTrue(Commands.none());
-    } */
-
   
 
   /**
@@ -306,10 +267,10 @@ public class RobotContainer {
   public boolean getUseLeftOffset() {
     return useLeftOffset;
   }
+
   public void toggleOffset() {
     useLeftOffset = !useLeftOffset;
   }
-
   
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
@@ -327,12 +288,7 @@ public class RobotContainer {
     return instance;
   }
 
-  public Cameras getBestCamera(int id) {
-    // Replace this with the actual logic to get the best camera
-    return visionSubsystem.getbestCamera(id);
-  }
-
-  private boolean isRedAlliance() {
+  /*private boolean isRedAlliance() {
     var alliance = DriverStation.getAlliance();
     
     if (alliance.isPresent()) {
@@ -341,9 +297,9 @@ public class RobotContainer {
   
     // Default to blue if no alliance data
     return false;
-  }
+  }*/
 
-  private Translation2d getHubCenter() {
+  /*private Translation2d getHubCenter() {
     boolean isRedAlliance = isRedAlliance();
   
     if (isRedAlliance) {
@@ -351,9 +307,9 @@ public class RobotContainer {
     } else {
       return BLUE_HUB_CENTER;
     }
-  }
+  }*/
 
-  private Rotation2d getScoringSide() {
+  /*private Rotation2d getScoringSide() {
     boolean isRedAlliance = isRedAlliance();
   
     if (isRedAlliance) {
@@ -361,7 +317,7 @@ public class RobotContainer {
     } else {
       return BLUE_SCORING_SIDE;
     }
-  }
+  }*/
 }
 
 

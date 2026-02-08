@@ -9,15 +9,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.util.HubScoringUtil;
 import frc.robot.subsystems.Shooter;
 import static frc.robot.Constants.HubScoringConstants.BLUE_SCORING_SIDE;
 import static frc.robot.Constants.HubScoringConstants.RED_SCORING_SIDE;
 import edu.wpi.first.math.util.Units;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Pose2d;
 
 
