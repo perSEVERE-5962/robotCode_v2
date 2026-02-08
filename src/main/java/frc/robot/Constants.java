@@ -51,7 +51,7 @@ public final class Constants {
 
     public static final double DistanceToHub = 0.4;
   }
-  public static class OperatorConstants {
+  public static final class OperatorConstants {
 
     // Joystick Deadband
     public static final double DEADBAND = 0.1;

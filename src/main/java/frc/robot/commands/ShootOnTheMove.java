@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.math.util.Units;
- import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import java.util.function.DoubleSupplier;
 //Shoot on the move command, this command has very similar heading control to the hub arc drive command, where error is calculated, time of flight is considered to compenstae for drift
 //and the robot continues to aim to hub, the differe is, the robot is free to move in both the x and y directions, this makes time of flight calculations more complicated, and needs to be tuned
@@ -72,7 +72,7 @@ public class ShootOnTheMove extends Command {
 
     Translation2d compensatedTarget = hubCenter;  // will be refined each iteration
     Translation2d shooterVecResult  = Translation2d.kZero;
-    double targetShooterSpeed = 0.0;    
+    double targetShooterSpeed = 0.0;
     for (int i = 0; i < 3; i++) {
 
       // how far the piece drifts during flight due to robot motion 

@@ -106,7 +106,7 @@ public class HubArcDrive extends Command {
     
   
     
- //get robot velocity
+    //get robot velocity
     ChassisSpeeds robotVelocity = swerve.getFieldVelocity();
     Translation2d robotVel = new Translation2d(
         robotVelocity.vxMetersPerSecond,
