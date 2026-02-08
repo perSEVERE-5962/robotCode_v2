@@ -176,4 +176,6 @@ public class ScoringTelemetry implements SubsystemTelemetry {
 
     // Accessors for TelemetryManager
     public boolean isReadyToShoot() { return readyToShoot; }
+    public int getHubShiftNumber() { return hubShiftNumber; }
+    public boolean isHubActive() { return hubActive; }
 }

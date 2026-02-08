@@ -58,7 +58,7 @@ public class TelemetryManager {
         commandsTelemetry = new CommandsTelemetry();
         networkTelemetry = new NetworkTelemetry();
         driverInputTelemetry = new DriverInputTelemetry();
-        matchStatsTelemetry = new MatchStatsTelemetry(shooterTelemetry, visionTelemetry);
+        matchStatsTelemetry = new MatchStatsTelemetry(shooterTelemetry, visionTelemetry, scoringTelemetry);
 
         // SystemHealth first (measures loop time), then Commands (callback-based)
         telemetryList.add(systemHealthTelemetry);

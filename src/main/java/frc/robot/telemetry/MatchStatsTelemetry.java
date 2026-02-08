@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
 public class MatchStatsTelemetry implements SubsystemTelemetry {
     private final ShooterTelemetry shooterTelemetry;
     private final VisionTelemetry visionTelemetry;
+    private final ScoringTelemetry scoringTelemetry;  // nullable
 
     // Match phase tracking
     private boolean wasEnabled = false;
@@ -30,12 +31,26 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
     private double shooterUptimeMs = 0;
     private double visionLockTimeMs = 0;
 
-    // Tracking state
+    // Per-shift shots (REBUILT hub strategy: 4x25s teleop shifts)
+    private int shotsShift1 = 0;
+    private int shotsShift2 = 0;
+    private int shotsShift3 = 0;
+    private int shotsShift4 = 0;
+
+    // Hub effectiveness
+    private int activeHubShots = 0;
+    private int inactiveHubShots = 0;
+
+    // Hub utilization
+    private double activeHubTimeMs = 0;
+    private double firingDuringActiveMs = 0;
+
     private double lastUpdateTime = 0;
 
-    public MatchStatsTelemetry(ShooterTelemetry shooter, VisionTelemetry vision) {
+    public MatchStatsTelemetry(ShooterTelemetry shooter, VisionTelemetry vision, ScoringTelemetry scoring) {
         this.shooterTelemetry = shooter;
         this.visionTelemetry = vision;
+        this.scoringTelemetry = scoring;
     }
 
     @Override
@@ -71,14 +86,28 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
 
         // Track shots by phase
         int currentTotalShots = shooterTelemetry.getTotalShots();
-        if (currentTotalShots > lastTotalShots) {
-            int newShots = currentTotalShots - lastTotalShots;
+        int newShots = currentTotalShots - lastTotalShots;
+        if (newShots > 0) {
             if (DriverStation.isAutonomous()) {
                 autoShots += newShots;
             } else if (inEndgame) {
                 endgameShots += newShots;
             } else {
                 teleopShots += newShots;
+            }
+
+            // Per-shift shot tracking (REBUILT hub strategy)
+            if (scoringTelemetry != null) {
+                int shift = scoringTelemetry.getHubShiftNumber();
+                boolean hubActive = scoringTelemetry.isHubActive();
+                switch (shift) {
+                    case 1 -> shotsShift1 += newShots;
+                    case 2 -> shotsShift2 += newShots;
+                    case 3 -> shotsShift3 += newShots;
+                    case 4 -> shotsShift4 += newShots;
+                }
+                if (hubActive) activeHubShots += newShots;
+                else inactiveHubShots += newShots;
             }
         }
         lastTotalShots = currentTotalShots;
@@ -104,6 +133,16 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
             case SHOOTING -> timeShootingMs += dtMs;
             case RECOVERING -> timeShootingMs += dtMs;  // count as shooting time
             case IDLE -> timeIdleMs += dtMs;
+        }
+
+        // Hub utilization: time at-speed while our hub is active
+        if (scoringTelemetry != null && DriverStation.isTeleop()) {
+            if (scoringTelemetry.isHubActive()) {
+                activeHubTimeMs += dtMs;
+                if (shooterTelemetry.isAtSpeed()) {
+                    firingDuringActiveMs += dtMs;
+                }
+            }
         }
     }
 
@@ -148,6 +187,16 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
             SafeLog.put("MatchStats/ShotsPerMinute", 0.0);
             SafeLog.put("MatchStats/CyclesPerMinute", 0.0);
         }
+
+        // Per-shift strategy (REBUILT hub timing)
+        SafeLog.put("MatchStats/ShotsInShift/1", shotsShift1);
+        SafeLog.put("MatchStats/ShotsInShift/2", shotsShift2);
+        SafeLog.put("MatchStats/ShotsInShift/3", shotsShift3);
+        SafeLog.put("MatchStats/ShotsInShift/4", shotsShift4);
+        SafeLog.put("MatchStats/ActiveHubShots", activeHubShots);
+        SafeLog.put("MatchStats/InactiveHubShots", inactiveHubShots);
+        double hubUtil = activeHubTimeMs > 0 ? (firingDuringActiveMs / activeHubTimeMs) * 100 : 0;
+        SafeLog.put("MatchStats/HubUtilization", hubUtil);
     }
 
     @Override
@@ -171,5 +220,13 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
         endgameStartTime = 0;
         inEndgame = false;
         wasEnabled = false;
+        shotsShift1 = 0;
+        shotsShift2 = 0;
+        shotsShift3 = 0;
+        shotsShift4 = 0;
+        activeHubShots = 0;
+        inactiveHubShots = 0;
+        activeHubTimeMs = 0;
+        firingDuringActiveMs = 0;
     }
 }
