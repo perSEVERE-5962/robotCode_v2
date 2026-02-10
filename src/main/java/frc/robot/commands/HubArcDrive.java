@@ -126,7 +126,7 @@ public class HubArcDrive extends Command {
     //get shooter velocity
     
     // Time for game piece to reach hub
-    double timeToHub =  1.2;//1.16 sec
+    double timeToHub =  1.14;//1.16 sec
     
     // velocity drift compensation, calculates distance the ball would drift due to do robot velocity, and calculated the new target, factoring in said drift.
     Translation2d velocityDrift = robotVel.times(timeToHub);
@@ -137,18 +137,18 @@ public class HubArcDrive extends Command {
     // Heading control with velocity compensation, to compensate for the velocity of ball due to robot speed
     headingError = compensatedAim.minus(currentHeading).getRadians();
     headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));
-    double headingSpeed = headingError*5.4;//tune pid
+    double headingSpeed = headingError*5.3;//tune pid
     headingSpeed += tangentialSpeed / scoringDistance;
     double maxHeadingSpeed = swerve.getSwerveDrive().getMaximumChassisAngularVelocity();
-    headingSpeed = MathUtil.clamp(headingSpeed, -maxHeadingSpeed*0.4, maxHeadingSpeed*0.4);//clamp speeds for controlled turning
+    headingSpeed = MathUtil.clamp(headingSpeed, -maxHeadingSpeed*0.5, maxHeadingSpeed*0.5);//clamp speeds for controlled turning
     ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
         maxX, maxY, headingSpeed, currentHeading
-    );
+    )
 
     swerve.drive(speeds);
     System.out.println(headingError);
     System.out.println("velocity:"+robotVelocity.vyMetersPerSecond);
-    double shooterSpeed=Constants.MotorConstants.DESIRED_SHOOTER_RPM+( Math.abs(robotVelocity.vyMetersPerSecond*300));
+    double shooterSpeed=Constants.MotorConstants.DESIRED_SHOOTER_RPM+( Math.abs(robotVelocity.vyMetersPerSecond*350));
     shooterSpeed = MathUtil.clamp(shooterSpeed, 0, 3800);
     shooter.moveToVelocityWithPID(shooterSpeed);
     System.out.println("shooter speed" + shooterSpeed);

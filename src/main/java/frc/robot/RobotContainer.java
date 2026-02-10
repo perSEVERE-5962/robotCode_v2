@@ -71,7 +71,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
   
   private boolean useLeftOffset = true;
-
+  private boolean arcDriveOn = true;
   private static RobotContainer instance;
 
   // The robot's subsystems and commands are defined here...
@@ -250,15 +250,15 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
       
-      // driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
-      // driverXbox.x().toggleOnTrue(
-      //   new HubArcDrive(drivebase,
-      //     driverXbox::getLeftX,
-      //     getHubCenter(),
-      //     SCORING_DISTANCE,
-      //     getScoringSide()
-      //   )
-      // );
+      driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
+      driverXbox.x().toggleOnTrue(
+        new HubArcDrive(drivebase,
+          driverXbox::getLeftX,
+          getHubCenter(),
+          SCORING_DISTANCE,
+          getScoringSide()
+        )
+      );
       //driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
@@ -266,9 +266,9 @@ public class RobotContainer {
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
       //driverXbox.b().whileTrue(new RunIntake())
        //   .onFalse(new RetractIntake());
-      driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM));
-      driverXbox.a().whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
-      driverXbox.x().onTrue(new SpeedUpThenIndex());
+      driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM, arcDriveOn));
+      //driverXbox.a().whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
+      //driverXbox.x().onTrue(new SpeedUpThenIndex());
     }
   }
 /*     if (DriverStation.isTest()) {
@@ -338,6 +338,9 @@ public class RobotContainer {
 
     return instance;
   }
+  public void toggleArcDrive(){ 
+    arcDriveOn = !arcDriveOn; 
+  } 
 
   public Cameras getBestCamera(int id) {
     // Replace this with the actual logic to get the best camera

@@ -68,7 +68,7 @@ public final class Constants {
     public static final Translation2d RED_HUB_CENTER = new Translation2d(11.901424, 4.0);
 
     // Scoring parameters
-    public static final double SCORING_DISTANCE = 1.67; // meters from hub center
+    public static final double SCORING_DISTANCE = 2; // meters from hub center
     public static final double MAX_ARC_SPEED = 2.0; // max speed while driving along arc (m/s)
 
     // Valid scoring arc definition
