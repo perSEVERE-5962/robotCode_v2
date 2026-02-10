@@ -42,22 +42,27 @@ jobs:
       - name: Run Spotless Check
         id: spotless
         run: |
-          # Run Spotless check and capture exit code
           ./gradlew spotlessCheck
           SPOTLESS_EXIT_CODE=$?
 
-          # If Spotless failed, add a friendly summary and fail the build
+          # Add summary regardless of exit code
           if [ $SPOTLESS_EXIT_CODE -ne 0 ]; then
             echo "## Spotless Formatting Check Failed" >> $GITHUB_STEP_SUMMARY
             echo "The build failed because code formatting did not pass Spotless checks." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "To fix this locally:" >> $GITHUB_STEP_SUMMARY
+            echo "To fix locally:" >> $GITHUB_STEP_SUMMARY
             echo "1. Run: ./gradlew spotlessApply" >> $GITHUB_STEP_SUMMARY
             echo "2. Commit and push your changes" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "::error::Spotless check failed. See summary for instructions to fix."
-            exit $SPOTLESS_EXIT_CODE
+            echo "::error::Spotless check failed. See summary for instructions."
           fi
+
+          # Export exit code for next step
+          echo "SPOTLESS_EXIT_CODE=$SPOTLESS_EXIT_CODE" >> $GITHUB_ENV
+
+      - name: Check Spotless Exit Code
+        if: env.SPOTLESS_EXIT_CODE != '0'
+        run: exit $SPOTLESS_EXIT_CODE
 
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
