@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /** Command scheduler telemetry: active commands, execution counts, durations. */
 public class CommandsTelemetry implements SubsystemTelemetry {
@@ -104,12 +103,18 @@ public class CommandsTelemetry implements SubsystemTelemetry {
   @Override
   public void update() {
     // M1: Build active list from reference counts
-    activeList =
-        activeCommandCounts.isEmpty()
-            ? "none"
-            : activeCommandCounts.keySet().stream()
-                .filter(n -> activeCommandCounts.getOrDefault(n, 0) > 0)
-                .collect(Collectors.joining(", "));
+    if (activeCommandCounts.isEmpty()) {
+      activeList = "none";
+    } else {
+      StringBuilder sb = new StringBuilder();
+      for (String name : activeCommandCounts.keySet()) {
+        if (activeCommandCounts.getOrDefault(name, 0) > 0) {
+          if (sb.length() > 0) sb.append(", ");
+          sb.append(name);
+        }
+      }
+      activeList = sb.length() > 0 ? sb.toString() : "none";
+    }
     activeCount = activeCommandCounts.size();
   }
 
@@ -118,6 +123,7 @@ public class CommandsTelemetry implements SubsystemTelemetry {
     SafeLog.put("Commands/ActiveList", activeList);
     SafeLog.put("Commands/ActiveCount", activeCount);
     SafeLog.put("Commands/TotalExecutions", totalExecutions);
+    SafeLog.put("Commands/LastCommandName", lastCommandName);
     SafeLog.put("Commands/LastCommandDurationMs", lastCommandDurationMs);
 
     // Command stability metrics

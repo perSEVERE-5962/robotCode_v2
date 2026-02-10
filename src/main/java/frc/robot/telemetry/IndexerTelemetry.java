@@ -25,7 +25,6 @@ public class IndexerTelemetry implements SubsystemTelemetry {
   private double appliedOutput = 0;
   private double currentAmps = 0;
   private double temperatureCelsius = 0;
-  private double actualSpeed = 0;
   private double velocityRPM = 0;
 
   private boolean feederActive = false;
@@ -70,7 +69,6 @@ public class IndexerTelemetry implements SubsystemTelemetry {
       running = indexer.isRunning();
       currentAmps = indexer.getOutputCurrent();
       temperatureCelsius = indexer.getTemperature();
-      actualSpeed = appliedOutput;
       velocityRPM = indexer.getVelocityRPM();
 
       deviceConnected = connectDebouncer.calculate(true);
@@ -160,7 +158,6 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     appliedOutput = 0;
     currentAmps = 0;
     temperatureCelsius = 0;
-    actualSpeed = 0;
     velocityRPM = 0;
     stalled = false;
     stallDurationMs = 0;
@@ -174,7 +171,6 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     SafeLog.put("Indexer/Direction", direction);
     SafeLog.put("Indexer/ReadyToFire", !jamDetected);
     SafeLog.put("Indexer/AppliedOutput", appliedOutput);
-    SafeLog.put("Indexer/ActualSpeed", actualSpeed);
     SafeLog.put("Indexer/TargetSpeed", indexer != null ? indexer.getTunableTargetSpeed() : 0.0);
     SafeLog.put("Indexer/CurrentAmps", currentAmps);
     SafeLog.put("Indexer/TemperatureCelsius", temperatureCelsius);
