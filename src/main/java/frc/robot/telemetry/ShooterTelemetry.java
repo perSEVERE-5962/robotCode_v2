@@ -301,4 +301,12 @@ public class ShooterTelemetry implements SubsystemTelemetry {
   public boolean isStalled() {
     return stalled;
   }
+
+  public boolean isDeviceConnected() {
+    return deviceConnected;
+  }
+
+  public int getDeviceFaultsRaw() {
+    return deviceFaultsRaw;
+  }
 }

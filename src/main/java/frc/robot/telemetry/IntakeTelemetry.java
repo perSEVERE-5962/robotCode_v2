@@ -186,4 +186,12 @@ public class IntakeTelemetry implements SubsystemTelemetry {
     jamDetected = false;
     jamDebouncer.calculate(false);
   }
+
+  public boolean isDeviceConnected() {
+    return deviceConnected;
+  }
+
+  public int getDeviceFaultsRaw() {
+    return deviceFaultsRaw;
+  }
 }

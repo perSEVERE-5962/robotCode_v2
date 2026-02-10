@@ -289,4 +289,12 @@ public class VisionTelemetry implements SubsystemTelemetry {
   public boolean hasTarget() {
     return hasTarget;
   }
+
+  public boolean isLeftCamConnected() {
+    return leftCamConnected;
+  }
+
+  public boolean isRightCamConnected() {
+    return rightCamConnected;
+  }
 }

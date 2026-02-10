@@ -277,4 +277,8 @@ public class DriveTelemetry implements SubsystemTelemetry {
   public double getHeadingErrorDegrees() {
     return headingErrorDegrees;
   }
+
+  public boolean isGyroConnected() {
+    return gyroConnected;
+  }
 }

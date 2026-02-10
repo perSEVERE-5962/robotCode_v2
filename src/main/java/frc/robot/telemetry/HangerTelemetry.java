@@ -134,4 +134,12 @@ public class HangerTelemetry implements SubsystemTelemetry {
   public double getTemperature() {
     return temperatureCelsius;
   }
+
+  public boolean isDeviceConnected() {
+    return deviceConnected;
+  }
+
+  public int getDeviceFaultsRaw() {
+    return deviceFaultsRaw;
+  }
 }
