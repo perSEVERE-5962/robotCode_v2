@@ -119,6 +119,24 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
+// Pre-deploy safety check: blocks if TUNING_MODE = true
+// Skip with: ./gradlew deploy -x checkDeploy
+tasks.register('checkDeploy', JavaExec) {
+    description = 'Blocks deploy when TUNING_MODE is true'
+    group = 'Verification'
+    mainClass = 'frc.robot.Constants$DeploySafetyCheck'
+    classpath = sourceSets.main.runtimeClasspath
+    dependsOn classes
+}
+
+// Wire: any task starting with "deploy" must run checkDeploy first
+// DISABLED for build season tuning. Re-enable before competition:
+// afterEvaluate {
+//     tasks.matching { it.name.startsWith('deploy') && it.name != 'checkDeploy' }.configureEach {
+//         it.dependsOn 'checkDeploy'
+//     }
+// }
+
 // Configure jar and deploy tasks
 deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)

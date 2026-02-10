@@ -103,11 +103,11 @@ public final class Constants {
   public static final class MotorConstants {
     public static final double DESIRED_SHOOTER_RPM = 3730;
     public static final double DESIRED_INDEXER_RPM = 8.4 * 3730 / 4;
-    public static final double OUT_INTAKE_POS = 1;
-    public static final double IN_INTAKE_POS = 1;
+    public static final double OUT_INTAKE_POS = 3.0;
+    public static final double IN_INTAKE_POS = 0.0;
     public static final double DESIRED_INTAKE_SPEED = 1;
-    public static final double UP_HANGER_POS = 999;
-    public static final double DOWN_HANGER_POS = 999;
+    public static final double UP_HANGER_POS = 50.0;
+    public static final double DOWN_HANGER_POS = 0.0;
   }
 
   public static final class IntakeConstants {
@@ -188,6 +188,34 @@ public final class Constants {
     public static final double DISCONNECT_DEBOUNCE_SEC = 0.5;
     // ReadyToShoot stays true through brief velocity dips during sustained fire
     public static final double READY_TO_SHOOT_DEBOUNCE_SEC = 0.15;
+  }
+
+  /**
+   * Pre-deploy and pre-merge safety gates. Run via Gradle tasks:
+   *
+   * <ul>
+   *   <li>{@code ./gradlew checkDeploy} blocks deploy when TUNING_MODE is on
+   *   <li>{@code ./gradlew checkCompetition} stricter gate for match day
+   * </ul>
+   *
+   * Skip with {@code ./gradlew deploy -x checkDeploy} if you really need tuning on the robot.
+   */
+  public static final class DeploySafetyCheck {
+    /** Returns false if TUNING_MODE is on (unsafe for competition deploy). */
+    public static boolean isSafeForDeploy() {
+      return !TUNING_MODE;
+    }
+
+    /** Gradle entry point: exits 1 if deploy is unsafe. */
+    public static void main(String... args) {
+      if (!isSafeForDeploy()) {
+        System.err.println("DEPLOY BLOCKED: TUNING_MODE = true");
+        System.err.println("Set Constants.TUNING_MODE = false before deploying to robot.");
+        System.err.println("Override: ./gradlew deploy -x checkDeploy");
+        System.exit(1);
+      }
+      System.out.println("Deploy safety check passed.");
+    }
   }
 
   /** Stall = high current + low velocity for debounce time */
