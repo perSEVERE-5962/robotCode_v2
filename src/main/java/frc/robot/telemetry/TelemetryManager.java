@@ -34,6 +34,8 @@ public class TelemetryManager {
   private NetworkTelemetry networkTelemetry;
   private DriverInputTelemetry driverInputTelemetry;
   private MatchStatsTelemetry matchStatsTelemetry;
+  private ShotVisualizerTelemetry shotVisualizerTelemetry;
+  private ShotPredictorTelemetry shotPredictorTelemetry;
 
   public static TelemetryManager getInstance() {
     if (instance == null) {
@@ -58,6 +60,8 @@ public class TelemetryManager {
     driverInputTelemetry = new DriverInputTelemetry();
     matchStatsTelemetry =
         new MatchStatsTelemetry(shooterTelemetry, visionTelemetry, scoringTelemetry);
+    shotVisualizerTelemetry = new ShotVisualizerTelemetry(shooterTelemetry);
+    shotPredictorTelemetry = new ShotPredictorTelemetry();
 
     // SystemHealth first (measures loop time), then Commands (callback-based)
     telemetryList.add(systemHealthTelemetry);
@@ -74,6 +78,8 @@ public class TelemetryManager {
     telemetryList.add(networkTelemetry);
     telemetryList.add(driverInputTelemetry);
     telemetryList.add(matchStatsTelemetry);
+    telemetryList.add(shotVisualizerTelemetry);
+    telemetryList.add(shotPredictorTelemetry);
   }
 
   /** Called from RobotContainer after vision init */
