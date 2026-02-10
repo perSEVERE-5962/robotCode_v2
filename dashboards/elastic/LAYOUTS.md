@@ -27,20 +27,20 @@ The driver reads this from 5+ feet away while driving, so everything is big. The
 
 | Widget | Type | Size | Signal |
 |--------|------|------|--------|
-| Match Time | Match Time | 15x1 | Match/Time -- color shifts: blue above 60s, green above 30s, yellow above 15s, red |
-| READY TO SHOOT | Boolean Box | 3x3 | Scoring/ReadyToShoot -- biggest thing on screen |
+| Match Time | Match Time | 15x1 | Match/Time. Color shifts: blue above 60s, green above 30s, yellow above 15s, red |
+| READY TO SHOOT | Boolean Box | 3x3 | Scoring/ReadyToShoot. Biggest thing on screen |
 | Camera | Camera Stream | 5x3 | USB Camera 0 |
 | Target Lock | Boolean Box | 2x2 | Vision/LockedOnTarget |
 | Battery | Voltage View | 5x1 | SystemHealth/BatteryVoltage (8-13V range) |
 | Shooter RPM | Number Bar | 5x1 | Shooter/VelocityRPM (0-5700) |
 | Hub Active | Boolean Box | 2x1 | Scoring/Conditions/HubActive |
-| JAM! | Boolean Box | 5x1 | Indexer/JamDetected -- red when jammed |
+| JAM! | Boolean Box | 5x1 | Indexer/JamDetected. Red when jammed |
 | Auto Selector | ComboBox Chooser | 5x1 | Auto Chooser |
 | Alerts | Text Display | 10x1 | Alerts/ActiveList |
 
 ### Coach tab (12 widgets)
 
-Strategy info for the drive coach -- shot counts, fire rate, hub timing. The Shots Scored widget is a large text display readable from 5+ feet.
+Strategy info for the drive coach: shot counts, fire rate, hub timing. The Shots Scored widget is a large text display readable from 5+ feet.
 
 | Widget | Type | Size | Signal |
 |--------|------|------|--------|
@@ -102,10 +102,10 @@ Pre-match diagnostic tests. Hit the trigger buttons and watch pass/fail results.
 |--------|------|------|--------|
 | Safe Check | Toggle Button | 3x1 | Diagnostics/TriggerSafe |
 | Full Check | Toggle Button | 3x1 | Diagnostics/TriggerFull |
-| Running | Boolean Box | 2x1 | Diagnostics/Running -- blue while active |
+| Running | Boolean Box | 2x1 | Diagnostics/Running. Blue while active |
 | Mode | Text Display | 2x1 | Diagnostics/Mode |
 | Step | Text Display | 5x1 | Diagnostics/Step |
-| ALL PASSED | Boolean Box | 5x2 | Diagnostics/AllPassed -- big green or red |
+| ALL PASSED | Boolean Box | 5x2 | Diagnostics/AllPassed. Big green or red |
 | Pass/Warn/Fail/Skip counts | 4x Text Display | 2x1 each | Diagnostics/PassCount, WarnCount, FailCount, SkippedCount |
 | Gyro Drift | Text Display | 3x1 | Diagnostics/GyroMaxDrift |
 | Gyro OK | Boolean Box | 2x1 | Diagnostics/GyroHealthy |
@@ -145,16 +145,16 @@ v3 split the old 48-widget mega-tab into these 3 tabs. Everything fits on screen
 
 For practice sessions when you're tuning PID gains. Both tabs have a live Graph widget as the centerpiece.
 
-### Shooter tab (26 widgets)
+### Shooter tab (30 widgets)
 
-The RPM Graph (8x3, 5-second window) is the main thing here. PID gain inputs are right next to it so you can tweak and watch the response immediately.
+The RPM Graph (8x3, 5-second window) is the main thing here. PID gain inputs are right next to it so you can tweak and watch the response immediately. Also has ShotPredictor status (active indicator, distance, heading error, predicted RPM) at the bottom for checking shoot-on-the-move behavior.
 
 | Widget | Type | Size | Signal |
 |--------|------|------|--------|
 | RPM Graph | Graph | 8x3 | Shooter/VelocityRPM (5s window, light blue) |
 | kP/kI/kD/FF | 4x Text Display (editable) | 2x1 each | SmartDashboard Shooter gains |
 | TargetRPM/Tolerance/ShotDrop | 3x Text Display (editable) | 2-3x1 | SmartDashboard Shooter params |
-| TUNING MODE | Boolean Box | 4x2 | TuningMode -- green when active, orange when off |
+| TUNING MODE | Boolean Box | 4x2 | TuningMode. Green when active, orange when off |
 | AT SPEED | Boolean Box | 4x1 | Shooter/AtSpeed |
 | Spin Up / Vel Error | Text Display | 2x1 each | SpinUpTimeMs, VelocityError |
 | At Speed % | Number Bar | 3x1 | Shooter/AtSpeedPercent (0-120%) |
@@ -163,6 +163,10 @@ The RPM Graph (8x3, 5-second window) is the main thing here. PID gain inputs are
 | Motor Temp/Current/Output | 3x Number Bar | 5x1 each | motor health |
 | Total Shots | Text Display | 2x1 | Shooter/TotalShots |
 | Ready To Shoot | Boolean Box | 4x1 | Scoring/ReadyToShoot |
+| PREDICTOR | Boolean Box | 2x1 | Scoring/ShotPredictor/Active. Green when prediction is running |
+| Distance | Text Display | 2x1 | Scoring/ShotPredictor/DistanceToHubM |
+| Heading Err | Text Display | 2x1 | Scoring/ShotPredictor/HeadingErrorRad |
+| Pred RPM | Text Display | 2x1 | Scoring/ShotPredictor/ComputedRPM |
 
 ### Subsystems tab (19 widgets)
 
@@ -196,11 +200,11 @@ Elastic.sendNotification(new Notification(
     "Battery below 11.5V"
 ));
 ```
-This pops up in the driver's face -- way more effective than hoping they notice a widget changing color.
+This pops up in the driver's face, which is way more effective than hoping they notice a widget changing color.
 
 **Switching tabs from code:**
 ```java
 Elastic.selectTab("Autonomous");
 ```
 
-**Competition bandwidth:** Elastic reads from NetworkTables over the field network (4 Mbps limit). Don't publish too much data to NT -- log to USB for AdvantageScope instead.
+**Competition bandwidth:** Elastic reads from NetworkTables over the field network (4 Mbps limit). Don't publish too much data to NT. Log the rest to USB for AdvantageScope instead.

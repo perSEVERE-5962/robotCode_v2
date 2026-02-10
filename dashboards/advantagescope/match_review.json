@@ -1,10 +1,10 @@
 {
   "hubs": [
     {
-      "x": -8,
-      "y": -8,
-      "width": 1482,
-      "height": 886,
+      "x": -7,
+      "y": -7,
+      "width": 1477,
+      "height": 881,
       "state": {
         "sidebar": {
           "width": 300,
@@ -16,7 +16,7 @@
           ]
         },
         "tabs": {
-          "selected": 2,
+          "selected": 3,
           "tabs": [
             {
               "type": 0,
@@ -30,7 +30,18 @@
               "type": 1,
               "title": "Scoring Timeline",
               "controller": {
-                "leftSources": [],
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Scoring/ShotPredictor/HeadingErrorRad",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32",
+                      "size": "normal"
+                    }
+                  }
+                ],
                 "rightSources": [
                   {
                     "type": "stepped",
@@ -107,6 +118,15 @@
                     "options": {
                       "color": "#d993aa"
                     }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Scoring/ShotPredictor/Active",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32"
+                    }
                   }
                 ],
                 "leftLockedRange": null,
@@ -124,6 +144,40 @@
               },
               "controllerUUID": "53849e89-45d7-4084-b794-eaaa5093381f",
               "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 3,
+              "title": "Field Position",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "robot",
+                    "logKey": "/RealOutputs/Drive/Pose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "2026 KitBot"
+                    }
+                  }
+                ],
+                "game": "FRC:2026 Field"
+              },
+              "controllerUUID": "a95a2688-5130-41f0-a28e-ddeaa1ae9432",
+              "renderer": {
+                "cameraIndex": -1,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  0.3021690460994502,
+                  6.304038092326322,
+                  -11.852081491890123
+                ],
+                "cameraTarget": [
+                  0,
+                  0.5,
+                  0
+                ]
+              },
               "controlsHeight": 200
             },
             {

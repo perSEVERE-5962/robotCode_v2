@@ -14,9 +14,9 @@ flowchart LR
 ## What's new
 
 - 17 telemetry classes that log about 285 signals through SafeLog (crash-isolated so one bad sensor can't take down the whole robot)
-- Hub strategy tracking -- shots per hub shift, hub utilization %, active vs inactive hub shots
+- Hub strategy tracking: shots per hub shift, hub utilization %, active vs inactive hub shots
 - Debounced disconnect detection on all motors (filters out CAN bus noise)
-- `Scoring/ReadyToShoot` -- a composite signal, explained below
+- `Scoring/ReadyToShoot`, a composite signal explained below
 - 12 dashboard layouts (9 for AdvantageScope, 3 for Elastic)
 
 ReadyToShoot is the main signal to watch. It only goes true when all three of these are true at the same time:
@@ -58,8 +58,8 @@ You need both of these on the driver station laptop. If you already have them, m
 3. **File > Import Layout**
 4. Pick a `.json` from `dashboards/advantagescope/`
 5. Good ones to start with:
-   - **match_review.json** -- open this after a match to see scoring timeline, field replay, cycle times
-   - **pit_triage.json** -- quick health check between matches (battery, faults, temps)
+   - **match_review.json** for scoring timeline, field replay, cycle times after a match
+   - **pit_triage.json** for quick health checks between matches (battery, faults, temps)
 6. The layout loads all the tabs at once. Just click through them.
 
 ### Elastic
@@ -68,7 +68,7 @@ You need both of these on the driver station laptop. If you already have them, m
 2. It should auto-connect to the robot if you're on the same network (check the connection indicator in the top bar)
 3. **File > Open Layout**
 4. Pick a `.json` from `dashboards/elastic/`
-5. Start with **rebuilt_driver_competition.json** -- it has a Match tab for the driver and a Coach tab for strategy
+5. Start with **rebuilt_driver_competition.json**, which has a Match tab for the driver and a Coach tab for strategy
 
 See `dashboards/README.md` for what all 12 layouts do.
 
@@ -80,10 +80,10 @@ See `dashboards/README.md` for what all 12 layouts do.
 2. Expand `/RealOutputs/` in the sidebar
 3. You should see folders like `Shooter/`, `Drive/`, `Vision/`, `Scoring/`, `SystemHealth/`
 4. Check these signals:
-   - `Shooter/VelocityRPM` -- should be non-zero when the shooter is spinning
-   - `Drive/Pose` -- should update when you push the robot around
-   - `SystemHealth/BatteryVoltage` -- should read around 12-13V
-   - `Scoring/ReadyToShoot` -- goes true when shooter is at speed + indexer clear + vision locked
+   - `Shooter/VelocityRPM` should be non-zero when the shooter is spinning
+   - `Drive/Pose` should update when you push the robot around
+   - `SystemHealth/BatteryVoltage` should read around 12-13V
+   - `Scoring/ReadyToShoot` goes true when shooter is at speed + indexer clear + vision locked
 
 If you see all of those, telemetry is working.
 
@@ -117,7 +117,7 @@ The Tuning layout in Elastic lets you change PID gains on the fly without re-dep
 1. Load `rebuilt_tuning_session.json` in Elastic
 2. Go to the **Shooter** tab
 3. The RPM Graph in the middle shows shooter velocity in real time (5-second rolling window)
-4. The kP/kI/kD/FF text fields next to it are **editable** -- type a new value and hit Enter
+4. The kP/kI/kD/FF text fields next to it are **editable**. Type a new value and hit Enter.
 5. The gain updates instantly on the robot through NetworkTables. You'll see the response change on the graph right away.
 6. Same thing works on the **Subsystems** tab for indexer gains, hanger gains, intake speed, and driver deadband
 

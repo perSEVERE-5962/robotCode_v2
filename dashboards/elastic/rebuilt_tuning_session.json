@@ -380,6 +380,61 @@
               "true_icon": "None",
               "false_icon": "None"
             }
+          },
+          {
+            "title": "PREDICTOR",
+            "x": 0.0,
+            "y": 896.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Scoring/ShotPredictor/Active",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4281545523,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Distance (m)",
+            "x": 384.0,
+            "y": 896.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Scoring/ShotPredictor/DistanceToHubM",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Heading Err",
+            "x": 768.0,
+            "y": 896.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Scoring/ShotPredictor/HeadingErrorRad",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Pred RPM",
+            "x": 1152.0,
+            "y": 896.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Scoring/ShotPredictor/ComputedRPM",
+              "period": 0.033,
+              "show_submit_button": false
+            }
           }
         ]
       }
