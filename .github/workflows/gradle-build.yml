@@ -38,12 +38,26 @@ jobs:
             sed -i 's/\r$//' ./gradlew || true
             chmod +x ./gradlew
           fi
-          
-      - name: Ensure gradlew is executable
-        run: chmod +x ./gradlew
 
-      - name: Spotless check
-        run: ./gradlew spotlessCheck --no-daemon
+      - name: Run Spotless Check
+        id: spotless
+        run: |
+          # Run Spotless check and capture exit code
+          ./gradlew spotlessCheck
+          SPOTLESS_EXIT_CODE=$?
+
+          # If Spotless failed, add a friendly summary and fail the build
+          if [ $SPOTLESS_EXIT_CODE -ne 0 ]; then
+            echo "## Spotless Formatting Check Failed" >> $GITHUB_STEP_SUMMARY
+            echo "The build failed because code formatting did not pass Spotless checks." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "To fix this locally:" >> $GITHUB_STEP_SUMMARY
+            echo "1. Run: ./gradlew spotlessApply" >> $GITHUB_STEP_SUMMARY
+            echo "2. Commit and push your changes" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "::error::Spotless check failed. See summary for instructions to fix."
+            exit $SPOTLESS_EXIT_CODE
+          fi
 
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
