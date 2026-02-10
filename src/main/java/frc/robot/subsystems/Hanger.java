@@ -14,16 +14,25 @@ public class Hanger extends Actuator {
   private static final TunableNumber kD = new TunableNumber("Hanger/kD", HangerConstants.D);
 
   private Hanger() {
-    super(Constants.CANDeviceIDs.kHangerID, HangerConstants.P, HangerConstants.I, HangerConstants.D,
-        HangerConstants.MinOutput, HangerConstants.MaxOutput, HangerConstants.FF, HangerConstants.Iz,
-        0, 0, false, false, false);
+    super(
+        Constants.CANDeviceIDs.kHangerID,
+        HangerConstants.P,
+        HangerConstants.I,
+        HangerConstants.D,
+        HangerConstants.MinOutput,
+        HangerConstants.MaxOutput,
+        HangerConstants.FF,
+        HangerConstants.Iz,
+        0,
+        0,
+        false,
+        false,
+        false);
   }
 
   @Override
   public void periodic() {
-    TunableNumber.ifChanged(
-        () -> updatePID(kP.get(), 0, kD.get(), 0),
-        kP, kD);
+    TunableNumber.ifChanged(() -> updatePID(kP.get(), 0, kD.get(), 0), kP, kD);
   }
 
   @Override
@@ -37,10 +46,21 @@ public class Hanger extends Actuator {
   }
 
   // Hardware accessors
-  public double getTargetPosition() { return targetPosition; }
-  public double getAppliedOutput() { return getMotor().getAppliedOutput(); }
-  public double getOutputCurrent() { return getMotor().getOutputCurrent(); }
-  public double getTemperature() { return getMotor().getMotorTemperature(); }
+  public double getTargetPosition() {
+    return targetPosition;
+  }
+
+  public double getAppliedOutput() {
+    return getMotor().getAppliedOutput();
+  }
+
+  public double getOutputCurrent() {
+    return getMotor().getOutputCurrent();
+  }
+
+  public double getTemperature() {
+    return getMotor().getMotorTemperature();
+  }
 
   public static Hanger getInstance() {
     if (instance == null) {

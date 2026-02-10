@@ -1,12 +1,11 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.RelativeEncoder;
-
 import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.util.TunableNumber;
@@ -35,9 +34,20 @@ public class Shooter extends Actuator {
       new TunableNumber("Shooter/ShotDropRPM", ShooterConstants.SHOT_DETECTION_DROP_RPM);
 
   private Shooter() {
-    super(Constants.CANDeviceIDs.kShooterID, ShooterConstants.P, ShooterConstants.I, ShooterConstants.D,
-        ShooterConstants.MinOutput, ShooterConstants.MaxOutput, ShooterConstants.FF, ShooterConstants.Iz,
-        0, 0, false, false, false);
+    super(
+        Constants.CANDeviceIDs.kShooterID,
+        ShooterConstants.P,
+        ShooterConstants.I,
+        ShooterConstants.D,
+        ShooterConstants.MinOutput,
+        ShooterConstants.MaxOutput,
+        ShooterConstants.FF,
+        ShooterConstants.Iz,
+        0,
+        0,
+        false,
+        false,
+        false);
     motor = getMotor();
 
     motorConfig = new SparkMaxConfig();
@@ -61,8 +71,7 @@ public class Shooter extends Actuator {
   @Override
   public void periodic() {
     TunableNumber.ifChanged(
-        () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()),
-        kP, kI, kD, kF);
+        () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
   }
 
   public void move(double speed) {
@@ -85,21 +94,51 @@ public class Shooter extends Actuator {
   }
 
   // Hardware accessors
-  public double getTargetRPM() { return targetRPM; }
-  public double getAppliedOutput() { return motor.getAppliedOutput(); }
-  public double getOutputCurrent() { return motor.getOutputCurrent(); }
-  public double getBusVoltage() { return motor.getBusVoltage(); }
+  public double getTargetRPM() {
+    return targetRPM;
+  }
+
+  public double getAppliedOutput() {
+    return motor.getAppliedOutput();
+  }
+
+  public double getOutputCurrent() {
+    return motor.getOutputCurrent();
+  }
+
+  public double getBusVoltage() {
+    return motor.getBusVoltage();
+  }
 
   // Tunable accessors
-  public double getTunableTargetRPM() { return targetRPMTunable.get(); }
-  public double getToleranceRPM() { return toleranceRPM.get(); }
-  public double getShotDropThreshold() { return shotDropRPM.get(); }
+  public double getTunableTargetRPM() {
+    return targetRPMTunable.get();
+  }
+
+  public double getToleranceRPM() {
+    return toleranceRPM.get();
+  }
+
+  public double getShotDropThreshold() {
+    return shotDropRPM.get();
+  }
 
   // PID gain getters
-  public double getTunableKP() { return kP.get(); }
-  public double getTunableKI() { return kI.get(); }
-  public double getTunableKD() { return kD.get(); }
-  public double getTunableFF() { return kF.get(); }
+  public double getTunableKP() {
+    return kP.get();
+  }
+
+  public double getTunableKI() {
+    return kI.get();
+  }
+
+  public double getTunableKD() {
+    return kD.get();
+  }
+
+  public double getTunableFF() {
+    return kF.get();
+  }
 
   public static Shooter getInstance() {
     if (instance == null) {

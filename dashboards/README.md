@@ -35,7 +35,7 @@ dashboards/
     vision_debug.json
 ```
 
-These are all reference copies. Import them into AdvantageScope or Elastic on your laptop -- nothing here gets deployed to the robot.
+These are all reference copies. Import them into AdvantageScope or Elastic on your laptop, nothing here gets deployed to the robot.
 
 ---
 
@@ -49,7 +49,7 @@ Check [elastic/LAYOUTS.md](elastic/LAYOUTS.md) for the full widget breakdown and
 |--------|------|------|-------------|
 | Competition | `rebuilt_driver_competition.json` | **Match** (10 widgets) + **Coach** (12 widgets) | Driver + coach behind the glass |
 | Pit Diagnostic | `rebuilt_pit_diagnostic.json` | **Quick Check** (20) + **Diagnostics** (15) + **System Detail** (19) | Pit crew between matches |
-| Tuning | `rebuilt_tuning_session.json` | **Shooter** (26, has RPM graph) + **Subsystems** (19, has current graph) | Programmers during practice |
+| Tuning | `rebuilt_tuning_session.json` | **Shooter** (30, has RPM graph + ShotPredictor) + **Subsystems** (19, has current graph) | Programmers during practice |
 
 ---
 
@@ -59,23 +59,23 @@ Post-match log analysis. To load one: **File > Import Layout** and pick a `.json
 
 Check [advantagescope/LAYOUTS.md](advantagescope/LAYOUTS.md) for details on every tab and what to look for.
 
-### Workflow layouts -- use these between matches
+### Workflow layouts, use these between matches
 
 | Layout | File | Tabs | When |
 |--------|------|------|------|
-| Match Review | [match_review.json](advantagescope/match_review.json) | 5 | After every match -- scoring timeline, 3D field, cycles, driver inputs |
+| Match Review | [match_review.json](advantagescope/match_review.json) | 5 | After every match. Scoring timeline (heading error + prediction active), 3D field, cycles, driver inputs |
 | Cycle and Strategy | [cycle_and_strategy.json](advantagescope/cycle_and_strategy.json) | 5 | Hub shift analysis, cycle timing, intake-to-score pipeline |
-| Pit Triage | [pit_triage.json](advantagescope/pit_triage.json) | 4 | Quick health check -- battery, faults, performance |
+| Pit Triage | [pit_triage.json](advantagescope/pit_triage.json) | 4 | Quick health check. Battery, faults, performance |
 | Mechanism Debug | [mechanism_debug.json](advantagescope/mechanism_debug.json) | 7 | Shooter/indexer/intake/hanger PID, jams, temps |
 | Power and Health | [power_and_health.json](advantagescope/power_and_health.json) | 5 | Brownouts, CAN errors, loop overruns, crash barriers |
 
-### Utility layouts -- focused debugging
+### Utility layouts, focused debugging
 
 | Layout | File | Tabs | Focus |
 |--------|------|------|-------|
 | Drive and Auto | [drive_and_auto.json](advantagescope/drive_and_auto.json) | 5 | Swerve pose, speeds, path following, gyro, modules |
-| Shooter Tuning | [shooter_tuning.json](advantagescope/shooter_tuning.json) | 9 | Velocity curves, PID response, fire rate, recovery time |
-| System Overview | [system_overview.json](advantagescope/system_overview.json) | 8 | Battery, CAN, temps, alerts -- general "is anything broken" |
+| Shooter Tuning | [shooter_tuning.json](advantagescope/shooter_tuning.json) | 12 | Velocity curves, PID response, fire rate, recovery time, shot prediction, drift compensation |
+| System Overview | [system_overview.json](advantagescope/system_overview.json) | 8 | Battery, CAN, temps, alerts. General "is anything broken" check |
 | Vision Debug | [vision_debug.json](advantagescope/vision_debug.json) | 4 | Target lock, latency, camera connectivity, aim offset |
 
 ---
@@ -100,8 +100,10 @@ If you're standing at the field or in the pit and thinking one of these things, 
 | CAN errors in driver station log | AdvantageScope | power_and_health, tab 2 |
 | Auto path was off | AdvantageScope | drive_and_auto, tab 3 |
 | Swerve drifting | AdvantageScope | drive_and_auto, tab 5 |
+| Shot prediction working? | AdvantageScope | shooter_tuning, tab 10 |
+| Heading off when shooting? | AdvantageScope | match_review, tab 1 |
 | Vision kept dropping targets | AdvantageScope | vision_debug |
 
 ---
 
-12 dashboards total (3 Elastic with 7 tabs + 9 AdvantageScope layouts) covering about 285 telemetry signals.
+12 dashboards total (3 Elastic with 7 tabs + 9 AdvantageScope layouts) covering about 295 telemetry signals.

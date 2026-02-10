@@ -2,8 +2,13 @@
 /gradlew text eol=lf
 *.sh text eol=lf
 
-# Normalize source files in the repository but allow platform-native checkout
-# so Windows users can keep CRLF in their working tree if desired.
-*.java text=auto
-*.xml text=auto
-*.json text=auto
+# Force LF in repo for all text files that CI/spotless touch
+*.java text eol=lf
+*.gradle text eol=lf
+*.xml text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.properties text eol=lf
+*.csv text eol=lf

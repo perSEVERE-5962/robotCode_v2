@@ -3,10 +3,15 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.commands;
 
+import static frc.robot.Constants.HubScoringConstants.BLUE_SCORING_SIDE;
+import static frc.robot.Constants.HubScoringConstants.RED_SCORING_SIDE;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -23,11 +28,8 @@ import java.util.function.DoubleSupplier;
 import frc.robot.subsystems.Indexer;
 import edu.wpi.first.math.geometry.Pose2d;
 
-
-
-
 public class HubArcDrive extends Command {
-  
+
   private final SwerveSubsystem swerve;
   private final DoubleSupplier strafeInput;
   private final Translation2d hubCenter;
@@ -53,35 +55,30 @@ public class HubArcDrive extends Command {
     addRequirements(swerve, shooter);
   }
 
-
-
   @Override
-  public void initialize() {
-    
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
-    
-    
+
     // joystick input for movement
     double strafeStrength = strafeInput.getAsDouble();
-    
+
     // current robot pose and rotation
     Translation2d robotPos = swerve.getPose().getTranslation();
     Rotation2d currentHeading = swerve.getHeading();
-    
+
     // position relative to hub
     Translation2d hubToRobot = robotPos.minus(hubCenter);
     double distanceFromHub = hubToRobot.getNorm();
     double angleFromHub = Math.atan2(hubToRobot.getY(), hubToRobot.getX());
-    
+
     // Check arc limits
     double centerAngle = scoringSide.getRadians();
     double halfArcWidth = Math.toRadians(90 / 2.0);
     double angleDifference = angleFromHub - centerAngle;
     angleDifference = Math.atan2(Math.sin(angleDifference), Math.cos(angleDifference));
-    
+
     boolean atLeftLimit = angleDifference >= halfArcWidth;
     boolean atRightLimit = angleDifference <= -halfArcWidth;
     if (atLeftLimit && strafeStrength > 0) {
@@ -90,12 +87,12 @@ public class HubArcDrive extends Command {
     if (atRightLimit && strafeStrength < 0) {
       strafeStrength = 0;
     }
-    
-    //get desired distance vs real distance
+
+    // get desired distance vs real distance
     double distanceError = distanceFromHub - scoringDistance;
     double radialSpeed = -distanceError * 1.5; // p controller to keep distance
-    radialSpeed = MathUtil.clamp(radialSpeed, -1.0, 1.0);//get speed
-    
+    radialSpeed = MathUtil.clamp(radialSpeed, -1.0, 1.0); // get speed
+
     if (Math.abs(distanceError) < 0.05) {
       radialSpeed = 0;
     }
@@ -105,10 +102,10 @@ public class HubArcDrive extends Command {
     // get x and y from distance to hub
     double radialX = Math.cos(angleFromHub);
     double radialY = Math.sin(angleFromHub);
-    //get x and y for around the hub
+    // get x and y for around the hub
     double tangentialX = -Math.sin(angleFromHub);
     double tangentialY = Math.cos(angleFromHub);
-    
+
     double fieldVx = radialSpeed * radialX + tangentialSpeed * tangentialX;
     double fieldVy = radialSpeed * radialY + tangentialSpeed * tangentialY;
     double maxX = MathUtil.clamp(fieldVx,-swerve.getSwerveDrive().getMaximumChassisVelocity() *0.6,swerve.getSwerveDrive().getMaximumChassisVelocity()*0.6);//clamp speeds for controlled turning
@@ -171,9 +168,8 @@ public class HubArcDrive extends Command {
     if (scoringSide == BLUE_SCORING_SIDE && pose.getX() > 4.611) {
       System.out.print("Wrong side");
       return true;
-    
-    }
-    else if (scoringSide == RED_SCORING_SIDE && pose.getX() < 11.901424) {
+
+    } else if (scoringSide == RED_SCORING_SIDE && pose.getX() < 11.901424) {
       System.out.print("Wrong side");
       return true;
     }

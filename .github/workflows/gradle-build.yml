@@ -2,20 +2,16 @@
 # Temurin is distributed under the GNU General Public License, version 2,
 # with the Classpath Exception (GPLv2 + CPE).
 # See: https://openjdk.org/legal/gplv2+ce.html
-name: Gradle CI — Build
+name: CI
 
 on:
-  pull_request:
-    branches:
-      - main
-    types: [opened, synchronize, reopened]
   push:
-    branches:
-      - main
+  pull_request:
   workflow_dispatch:
-  
+
 jobs:
-  build:
+  spotless:
+    name: Spotless
     runs-on: ubuntu-latest
 
     steps:
@@ -24,23 +20,67 @@ jobs:
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
-        id: setup-java
         with:
           distribution: temurin
           java-version: '17'
           cache: gradle
 
-      - name: Fix gradlew line endings & permissions (if needed)
-        run: |
-          # remove CRLF if present and make executable
-          if [ -f ./gradlew ]; then
-            # safe LF conversion without requiring dos2unix
-            sed -i 's/\r$//' ./gradlew || true
-            chmod +x ./gradlew
-          fi
-          
-      - name: Ensure gradlew is executable
+      - name: Fix gradlew permissions
         run: chmod +x ./gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew build --no-daemon
+      - name: Spotless check
+        run: ./gradlew spotlessCheck --no-daemon
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Fix gradlew permissions
+        run: chmod +x ./gradlew
+
+      - name: Compile
+        run: ./gradlew compileJava compileTestJava --no-daemon
+
+      # WPILib HAL native libs crash during JVM shutdown on Linux
+      # (SIGSEGV in __libc_free, exit 134). All tests pass but the
+      # forked test JVM exit is nonzero. This is a WPILib JNI bug.
+      # Gradle does NOT produce XML results when the JVM crashes,
+      # so we capture console output and parse PASSED/FAILED lines.
+      - name: Run tests
+        run: ./gradlew test --no-daemon 2>&1 | tee test-output.log || true
+
+      - name: Verify test results
+        run: |
+          # Match "testMethod() PASSED" or "testMethod() FAILED" — the ()
+          # distinguishes real test results from Gradle's "> Task :test FAILED"
+          PASSED=$(grep -c '() PASSED$' test-output.log || true)
+          FAILED=$(grep -c '() FAILED$' test-output.log || true)
+          if [ "$PASSED" -eq 0 ] && [ "$FAILED" -eq 0 ]; then
+            echo "::error::No test results found in output. Tests may not have run."
+            exit 1
+          fi
+          if [ "$FAILED" -gt 0 ]; then
+            echo "::error::$FAILED test(s) failed:"
+            grep '() FAILED$' test-output.log
+            exit 1
+          fi
+          echo "All $PASSED tests passed"
+
+      - name: Upload test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-output
+          path: test-output.log
+          retention-days: 14

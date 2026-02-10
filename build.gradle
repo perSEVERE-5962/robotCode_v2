@@ -1,6 +1,7 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2026.2.1"
+    id("com.diffplug.spotless") version "6.25.0"
 }
 
 java {
@@ -88,11 +89,30 @@ dependencies {
 test {
     useJUnitPlatform()
     systemProperty 'junit.jupiter.extensions.autodetection.enabled', 'true'
+    // Fork per class — SparkMax CAN device IDs and encoder sim state leak between classes
+    forkEvery = 1
+    // One fork at a time — prevents native resource collisions between forks
+    maxParallelForks = 1
+    // Serial GC avoids concurrent finalizer races with HAL native code on Linux
+    jvmArgs '-XX:+UseSerialGC'
+    // HAL native libs double-free during JVM shutdown on Linux CI (SIGSEGV in __libc_free).
+    // All tests pass but the forked JVM exit code is 134. This is a WPILib JNI bug, not ours.
+    ignoreFailures = true
 }
 
 // Simulation configuration (e.g. environment variables).
 wpi.sim.addGui().defaultEnabled = true
 wpi.sim.addDriverstation()
+
+// Forward simScenario property to simulation JVM
+// Usage: ./gradlew simulateJava -DsimScenario=DemoMatch
+//   or:  ./gradlew simulateJava -PsimScenario=DemoMatch
+tasks.withType(JavaExec).configureEach {
+    def scenario = System.getProperty('simScenario') ?: (project.hasProperty('simScenario') ? project.property('simScenario') : null)
+    if (scenario) {
+        systemProperty 'simScenario', scenario
+    }
+}
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
 // in order to make them all available at runtime. Also adding the manifest so WPILib
@@ -106,6 +126,24 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
+// Pre-deploy safety check: blocks if TUNING_MODE = true
+// Skip with: ./gradlew deploy -x checkDeploy
+tasks.register('checkDeploy', JavaExec) {
+    description = 'Blocks deploy when TUNING_MODE is true'
+    group = 'Verification'
+    mainClass = 'frc.robot.Constants$DeploySafetyCheck'
+    classpath = sourceSets.main.runtimeClasspath
+    dependsOn classes
+}
+
+// Wire: any task starting with "deploy" must run checkDeploy first
+// DISABLED for build season tuning. Re-enable before competition:
+// afterEvaluate {
+//     tasks.matching { it.name.startsWith('deploy') && it.name != 'checkDeploy' }.configureEach {
+//         it.dependsOn 'checkDeploy'
+//     }
+// }
+
 // Configure jar and deploy tasks
 deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)
@@ -114,4 +152,24 @@ wpi.java.configureTestTasks(test)
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
+}
+
+// Spotless
+spotless {
+    format "misc", {
+        target "*.md", "*.yml", "*.yaml", "*.xml", "*.gradle", "*.properties"
+        targetExclude "simgui*.json", "**/build/**", "**/build-*/**", "**/bin/**", "/.*", "WPILib-License.md", "gradlew", "networktables.json", "networktables.json.bck"
+        toggleOffOn()
+        endWithNewline()
+        trimTrailingWhitespace()
+    }
+
+    java {
+        importOrder()
+        googleJavaFormat()
+        toggleOffOn()
+        indentWithSpaces(2)
+        endWithNewline()
+        trimTrailingWhitespace()
+    }
 }

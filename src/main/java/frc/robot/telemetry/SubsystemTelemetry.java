@@ -2,9 +2,9 @@ package frc.robot.telemetry;
 
 /** Common interface for telemetry classes. */
 public interface SubsystemTelemetry {
-    void update();
+  void update();
 
-    void log();
+  void log();
 
-    String getName();
+  String getName();
 }
