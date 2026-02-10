@@ -1,11 +1,11 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.util.TunableNumber;
@@ -23,9 +23,7 @@ public class Intake extends SubsystemBase {
     motor = new SparkMax(Constants.CANDeviceIDs.kIntakeID, SparkLowLevel.MotorType.kBrushless);
     motorConfig = new SparkMaxConfig();
 
-    motorConfig
-      .idleMode(SparkMaxConfig.IdleMode.kCoast)
-      .smartCurrentLimit(40);
+    motorConfig.idleMode(SparkMaxConfig.IdleMode.kCoast).smartCurrentLimit(40);
 
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
@@ -39,14 +37,30 @@ public class Intake extends SubsystemBase {
   }
 
   // Hardware accessors
-  public double getAppliedOutput() { return motor.getAppliedOutput(); }
-  public double getOutputCurrent() { return motor.getOutputCurrent(); }
-  public double getVelocityRPM() { return motor.getEncoder().getVelocity(); }
-  public boolean isRunning() { return Math.abs(motor.getAppliedOutput()) > 0.05; }
-  public SparkMax getMotor() { return motor; }
+  public double getAppliedOutput() {
+    return motor.getAppliedOutput();
+  }
+
+  public double getOutputCurrent() {
+    return motor.getOutputCurrent();
+  }
+
+  public double getVelocityRPM() {
+    return motor.getEncoder().getVelocity();
+  }
+
+  public boolean isRunning() {
+    return Math.abs(motor.getAppliedOutput()) > 0.05;
+  }
+
+  public SparkMax getMotor() {
+    return motor;
+  }
 
   // Tunable value accessor
-  public double getTunableSpeed() { return intakeSpeed.get(); }
+  public double getTunableSpeed() {
+    return intakeSpeed.get();
+  }
 
   /** Sticky faults as raw bits for diagnostics */
   public int getStickyFaultsRaw() {

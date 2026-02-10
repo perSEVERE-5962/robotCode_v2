@@ -1,6 +1,7 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2026.2.1"
+    id("com.diffplug.spotless") version "6.25.0"
 }
 
 java {
@@ -88,11 +89,23 @@ dependencies {
 test {
     useJUnitPlatform()
     systemProperty 'junit.jupiter.extensions.autodetection.enabled', 'true'
+    // Fork per class — SparkMax CAN device IDs and encoder sim state leak between classes
+    forkEvery = 1
 }
 
 // Simulation configuration (e.g. environment variables).
 wpi.sim.addGui().defaultEnabled = true
 wpi.sim.addDriverstation()
+
+// Forward simScenario property to simulation JVM
+// Usage: ./gradlew simulateJava -DsimScenario=DemoMatch
+//   or:  ./gradlew simulateJava -PsimScenario=DemoMatch
+tasks.withType(JavaExec).configureEach {
+    def scenario = System.getProperty('simScenario') ?: (project.hasProperty('simScenario') ? project.property('simScenario') : null)
+    if (scenario) {
+        systemProperty 'simScenario', scenario
+    }
+}
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
 // in order to make them all available at runtime. Also adding the manifest so WPILib
@@ -114,4 +127,24 @@ wpi.java.configureTestTasks(test)
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
+}
+
+// Spotless
+spotless {
+    format "misc", {
+        target "*.md", "*.yml", "*.yaml", "*.xml", "*.gradle", "*.properties"
+        targetExclude "simgui*.json", "**/build/**", "**/build-*/**", "**/bin/**", "/.*", "WPILib-License.md", "gradlew", "networktables.json", "networktables.json.bck"
+        toggleOffOn()
+        endWithNewline()
+        trimTrailingWhitespace()
+    }
+
+    java {
+        importOrder()
+        googleJavaFormat()
+        toggleOffOn()
+        indentWithSpaces(2)
+        endWithNewline()
+        trimTrailingWhitespace()
+    }
 }

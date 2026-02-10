@@ -38,9 +38,9 @@ jobs:
             sed -i 's/\r$//' ./gradlew || true
             chmod +x ./gradlew
           fi
-          
-      - name: Ensure gradlew is executable
-        run: chmod +x ./gradlew
+
+      - name: Run Spotless Check
+        run: ./gradlew spotlessCheck
 
       - name: Build with Gradle
         run: ./gradlew build --no-daemon

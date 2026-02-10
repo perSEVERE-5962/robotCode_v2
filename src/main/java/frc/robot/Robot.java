@@ -8,28 +8,26 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.telemetry.CycleTracker;
+import frc.robot.telemetry.TelemetryManager;
+import frc.robot.util.AlertManager;
 import frc.robot.util.DiagnosticContext;
 import frc.robot.util.ElasticUtil;
 import frc.robot.util.EventMarker;
 import frc.robot.util.LoggedTracer;
-import frc.robot.util.AlertManager;
-import frc.robot.util.PredictiveAlerts;
-import frc.robot.util.PreMatchDiagnostics;
 import frc.robot.util.PostMatchSummary;
-import frc.robot.telemetry.CycleTracker;
-import frc.robot.telemetry.TelemetryManager;
-// AdvantageKit imports for logging
+import frc.robot.util.PreMatchDiagnostics;
+import frc.robot.util.PredictiveAlerts;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as
- * described in the TimedRobot documentation. If you change the name of this
- * class or the package after creating this
- * project, you must also update the build.gradle file in the project.
+ * The VM is configured to automatically run this class, and to call the functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the name of this class or
+ * the package after creating this project, you must also update the build.gradle file in the
+ * project.
  */
 public class Robot extends LoggedRobot {
 
@@ -54,20 +52,21 @@ public class Robot extends LoggedRobot {
   }
 
   private void installExceptionHandler() {
-    Thread.setDefaultUncaughtExceptionHandler((thread, exception) -> {
-      try {
-        DiagnosticContext.captureException(thread, exception);
-      } catch (Throwable t) {
-      }
+    Thread.setDefaultUncaughtExceptionHandler(
+        (thread, exception) -> {
+          try {
+            DiagnosticContext.captureException(thread, exception);
+          } catch (Throwable t) {
+          }
 
-      if (exception instanceof RuntimeException) {
-        throw (RuntimeException) exception;
-      } else if (exception instanceof Error) {
-        throw (Error) exception;
-      } else {
-        throw new RuntimeException(exception);
-      }
-    });
+          if (exception instanceof RuntimeException) {
+            throw (RuntimeException) exception;
+          } else if (exception instanceof Error) {
+            throw (Error) exception;
+          } else {
+            throw new RuntimeException(exception);
+          }
+        });
   }
 
   // ==================== LOGGING CONFIGURATION ====================
@@ -134,8 +133,8 @@ public class Robot extends LoggedRobot {
   }
 
   /**
-   * This function is run when the robot is first started up and should be used
-   * for any initialization code.
+   * This function is run when the robot is first started up and should be used for any
+   * initialization code.
    */
   @Override
   public void robotInit() {
@@ -163,13 +162,11 @@ public class Robot extends LoggedRobot {
   }
 
   /**
-   * This function is called every 20 ms, no matter the mode. Use this for items
-   * like diagnostics that you want ran
-   * during disabled, autonomous, teleoperated and test.
+   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+   * that you want ran during disabled, autonomous, teleoperated and test.
    *
-   * <p>
-   * This runs after the mode specific periodic functions, but before LiveWindow
-   * and SmartDashboard integrated updating.
+   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+   * SmartDashboard integrated updating.
    */
   @Override
   public void robotPeriodic() {
@@ -216,7 +213,8 @@ public class Robot extends LoggedRobot {
     // Post-match tracking is OPTIONAL
     try {
       if (DriverStation.isEnabled()) {
-        PostMatchSummary.getInstance().updateTracking(TelemetryManager.getInstance().getLoopTimeMs());
+        PostMatchSummary.getInstance()
+            .updateTracking(TelemetryManager.getInstance().getLoopTimeMs());
       }
     } catch (Throwable t) {
       safeLog("Health/CrashBarrier/PostMatch", true);
@@ -226,9 +224,7 @@ public class Robot extends LoggedRobot {
     LoggedTracer.record("AlertsMs");
   }
 
-  /**
-   * This function is called once each time the robot enters Disabled mode.
-   */
+  /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
     m_robotContainer.setMotorBrake(true);
@@ -292,10 +288,7 @@ public class Robot extends LoggedRobot {
     }
   }
 
-  /**
-   * This autonomous runs the autonomous command selected by your
-   * {@link RobotContainer} class.
-   */
+  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
     m_robotContainer.setMotorBrake(true);
@@ -317,12 +310,9 @@ public class Robot extends LoggedRobot {
     }
   }
 
-  /**
-   * This function is called periodically during autonomous.
-   */
+  /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-  }
+  public void autonomousPeriodic() {}
 
   @Override
   public void teleopInit() {
@@ -338,12 +328,9 @@ public class Robot extends LoggedRobot {
     PostMatchSummary.getInstance().startTracking();
   }
 
-  /**
-   * This function is called periodically during operator control.
-   */
+  /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void testInit() {
@@ -352,9 +339,7 @@ public class Robot extends LoggedRobot {
     EventMarker.modeChange("TEST");
   }
 
-  /**
-   * This function is called periodically during test mode.
-   */
+  /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
     // Full diagnostic trigger (actuator tests) - only works in test mode

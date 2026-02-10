@@ -4,35 +4,30 @@
 
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.*;
+
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide
- * numerical or boolean constants. This
- * class should not be used for any other purpose. All constants should be
- * declared globally (i.e. public static). Do
- * not put anything functional in this class.
+ * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants should be declared
+ * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>
- * It is advised to statically import this class (or one of its inner classes)
- * wherever the
+ * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
 
   /**
-   * Master tuning mode switch.
-   * - true:  Values read from dashboard (practice/testing)
-   * - false: Values locked to defaults (competition)
+   * Master tuning mode switch. - true: Values read from dashboard (practice/testing) - false:
+   * Values locked to defaults (competition)
    *
-   * IMPORTANT: Set to FALSE before competition deployment!
+   * <p>IMPORTANT: Set to FALSE before competition deployment!
    */
   public static final boolean TUNING_MODE = true;
 
@@ -40,19 +35,22 @@ public final class Constants {
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED = Units.feetToMeters(14.5);
   // Maximum speed of the robot in meters per second, used to limit acceleration.
-  public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
+  public static final Matter CHASSIS =
+      new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
 
   public static final class DrivebaseConstants {
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
+
   public static final class FieldConstants {
-    public static final AprilTagFieldLayout FIELD_LAYOUT = AprilTagFieldLayout.loadField(
-      AprilTagFields.k2026RebuiltAndymark);
+    public static final AprilTagFieldLayout FIELD_LAYOUT =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
     public static final double DistanceToHub = 0.4;
   }
+
   public static class OperatorConstants {
 
     // Joystick Deadband
@@ -61,6 +59,7 @@ public final class Constants {
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT = 6;
   }
+
   public static final class HubScoringConstants {
 
     // Hub positions on field
@@ -74,12 +73,14 @@ public final class Constants {
     // Valid scoring arc definition
     public static final Rotation2d BLUE_SCORING_SIDE = Rotation2d.fromDegrees(180); // Faces +X
     public static final Rotation2d RED_SCORING_SIDE = Rotation2d.fromDegrees(0); // Faces -X
-    public static final double SCORING_ARC_WIDTH_DEGREES = 90; // 180 = semicircle, 90 = quarter circle
+    public static final double SCORING_ARC_WIDTH_DEGREES =
+        90; // 180 = semicircle, 90 = quarter circle
 
     // Tolerances
     public static final double POSITION_TOLERANCE = 0.05; // meters
     public static final double ANGLE_TOLERANCE = 2.0; // degrees
   }
+
   public static class PhotonvisionConstants {
 
     /*
@@ -90,6 +91,7 @@ public final class Constants {
     backright
      */
   }
+
   public static final class CANDeviceIDs {
     public static final int kIndexerID = 50;
     public static final int kShooterID = 52;
@@ -100,7 +102,7 @@ public final class Constants {
 
   public static final class MotorConstants {
     public static final double DESIRED_SHOOTER_RPM = 3730;
-    public static final double DESIRED_INDEXER_RPM = 8.4 * 3730/4;
+    public static final double DESIRED_INDEXER_RPM = 8.4 * 3730 / 4;
     public static final double OUT_INTAKE_POS = 1;
     public static final double IN_INTAKE_POS = 1;
     public static final double DESIRED_INTAKE_SPEED = 1;

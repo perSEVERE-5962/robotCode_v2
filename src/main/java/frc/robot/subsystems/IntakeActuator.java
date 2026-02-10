@@ -9,9 +9,20 @@ public class IntakeActuator extends Actuator {
   private static final double POSITION_TOLERANCE_ROTATIONS = 0.05;
 
   private IntakeActuator() {
-    super(Constants.CANDeviceIDs.kIntakeActuatorID, Constants.IntakeConstants.P, Constants.IntakeConstants.I,
-        Constants.IntakeConstants.D, Constants.IntakeConstants.MinOutput, Constants.IntakeConstants.MaxOutput,
-        Constants.IntakeConstants.FF, Constants.IntakeConstants.Iz, 0, 0, false, false, false);
+    super(
+        Constants.CANDeviceIDs.kIntakeActuatorID,
+        Constants.IntakeConstants.P,
+        Constants.IntakeConstants.I,
+        Constants.IntakeConstants.D,
+        Constants.IntakeConstants.MinOutput,
+        Constants.IntakeConstants.MaxOutput,
+        Constants.IntakeConstants.FF,
+        Constants.IntakeConstants.Iz,
+        0,
+        0,
+        false,
+        false,
+        false);
   }
 
   @Override
@@ -29,9 +40,17 @@ public class IntakeActuator extends Actuator {
   }
 
   // Hardware accessors
-  public double getTargetPosition() { return targetPosition; }
-  public double getAppliedOutput() { return getMotor().getAppliedOutput(); }
-  public double getOutputCurrent() { return getMotor().getOutputCurrent(); }
+  public double getTargetPosition() {
+    return targetPosition;
+  }
+
+  public double getAppliedOutput() {
+    return getMotor().getAppliedOutput();
+  }
+
+  public double getOutputCurrent() {
+    return getMotor().getOutputCurrent();
+  }
 
   public static IntakeActuator getInstance() {
     if (instance == null) {
