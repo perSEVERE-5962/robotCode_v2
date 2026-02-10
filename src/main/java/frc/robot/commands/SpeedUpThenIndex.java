@@ -5,14 +5,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/*
+ * Command to speed up shooter then run indexer.
+ */
 public class SpeedUpThenIndex extends Command {
   /** Creates a new SpeedUpThenIndex. */
   private Shooter shooter;
@@ -34,26 +32,17 @@ public class SpeedUpThenIndex extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    CommandScheduler.getInstance()
-        .schedule(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
-    final Command waitUntilSpeed =
-        Commands.waitUntil(
-            () -> shooter.getMotorVelocity() == Constants.MotorConstants.DESIRED_SHOOTER_RPM);
-    CommandScheduler.getInstance()
-        .schedule(
-            new SequentialCommandGroup(
-                waitUntilSpeed, new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM)));
+    shooter.moveToVelocityWithPID(shooter.getTunableTargetRPM());
+    if (shooter.isAtSpeed()) {
+      indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    CommandScheduler.getInstance().schedule(new MoveShooter(0));
-    CommandScheduler.getInstance()
-        .schedule(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_RPM));
-    final Command waitTime = Commands.waitSeconds(0.25);
-    CommandScheduler.getInstance()
-        .schedule(new SequentialCommandGroup(waitTime, new MoveIndexer(0)));
+    shooter.move(0);
+    indexer.move(0);
   }
 
   // Returns true when the command should end.

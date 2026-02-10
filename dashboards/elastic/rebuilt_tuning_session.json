@@ -671,7 +671,7 @@
             }
           },
           {
-            "title": "Deadband",
+            "title": "Deadband (read-only)",
             "x": 768.0,
             "y": 512.0,
             "width": 384.0,
@@ -680,11 +680,11 @@
             "properties": {
               "topic": "/SmartDashboard/Driver/Deadband",
               "period": 0.033,
-              "show_submit_button": true
+              "show_submit_button": false
             }
           },
           {
-            "title": "Turn Constant",
+            "title": "Turn Constant (read-only)",
             "x": 1152.0,
             "y": 512.0,
             "width": 384.0,
@@ -693,7 +693,7 @@
             "properties": {
               "topic": "/SmartDashboard/Driver/TurnConstant",
               "period": 0.033,
-              "show_submit_button": true
+              "show_submit_button": false
             }
           }
         ]
