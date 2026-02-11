@@ -98,7 +98,7 @@ public class ShootOnTheMove extends Command {
 
   private final SwerveSubsystem swerve;
   private final Shooter shooter;
-
+  private Translation2d lastDrift;
   private final double WHEEL_RADIUS_METERS = Units.inchesToMeters(2.0);
   private final DoubleSupplier forwardInput;
   private final DoubleSupplier strafeInput;
@@ -150,7 +150,7 @@ private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoub
 
       // how far the piece drifts during flight due to robot motion 
       Translation2d drift = robotVel.times(timeOfFlight);
-      lastDrift = drift;
+       lastDrift = drift;
       compensatedTarget = hubCenter.minus(drift);
       double distanceToCompensated = robotPos.getDistance(compensatedTarget);
 

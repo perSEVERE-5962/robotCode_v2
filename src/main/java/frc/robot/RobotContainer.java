@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -43,6 +44,7 @@ import swervelib.SwerveInputStream;
 import frc.robot.Constants;
 import frc.robot.Constants.HubScoringConstants;
 import java.io.File;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.MoveShooter;
@@ -259,7 +261,7 @@ public class RobotContainer {
       //driverXbox.b().whileTrue(new RunIntake())
        //   .onFalse(new RetractIntake());
       driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM, arcDriveOn));
-      //driverXbox.a().whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
+      driverXbox.rightBumper().whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
       //driverXbox.x().onTrue(new SpeedUpThenIndex());
     }
   }
@@ -340,14 +342,16 @@ public class RobotContainer {
   }
 
   private boolean isRedAlliance() {
-    var alliance = DriverStation.getAlliance();
-
-    if (alliance.isPresent()) {
-      return alliance.get() == DriverStation.Alliance.Red;
+    Optional<Alliance> ally = DriverStation.getAlliance();
+if (ally.isPresent()) {
+    if (ally.get() == Alliance.Red) {
+        return true;
     }
-
-    // Default to blue if no alliance data
-    return false;
+    if (ally.get() == Alliance.Blue) {
+        return false;
+    }
+}
+return false;
   }
 
   private Translation2d getHubCenter() {

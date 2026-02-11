@@ -108,8 +108,8 @@ public class HubArcDrive extends Command {
 
     double fieldVx = radialSpeed * radialX + tangentialSpeed * tangentialX;
     double fieldVy = radialSpeed * radialY + tangentialSpeed * tangentialY;
-    double maxX = MathUtil.clamp(fieldVx,-swerve.getSwerveDrive().getMaximumChassisVelocity() *0.6,swerve.getSwerveDrive().getMaximumChassisVelocity()*0.6);//clamp speeds for controlled turning
-    double maxY = MathUtil.clamp(fieldVy,-swerve.getSwerveDrive().getMaximumChassisVelocity() *0.6,swerve.getSwerveDrive().getMaximumChassisVelocity()*0.6);//clamp speeds for controlled turning
+    double maxX = MathUtil.clamp(fieldVx,-swerve.getSwerveDrive().getMaximumChassisVelocity() *0.7,swerve.getSwerveDrive().getMaximumChassisVelocity()*0.7);//clamp speeds for controlled turning
+    double maxY = MathUtil.clamp(fieldVy,-swerve.getSwerveDrive().getMaximumChassisVelocity() *0.7,swerve.getSwerveDrive().getMaximumChassisVelocity()*0.7);//clamp speeds for controlled turning
 
    
   
@@ -134,19 +134,19 @@ public class HubArcDrive extends Command {
     // Heading control with velocity compensation, to compensate for the velocity of ball due to robot speed
     headingError = compensatedAim.minus(currentHeading).getRadians();
     headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));
-    double headingSpeed = headingError*5.3;//tune pid
+    double headingSpeed = headingError*4.5;//tune pid
     headingSpeed += tangentialSpeed / scoringDistance;
     double maxHeadingSpeed = swerve.getSwerveDrive().getMaximumChassisAngularVelocity();
-    headingSpeed = MathUtil.clamp(headingSpeed, -maxHeadingSpeed*0.5, maxHeadingSpeed*0.5);//clamp speeds for controlled turning
+    headingSpeed = MathUtil.clamp(headingSpeed, -maxHeadingSpeed*0.4, maxHeadingSpeed*0.4);//clamp speeds for controlled turning
     ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
         maxX, maxY, headingSpeed, currentHeading
-    )
+    );
 
     swerve.drive(speeds);
     System.out.println(headingError);
     System.out.println("velocity:"+robotVelocity.vyMetersPerSecond);
     double shooterSpeed=Constants.MotorConstants.DESIRED_SHOOTER_RPM+( Math.abs(robotVelocity.vyMetersPerSecond*350));
-    shooterSpeed = MathUtil.clamp(shooterSpeed, 0, 3800);
+    shooterSpeed = MathUtil.clamp(shooterSpeed, 0, 3760);
     shooter.moveToVelocityWithPID(shooterSpeed);
     System.out.println("shooter speed" + shooterSpeed);
     
