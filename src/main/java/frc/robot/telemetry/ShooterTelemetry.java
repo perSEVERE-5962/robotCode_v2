@@ -18,9 +18,10 @@ public class ShooterTelemetry implements SubsystemTelemetry {
   // Spin-up tracking
   private double spinUpStartTime = 0;
   private boolean wasSpinningUp = false;
-  private double lastSpinUpDurationMs = 0;
+  private double lastSpinUpDurationMs = -1; // -1 = not yet measured
   private boolean spinUpInterrupted = false;
   private boolean wasAtSpeed = false;
+  private boolean hasReachedSpeed = false; // Latch: prevents oscillation from resetting timer
 
   // Shot detection
   private double previousVelocityRPM = 0;
@@ -134,8 +135,17 @@ public class ShooterTelemetry implements SubsystemTelemetry {
       stalled = false;
     }
 
-    // Spin-up tracking
-    isSpinningUp = (targetRPM > 0) && !atSpeed;
+    // Spin-up tracking (with oscillation protection)
+    // Reset latch when motor not commanded (command ended)
+    if (targetRPM <= 0) {
+      hasReachedSpeed = false;
+    }
+    // Latch once we reach speed during this command run
+    if (targetRPM > 0 && atSpeed) {
+      hasReachedSpeed = true;
+    }
+    // Only spinning up on first ramp, not on oscillation dips after reaching speed
+    isSpinningUp = (targetRPM > 0) && !atSpeed && !hasReachedSpeed;
     if (isSpinningUp && !wasSpinningUp) {
       spinUpStartTime = now;
     }
