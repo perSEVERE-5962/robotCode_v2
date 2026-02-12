@@ -3,7 +3,6 @@ package frc.robot.telemetry;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.DeviceHealthConstants;
-import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.StallDetectionConstants;
 import frc.robot.subsystems.Indexer;
 import frc.robot.util.EventMarker;
@@ -13,9 +12,9 @@ public class IndexerTelemetry implements SubsystemTelemetry {
   private Indexer indexer; // Not final - can re-acquire if null
   private boolean subsystemAvailable = false;
 
-  // Jam detection
-  private final Debouncer jamDebouncer =
-      new Debouncer(IndexerConstants.JAM_TIME_THRESHOLD_SECONDS, Debouncer.DebounceType.kRising);
+  // Jam detection (manual time-based so JamSeconds tunable is read each cycle)
+  private double jamConditionStartTime = 0;
+  private boolean inJamCondition = false;
   private boolean jamDetected = false;
   private int totalJamCount = 0;
 
@@ -33,7 +32,7 @@ public class IndexerTelemetry implements SubsystemTelemetry {
   private boolean pidTuningEvent = false;
   private double prevKP = -1, prevKI = -1, prevKD = -1, prevFF = -1;
 
-  // Device health — debounced to filter CAN bus transients
+  // Device health. Debounced to filter CAN bus transients
   private final Debouncer connectDebouncer =
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
   private boolean deviceConnected = false;
@@ -112,11 +111,22 @@ public class IndexerTelemetry implements SubsystemTelemetry {
       SafeLog.run(() -> CycleTracker.getInstance().intakeComplete());
     }
 
-    // Jam detection using debouncer (threshold from tunable)
+    // Jam detection: manual time-based (reads both JamAmps and JamSeconds tunables live)
     double jamThreshold = indexer.getJamCurrentThreshold();
+    double jamTimeSec = indexer.getJamTimeThreshold();
     boolean highCurrent = running && (currentAmps > jamThreshold);
     boolean wasJammed = jamDetected;
-    jamDetected = jamDebouncer.calculate(highCurrent);
+
+    if (highCurrent) {
+      if (!inJamCondition) {
+        jamConditionStartTime = now;
+        inJamCondition = true;
+      }
+      jamDetected = (now - jamConditionStartTime) >= jamTimeSec;
+    } else {
+      inJamCondition = false;
+      jamDetected = false;
+    }
 
     // Count on rising edge only
     if (jamDetected && !wasJammed) {
@@ -220,7 +230,7 @@ public class IndexerTelemetry implements SubsystemTelemetry {
 
   public void clearJam() {
     jamDetected = false;
-    jamDebouncer.calculate(false);
+    inJamCondition = false;
   }
 
   public boolean isDeviceConnected() {

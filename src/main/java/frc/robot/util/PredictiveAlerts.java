@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.BatteryThresholds;
 import frc.robot.telemetry.TelemetryManager;
 import org.littletonrobotics.junction.Logger;
@@ -30,9 +31,11 @@ public class PredictiveAlerts {
   private static final double TEMP_OVERHEAT = 70.0;
   private static final double PREDICTION_WARN_SECONDS = 30.0;
 
-  // Alert state (prevent spam)
-  private boolean batteryAlertSent = false;
-  private boolean tempAlertSent = false;
+  // Cooldown timers to prevent notification spam on oscillating loads
+  private static final double BATTERY_ALERT_COOLDOWN_S = 60.0;
+  private static final double TEMP_ALERT_COOLDOWN_S = 60.0;
+  private double lastBatteryAlertTime = 0;
+  private double lastTempAlertTime = 0;
 
   private PredictiveAlerts() {
     double initialVoltage = RobotController.getBatteryVoltage();
@@ -117,30 +120,28 @@ public class PredictiveAlerts {
   }
 
   private void checkPredictiveAlerts() {
-    // Battery prediction
+    double now = Timer.getFPGATimestamp();
+
+    // Battery prediction with cooldown to prevent spam on oscillating loads
     if (predictedTimeToWarning > 0 && predictedTimeToWarning < PREDICTION_WARN_SECONDS) {
-      if (!batteryAlertSent) {
+      if ((now - lastBatteryAlertTime) > BATTERY_ALERT_COOLDOWN_S) {
         ElasticUtil.sendWarning(
             "Battery Prediction",
             String.format(
                 "Battery will hit warning in %.0fs at current drain", predictedTimeToWarning));
-        batteryAlertSent = true;
+        lastBatteryAlertTime = now;
       }
-    } else {
-      batteryAlertSent = false;
     }
 
-    // Temp prediction
+    // Temp prediction with cooldown
     if (predictedTimeToOverheat > 0 && predictedTimeToOverheat < PREDICTION_WARN_SECONDS) {
-      if (!tempAlertSent) {
+      if ((now - lastTempAlertTime) > TEMP_ALERT_COOLDOWN_S) {
         ElasticUtil.sendWarning(
             "Temp Prediction",
             String.format(
                 "Shooter will overheat in %.0fs at current rate", predictedTimeToOverheat));
-        tempAlertSent = true;
+        lastTempAlertTime = now;
       }
-    } else {
-      tempAlertSent = false;
     }
   }
 
@@ -165,8 +166,8 @@ public class PredictiveAlerts {
   public void reset() {
     samplesInitialized = false;
     sampleIndex = 0;
-    batteryAlertSent = false;
-    tempAlertSent = false;
+    lastBatteryAlertTime = 0;
+    lastTempAlertTime = 0;
 
     double initialVoltage = RobotController.getBatteryVoltage();
     for (int i = 0; i < SAMPLE_SIZE; i++) {

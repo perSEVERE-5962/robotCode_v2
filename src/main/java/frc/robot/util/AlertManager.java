@@ -34,6 +34,11 @@ public class AlertManager {
 
   // Debounce timing (seconds)
   private static final double DEBOUNCE_TIME_S = 5.0;
+  private static final double BATTERY_DEBOUNCE_TIME_S = 30.0;
+
+  // Hysteresis: once battery warning triggers, don't clear until voltage rises above this
+  public static final double BATTERY_WARNING_CLEAR_V = 12.0;
+  private boolean inBatteryWarning = false;
 
   // WPILib Alerts for Driver Station
   private final Alert batteryLowAlert = new Alert("Battery voltage low", AlertType.kWarning);
@@ -101,6 +106,7 @@ public class AlertManager {
     double voltage = RobotController.getBatteryVoltage();
 
     if (voltage < BATTERY_CRITICAL_V) {
+      inBatteryWarning = true;
       batteryCriticalAlert.set(true);
       batteryLowAlert.set(false);
       addAlert("BatteryCritical");
@@ -109,12 +115,14 @@ public class AlertManager {
           "Battery Critical",
           String.format("Battery at %.1fV - REPLACE NOW!", voltage),
           true);
-    } else if (voltage < BATTERY_WARNING_V) {
+    } else if (voltage < BATTERY_WARNING_V || (inBatteryWarning && voltage < BATTERY_WARNING_CLEAR_V)) {
+      inBatteryWarning = true;
       batteryCriticalAlert.set(false);
       batteryLowAlert.set(true);
       addAlert("BatteryLow");
       notifyElastic("BatteryLow", "Battery Low", String.format("Battery at %.1fV", voltage), false);
     } else {
+      inBatteryWarning = false;
       batteryCriticalAlert.set(false);
       batteryLowAlert.set(false);
     }
@@ -331,12 +339,14 @@ public class AlertManager {
     activeAlerts.add(alertName);
   }
 
-  /** Sends notification to Elastic with debouncing. */
+  /** Sends notification to Elastic with debouncing. Battery alerts use longer cooldown. */
   private void notifyElastic(String key, String title, String message, boolean isError) {
     double now = Timer.getFPGATimestamp();
     Double lastTime = lastElasticNotifyTimes.get(key);
+    boolean isBatteryKey = key.startsWith("Battery");
+    double debounce = isBatteryKey ? BATTERY_DEBOUNCE_TIME_S : DEBOUNCE_TIME_S;
 
-    if (lastTime == null || (now - lastTime) > DEBOUNCE_TIME_S) {
+    if (lastTime == null || (now - lastTime) > debounce) {
       if (isError) {
         ElasticUtil.sendError(title, message);
       } else {

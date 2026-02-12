@@ -22,7 +22,7 @@ public class HangerTelemetry implements SubsystemTelemetry {
   private boolean isDeployed = false;
   private boolean isClimbing = false;
 
-  // Device health — debounced to filter CAN bus transients
+  // Device health. Debounced to filter CAN bus transients
   private final Debouncer connectDebouncer =
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
   private boolean deviceConnected = false;
