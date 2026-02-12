@@ -5,6 +5,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 
@@ -41,8 +45,12 @@ public class SpeedUpThenIndex extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.move(0);
-    indexer.move(0);
+    CommandScheduler.getInstance().schedule(new MoveShooter(0));
+    CommandScheduler.getInstance()
+        .schedule(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_RPM));
+    final Command waitTime = Commands.waitSeconds(0.25);
+    CommandScheduler.getInstance()
+        .schedule(new SequentialCommandGroup(waitTime, new MoveIndexer(0)));
   }
 
   // Returns true when the command should end.

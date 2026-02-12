@@ -19,7 +19,7 @@ public class MoveIndexer extends Command {
 
   @Override
   public void execute() {
-    indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
+    indexer.moveToVelocityWithPID(rpm);
   }
 
   @Override
