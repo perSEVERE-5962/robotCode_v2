@@ -68,8 +68,8 @@ public class EventMarker {
   }
 
   /**
-   * Flush buffered events to log. Call once per cycle from TelemetryManager. This ensures all
-   * events from a cycle are logged together as an array.
+   * Flush buffered events to log. Call once per cycle from TelemetryManager. All events from a
+   * cycle get logged together as an array.
    */
   public static synchronized void flushCycleEvents() {
     try {

@@ -20,7 +20,7 @@ public class ScoringTelemetry implements SubsystemTelemetry {
   private static final double ENDGAME_START = 30.0;
 
   // ReadyToShoot stays true through brief velocity dips during sustained fire.
-  // Manual time-based debounce (not WPILib Debouncer — that has wrong initial baseline).
+  // Manual time-based debounce (not WPILib Debouncer, that has wrong initial baseline).
   private double readyFalseSince = 0;
 
   private boolean scoringAvailable = false;
@@ -93,7 +93,7 @@ public class ScoringTelemetry implements SubsystemTelemetry {
       } else if (!readyToShoot) {
         readyFalseSince = 0;
       } else {
-        // Was true, conditions now false — hold true during debounce window
+        // Was true, conditions now false, hold true during debounce window
         if (readyFalseSince == 0) readyFalseSince = now;
         if ((now - readyFalseSince) >= DeviceHealthConstants.READY_TO_SHOOT_DEBOUNCE_SEC) {
           readyToShoot = false;

@@ -32,7 +32,7 @@ public class IndexerTelemetry implements SubsystemTelemetry {
   private boolean pidTuningEvent = false;
   private double prevKP = -1, prevKI = -1, prevKD = -1, prevFF = -1;
 
-  // Device health — debounced to filter CAN bus transients
+  // Device health. Debounced to filter CAN bus transients
   private final Debouncer connectDebouncer =
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
   private boolean deviceConnected = false;

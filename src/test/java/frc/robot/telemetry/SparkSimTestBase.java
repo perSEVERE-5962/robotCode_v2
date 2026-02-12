@@ -100,7 +100,7 @@ public abstract class SparkSimTestBase {
     sim.iterate(velocityRPM, busVoltage, 0.020);
   }
 
-  /** Set encoder velocity directly — bypasses firmware filtering for deterministic tests */
+  /** Set encoder velocity directly, bypasses firmware filtering for deterministic tests */
   protected static void setMotorVelocity(SparkSim sim, double velocityRPM) {
     sim.getRelativeEncoderSim().setVelocity(velocityRPM);
   }
