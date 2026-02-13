@@ -235,7 +235,8 @@ public class RobotContainer {
        //   .onFalse(new RetractIntake());
       driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM));
       driverXbox.a().whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
-      driverXbox.x().onTrue(new SpeedUpThenIndex());
+      driverXbox.x().whileTrue(new SpeedUpThenIndex());
+      driverXbox.x().onFalse(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_RPM).andThen(Commands.waitSeconds(0.25)).andThen(new MoveIndexer(0)));
     }
   }
   
