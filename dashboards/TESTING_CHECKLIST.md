@@ -1,6 +1,8 @@
 # Testing Checklist
 
-This branch adds telemetry logging and 12 dashboard layouts. The telemetry is read-only (no motor commands, no control logic), so the robot should drive exactly the same as before.
+This branch adds telemetry logging and 12 dashboard layouts. **The robot drives exactly the same as before.** Telemetry is read-only, it just records what's happening. It can't change how anything moves.
+
+If something drives differently after deploying this, it's not the logging. Check if something else changed.
 
 ```mermaid
 flowchart LR
@@ -11,24 +13,16 @@ flowchart LR
 
 ---
 
-## What's new
+## Bare minimum test (2 min)
 
-- 17 telemetry classes that log about 285 signals through SafeLog (crash-isolated so one bad sensor can't take down the whole robot)
-- Hub strategy tracking: shots per hub shift, hub utilization %, active vs inactive hub shots
-- Debounced disconnect detection on all motors (filters out CAN bus noise)
-- `Scoring/ReadyToShoot`, a composite signal explained below
-- 12 dashboard layouts (9 for AdvantageScope, 3 for Elastic)
+If you only do one thing, do this:
 
-ReadyToShoot is the main signal to watch. It only goes true when all three of these are true at the same time:
+1. `./gradlew build` → should say BUILD SUCCESSFUL
+2. `./gradlew deploy` → robot boots, no errors in Driver Station
+3. Drive around for 30 seconds → **robot should feel exactly the same as before**
+4. Check `SystemHealth/BatteryVoltage` in AdvantageScope → should read 12-13V
 
-```mermaid
-flowchart LR
-    A[Shooter at speed] --> D[ReadyToShoot]
-    B[Indexer not jammed] --> D
-    C[Vision has target lock] --> D
-```
-
-If ReadyToShoot is false, check which one of those three isn't happy.
+If all four pass, logging is working and nothing is broken. Everything below is extra verification.
 
 ---
 
@@ -83,7 +77,7 @@ See `dashboards/README.md` for what all 12 layouts do.
    - `Shooter/VelocityRPM` should be non-zero when the shooter is spinning
    - `Drive/Pose` should update when you push the robot around
    - `SystemHealth/BatteryVoltage` should read around 12-13V
-   - `Scoring/ReadyToShoot` goes true when shooter is at speed + indexer clear + vision locked
+   - `Scoring/ReadyToShoot` goes true when all 5 conditions are met
 
 If you see all of those, telemetry is working.
 
@@ -93,20 +87,28 @@ If you see all of those, telemetry is working.
 
 Run through these with the robot enabled. Check the signals in AdvantageScope as you go.
 
-| # | Test | What to do | What you should see |
-|---|------|------------|---------------------|
-| 1 | Build | `./gradlew build` | BUILD SUCCESSFUL |
-| 2 | Deploy | `./gradlew deploy` | Robot boots, no errors in Driver Station |
-| 3 | Drive | Drive around for 30 sec | `Drive/Pose` updates, robot feels normal |
-| 4 | Shooter | Spin up the shooter | `Shooter/VelocityRPM` goes up, `Shooter/AtSpeed` goes true |
-| 5 | Intake | Run the intake | `Intake/Running` goes true |
-| 6 | Vision | Point at an AprilTag | `Vision/HasTarget` goes true |
-| 7 | Scoring | Do a full shoot cycle | `Scoring/ReadyToShoot` goes true when everything lines up |
-| 8 | Battery | Just check | `SystemHealth/BatteryVoltage` reads a reasonable number |
-| 9 | Hub timing | Sit in teleop for a minute | `Scoring/HubShiftNumber` should increment every ~25 seconds |
-| 10 | Health | Check after all tests | `Health/Telemetry/Failures` should still be 0 |
-| 11 | Dashboard | Import match_review.json into AdvantageScope | All tabs show up and signals populate |
-| 12 | Live tuning | Load `rebuilt_tuning_session.json` in Elastic, see below | RPM graph updates live, PID changes take effect immediately |
+**Important:** Some mechanisms might not be on the robot yet. That's fine. Skip the ones marked "skip if not built" and come back to them later. Logging still works for everything else.
+
+| # | Test | What to do | What you should see | Hardware needed? |
+|---|------|------------|---------------------|-----------------|
+| 1 | Build | `./gradlew build` | BUILD SUCCESSFUL | No |
+| 2 | Deploy | `./gradlew deploy` | Robot boots, no errors in Driver Station | Robot on |
+| 3 | Drive | Drive around for 30 sec | `Drive/Pose` updates, robot feels normal | Drivetrain |
+| 4 | Shooter | Spin up the shooter | `Shooter/VelocityRPM` goes up, `Shooter/AtSpeed` goes true | Shooter motor |
+| 5 | Intake | Run the intake | `Intake/Running` goes true | **Skip if intake not built** |
+| 6 | Vision | Point at an AprilTag | `Vision/HasTarget` goes true | **Skip if cameras not mounted** |
+| 7 | Scoring | Do a full shoot cycle | `Scoring/ReadyToShoot` goes true when everything lines up | Shooter + vision + indexer all working |
+| 8 | Battery | Just check | `SystemHealth/BatteryVoltage` reads a reasonable number | Robot on |
+| 9 | Hub timing | Sit in teleop for a minute | `Scoring/HubShiftNumber` should increment every ~25 seconds | Robot enabled in teleop |
+| 10 | Health | Check after all tests | `Health/Telemetry/Failures` should still be 0 | Robot on |
+| 11 | Dashboard | Import match_review.json into AdvantageScope | All tabs show up and signals populate | Log file from any test above |
+| 12 | Live tuning | Load `rebuilt_tuning_session.json` in Elastic, see below | RPM graph updates live, PID changes take effect immediately | Shooter motor |
+
+**Signals that will be zero if hardware isn't installed yet (this is expected, not a bug):**
+- `Intake/*` and `IntakeActuator/*` → zero until intake is assembled
+- `Hanger/*` → zero until hanger is mounted
+- `Vision/*` → zero until cameras are on the robot
+- Motor temperatures → zero in the first few seconds, they take time to read
 
 ---
 
@@ -148,6 +150,8 @@ I'll review them in AdvantageScope at home and ping you if anything looks off.
 |---------|---------------|
 | Robot drives differently | Telemetry is read-only so this shouldn't happen. Check if something else changed. |
 | Everything is zeros in AdvantageScope | Check CAN wiring. Try re-deploying. Make sure AdvantageScope is connected. |
+| Signals are zero for one mechanism | Is that mechanism built and wired? If not, zeros are expected. |
 | `Health/Telemetry/Failures` is above 0 | Look at `Health/Telemetry/LastFailed` to see which telemetry class is having problems. |
 | Loop time over 20ms | Check `SystemHealth/LoopTimeMs`. If it stays high, CAN bus might be overloaded. |
 | Dashboard file won't open | Make sure you have AdvantageScope v26+ or Elastic 2026. Older versions won't work. |
+| Controller isn't vibrating | Make sure `DriverFeedback.initialize()` is being called. Check that hapticScale isn't set to 0. |
