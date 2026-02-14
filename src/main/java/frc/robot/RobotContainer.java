@@ -262,27 +262,57 @@ public class RobotContainer {
        //   .onFalse(new RetractIntake());
       driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM, arcDriveOn));
       driverXbox.rightBumper().whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
-      //driverXbox.x().onTrue(new SpeedUpThenIndex());
+
+
+      Trigger crossingZone = new Trigger(()->{
+    Pose2d pose = drivebase.getPose();
+    if(pose.getTranslation().getX()<RED_HUB_CENTER.getX()+1&&pose.getTranslation().getX()>RED_HUB_CENTER.getX()-1||
+    pose.getTranslation().getX()<BLUE_HUB_CENTER.getX()+1&&pose.getTranslation().getX()>BLUE_HUB_CENTER.getX()-1){
+    return true;
+    }
+    else{
+    return false;
+    }
+});
+crossingZone.whileTrue(Commands.run(() -> {
+  Rotation2d current = drivebase.getHeading();
+  Rotation2d target;
+
+if (Math.abs(current.getDegrees()) < 90 || Math.abs(current.getDegrees()) > 270) {
+    target = Rotation2d.fromDegrees(0);   
+} else {
+    target = Rotation2d.fromDegrees(180);  
+}
+    ChassisSpeeds speeds = drivebase.getTargetSpeeds(
+        driverXbox.getLeftY(),
+        driverXbox.getLeftX(),
+        target.getSin(),
+        target.getCos()
+    );
+    drivebase.driveFieldOriented(speeds);
+}, drivebase));
+
     }
   }
+/*     if (DriverStation.isTest()) {
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
-  /*     if (DriverStation.isTest()) {
-    drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
+      driverJoystick.button(12).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverJoystick.button(11).whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
+      driverJoystick.button(3).onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverJoystick.button(4).whileTrue(drivebase.centerModulesCommand());
+      driverJoystick.button(1).onTrue(Commands.none());
+      driverJoystick.button(6).onTrue(Commands.none());
+    } else {
+      driverJoystick.button(12).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverJoystick.button(11).whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
+      driverJoystick.button(3).onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverJoystick.button(4).whileTrue(drivebase.centerModulesCommand());
+      driverJoystick.button(1).onTrue(Commands.none());
+      driverJoystick.button(6).onTrue(Commands.none());
+    } */
 
-    driverJoystick.button(12).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-    driverJoystick.button(11).whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-    driverJoystick.button(3).onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    driverJoystick.button(4).whileTrue(drivebase.centerModulesCommand());
-    driverJoystick.button(1).onTrue(Commands.none());
-    driverJoystick.button(6).onTrue(Commands.none());
-  } else {
-    driverJoystick.button(12).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-    driverJoystick.button(11).whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-    driverJoystick.button(3).onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    driverJoystick.button(4).whileTrue(drivebase.centerModulesCommand());
-    driverJoystick.button(1).onTrue(Commands.none());
-    driverJoystick.button(6).onTrue(Commands.none());
-  } */
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
