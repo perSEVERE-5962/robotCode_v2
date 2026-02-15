@@ -17,7 +17,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    container: wpilib/roborio-cross-ubuntu:2026-22.04-py314
+    container: wpilib/ubuntu-base:22.04
 
     steps:
       - name: Checkout
@@ -34,16 +34,6 @@ jobs:
             sed -i 's/\r$//' ./gradlew || true
             chmod +x ./gradlew
           fi
- 
-#      - name: Set JAVA_HOME automatically
-#        run: |
-#          echo "JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))" >> $GITHUB_ENV
-
-      - name: Verify
-        run: |
-          echo JAVA_HOME=$JAVA_HOME
-          java -version
-          which java
           
       - name: Run Spotless Check
         run: ./gradlew spotlessCheck
