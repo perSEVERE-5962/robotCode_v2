@@ -4,69 +4,53 @@
 
 package frc.robot;
 
-
 import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.Robot;
-import java.awt.Desktop;
+import frc.robot.subsystems.swervedrive.Vision;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonTargetSortMode;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.PhotonUtils;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
-import frc.robot.subsystems.swervedrive.Vision;
+
 /** Add your docs here. */
 public enum Cameras {
-  /**
-   * Left Camera
-   */
-  LEFT_CAM("left",
+  /** Left Camera */
+  LEFT_CAM(
+      "left",
       new Rotation3d(0, 0, 0),
-      new Translation3d(0.31,0.17,0.32),
-      VecBuilder.fill(0.3, 0.3, 0.6), VecBuilder.fill(0.1, 0.1, 0.2)),
-  /**
-   * Right Camera
-   */
-  RIGHT_CAM("right",
+      new Translation3d(0.31, 0.17, 0.32),
+      VecBuilder.fill(0.3, 0.3, 0.6),
+      VecBuilder.fill(0.1, 0.1, 0.2)),
+  /** Right Camera */
+  RIGHT_CAM(
+      "right",
       new Rotation3d(0, 0, 0),
-      new Translation3d(0,0,0),
-          VecBuilder.fill(0.3, 0.3, 0.6), VecBuilder.fill(0.1, 0.1, 0.2));
-  /**
-   * Center Camera
-   */
+      new Translation3d(0, 0, 0),
+      VecBuilder.fill(0.3, 0.3, 0.6),
+      VecBuilder.fill(0.1, 0.1, 0.2));
+
+  /** Center Camera */
   // CENTER_CAM("center",
   //     new Rotation3d(0, Units.degreesToRadians(18), 0),
   //     new Translation3d(Units.inchesToMeters(-4.628),
@@ -74,81 +58,67 @@ public enum Cameras {
   //         Units.inchesToMeters(16.129)),
   //     VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
-  /**
-   * Latency alert to use when high latency is detected.
-   */
+  /** Latency alert to use when high latency is detected. */
   public final Alert latencyAlert;
-  /**
-   * Camera instance for comms.
-   */
+
+  /** Camera instance for comms. */
   public final PhotonCamera camera;
-  /**
-   * Pose estimator for camera.
-   */
+
+  /** Pose estimator for camera. */
   public final PhotonPoseEstimator poseEstimator;
-  /**
-   * Standard Deviation for single tag readings for pose estimation.
-   */
+
+  /** Standard Deviation for single tag readings for pose estimation. */
   private final Matrix<N3, N1> singleTagStdDevs;
-  /**
-   * Standard deviation for multi-tag readings for pose estimation.
-   */
+
+  /** Standard deviation for multi-tag readings for pose estimation. */
   private final Matrix<N3, N1> multiTagStdDevs;
-  /**
-   * Transform of the camera rotation and translation relative to the center of
-   * the robot
-   */
+
+  /** Transform of the camera rotation and translation relative to the center of the robot */
   private final Transform3d robotToCamTransform;
-  /**
-   * Current standard deviations used.
-   */
+
+  /** Current standard deviations used. */
   public Matrix<N3, N1> curStdDevs;
-  /**
-   * Estimated robot pose.
-   */
+
+  /** Estimated robot pose. */
   public Optional<EstimatedRobotPose> estimatedRobotPose = Optional.empty();
 
-  /**
-   * Simulated camera instance which only exists during simulations.
-   */
+  /** Simulated camera instance which only exists during simulations. */
   public PhotonCameraSim cameraSim;
-  /**
-   * Results list to be updated periodically and cached to avoid unnecessary
-   * queries.
-   */
+
+  /** Results list to be updated periodically and cached to avoid unnecessary queries. */
   public List<PhotonPipelineResult> resultsList = new ArrayList<>();
-  /**
-   * Last read from the camera timestamp to prevent lag due to slow data fetches.
-   */
+
+  /** Last read from the camera timestamp to prevent lag due to slow data fetches. */
   private double lastReadTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
 
   /**
-   * Construct a Photon Camera class with help. Standard deviations are fake
-   * values, experiment and determine
-   * estimation noise on an actual robot.
+   * Construct a Photon Camera class with help. Standard deviations are fake values, experiment and
+   * determine estimation noise on an actual robot.
    *
-   * @param name                  Name of the PhotonVision camera found in the PV
-   *                              UI.
-   * @param robotToCamRotation    {@link Rotation3d} of the camera.
-   * @param robotToCamTranslation {@link Translation3d} relative to the center of
-   *                              the robot.
-   * @param singleTagStdDevs      Single AprilTag standard deviations of estimated
-   *                              poses from the camera.
-   * @param multiTagStdDevsMatrix Multi AprilTag standard deviations of estimated
-   *                              poses from the camera.
+   * @param name Name of the PhotonVision camera found in the PV UI.
+   * @param robotToCamRotation {@link Rotation3d} of the camera.
+   * @param robotToCamTranslation {@link Translation3d} relative to the center of the robot.
+   * @param singleTagStdDevs Single AprilTag standard deviations of estimated poses from the camera.
+   * @param multiTagStdDevsMatrix Multi AprilTag standard deviations of estimated poses from the
+   *     camera.
    */
-  Cameras(String name, Rotation3d robotToCamRotation, Translation3d robotToCamTranslation,
-      Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevsMatrix) {
-    latencyAlert = new Alert("'" + name + "' Camera is experiencing high latency.", AlertType.kWarning);
+  Cameras(
+      String name,
+      Rotation3d robotToCamRotation,
+      Translation3d robotToCamTranslation,
+      Matrix<N3, N1> singleTagStdDevs,
+      Matrix<N3, N1> multiTagStdDevsMatrix) {
+    latencyAlert =
+        new Alert("'" + name + "' Camera is experiencing high latency.", AlertType.kWarning);
 
     camera = new PhotonCamera(name);
 
     // https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
     robotToCamTransform = new Transform3d(robotToCamTranslation, robotToCamRotation);
 
-    poseEstimator = new PhotonPoseEstimator(Vision.fieldLayout,
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        robotToCamTransform);
+    poseEstimator =
+        new PhotonPoseEstimator(
+            Vision.fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamTransform);
     poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
     this.singleTagStdDevs = singleTagStdDevs;
@@ -172,9 +142,11 @@ public enum Cameras {
       cameraSim.enableDrawWireframe(true);
     }
   }
+
   public Transform3d getRobotToCamera() {
     return robotToCamTransform;
   }
+
   /**
    * Add camera to {@link VisionSystemSim} for simulated photon vision.
    *
@@ -187,12 +159,11 @@ public enum Cameras {
   }
 
   /**
-   * Get the result with the least ambiguity from the best tracked target within
-   * the Cache. This may not be the most
-   * recent result!
+   * Get the result with the least ambiguity from the best tracked target within the Cache. This may
+   * not be the most recent result!
    *
-   * @return The result in the cache with the least ambiguous best tracked target.
-   *         This is not the most recent result!
+   * @return The result in the cache with the least ambiguous best tracked target. This is not the
+   *     most recent result!
    */
   public Optional<PhotonPipelineResult> getBestResult() {
     if (resultsList.isEmpty()) {
@@ -215,17 +186,15 @@ public enum Cameras {
   /**
    * Get the latest result from the current cache.
    *
-   * @return Empty optional if nothing is found. Latest result if something is
-   *         there.
+   * @return Empty optional if nothing is found. Latest result if something is there.
    */
   public Optional<PhotonPipelineResult> getLatestResult() {
     return resultsList.isEmpty() ? Optional.empty() : Optional.of(resultsList.get(0));
   }
 
   /**
-   * Get the estimated robot pose. Updates the current robot pose estimation,
-   * standard deviations, and flushes the
-   * cache of results.
+   * Get the estimated robot pose. Updates the current robot pose estimation, standard deviations,
+   * and flushes the cache of results.
    *
    * @return Estimated pose.
    */
@@ -235,44 +204,39 @@ public enum Cameras {
   }
 
   /**
-   * Update the latest results, cached with a maximum refresh rate of 1req/15ms.
-   * Sorts the list by timestamp.
+   * Update the latest results, cached with a maximum refresh rate of 1req/15ms. Sorts the list by
+   * timestamp.
    */
   private void updateUnreadResults() {
-    double mostRecentTimestamp = resultsList.isEmpty() ? 0.0 : resultsList.get(0).getTimestampSeconds();
+    double mostRecentTimestamp =
+        resultsList.isEmpty() ? 0.0 : resultsList.get(0).getTimestampSeconds();
     double currentTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
     double debounceTime = Milliseconds.of(15).in(Seconds);
     for (PhotonPipelineResult result : resultsList) {
       mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
     }
 
-    resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
+    resultsList =
+        Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
     lastReadTimestamp = currentTimestamp;
-    resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
-      return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
-    });
+    resultsList.sort(
+        (PhotonPipelineResult a, PhotonPipelineResult b) -> {
+          return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
+        });
     if (!resultsList.isEmpty()) {
       updateEstimatedGlobalPose();
     }
-
   }
 
-
-
-
   /**
-   * The latest estimated robot pose on the field from vision data. This may be
-   * empty. This should only be called once
-   * per loop.
+   * The latest estimated robot pose on the field from vision data. This may be empty. This should
+   * only be called once per loop.
    *
-   * <p>
-   * Also includes updates for the standard deviations, which can (optionally) be
-   * retrieved with
+   * <p>Also includes updates for the standard deviations, which can (optionally) be retrieved with
    * {@link Cameras#updateEstimationStdDevs}
    *
-   * @return An {@link EstimatedRobotPose} with an estimated pose, estimate
-   *         timestamp, and targets used for
-   *         estimation.
+   * @return An {@link EstimatedRobotPose} with an estimated pose, estimate timestamp, and targets
+   *     used for estimation.
    */
   private void updateEstimatedGlobalPose() {
     Optional<EstimatedRobotPose> visionEst = Optional.empty();
@@ -284,12 +248,11 @@ public enum Cameras {
   }
 
   /**
-   * Calculates new standard deviations This algorithm is a heuristic that creates
-   * dynamic standard deviations based
-   * on number of tags, estimation strategy, and distance from the tags.
+   * Calculates new standard deviations This algorithm is a heuristic that creates dynamic standard
+   * deviations based on number of tags, estimation strategy, and distance from the tags.
    *
    * @param estimatedPose The estimated pose to guess standard deviations for.
-   * @param targets       All targets in this camera frame
+   * @param targets All targets in this camera frame
    */
   private void updateEstimationStdDevs(
       Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets) {
@@ -311,11 +274,12 @@ public enum Cameras {
           continue;
         }
         numTags++;
-        avgDist += tagPose
-            .get()
-            .toPose2d()
-            .getTranslation()
-            .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
+        avgDist +=
+            tagPose
+                .get()
+                .toPose2d()
+                .getTranslation()
+                .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
       }
 
       if (numTags == 0) {
@@ -338,5 +302,4 @@ public enum Cameras {
       }
     }
   }
-
 }

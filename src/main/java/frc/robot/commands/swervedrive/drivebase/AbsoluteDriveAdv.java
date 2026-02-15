@@ -17,10 +17,7 @@ import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.math.SwerveMath;
 
-/**
- * A more advanced Swerve Control System that has 4 buttons for which direction
- * to face
- */
+/** A more advanced Swerve Control System that has 4 buttons for which direction to face */
 public class AbsoluteDriveAdv extends Command {
 
   private final SwerveSubsystem swerve;
@@ -30,38 +27,34 @@ public class AbsoluteDriveAdv extends Command {
   private boolean resetHeading = false;
 
   /**
-   * Used to drive a swerve robot in full field-centric mode. vX and vY supply
-   * translation inputs, where x is
-   * torwards/away from alliance wall and y is left/right. Heading Adjust changes
-   * the current heading after being
-   * multipied by a constant. The look booleans are shortcuts to get the robot to
-   * face a certian direction. Based off of
-   * ideas in
+   * Used to drive a swerve robot in full field-centric mode. vX and vY supply translation inputs,
+   * where x is torwards/away from alliance wall and y is left/right. Heading Adjust changes the
+   * current heading after being multipied by a constant. The look booleans are shortcuts to get the
+   * robot to face a certian direction. Based off of ideas in
    * https://www.chiefdelphi.com/t/experiments-with-a-swerve-steering-knob/446172
    *
-   * @param swerve        The swerve drivebase subsystem.
-   * @param vX            DoubleSupplier that supplies the x-translation joystick
-   *                      input. Should be in the range -1 to 1
-   *                      with deadband already accounted for. Positive X is away
-   *                      from the alliance wall.
-   * @param vY            DoubleSupplier that supplies the y-translation joystick
-   *                      input. Should be in the range -1 to 1
-   *                      with deadband already accounted for. Positive Y is
-   *                      towards the left wall when looking through
-   *                      the driver station glass.
-   * @param headingAdjust DoubleSupplier that supplies the component of the
-   *                      robot's heading angle that should be
-   *                      adjusted. Should range from -1 to 1 with deadband
-   *                      already accounted for.
-   * @param lookAway      Face the robot towards the opposing alliance's wall in
-   *                      the same direction the driver is
-   *                      facing
-   * @param lookTowards   Face the robot towards the driver
-   * @param lookLeft      Face the robot left
-   * @param lookRight     Face the robot right
+   * @param swerve The swerve drivebase subsystem.
+   * @param vX DoubleSupplier that supplies the x-translation joystick input. Should be in the range
+   *     -1 to 1 with deadband already accounted for. Positive X is away from the alliance wall.
+   * @param vY DoubleSupplier that supplies the y-translation joystick input. Should be in the range
+   *     -1 to 1 with deadband already accounted for. Positive Y is towards the left wall when
+   *     looking through the driver station glass.
+   * @param headingAdjust DoubleSupplier that supplies the component of the robot's heading angle
+   *     that should be adjusted. Should range from -1 to 1 with deadband already accounted for.
+   * @param lookAway Face the robot towards the opposing alliance's wall in the same direction the
+   *     driver is facing
+   * @param lookTowards Face the robot towards the driver
+   * @param lookLeft Face the robot left
+   * @param lookRight Face the robot right
    */
-  public AbsoluteDriveAdv(SwerveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier headingAdjust,
-      BooleanSupplier lookAway, BooleanSupplier lookTowards, BooleanSupplier lookLeft,
+  public AbsoluteDriveAdv(
+      SwerveSubsystem swerve,
+      DoubleSupplier vX,
+      DoubleSupplier vY,
+      DoubleSupplier headingAdjust,
+      BooleanSupplier lookAway,
+      BooleanSupplier lookTowards,
+      BooleanSupplier lookLeft,
       BooleanSupplier lookRight) {
     this.swerve = swerve;
     this.vX = vX;
@@ -118,20 +111,30 @@ public class AbsoluteDriveAdv extends Command {
       resetHeading = false;
     }
 
-    ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(), headingX, headingY);
+    ChassisSpeeds desiredSpeeds =
+        swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(), headingX, headingY);
 
     // Limit velocity to prevent tippy
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
-    translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
-        Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),
-        swerve.getSwerveDriveConfiguration());
+    translation =
+        SwerveMath.limitVelocity(
+            translation,
+            swerve.getFieldVelocity(),
+            swerve.getPose(),
+            Constants.LOOP_TIME,
+            Constants.ROBOT_MASS,
+            List.of(Constants.CHASSIS),
+            swerve.getSwerveDriveConfiguration());
     SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     SmartDashboard.putString("Translation", translation.toString());
 
     // Make the robot move
     if (headingX == 0 && headingY == 0 && Math.abs(headingAdjust.getAsDouble()) > 0) {
       resetHeading = true;
-      swerve.drive(translation, (Constants.OperatorConstants.TURN_CONSTANT * -headingAdjust.getAsDouble()), true);
+      swerve.drive(
+          translation,
+          (Constants.OperatorConstants.TURN_CONSTANT * -headingAdjust.getAsDouble()),
+          true);
     } else {
       swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, true);
     }
@@ -139,13 +142,11 @@ public class AbsoluteDriveAdv extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
   }
-
 }
