@@ -34,7 +34,10 @@ jobs:
             sed -i 's/\r$//' ./gradlew || true
             chmod +x ./gradlew
           fi
-
+ 
+      - name: Set JAVA_HOME dynamically
+        run: echo "JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))" >> $GITHUB_ENV
+      
       - name: Run Spotless Check
         run: ./gradlew spotlessCheck
 
