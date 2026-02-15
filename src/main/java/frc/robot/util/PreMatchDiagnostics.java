@@ -556,8 +556,9 @@ public class PreMatchDiagnostics {
   // ==================== ACTUATOR CHECKS (test mode only) ====================
 
   private void checkShooterSpinup() {
+    Shooter shooter = null;
     try {
-      Shooter shooter = Shooter.getInstance();
+      shooter = Shooter.getInstance();
       if (shooter == null) {
         shooterSpinupMs = -1;
         Logger.recordOutput("Diagnostics/ShooterSpinupMs", shooterSpinupMs);
@@ -598,12 +599,18 @@ public class PreMatchDiagnostics {
       shooterSpinupMs = -1;
       Logger.recordOutput("Diagnostics/ShooterSpinupMs", shooterSpinupMs);
       addResult("ShooterSpinup", CheckResult.FAIL, "Exception: " + e.getMessage());
+    } finally {
+      try {
+        if (shooter != null) shooter.move(0);
+      } catch (Exception e) {
+      }
     }
   }
 
   private void checkIndexerCurrent() {
+    Indexer indexer = null;
     try {
-      Indexer indexer = Indexer.getInstance();
+      indexer = Indexer.getInstance();
       if (indexer == null) {
         indexerCurrentPeak = 0;
         Logger.recordOutput("Diagnostics/IndexerCurrentPeak", indexerCurrentPeak);
@@ -639,20 +646,26 @@ public class PreMatchDiagnostics {
       indexerCurrentPeak = 0;
       Logger.recordOutput("Diagnostics/IndexerCurrentPeak", indexerCurrentPeak);
       addResult("IndexerCurrent", CheckResult.WARN, "Error: " + e.getMessage());
+    } finally {
+      try {
+        if (indexer != null) indexer.move(0);
+      } catch (Exception e) {
+      }
     }
   }
 
   /** Command small drive motion and verify response. Tests closed-loop control actually works. */
   private void checkDriveMotion() {
+    var swerve =
+        (RobotContainer.getInstance() != null)
+            ? RobotContainer.getInstance().getSwerveSubsystem()
+            : null;
     try {
-      RobotContainer container = RobotContainer.getInstance();
-      if (container == null || container.getSwerveSubsystem() == null) {
+      if (swerve == null) {
         addResult("DriveMotion", CheckResult.FAIL, "Drivebase not initialized");
         Logger.recordOutput("Diagnostics/DriveResponseMs", -1.0);
         return;
       }
-
-      var swerve = container.getSwerveSubsystem();
 
       var startPose = swerve.getPose();
       double startTime = Timer.getFPGATimestamp();
@@ -694,6 +707,12 @@ public class PreMatchDiagnostics {
     } catch (Exception e) {
       addResult("DriveMotion", CheckResult.WARN, "Error: " + e.getMessage());
       Logger.recordOutput("Diagnostics/DriveResponseMs", -1.0);
+    } finally {
+      try {
+        if (swerve != null)
+          swerve.drive(new edu.wpi.first.math.geometry.Translation2d(0, 0), 0, false);
+      } catch (Exception e) {
+      }
     }
   }
 

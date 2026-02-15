@@ -26,14 +26,16 @@ public class MatchTelemetry implements SubsystemTelemetry {
     eventName = DriverStation.getEventName();
     stationNumber = DriverStation.getLocation().orElse(0);
 
-    if (DriverStation.isAutonomous()) {
+    if (DriverStation.isDisabled()) {
+      mode = "DISABLED";
+    } else if (DriverStation.isAutonomous()) {
       mode = "AUTO";
-    } else if (DriverStation.isTeleop()) {
-      mode = "TELEOP";
     } else if (DriverStation.isTest()) {
       mode = "TEST";
+    } else if (DriverStation.isTeleop()) {
+      mode = "TELEOP";
     } else {
-      mode = "DISABLED";
+      mode = "UNKNOWN";
     }
 
     var allianceOpt = DriverStation.getAlliance();

@@ -59,8 +59,7 @@ public final class DiagnosticContext {
       sb.append("Mode: ").append(safeGetMode()).append(" | ");
       sb.append("Action: ").append(currentAction).append(" | ");
       sb.append("Command: ").append(currentCommand).append(" | ");
-      sb.append(
-          String.format("Voltage: %.1fV | Loop: %.1fms", safeGetVoltage(), safeGetLoopTime()));
+      sb.append(String.format("Voltage: %.1fV", safeGetVoltage()));
       return sb.toString();
     } catch (Throwable t) {
       return "Context unavailable";
@@ -181,14 +180,6 @@ public final class DiagnosticContext {
   private static double safeGetVoltage() {
     try {
       return RobotController.getBatteryVoltage();
-    } catch (Throwable t) {
-      return 0;
-    }
-  }
-
-  private static double safeGetLoopTime() {
-    try {
-      return RobotController.getFPGATime() % 1000000 / 1000.0;
     } catch (Throwable t) {
       return 0;
     }

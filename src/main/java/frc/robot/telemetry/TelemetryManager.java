@@ -101,6 +101,7 @@ public class TelemetryManager {
   /** Called from RobotContainer after swerve init */
   public void setSwerveSubsystem(SwerveSubsystem swerveSubsystem) {
     driveTelemetry.setSwerveSubsystem(swerveSubsystem);
+    shotVisualizerTelemetry.setSwerveSubsystem(swerveSubsystem);
   }
 
   /** Called from RobotContainer after controller init */

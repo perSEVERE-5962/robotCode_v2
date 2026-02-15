@@ -137,10 +137,10 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     // Feeder active: running, outputting, not jammed
     feederActive = running && appliedOutput > 0.05 && !jamDetected;
 
-    // Jam frequency over match duration
-    if (matchStartTime < 0) matchStartTime = now;
-    double elapsed = now - matchStartTime;
-    jamFrequencyPerMin = (elapsed > 0) ? (totalJamCount / elapsed) * 60.0 : 0;
+    // Jam frequency: start counting from first motor run, not robot boot
+    if (matchStartTime < 0 && running) matchStartTime = now;
+    double elapsed = (matchStartTime > 0) ? (now - matchStartTime) : 0;
+    jamFrequencyPerMin = (elapsed > 1.0) ? (totalJamCount / elapsed) * 60.0 : 0;
 
     // PID audit trail
     pidTuningEvent = false;

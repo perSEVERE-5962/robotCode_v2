@@ -297,40 +297,50 @@ public class AlertManager {
   }
 
   private void checkJams() {
-    if (TelemetryManager.getInstance().isIndexerJamDetected()) {
-      indexerJamAlert.set(true);
-      addAlert("IndexerJam");
-      notifyElastic("IndexerJam", "Indexer Jam", "Indexer jam detected - clear manually", true);
-    } else {
-      indexerJamAlert.set(false);
-    }
+    try {
+      if (TelemetryManager.getInstance().isIndexerJamDetected()) {
+        indexerJamAlert.set(true);
+        addAlert("IndexerJam");
+        notifyElastic("IndexerJam", "Indexer Jam", "Indexer jam detected - clear manually", true);
+      } else {
+        indexerJamAlert.set(false);
+      }
 
-    if (TelemetryManager.getInstance().isIntakeJamDetected()) {
-      intakeJamAlert.set(true);
-      addAlert("IntakeJam");
-      notifyElastic("IntakeJam", "Intake Jam", "Intake jam detected - clear manually", true);
-    } else {
+      if (TelemetryManager.getInstance().isIntakeJamDetected()) {
+        intakeJamAlert.set(true);
+        addAlert("IntakeJam");
+        notifyElastic("IntakeJam", "Intake Jam", "Intake jam detected - clear manually", true);
+      } else {
+        intakeJamAlert.set(false);
+      }
+    } catch (Throwable t) {
+      indexerJamAlert.set(false);
       intakeJamAlert.set(false);
     }
   }
 
   private void checkBandwidth() {
-    TelemetryManager tm = TelemetryManager.getInstance();
+    try {
+      TelemetryManager tm = TelemetryManager.getInstance();
 
-    if (tm.isBandwidthCritical()) {
-      bandwidthCriticalAlert.set(true);
-      bandwidthWarningAlert.set(false);
-      addAlert("BandwidthCritical");
-      notifyElastic(
-          "BandwidthCritical",
-          "Bandwidth Critical",
-          String.format("%.0f%% - REDUCE CAMERA RESOLUTION!", tm.getBandwidthPercent()),
-          true);
-    } else if (tm.isBandwidthWarning()) {
-      bandwidthCriticalAlert.set(false);
-      bandwidthWarningAlert.set(true);
-      addAlert("BandwidthWarning");
-    } else {
+      if (tm.isBandwidthCritical()) {
+        bandwidthCriticalAlert.set(true);
+        bandwidthWarningAlert.set(false);
+        addAlert("BandwidthCritical");
+        notifyElastic(
+            "BandwidthCritical",
+            "Bandwidth Critical",
+            String.format("%.0f%% - REDUCE CAMERA RESOLUTION!", tm.getBandwidthPercent()),
+            true);
+      } else if (tm.isBandwidthWarning()) {
+        bandwidthCriticalAlert.set(false);
+        bandwidthWarningAlert.set(true);
+        addAlert("BandwidthWarning");
+      } else {
+        bandwidthCriticalAlert.set(false);
+        bandwidthWarningAlert.set(false);
+      }
+    } catch (Throwable t) {
       bandwidthCriticalAlert.set(false);
       bandwidthWarningAlert.set(false);
     }

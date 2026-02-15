@@ -73,12 +73,14 @@ public class CANHealthTelemetry implements SubsystemTelemetry {
     disconnectedList = disconnected.toString();
 
     // Fault aggregation across 5 motor telemetry classes
+    // -1 sentinel means CAN read failed; clamp to 0 so failures don't hide real faults
     int faults = 0;
-    if (shooterTelemetry != null) faults += shooterTelemetry.getDeviceFaultsRaw();
-    if (indexerTelemetry != null) faults += indexerTelemetry.getDeviceFaultsRaw();
-    if (intakeTelemetry != null) faults += intakeTelemetry.getDeviceFaultsRaw();
-    if (intakeActuatorTelemetry != null) faults += intakeActuatorTelemetry.getDeviceFaultsRaw();
-    if (hangerTelemetry != null) faults += hangerTelemetry.getDeviceFaultsRaw();
+    if (shooterTelemetry != null) faults += Math.max(0, shooterTelemetry.getDeviceFaultsRaw());
+    if (indexerTelemetry != null) faults += Math.max(0, indexerTelemetry.getDeviceFaultsRaw());
+    if (intakeTelemetry != null) faults += Math.max(0, intakeTelemetry.getDeviceFaultsRaw());
+    if (intakeActuatorTelemetry != null)
+      faults += Math.max(0, intakeActuatorTelemetry.getDeviceFaultsRaw());
+    if (hangerTelemetry != null) faults += Math.max(0, hangerTelemetry.getDeviceFaultsRaw());
     totalFaults = faults;
     hasFaults = (faults > 0);
   }

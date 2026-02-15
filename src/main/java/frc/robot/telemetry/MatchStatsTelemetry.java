@@ -213,7 +213,7 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
     autoShots = 0;
     teleopShots = 0;
     endgameShots = 0;
-    lastTotalShots = 0;
+    lastTotalShots = shooterTelemetry.getTotalShots();
     timeShootingMs = 0;
     timeIntakingMs = 0;
     timeAimingMs = 0;
@@ -233,5 +233,6 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
     inactiveHubShots = 0;
     activeHubTimeMs = 0;
     firingDuringActiveMs = 0;
+    lastUpdateTime = 0;
   }
 }

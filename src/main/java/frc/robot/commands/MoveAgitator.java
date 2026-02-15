@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Agitator;
 import frc.robot.Constants;
+import frc.robot.subsystems.Agitator;
 
 public class MoveAgitator extends Command {
   private Agitator agitator;
-  
+
   public MoveAgitator() {
     agitator = Agitator.getInstance();
 
@@ -14,9 +14,7 @@ public class MoveAgitator extends Command {
   }
 
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
@@ -32,5 +30,4 @@ public class MoveAgitator extends Command {
   public boolean isFinished() {
     return false;
   }
-
 }
