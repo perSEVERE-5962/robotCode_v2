@@ -36,6 +36,7 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
   private int shotsShift2 = 0;
   private int shotsShift3 = 0;
   private int shotsShift4 = 0;
+  private int shotsShiftEndgame = 0;
 
   // Hub effectiveness
   private int activeHubShots = 0;
@@ -106,6 +107,7 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
           case 2 -> shotsShift2 += newShots;
           case 3 -> shotsShift3 += newShots;
           case 4 -> shotsShift4 += newShots;
+          case 0 -> shotsShiftEndgame += newShots;
         }
         if (hubActive) activeHubShots += newShots;
         else inactiveHubShots += newShots;
@@ -194,6 +196,7 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
     SafeLog.put("MatchStats/ShotsInShift/2", shotsShift2);
     SafeLog.put("MatchStats/ShotsInShift/3", shotsShift3);
     SafeLog.put("MatchStats/ShotsInShift/4", shotsShift4);
+    SafeLog.put("MatchStats/ShotsInShift/Endgame", shotsShiftEndgame);
     SafeLog.put("MatchStats/ActiveHubShots", activeHubShots);
     SafeLog.put("MatchStats/InactiveHubShots", inactiveHubShots);
     double hubUtil = activeHubTimeMs > 0 ? (firingDuringActiveMs / activeHubTimeMs) * 100 : 0;
@@ -225,6 +228,7 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
     shotsShift2 = 0;
     shotsShift3 = 0;
     shotsShift4 = 0;
+    shotsShiftEndgame = 0;
     activeHubShots = 0;
     inactiveHubShots = 0;
     activeHubTimeMs = 0;
