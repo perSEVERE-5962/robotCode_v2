@@ -5,11 +5,19 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.telemetry.CycleTracker;
+import frc.robot.telemetry.TelemetryManager;
+import frc.robot.util.AlertManager;
+import frc.robot.util.DiagnosticContext;
 import frc.robot.util.ElasticUtil;
+import frc.robot.util.EventMarker;
+import frc.robot.util.LoggedTracer;
+import frc.robot.util.PostMatchSummary;
+import frc.robot.util.PreMatchDiagnostics;
+import frc.robot.util.PredictiveAlerts;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -25,14 +33,15 @@ public class Robot extends LoggedRobot {
 
   private static Robot instance;
   private Command m_autonomousCommand;
-  private Cameras cameras;
   private RobotContainer m_robotContainer;
 
   private Timer disabledTimer;
 
-  // Loop timing tracking
-  private double lastLoopTimestamp = 0;
-  private int loopOverrunCount = 0;
+  // Diagnostics
+  private boolean hasRunDiagnostics = false;
+
+  // Logging status
+  private boolean loggingAvailable = false;
 
   public Robot() {
     instance = this;
@@ -42,148 +51,85 @@ public class Robot extends LoggedRobot {
     return instance;
   }
 
-  // ==================== LOGGING HELPER METHODS ====================
+  private void installExceptionHandler() {
+    Thread.setDefaultUncaughtExceptionHandler(
+        (thread, exception) -> {
+          try {
+            DiagnosticContext.captureException(thread, exception);
+          } catch (Throwable t) {
+          }
 
-  /** Returns the current robot mode as a string. */
-  private String getCurrentMode() {
-    if (isDisabled()) return "Disabled";
-    if (isAutonomous()) return "Autonomous";
-    if (isTeleop()) return "Teleop";
-    if (isTest()) return "Test";
-    return "Unknown";
-  }
-
-  /** Returns the alliance color as a string. */
-  private String getAllianceString() {
-    var alliance = DriverStation.getAlliance();
-    if (alliance.isPresent()) {
-      return alliance.get().name();
-    }
-    return "Unknown";
-  }
-
-  /**
-   * Logs match state data every cycle. Signals: Match/Time, Mode, Enabled, FMSAttached,
-   * MatchNumber, EventName, Alliance, StationNumber
-   */
-  private void logMatchData() {
-    Logger.recordOutput("Match/Time", DriverStation.getMatchTime());
-    Logger.recordOutput("Match/Mode", getCurrentMode());
-    Logger.recordOutput("Match/Enabled", isEnabled());
-    Logger.recordOutput("Match/FMSAttached", DriverStation.isFMSAttached());
-    Logger.recordOutput("Match/MatchNumber", DriverStation.getMatchNumber());
-    Logger.recordOutput("Match/EventName", DriverStation.getEventName());
-    Logger.recordOutput("Match/Alliance", getAllianceString());
-    Logger.recordOutput("Match/StationNumber", DriverStation.getLocation().orElse(0));
-  }
-
-  // Track active commands via callbacks
-  private final java.util.Set<String> activeCommands = new java.util.LinkedHashSet<>();
-
-  /** Sets up command tracking callbacks. Called once during robotInit. */
-  private void setupCommandLogging() {
-    CommandScheduler.getInstance()
-        .onCommandInitialize(
-            command -> {
-              activeCommands.add(command.getName());
-            });
-    CommandScheduler.getInstance()
-        .onCommandFinish(
-            command -> {
-              activeCommands.remove(command.getName());
-            });
-    CommandScheduler.getInstance()
-        .onCommandInterrupt(
-            command -> {
-              activeCommands.remove(command.getName());
-            });
-  }
-
-  /** Logs active command data every cycle. Signals: Commands/ActiveList, Commands/ActiveCount */
-  private void logCommands() {
-    String list = activeCommands.isEmpty() ? "none" : String.join(", ", activeCommands);
-    Logger.recordOutput("Commands/ActiveList", list);
-    Logger.recordOutput("Commands/ActiveCount", activeCommands.size());
-  }
-
-  /**
-   * Logs system health data every cycle. Signals: BatteryVoltage, CAN stats, RIO voltages/temp,
-   * BrownedOut, RSLState
-   */
-  private void logSystemHealth() {
-    // Battery voltage
-    Logger.recordOutput("SystemHealth/BatteryVoltage", RobotController.getBatteryVoltage());
-
-    // CAN bus statistics
-    var canStatus = RobotController.getCANStatus();
-    Logger.recordOutput("SystemHealth/CANUtilization", canStatus.percentBusUtilization);
-    Logger.recordOutput("SystemHealth/CANTxErrors", canStatus.transmitErrorCount);
-    Logger.recordOutput("SystemHealth/CANRxErrors", canStatus.receiveErrorCount);
-    Logger.recordOutput("SystemHealth/CANBusOff", canStatus.busOffCount);
-
-    // roboRIO health
-    Logger.recordOutput("SystemHealth/RioCPUTemp", RobotController.getCPUTemp());
-    Logger.recordOutput("SystemHealth/Rio3V3Rail", RobotController.getVoltage3V3());
-    Logger.recordOutput("SystemHealth/Rio5VRail", RobotController.getVoltage5V());
-    Logger.recordOutput("SystemHealth/Rio6VRail", RobotController.getVoltage6V());
-
-    // System state
-    Logger.recordOutput("SystemHealth/BrownedOut", RobotController.isBrownedOut());
-    Logger.recordOutput("SystemHealth/RSLState", RobotController.getRSLState());
-  }
-
-  /**
-   * Logs loop timing data every cycle. Tracks loop time in milliseconds and counts overruns (>
-   * 20ms). Signals: SystemHealth/LoopTimeMs, SystemHealth/LoopOverruns
-   */
-  private void logLoopTiming() {
-    double currentTimestamp = Timer.getFPGATimestamp();
-
-    // Calculate loop time (skip first cycle where lastLoopTimestamp is 0)
-    if (lastLoopTimestamp > 0) {
-      double loopTimeMs = (currentTimestamp - lastLoopTimestamp) * 1000.0;
-
-      // Check for overrun (> 20ms for 50Hz loop)
-      if (loopTimeMs > 20.0) {
-        loopOverrunCount++;
-      }
-
-      Logger.recordOutput("SystemHealth/LoopTimeMs", loopTimeMs);
-    }
-
-    Logger.recordOutput("SystemHealth/LoopOverruns", loopOverrunCount);
-    lastLoopTimestamp = currentTimestamp;
+          if (exception instanceof RuntimeException) {
+            throw (RuntimeException) exception;
+          } else if (exception instanceof Error) {
+            throw (Error) exception;
+          } else {
+            throw new RuntimeException(exception);
+          }
+        });
   }
 
   // ==================== LOGGING CONFIGURATION ====================
 
-  /**
-   * Configures AdvantageKit logging. - Records build metadata for traceability - Sets up file
-   * logging (WPILOGWriter) to USB drive - Sets up NetworkTables publishing (NT4Publisher) for live
-   * dashboard
-   */
-  @SuppressWarnings("unused")
+  /** Configure AdvantageKit logging. Failures are swallowed so the robot keeps running. */
   private void configureLogging() {
-    // Record build metadata for traceability in logs
-    Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
-    Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
-    Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-    Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-    Logger.recordMetadata("GitDirty", BuildConstants.DIRTY == 1 ? "true" : "false");
+    try {
+      // Record build metadata for traceability in logs
+      Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+      Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+      Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+      Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+      Logger.recordMetadata("GitDirty", BuildConstants.DIRTY == 1 ? "true" : "false");
 
-    // Set up data receivers (where logged data goes)
-    if (isReal()) {
-      // Running on real robot: log to USB drive and publish to NetworkTables
-      Logger.addDataReceiver(new WPILOGWriter()); // Log to USB stick at /U/logs
-      Logger.addDataReceiver(new NT4Publisher()); // Publish to NetworkTables
-    } else {
-      // Running in simulation: log to local file and publish to NetworkTables
-      Logger.addDataReceiver(new WPILOGWriter("logs")); // Log to logs/ folder
-      Logger.addDataReceiver(new NT4Publisher());
+      if (isReal()) {
+        // USB logging - optional, fail gracefully if USB not mounted
+        try {
+          Logger.addDataReceiver(new WPILOGWriter());
+        } catch (Throwable t) {
+          DriverStation.reportWarning("USB logging unavailable: " + t.getMessage(), false);
+        }
+
+        // NT logging - also optional
+        try {
+          Logger.addDataReceiver(new NT4Publisher());
+        } catch (Throwable t) {
+          DriverStation.reportWarning("NT logging unavailable: " + t.getMessage(), false);
+        }
+      } else {
+        // Simulation - less critical but still wrap
+        try {
+          Logger.addDataReceiver(new WPILOGWriter("logs"));
+          Logger.addDataReceiver(new NT4Publisher());
+        } catch (Throwable t) {
+          // Simulation logging failed - continue anyway
+        }
+      }
+
+      Logger.start();
+      loggingAvailable = true;
+    } catch (Throwable t) {
+      // Entire logging system failed - robot still runs
+      DriverStation.reportError("Logging system failed to initialize: " + t.getMessage(), false);
+      loggingAvailable = false;
     }
+  }
 
-    // Start the logger - must be called after all configuration
-    Logger.start();
+  /** Safe logging helper that cannot throw */
+  private void safeLog(String key, boolean value) {
+    try {
+      Logger.recordOutput(key, value);
+    } catch (Throwable t) {
+      // Ignore - logging failure shouldn't crash robot
+    }
+  }
+
+  /** Safe logging helper that cannot throw */
+  private void safeLog(String key, String value) {
+    try {
+      Logger.recordOutput(key, value);
+    } catch (Throwable t) {
+      // Ignore - logging failure shouldn't crash robot
+    }
   }
 
   /**
@@ -192,28 +138,27 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
-    // Configure AdvantageKit logging FIRST before anything else
+    installExceptionHandler();
     configureLogging();
 
-    // Set up command tracking callbacks
-    setupCommandLogging();
-
     // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our
-    // autonomous chooser on the dashboard.
+    // and put our autonomous chooser on the dashboard.
     m_robotContainer = RobotContainer.getInstance();
 
     // Create a timer to disable motor brake a few seconds after disable. This will
-    // let the robot stop
-    // immediately when disabled, but then also let it be pushed more
+    // let the robot stop immediately when disabled, but then also let it be pushed more
     disabledTimer = new Timer();
 
     if (isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
 
-    // Send test notification to Elastic Dashboard
-    ElasticUtil.sendInfo("Robot", "Code initialized successfully");
+    // Send test notification to Elastic Dashboard (protected)
+    try {
+      ElasticUtil.sendInfo("Robot", "Code initialized successfully");
+    } catch (Throwable t) {
+      // Dashboard notification failed - not critical
+    }
   }
 
   /**
@@ -225,26 +170,58 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotPeriodic() {
-    // Log loop timing at the start to measure time since last cycle
-    logLoopTiming();
+    LoggedTracer.reset();
 
-    // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled
-    // commands, running already-scheduled commands, removing finished or
-    // interrupted commands,
-    // and running subsystem periodic() methods. This must be called from the
-    // robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
+    // CommandScheduler is CRITICAL - robot must drive
+    // But even this shouldn't crash the entire robot
+    try {
+      CommandScheduler.getInstance().run();
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/CommandScheduler", true);
+      safeLog("Health/CrashBarrier/LastError", t.getClass().getSimpleName());
+    }
+    LoggedTracer.record("CommandsMs");
 
-    // Log match state data every cycle
-    logMatchData();
+    // Telemetry is IMPORTANT but not critical - robot can play without it
+    try {
+      TelemetryManager.getInstance().updateAll();
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/Telemetry", true);
+      safeLog("Health/CrashBarrier/LastError", t.getClass().getSimpleName());
+    }
+    LoggedTracer.record("TelemetryMs");
 
-    // Log system health data every cycle
-    logSystemHealth();
+    // Alerts are OPTIONAL - robot definitely plays without them
+    try {
+      AlertManager.getInstance().checkAll();
+      AlertManager.getInstance().checkLoopTime(TelemetryManager.getInstance().getLoopTimeMs());
+      AlertManager.getInstance().logActiveAlerts();
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/Alerts", true);
+      safeLog("Health/CrashBarrier/LastError", t.getClass().getSimpleName());
+    }
 
-    // Log active commands every cycle
-    logCommands();
+    // Predictive alerts are OPTIONAL
+    try {
+      PredictiveAlerts.getInstance().update();
+      PredictiveAlerts.getInstance().log();
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/Predictive", true);
+      safeLog("Health/CrashBarrier/LastError", t.getClass().getSimpleName());
+    }
+
+    // Post-match tracking is OPTIONAL
+    try {
+      if (DriverStation.isEnabled()) {
+        PostMatchSummary.getInstance()
+            .updateTracking(TelemetryManager.getInstance().getLoopTimeMs());
+      }
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/PostMatch", true);
+      safeLog("Health/CrashBarrier/LastError", t.getClass().getSimpleName());
+    }
+
+    LoggedTracer.record("AlertsMs");
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -253,6 +230,22 @@ public class Robot extends LoggedRobot {
     m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
+
+    try {
+      EventMarker.modeChange("DISABLED");
+    } catch (Throwable t) {
+      // Event marker failure not critical
+    }
+
+    // Generate post-match summary if we were tracking
+    try {
+      PostMatchSummary.getInstance().generateSummary();
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/PostMatchSummary", true);
+    }
+
+    // Reset diagnostics flag so they run once in disabledPeriodic
+    hasRunDiagnostics = false;
   }
 
   @Override
@@ -262,6 +255,37 @@ public class Robot extends LoggedRobot {
       disabledTimer.stop();
       disabledTimer.reset();
     }
+
+    // Run safe diagnostics once after 0.5s delay (let readings stabilize)
+    if (!hasRunDiagnostics && disabledTimer.hasElapsed(0.5)) {
+      try {
+        PreMatchDiagnostics.getInstance().runSafeChecks();
+      } catch (Throwable t) {
+        safeLog("Health/CrashBarrier/Diagnostics", true);
+        DriverStation.reportWarning("Pre-match diagnostics failed: " + t.getMessage(), false);
+      }
+      hasRunDiagnostics = true;
+    }
+
+    // Manual safe trigger from dashboard (sensor-only, works while disabled)
+    try {
+      if (PreMatchDiagnostics.getInstance().checkAndClearSafeTrigger()
+          && !PreMatchDiagnostics.getInstance().isRunning()) {
+        PreMatchDiagnostics.getInstance().runSafeChecks();
+      }
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/DiagnosticsTrigger", true);
+    }
+
+    // Full trigger pressed while disabled - warn user
+    try {
+      if (PreMatchDiagnostics.getInstance().checkAndClearFullTrigger()) {
+        safeLog("Diagnostics/FullCheckBlocked", true);
+        // Notification sent by PreMatchDiagnostics.runFullChecks() when it rejects
+      }
+    } catch (Throwable t) {
+      // Ignore
+    }
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -270,9 +294,19 @@ public class Robot extends LoggedRobot {
     m_robotContainer.setMotorBrake(true);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
+    // Reset event markers and cycle tracker for new match
+    EventMarker.reset();
+    CycleTracker.getInstance().reset();
+    EventMarker.modeChange("AUTONOMOUS");
+
+    // Start tracking for post-match summary
+    PostMatchSummary.getInstance().startTracking();
+
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
+      String autoName = m_autonomousCommand.getName();
+      EventMarker.autoStart(autoName);
     }
   }
 
@@ -288,6 +322,10 @@ public class Robot extends LoggedRobot {
     // this line or comment it out.
 
     CommandScheduler.getInstance().cancelAll();
+    EventMarker.modeChange("TELEOP");
+
+    // Start tracking for post-match summary (if not already from auto)
+    PostMatchSummary.getInstance().startTracking();
   }
 
   /** This function is called periodically during operator control. */
@@ -298,17 +336,31 @@ public class Robot extends LoggedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    EventMarker.modeChange("TEST");
   }
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    // Full diagnostic trigger (actuator tests) - only works in test mode
+    try {
+      if (PreMatchDiagnostics.getInstance().checkAndClearFullTrigger()
+          && !PreMatchDiagnostics.getInstance().isRunning()) {
+        PreMatchDiagnostics.getInstance().runFullChecks();
+      }
+      // Safe checks can also run in test mode
+      if (PreMatchDiagnostics.getInstance().checkAndClearSafeTrigger()
+          && !PreMatchDiagnostics.getInstance().isRunning()) {
+        PreMatchDiagnostics.getInstance().runSafeChecks();
+      }
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/DiagnosticsTest", true);
+    }
+  }
 
-  /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {}
 
-  /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
 }
