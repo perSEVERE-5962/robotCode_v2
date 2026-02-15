@@ -60,7 +60,7 @@ public class ShooterTelemetry implements SubsystemTelemetry {
   private boolean pidTuningEvent = false;
   private double prevKP = -1, prevKI = -1, prevKD = -1, prevFF = -1;
 
-  // Device health. Debounced to filter CAN bus transients
+  // Device health,debounced to filter CAN bus transients
   private final Debouncer connectDebouncer =
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
   private boolean deviceConnected = false;
@@ -139,6 +139,9 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     // Reset latch when motor not commanded (command ended)
     if (targetRPM <= 0) {
       hasReachedSpeed = false;
+      if (trackingRecovery) {
+        trackingRecovery = false;
+      }
     }
     // Latch once we reach speed during this command run
     if (targetRPM > 0 && atSpeed) {
@@ -278,7 +281,6 @@ public class ShooterTelemetry implements SubsystemTelemetry {
       SafeLog.put("Shooter/Config/FF", prevFF);
     }
 
-    // Device health
     SafeLog.put("Shooter/Device/Connected", deviceConnected);
     SafeLog.put("Shooter/Device/FaultsRaw", deviceFaultsRaw);
 
@@ -318,5 +320,13 @@ public class ShooterTelemetry implements SubsystemTelemetry {
 
   public int getDeviceFaultsRaw() {
     return deviceFaultsRaw;
+  }
+
+  public double getAtSpeedPercent() {
+    return atSpeedPercent;
+  }
+
+  public boolean isSpinningUp() {
+    return isSpinningUp;
   }
 }

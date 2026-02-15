@@ -31,7 +31,7 @@ public class IntakeTelemetry implements SubsystemTelemetry {
 
   private double currentPerSpeedRatio = 0; // drag indicator
 
-  // Device health. Debounced to filter CAN bus transients
+  // Device health,debounced to filter CAN bus transients
   private final Debouncer connectDebouncer =
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
   private boolean deviceConnected = false;
