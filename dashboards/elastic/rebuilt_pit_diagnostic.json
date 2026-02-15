@@ -1,0 +1,832 @@
+{
+  "version": 1.0,
+  "grid_size": 128,
+  "tabs": [
+    {
+      "name": "Quick Check",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Health Score",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 256.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Summary/HealthScore",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Battery",
+            "x": 384.0,
+            "y": 0.0,
+            "width": 640.0,
+            "height": 128.0,
+            "type": "Voltage View",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/BatteryVoltage",
+              "period": 0.033,
+              "min_value": 8.0,
+              "max_value": 13.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Top Issue 1",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 896.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Summary/TopIssue1",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Browned Out",
+            "x": 384.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/BrownedOut",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Total Current",
+            "x": 640.0,
+            "y": 128.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/TotalCurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 200.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Top Issue 2",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Summary/TopIssue2",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Top Issue 3",
+            "x": 1536.0,
+            "y": 128.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Summary/TopIssue3",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Shooter Temp",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/TemperatureCelsius",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 100.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Indexer Temp",
+            "x": 384.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Indexer/TemperatureCelsius",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 100.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Intake Temp",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Intake/TemperatureCelsius",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 100.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "IntakeAct Temp",
+            "x": 1152.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/TemperatureCelsius",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 100.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Hanger Temp",
+            "x": 1536.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Hanger/TemperatureCelsius",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 100.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Gyro",
+            "x": 0.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Gyro/Connected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Left Cam",
+            "x": 256.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Vision/Camera/LeftCam/Connected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Right Cam",
+            "x": 512.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Vision/Camera/RightCam/Connected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Vision Latency",
+            "x": 768.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Vision/LatencyMs",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Idx Jam",
+            "x": 1024.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Indexer/JamDetected",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Int Jam",
+            "x": 1280.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Intake/JamDetected",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "CAN Util",
+            "x": 1536.0,
+            "y": 384.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/CANUtilization",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Alerts",
+            "x": 0.0,
+            "y": 512.0,
+            "width": 1920.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Alerts/ActiveList",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Diagnostics",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Safe Check",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Toggle Button",
+            "properties": {
+              "topic": "/SmartDashboard/Diagnostics/TriggerSafe",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Full Check",
+            "x": 384.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Toggle Button",
+            "properties": {
+              "topic": "/SmartDashboard/Diagnostics/TriggerFull",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Running",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Diagnostics/Running",
+              "period": 0.033,
+              "true_color": 4278233855,
+              "false_color": 4284900966,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Mode",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Diagnostics/Mode",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Step",
+            "x": 1280.0,
+            "y": 0.0,
+            "width": 640.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Diagnostics/Step",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "ALL PASSED",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 640.0,
+            "height": 256.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Diagnostics/AllPassed",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Pass",
+            "x": 640.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Diagnostics/PassCount",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Warn",
+            "x": 896.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Diagnostics/WarnCount",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Fail",
+            "x": 1152.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Diagnostics/FailCount",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Skip",
+            "x": 1408.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Diagnostics/SkippedCount",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Gyro Drift",
+            "x": 640.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Diagnostics/GyroMaxDrift",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Gyro OK",
+            "x": 1024.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Diagnostics/GyroHealthy",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294927872,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Vision Drop %",
+            "x": 1280.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Diagnostics/VisionDropoutPct",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Drive Response",
+            "x": 0.0,
+            "y": 384.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Diagnostics/DriveResponseMs",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Shooter Spinup",
+            "x": 384.0,
+            "y": 384.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Diagnostics/ShooterSpinupMs",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "System Detail",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Battery",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Voltage View",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/BatteryVoltage",
+              "period": 0.033,
+              "min_value": 8.0,
+              "max_value": 13.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "CAN Util",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/CANUtilization",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Loop Time",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/LoopTimeMs",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 50.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Bandwidth",
+            "x": 1536.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Network/BandwidthPercent",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 100.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "CAN TX",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/CANTxErrors",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "CAN RX",
+            "x": 256.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/CANRxErrors",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "CAN Off",
+            "x": 512.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/CANBusOff",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Overruns",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/LoopOverruns",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "CPU Temp",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/RioCPUTemp",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 100.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "RSL",
+            "x": 1408.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/RSLState",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4284900966,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "BW Warn",
+            "x": 1664.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Network/BandwidthCritical",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Shooter Vel",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/VelocityRPM",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Shooter Tgt",
+            "x": 384.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/TargetRPM",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "At Speed",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/AtSpeed",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4294927872,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Spinup ms",
+            "x": 1024.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/SpinUpTimeMs",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Shots",
+            "x": 1408.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/TotalShots",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Shooter Current",
+            "x": 0.0,
+            "y": 384.0,
+            "width": 640.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/CurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 60.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Indexer Current",
+            "x": 640.0,
+            "y": 384.0,
+            "width": 640.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Indexer/CurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 30.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Intake Current",
+            "x": 1280.0,
+            "y": 384.0,
+            "width": 640.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Intake/CurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 30.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
