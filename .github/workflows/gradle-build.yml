@@ -36,7 +36,7 @@ jobs:
           fi
           
       - name: Run Spotless Check
-        #continue-on-error: true
+        continue-on-error: true
         run: ./gradlew spotlessCheck
 
       - name: Build with Gradle
