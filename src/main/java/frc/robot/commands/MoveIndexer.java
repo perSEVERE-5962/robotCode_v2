@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
-import frc.robot.subsystems.Indexer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Indexer;
 
 public class MoveIndexer extends Command {
   private Indexer indexer;
   private double rpm;
-  
+
   public MoveIndexer(double rpm) {
     this.rpm = rpm;
     indexer = Indexer.getInstance();
@@ -15,9 +15,7 @@ public class MoveIndexer extends Command {
   }
 
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {

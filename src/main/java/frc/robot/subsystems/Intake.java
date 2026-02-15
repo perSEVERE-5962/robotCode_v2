@@ -1,11 +1,11 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
@@ -18,9 +18,9 @@ public class Intake extends SubsystemBase {
     motorConfig = new SparkMaxConfig();
 
     motorConfig
-      //.inverted(true)
-      .idleMode(SparkMaxConfig.IdleMode.kCoast)
-      .smartCurrentLimit(40);
+        // .inverted(true)
+        .idleMode(SparkMaxConfig.IdleMode.kCoast)
+        .smartCurrentLimit(40);
 
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
@@ -35,5 +35,4 @@ public class Intake extends SubsystemBase {
     }
     return instance;
   }
-
 }
