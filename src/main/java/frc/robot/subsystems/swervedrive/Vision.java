@@ -5,6 +5,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Cameras;
 import frc.robot.Robot;
@@ -49,6 +50,12 @@ public class Vision {
   List<PoseObservation> poseObservations = new LinkedList<>();
 
   private final List<Short> tagIds = new ArrayList<>();
+
+  // Target lock tracking (for ReadyToShoot composite)
+  private static final int LOCK_THRESHOLD_FRAMES = 5;
+  private int consecutiveTargetFrames = 0;
+  private double lastTargetTimestamp = 0;
+  private boolean lastHasTarget = false;
 
   /**
    * Constructor for the Vision class.
@@ -264,4 +271,85 @@ public class Vision {
       int tagCount,
       double averageTagDistance,
       PhotonPipelineResult bestResult) {}
+
+  /** Check if any camera currently sees a target. */
+  public boolean hasTarget() {
+    for (Cameras c : Cameras.values()) {
+      Optional<PhotonPipelineResult> result = c.getLatestResult();
+      if (result.isPresent() && result.get().hasTargets()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Get the fiducial ID of the best visible target (largest area).
+   *
+   * @return Tag ID, or -1 if no target visible
+   */
+  public int getBestTargetId() {
+    PhotonTrackedTarget bestTarget = null;
+    for (Cameras c : Cameras.values()) {
+      Optional<PhotonPipelineResult> result = c.getLatestResult();
+      if (result.isPresent() && result.get().hasTargets()) {
+        for (PhotonTrackedTarget target : result.get().getTargets()) {
+          if (bestTarget == null || target.getArea() > bestTarget.getArea()) {
+            bestTarget = target;
+          }
+        }
+      }
+    }
+    return (bestTarget != null) ? bestTarget.getFiducialId() : -1;
+  }
+
+  /**
+   * Check if vision is locked on target (stable tracking for ReadyToShoot). Requires consecutive
+   * frames with targets to confirm lock.
+   */
+  public boolean isLockedOnTarget() {
+    return consecutiveTargetFrames >= LOCK_THRESHOLD_FRAMES;
+  }
+
+  /**
+   * Update target lock tracking and log vision telemetry. Call this in periodic or after
+   * updatePoseEstimation.
+   */
+  public void updateTargetLock() {
+    double now = Timer.getFPGATimestamp();
+    boolean currentHasTarget = hasTarget();
+
+    if (currentHasTarget) {
+      consecutiveTargetFrames++;
+      lastTargetTimestamp = now;
+    } else {
+      consecutiveTargetFrames = 0;
+    }
+    lastHasTarget = currentHasTarget;
+  }
+
+  /**
+   * Get pipeline latency from the best available result with targets.
+   *
+   * @return Latency in ms, or -1 if no result available
+   */
+  public double getBestTargetLatencyMs() {
+    for (Cameras c : Cameras.values()) {
+      Optional<PhotonPipelineResult> result = c.getLatestResult();
+      if (result.isPresent() && result.get().hasTargets()) {
+        return result.get().metadata.getLatencyMillis();
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Check if a specific camera is connected.
+   *
+   * @param cam Camera to check
+   * @return true if connected
+   */
+  public boolean isCameraConnected(Cameras cam) {
+    return cam != null && cam.camera.isConnected();
+  }
 }

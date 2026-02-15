@@ -145,7 +145,9 @@ public class SwerveSubsystem extends SubsystemBase {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
       vision.updateVisionField();
+      vision.updateTargetLock();
     }
+    // Drive telemetry now handled by DriveTelemetry class
   }
 
   @Override
