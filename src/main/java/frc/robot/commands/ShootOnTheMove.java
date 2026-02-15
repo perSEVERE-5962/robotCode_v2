@@ -26,11 +26,11 @@ public class ShootOnTheMove extends Command {
   private final SwerveSubsystem swerve;
   private final Shooter shooter;
 
- private final double WHEEL_RADIUS_METERS = Units.inchesToMeters(2.0);
+  private final double WHEEL_RADIUS_METERS = Units.inchesToMeters(2.0);
   private final DoubleSupplier forwardInput;  
   private final DoubleSupplier strafeInput;   
   private final Translation2d hubCenter;
-private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoubleTreeMap();
+  private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoubleTreeMap();
   
   public ShootOnTheMove(SwerveSubsystem swerve,
                         DoubleSupplier forwardInput,
@@ -48,6 +48,7 @@ private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoub
     timeOfFlightMap.put(4.0, 0.75);
     timeOfFlightMap.put(6.0, 1.10);
   }
+
   @Override
   public void initialize() {
 
@@ -68,12 +69,12 @@ private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoub
     double distanceToHub = robotPos.getDistance(hubCenter);
 
 
-     double timeOfFlight = timeOfFlightMap.get(distanceToHub);
+    double timeOfFlight = timeOfFlightMap.get(distanceToHub);
 
     Translation2d compensatedTarget = hubCenter;  // will be refined each iteration
     Translation2d shooterVecResult  = Translation2d.kZero;
     double targetShooterSpeed = 0.0;    
-      for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
 
       // how far the piece drifts during flight due to robot motion 
       Translation2d drift = robotVel.times(timeOfFlight);
@@ -124,7 +125,7 @@ private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoub
     swerve.drive(speeds);
     double shooterRPM = (targetShooterSpeed / (2.0 * Math.PI * WHEEL_RADIUS_METERS)) * 60.0;
     shooter.moveToVelocityWithPID(shooterRPM);
- 
+
   }
 
   @Override
