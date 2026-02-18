@@ -1,10 +1,8 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 
@@ -14,15 +12,29 @@ public class Indexer extends Actuator {
   private static Indexer instance;
 
   private Indexer() {
-    super(Constants.CANDeviceIDs.kIndexerID, Constants.IndexerConstants.P, Constants.IndexerConstants.I, Constants.IndexerConstants.D, Constants.IndexerConstants.MinOutput, Constants.IndexerConstants.MaxOutput, Constants.IndexerConstants.FF, Constants.IndexerConstants.Iz, 0, 0, true, false, false);
-    motor = /*new SparkMax(Constants.CANDeviceIDs.kIndexerID, SparkLowLevel.MotorType.kBrushless);*/getMotor();
+    super(
+        Constants.CANDeviceIDs.kIndexerID,
+        Constants.IndexerConstants.P,
+        Constants.IndexerConstants.I,
+        Constants.IndexerConstants.D,
+        Constants.IndexerConstants.MinOutput,
+        Constants.IndexerConstants.MaxOutput,
+        Constants.IndexerConstants.FF,
+        Constants.IndexerConstants.Iz,
+        0,
+        0,
+        true,
+        false,
+        false);
+    motor = /*new SparkMax(Constants.CANDeviceIDs.kIndexerID, SparkLowLevel.MotorType.kBrushless);*/
+        getMotor();
     motorConfig = new SparkMaxConfig();
 
     motorConfig
-      /*.inverted(true)*/
-      .idleMode(SparkMaxConfig.IdleMode.kCoast)
-      .smartCurrentLimit(20);
-    
+        /*.inverted(true)*/
+        .idleMode(SparkMaxConfig.IdleMode.kCoast)
+        .smartCurrentLimit(20);
+
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 

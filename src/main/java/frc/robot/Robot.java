@@ -9,22 +9,17 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.RobotContainer;
-import frc.robot.Cameras;
 import frc.robot.util.ElasticUtil;
-
-// AdvantageKit imports for logging
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as
- * described in the TimedRobot documentation. If you change the name of this
- * class or the package after creating this
- * project, you must also update the build.gradle file in the project.
+ * The VM is configured to automatically run this class, and to call the functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the name of this class or
+ * the package after creating this project, you must also update the build.gradle file in the
+ * project.
  */
 public class Robot extends LoggedRobot {
 
@@ -49,9 +44,7 @@ public class Robot extends LoggedRobot {
 
   // ==================== LOGGING HELPER METHODS ====================
 
-  /**
-   * Returns the current robot mode as a string.
-   */
+  /** Returns the current robot mode as a string. */
   private String getCurrentMode() {
     if (isDisabled()) return "Disabled";
     if (isAutonomous()) return "Autonomous";
@@ -60,9 +53,7 @@ public class Robot extends LoggedRobot {
     return "Unknown";
   }
 
-  /**
-   * Returns the alliance color as a string.
-   */
+  /** Returns the alliance color as a string. */
   private String getAllianceString() {
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
@@ -72,8 +63,8 @@ public class Robot extends LoggedRobot {
   }
 
   /**
-   * Logs match state data every cycle.
-   * Signals: Match/Time, Mode, Enabled, FMSAttached, MatchNumber, EventName, Alliance, StationNumber
+   * Logs match state data every cycle. Signals: Match/Time, Mode, Enabled, FMSAttached,
+   * MatchNumber, EventName, Alliance, StationNumber
    */
   private void logMatchData() {
     Logger.recordOutput("Match/Time", DriverStation.getMatchTime());
@@ -89,26 +80,26 @@ public class Robot extends LoggedRobot {
   // Track active commands via callbacks
   private final java.util.Set<String> activeCommands = new java.util.LinkedHashSet<>();
 
-  /**
-   * Sets up command tracking callbacks.
-   * Called once during robotInit.
-   */
+  /** Sets up command tracking callbacks. Called once during robotInit. */
   private void setupCommandLogging() {
-    CommandScheduler.getInstance().onCommandInitialize(command -> {
-      activeCommands.add(command.getName());
-    });
-    CommandScheduler.getInstance().onCommandFinish(command -> {
-      activeCommands.remove(command.getName());
-    });
-    CommandScheduler.getInstance().onCommandInterrupt(command -> {
-      activeCommands.remove(command.getName());
-    });
+    CommandScheduler.getInstance()
+        .onCommandInitialize(
+            command -> {
+              activeCommands.add(command.getName());
+            });
+    CommandScheduler.getInstance()
+        .onCommandFinish(
+            command -> {
+              activeCommands.remove(command.getName());
+            });
+    CommandScheduler.getInstance()
+        .onCommandInterrupt(
+            command -> {
+              activeCommands.remove(command.getName());
+            });
   }
 
-  /**
-   * Logs active command data every cycle.
-   * Signals: Commands/ActiveList, Commands/ActiveCount
-   */
+  /** Logs active command data every cycle. Signals: Commands/ActiveList, Commands/ActiveCount */
   private void logCommands() {
     String list = activeCommands.isEmpty() ? "none" : String.join(", ", activeCommands);
     Logger.recordOutput("Commands/ActiveList", list);
@@ -116,8 +107,8 @@ public class Robot extends LoggedRobot {
   }
 
   /**
-   * Logs system health data every cycle.
-   * Signals: BatteryVoltage, CAN stats, RIO voltages/temp, BrownedOut, RSLState
+   * Logs system health data every cycle. Signals: BatteryVoltage, CAN stats, RIO voltages/temp,
+   * BrownedOut, RSLState
    */
   private void logSystemHealth() {
     // Battery voltage
@@ -142,9 +133,8 @@ public class Robot extends LoggedRobot {
   }
 
   /**
-   * Logs loop timing data every cycle.
-   * Tracks loop time in milliseconds and counts overruns (> 20ms).
-   * Signals: SystemHealth/LoopTimeMs, SystemHealth/LoopOverruns
+   * Logs loop timing data every cycle. Tracks loop time in milliseconds and counts overruns (>
+   * 20ms). Signals: SystemHealth/LoopTimeMs, SystemHealth/LoopOverruns
    */
   private void logLoopTiming() {
     double currentTimestamp = Timer.getFPGATimestamp();
@@ -168,10 +158,9 @@ public class Robot extends LoggedRobot {
   // ==================== LOGGING CONFIGURATION ====================
 
   /**
-   * Configures AdvantageKit logging.
-   * - Records build metadata for traceability
-   * - Sets up file logging (WPILOGWriter) to USB drive
-   * - Sets up NetworkTables publishing (NT4Publisher) for live dashboard
+   * Configures AdvantageKit logging. - Records build metadata for traceability - Sets up file
+   * logging (WPILOGWriter) to USB drive - Sets up NetworkTables publishing (NT4Publisher) for live
+   * dashboard
    */
   @SuppressWarnings("unused")
   private void configureLogging() {
@@ -198,8 +187,8 @@ public class Robot extends LoggedRobot {
   }
 
   /**
-   * This function is run when the robot is first started up and should be used
-   * for any initialization code.
+   * This function is run when the robot is first started up and should be used for any
+   * initialization code.
    */
   @Override
   public void robotInit() {
@@ -228,13 +217,10 @@ public class Robot extends LoggedRobot {
   }
 
   /**
-   * This function is called every 20 ms, no matter the mode. Use this for items
-   * like diagnostics that you want ran
-   * during disabled, autonomous, teleoperated and test.
+   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+   * that you want ran during disabled, autonomous, teleoperated and test.
    *
-   * <p>
-   * This runs after the mode specific periodic functions, but before LiveWindow
-   * and
+   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
    * SmartDashboard integrated updating.
    */
   @Override
@@ -261,9 +247,7 @@ public class Robot extends LoggedRobot {
     logCommands();
   }
 
-  /**
-   * This function is called once each time the robot enters Disabled mode.
-   */
+  /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
     m_robotContainer.setMotorBrake(true);
@@ -280,10 +264,7 @@ public class Robot extends LoggedRobot {
     }
   }
 
-  /**
-   * This autonomous runs the autonomous command selected by your
-   * {@link RobotContainer} class.
-   */
+  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
     m_robotContainer.setMotorBrake(true);
@@ -295,12 +276,9 @@ public class Robot extends LoggedRobot {
     }
   }
 
-  /**
-   * This function is called periodically during autonomous.
-   */
+  /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-  }
+  public void autonomousPeriodic() {}
 
   @Override
   public void teleopInit() {
@@ -308,16 +286,13 @@ public class Robot extends LoggedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    
+
     CommandScheduler.getInstance().cancelAll();
   }
 
-  /**
-   * This function is called periodically during operator control.
-   */
+  /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void testInit() {
@@ -325,24 +300,15 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().cancelAll();
   }
 
-  /**
-   * This function is called periodically during test mode.
-   */
+  /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {
-  }
+  public void testPeriodic() {}
 
-  /**
-   * This function is called once when the robot is first started up.
-   */
+  /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {
-  }
+  public void simulationInit() {}
 
-  /**
-   * This function is called periodically whilst in simulation.
-   */
+  /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {
-  }
+  public void simulationPeriodic() {}
 }
