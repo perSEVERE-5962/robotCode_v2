@@ -6,6 +6,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,6 +31,71 @@ import java.util.function.DoubleSupplier;
 // https://www.chiefdelphi.com/t/shoot-on-the-move-from-the-code-perspective/511815/27
 public class ShootOnTheMove extends Command {
 
+  // Telemetry snapshot: static so ShotPredictorTelemetry can read without a reference
+  private static volatile boolean active = false;
+  private static volatile double snapDistanceToHubM = 0;
+  private static volatile double snapTimeOfFlightSec = 0;
+  private static volatile double snapCompTargetX = 0;
+  private static volatile double snapCompTargetY = 0;
+  private static volatile double snapDriftX = 0;
+  private static volatile double snapDriftY = 0;
+  private static volatile double snapComputedRPM = 0;
+  private static volatile double snapHeadingErrorRad = 0;
+  private static volatile double snapHeadingSpeedRadPerSec = 0;
+
+  public static boolean isActive() {
+    return active;
+  }
+
+  public static double getSnapDistanceToHubM() {
+    return snapDistanceToHubM;
+  }
+
+  public static double getSnapTimeOfFlightSec() {
+    return snapTimeOfFlightSec;
+  }
+
+  public static double getSnapCompTargetX() {
+    return snapCompTargetX;
+  }
+
+  public static double getSnapCompTargetY() {
+    return snapCompTargetY;
+  }
+
+  public static double getSnapDriftX() {
+    return snapDriftX;
+  }
+
+  public static double getSnapDriftY() {
+    return snapDriftY;
+  }
+
+  public static double getSnapComputedRPM() {
+    return snapComputedRPM;
+  }
+
+  public static double getSnapHeadingErrorRad() {
+    return snapHeadingErrorRad;
+  }
+
+  public static double getSnapHeadingSpeedRadPerSec() {
+    return snapHeadingSpeedRadPerSec;
+  }
+
+  private static void clearSnapshot() {
+    active = false;
+    snapDistanceToHubM = 0;
+    snapTimeOfFlightSec = 0;
+    snapCompTargetX = 0;
+    snapCompTargetY = 0;
+    snapDriftX = 0;
+    snapDriftY = 0;
+    snapComputedRPM = 0;
+    snapHeadingErrorRad = 0;
+    snapHeadingSpeedRadPerSec = 0;
+  }
+
   private final SwerveSubsystem swerve;
   private final Shooter shooter;
 
@@ -51,18 +117,19 @@ public class ShootOnTheMove extends Command {
     this.hubCenter = hubCenter;
 
     addRequirements(swerve);
-    // distance and time
+    // distance (m) → time of flight (s), tuned on field
     timeOfFlightMap.put(2.0, 0.40);
     timeOfFlightMap.put(4.0, 0.75);
     timeOfFlightMap.put(6.0, 1.10);
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    active = true;
+  }
 
   @Override
   public void execute() {
-
     Translation2d robotPos = swerve.getPose().getTranslation();
     Rotation2d currentHeading = swerve.getHeading();
 
@@ -71,50 +138,43 @@ public class ShootOnTheMove extends Command {
         new Translation2d(robotVelocity.vxMetersPerSecond, robotVelocity.vyMetersPerSecond);
 
     double distanceToHub = robotPos.getDistance(hubCenter);
-
     double timeOfFlight = timeOfFlightMap.get(distanceToHub);
 
-    Translation2d compensatedTarget = hubCenter; // will be refined each iteration
+    Translation2d compensatedTarget = hubCenter;
     Translation2d shooterVecResult = Translation2d.kZero;
     double targetShooterSpeed = 0.0;
+    Translation2d lastDrift = Translation2d.kZero;
+
+    // Iterative drift compensation: each pass refines the aim point
     for (int i = 0; i < 3; i++) {
-
-      // how far the piece drifts during flight due to robot motion
       Translation2d drift = robotVel.times(timeOfFlight);
-
-      // compensated target, pretty much creates a new target, and then with the drift, the ball
-      // will end up in the hub
+      lastDrift = drift;
       compensatedTarget = hubCenter.minus(drift);
 
-      // vector from robot to compensated target
       Translation2d toTarget = compensatedTarget.minus(robotPos);
       double distToCompTarget = toTarget.getNorm();
 
       timeOfFlight = timeOfFlightMap.get(distToCompTarget);
-      // required field-relative velocity of the piece
-      // The piece must travel toTarget in timeOfFlight seconds.
+
+      // Required field-relative velocity: piece must travel toTarget in timeOfFlight seconds
       Translation2d requiredFieldVel = toTarget.times(1.0 / timeOfFlight);
 
-      // what the shooter itself must produce
-
+      // Subtract robot velocity to get what the shooter itself must produce
       shooterVecResult = requiredFieldVel.minus(robotVel);
       targetShooterSpeed = shooterVecResult.getNorm();
 
-      // shooter speed should never be zero or negative for division
       if (targetShooterSpeed < 0.1) {
         targetShooterSpeed = 10;
       }
     }
 
+    // Heading: aim at compensated target, not raw hub
     Rotation2d compensatedAim = compensatedTarget.minus(robotPos).getAngle();
-
     double headingError = compensatedAim.minus(currentHeading).getRadians();
-
     headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));
 
-    double headingSpeed = headingError * 3; // tune pid
     double maxHeadingSpeed = swerve.getSwerveDrive().getMaximumChassisAngularVelocity() * 0.6;
-    headingSpeed = MathUtil.clamp(headingSpeed, -maxHeadingSpeed, maxHeadingSpeed);
+    double headingSpeed = MathUtil.clamp(headingError * 3, -maxHeadingSpeed, maxHeadingSpeed);
 
     double maxV = swerve.getSwerveDrive().getMaximumChassisVelocity();
     double fieldVx = forwardInput.getAsDouble() * maxV * 0.6;
@@ -123,13 +183,27 @@ public class ShootOnTheMove extends Command {
     ChassisSpeeds speeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(fieldVx, fieldVy, headingSpeed, currentHeading);
     swerve.drive(speeds);
+
+    // Convert shooter exit velocity (m/s) to flywheel RPM
     double shooterRPM = (targetShooterSpeed / (2.0 * Math.PI * WHEEL_RADIUS_METERS)) * 60.0;
     shooter.moveToVelocityWithPID(shooterRPM);
+
+    // Telemetry snapshot
+    snapDistanceToHubM = distanceToHub;
+    snapTimeOfFlightSec = timeOfFlight;
+    snapCompTargetX = compensatedTarget.getX();
+    snapCompTargetY = compensatedTarget.getY();
+    snapDriftX = lastDrift.getX();
+    snapDriftY = lastDrift.getY();
+    snapComputedRPM = shooterRPM;
+    snapHeadingErrorRad = headingError;
+    snapHeadingSpeedRadPerSec = headingSpeed;
   }
 
   @Override
   public void end(boolean interrupted) {
     swerve.drive(new ChassisSpeeds(0, 0, 0));
+    clearSnapshot();
   }
 
   @Override

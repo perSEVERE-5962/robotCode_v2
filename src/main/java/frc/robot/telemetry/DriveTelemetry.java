@@ -42,7 +42,7 @@ public class DriveTelemetry implements SubsystemTelemetry {
   private boolean[] encoderAbsoluteOk = {true, true, true, true};
   private double[] encoderDisagreementRad = {0, 0, 0, 0};
 
-  // Per-module motor health (rate-limited to reduce CAN traffic)
+  // Per-module motor health (rate-limited)
   private static final int SWERVE_HEALTH_DECIMATION = 25; // ~500ms at 50Hz
   private int swerveHealthCounter = 0;
   private boolean[] driveMotorConnected = {false, false, false, false};
@@ -195,8 +195,7 @@ public class DriveTelemetry implements SubsystemTelemetry {
   }
 
   private void updateSwerveMotorHealth() {
-    swerveHealthCounter++;
-    if (swerveHealthCounter < SWERVE_HEALTH_DECIMATION) return;
+    if (++swerveHealthCounter < SWERVE_HEALTH_DECIMATION) return;
     swerveHealthCounter = 0;
 
     try {
@@ -207,7 +206,7 @@ public class DriveTelemetry implements SubsystemTelemetry {
         SwerveModule mod = modules[i];
         if (mod == null) continue;
 
-        // Drive motor health
+        // Drive motor
         try {
           Object driveMotorObj = mod.getDriveMotor().getMotor();
           if (driveMotorObj instanceof SparkBase) {
@@ -219,10 +218,11 @@ public class DriveTelemetry implements SubsystemTelemetry {
           }
         } catch (Throwable t) {
           driveMotorConnected[i] = false;
-          driveFaultsRaw[i] = -1;
+          driveFaultsRaw[i] = 0;
+          driveTemperature[i] = 0;
         }
 
-        // Turn motor health
+        // Turn motor
         try {
           Object turnMotorObj = mod.getAngleMotor().getMotor();
           if (turnMotorObj instanceof SparkBase) {
@@ -233,10 +233,10 @@ public class DriveTelemetry implements SubsystemTelemetry {
           }
         } catch (Throwable t) {
           turnMotorConnected[i] = false;
-          turnFaultsRaw[i] = -1;
+          turnFaultsRaw[i] = 0;
         }
 
-        // CANCoder health via YAGSL
+        // CANCoder
         try {
           encoderReadIssue[i] = mod.getAbsoluteEncoderReadIssue();
         } catch (Throwable t) {
@@ -244,7 +244,6 @@ public class DriveTelemetry implements SubsystemTelemetry {
         }
       }
     } catch (Throwable t) {
-      // SwerveDrive not ready
     }
   }
 
