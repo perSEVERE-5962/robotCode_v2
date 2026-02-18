@@ -28,11 +28,18 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.ClimbHanger;
+import frc.robot.commands.DeployHanger;
 import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.MoveShooter;
+import frc.robot.commands.RetractIntake;
+import frc.robot.commands.RunIntake;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
+import frc.robot.telemetry.TelemetryManager;
+import frc.robot.util.DriverFeedback;
+import frc.robot.util.DriverTuning;
 import java.io.File;
 import swervelib.SwerveInputStream;
 
@@ -136,6 +143,16 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
+
+    // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
+    DriverTuning.initialize();
+
+    // Wire up telemetry references
+    TelemetryManager.getInstance().setVision(visionSubsystem);
+    TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
+    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), null);
+    DriverFeedback.getInstance().initialize(driverXbox.getHID());
+
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -204,6 +221,10 @@ public class RobotContainer {
       // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
       // );
 
+      // Sim-only: B = deploy+run intake, release B = retract
+      driverXbox.b().whileTrue(new RunIntake()).onFalse(new RetractIntake());
+      // Sim-only: RBumper = deploy hanger, release = climb
+      driverXbox.rightBumper().whileTrue(new DeployHanger()).onFalse(new ClimbHanger());
     }
     if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(
