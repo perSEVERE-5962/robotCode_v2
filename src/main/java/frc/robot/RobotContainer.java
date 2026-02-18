@@ -265,36 +265,37 @@ public class RobotContainer {
       driverXbox.rightBumper().whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
 
 
-      Trigger crossingZone = new Trigger(()->{
-    Pose2d pose = drivebase.getPose();
-    if(pose.getTranslation().getX()<RED_HUB_CENTER.getX()+1&&pose.getTranslation().getX()>RED_HUB_CENTER.getX()-1||
-    pose.getTranslation().getX()<BLUE_HUB_CENTER.getX()+1&&pose.getTranslation().getX()>BLUE_HUB_CENTER.getX()-1){
-    return true;
-    }
-    else{
-    return false;
-    }
-});
-crossingZone.whileTrue(Commands.run(() -> {
-  Rotation2d current = drivebase.getHeading();
-  Rotation2d target;
+//       Trigger crossingZone = new Trigger(()->{
+//     Pose2d pose = drivebase.getPose();
+//     if(pose.getTranslation().getX()<RED_HUB_CENTER.getX()+1&&pose.getTranslation().getX()>RED_HUB_CENTER.getX()-1||
+//     pose.getTranslation().getX()<BLUE_HUB_CENTER.getX()+1&&pose.getTranslation().getX()>BLUE_HUB_CENTER.getX()-1){
+//     return true;
+//     }
+//     else{
+//     return false;
+//     }
+// });
+// crossingZone.whileTrue(Commands.run(() -> {
+//   Rotation2d current = drivebase.getHeading();
+//   Rotation2d target;
 
-if (Math.abs(current.getDegrees()) < 90 || Math.abs(current.getDegrees()) > 270) {
-    target = Rotation2d.fromDegrees(0);   
-} else {
-    target = Rotation2d.fromDegrees(180);  
-}
-    ChassisSpeeds speeds = drivebase.getTargetSpeeds(
-        driverXbox.getLeftY(),
-        driverXbox.getLeftX(),
-        target.getSin(),
-        target.getCos()
-    );
-    drivebase.driveFieldOriented(speeds);
-}, drivebase));
+// if (Math.abs(current.getDegrees()) < 90 || Math.abs(current.getDegrees()) > 270) {
+//     target = Rotation2d.fromDegrees(0);   
+// } else {
+//     target = Rotation2d.fromDegrees(180);  
+// }
+//     ChassisSpeeds speeds = drivebase.getTargetSpeeds(
+//         driverXbox.getLeftY(),
+//         driverXbox.getLeftX(),
+//         target.getSin(),
+//         target.getCos()
+//     );
+//     drivebase.driveFieldOriented(speeds);
+// }, drivebase));
 
-    }
+//     }
   }
+}
 /*     if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 

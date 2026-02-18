@@ -129,7 +129,7 @@ public final class Constants {
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double Iz = 0.0;
-
+    
     // Tuning targets
     public static final double TARGET_RPM = 3730;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
