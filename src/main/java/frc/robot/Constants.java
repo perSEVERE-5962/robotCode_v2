@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
 
+// ──── Telemetry infrastructure ────
+// TUNING_MODE controls whether TunableNumbers are editable from dashboard.
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -22,6 +24,8 @@ import swervelib.math.Matter;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final boolean TUNING_MODE = true;
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
@@ -131,6 +135,16 @@ public final class Constants {
     public static final double MaxOutput = 1.0;
     public static final double FF = 0.0000145;
     public static final double Iz = 0.0;
+
+    // Telemetry targets and thresholds
+    public static final double TARGET_RPM = 3730;
+    public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
+    public static final double TARGET_RECOVERY_MS = 150.0;
+    public static final double SPEED_TOLERANCE_RPM = 50.0;
+    public static final double VELOCITY_CONVERSION = 1.0;
+    public static final double SHOT_DETECTION_DROP_RPM = 200.0;
+    public static final double SHOT_DETECTION_MIN_RPM = 1000.0;
+    public static final double TEMP_WARNING_CELSIUS = 65.0;
   }
 
   public static final class HangerConstants {
@@ -141,6 +155,7 @@ public final class Constants {
     public static final double MaxOutput = 1.0;
     public static final double FF = 0.0;
     public static final double Iz = 0.0;
+    public static final double POSITION_TOLERANCE = 0.1;
   }
 
   public static final class IndexerConstants {
@@ -151,5 +166,108 @@ public final class Constants {
     public static final double MaxOutput = 1.0;
     public static final double FF = 0.000014;
     public static final double Iz = 0.0;
+
+    // Telemetry constants
+    public static final double TARGET_SPEED = 0.4;
+    public static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
+    public static final double JAM_TIME_THRESHOLD_SECONDS = 0.25;
+  }
+
+  // ──── New telemetry constant classes (additive) ────
+
+  public static final class HopperConstants {
+    public static final int LOW_BALL_THRESHOLD = 3;
+    public static final double DETECTION_CONFIDENCE_THRESHOLD = 0.8;
+  }
+
+  public static final class BatteryThresholds {
+    public static final double CRITICAL_V = 10.0;
+    public static final double WARNING_V = 11.5;
+    public static final double PRE_MATCH_WARN_V = 12.3;
+    public static final double PRE_MATCH_FAIL_V = 12.0;
+  }
+
+  public static final class DeviceHealthConstants {
+    public static final double DISCONNECT_DEBOUNCE_SEC = 0.5;
+    public static final double READY_TO_SHOOT_DEBOUNCE_SEC = 0.15;
+  }
+
+  public static final class DeploySafetyCheck {
+    public static boolean isSafeForDeploy() {
+      return !TUNING_MODE;
+    }
+
+    public static void main(String... args) {
+      if (!isSafeForDeploy()) {
+        System.err.println("DEPLOY BLOCKED: TUNING_MODE = true");
+        System.err.println("Set Constants.TUNING_MODE = false before deploying to robot.");
+        System.err.println("Override: ./gradlew deploy -x checkDeploy");
+        System.exit(1);
+      }
+      System.out.println("Deploy safety check passed.");
+    }
+  }
+
+  public static final class LEDConstants {
+    public static final int PWM_PORT = 0;
+    public static final int STRIP_LENGTH = 60;
+    public static final double DIM_DISABLED = 0.15;
+  }
+
+  public static final class PDHChannelMap {
+    public static final int NUM_CHANNELS = 24;
+
+    // Channel labels: index = PDH channel number, value = circuit name
+    // Update these to match your actual wiring harness
+    private static final String[] LABELS = {
+      "FrontLeftDrive", // 0
+      "FrontLeftTurn", // 1
+      "FrontRightDrive", // 2
+      "FrontRightTurn", // 3
+      "BackLeftDrive", // 4
+      "BackLeftTurn", // 5
+      "BackRightDrive", // 6
+      "BackRightTurn", // 7
+      "Shooter", // 8
+      "Indexer", // 9
+      "Agitator", // 10
+      "Intake", // 11
+      "IntakeActuator", // 12
+      "Hanger", // 13
+      "Ch14", // 14 - unused/unknown
+      "Ch15", // 15 - unused/unknown
+      "Ch16", // 16 - unused/unknown
+      "Ch17", // 17 - unused/unknown
+      "Ch18", // 18 - unused/unknown
+      "Ch19", // 19 - unused/unknown
+      "Radio", // 20
+      "RoboRIO", // 21
+      "Ch22", // 22 - unused/unknown
+      "Ch23", // 23 - unused/unknown
+    };
+
+    /** Alert when any single channel exceeds this current (amps). */
+    public static final double CHANNEL_OVERCURRENT_AMPS = 40.0;
+
+    public static String getLabel(int channel) {
+      if (channel >= 0 && channel < LABELS.length) {
+        return LABELS[channel];
+      }
+      return "Ch" + channel;
+    }
+  }
+
+  public static final class StallDetectionConstants {
+    public static final double SHOOTER_STALL_CURRENT_AMPS = 50.0;
+    public static final double SHOOTER_STALL_VELOCITY_RPM = 100.0;
+    public static final double SHOOTER_STALL_DEBOUNCE_MS = 250.0;
+
+    public static final double INDEXER_STALL_CURRENT_AMPS = 15.0;
+    public static final double INDEXER_STALL_VELOCITY_RPM = 50.0;
+    public static final double INDEXER_STALL_DEBOUNCE_MS = 200.0;
+
+    public static final double INTAKE_STALL_CURRENT_AMPS = 20.0;
+    public static final double INTAKE_STALL_VELOCITY_RPM = 100.0;
+    public static final double INTAKE_STALL_DEBOUNCE_MS = 200.0;
   }
 }
