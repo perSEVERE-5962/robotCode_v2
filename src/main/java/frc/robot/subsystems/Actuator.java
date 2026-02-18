@@ -108,4 +108,36 @@ public class Actuator extends SubsystemBase {
   public SparkMax getMotor() {
     return motor;
   }
+
+  /** Returns motor velocity in RPM */
+  public double getMotorVelocity() {
+    if (useThroughBoreEncoder) {
+      if (absoluteEncoder == null) {
+        return 0;
+      }
+      return absoluteEncoder.getVelocity();
+    } else {
+      if (encoder == null) {
+        return 0;
+      }
+      return encoder.getVelocity();
+    }
+  }
+
+  /** Sticky faults as raw bits for diagnostics */
+  public int getStickyFaultsRaw() {
+    try {
+      return (int) motor.getStickyFaults().rawBits;
+    } catch (Throwable t) {
+      return -1;
+    }
+  }
+
+  /** Hot-reload PID values */
+  public void updatePID(double kP, double kI, double kD, double kF) {
+    SparkMaxConfig config = new SparkMaxConfig();
+    config.closedLoop.p(kP).i(kI).d(kD);
+    config.closedLoop.feedForward.kV(12.0 * kF);
+    motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+  }
 }

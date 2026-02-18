@@ -20,7 +20,7 @@ public class MoveIntake extends Command {
 
   @Override
   public void execute() {
-    intake.move(Constants.MotorConstants.DESIRED_INTAKE_SPEED);
+    intake.move(intake.getTunableSpeed());
   }
 
   @Override
