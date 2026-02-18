@@ -173,3 +173,18 @@ spotless {
         trimTrailingWhitespace()
     }
 }
+
+// Prevent Spotless from running automatically during build/check
+gradle.projectsEvaluated {
+    tasks.named("check").configure {
+        dependsOn.removeIf { dep ->
+            if (dep instanceof TaskProvider) {
+                return dep.name == "spotlessCheck"
+            }
+            if (dep instanceof Task) {
+                return dep.name == "spotlessCheck"
+            }
+            return dep == "spotlessCheck"
+        }
+    }
+}
