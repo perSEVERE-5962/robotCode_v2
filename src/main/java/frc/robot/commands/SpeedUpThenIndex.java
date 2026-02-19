@@ -35,7 +35,7 @@ public class SpeedUpThenIndex extends Command {
   @Override
   public void execute() {
     CommandScheduler.getInstance().schedule(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
-    final Command waitUntilSpeed = Commands.waitUntil(() -> shooter.getMotorVelocity() == Constants.MotorConstants.DESIRED_SHOOTER_RPM);
+    final Command waitUntilSpeed = Commands.waitUntil(() -> shooter.getVelocity() == Constants.MotorConstants.DESIRED_SHOOTER_RPM);
     CommandScheduler.getInstance().schedule(new SequentialCommandGroup(waitUntilSpeed, new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM)));
   }
 

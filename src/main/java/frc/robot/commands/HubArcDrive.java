@@ -113,7 +113,7 @@ public class HubArcDrive extends Command {
         robotVelocity.vyMetersPerSecond
     );
     //get shooter velocity
-    double shooterVelocity = (shooter.getMotorVelocity() / 60.0) * (2.0 * Math.PI * Units.inchesToMeters(2.0));    if(shooterVelocity<1){
+    double shooterVelocity = (shooter.getVelocity() / 60.0) * (2.0 * Math.PI * Units.inchesToMeters(2.0));    if(shooterVelocity<1){
       shooterVelocity = 10;
     }
     // Time for game piece to reach hub

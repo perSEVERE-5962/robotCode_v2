@@ -6,14 +6,12 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
-import com.revrobotics.RelativeEncoder;
 import frc.robot.Constants;
 
 public class Shooter extends Actuator {
   private static Shooter instance;
 
   private SparkMax motor;
-  private RelativeEncoder motorEncoder;
   private SparkMaxConfig motorConfig;
 
   private Shooter() {
@@ -23,14 +21,8 @@ public class Shooter extends Actuator {
     motorConfig = new SparkMaxConfig();
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
     motorConfig.smartCurrentLimit(40);
-    motorEncoder = motor.getEncoder();
     
     motor.configure(motorConfig,ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-  }
-
-  public double getMotorVelocity() {
-    double velocity = motorEncoder.getVelocity();
-    return velocity;
   }
 
   public static Shooter getInstance() {
