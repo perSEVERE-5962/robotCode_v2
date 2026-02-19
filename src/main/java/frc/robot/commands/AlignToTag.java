@@ -116,7 +116,7 @@ public class AlignToTag extends Command {
       PhotonPipelineResult result = results.get(i);
       if (result.hasTargets()) {
         for (int j = 0; j < result.getTargets().size(); j++) {
-          PhotonTrackedTarget trackedTarget = result.getTargets().get(i); {
+          PhotonTrackedTarget trackedTarget = result.getTargets().get(j); {
               if (trackedTarget.getFiducialId() == desiredTag) {
                   target = trackedTarget; 
                   break;

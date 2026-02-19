@@ -41,7 +41,7 @@ public class ShootOnTheMove extends Command {
     this.strafeInput = strafeInput;
     this.hubCenter = hubCenter;
 
-    addRequirements(swerve);
+    addRequirements(swerve, shooter);
     //distance and time
     timeOfFlightMap.put(2.0, 0.40);
     timeOfFlightMap.put(4.0, 0.75);

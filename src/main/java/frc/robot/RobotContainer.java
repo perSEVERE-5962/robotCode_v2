@@ -159,8 +159,6 @@ public class RobotContainer {
    */
   private void configureBindings() {
     
-    driverXbox.y().onTrue(Commands.runOnce(() -> toggleOffset()));
-
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveRobotOriented);
@@ -265,14 +263,6 @@ public class RobotContainer {
     return drivebase.driveToPose(targPose);
   }
 
-  public boolean getUseLeftOffset() {
-    return useLeftOffset;
-  }
-
-  public void toggleOffset() {
-    useLeftOffset = !useLeftOffset;
-  }
-  
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
   }
