@@ -5,9 +5,6 @@
 package frc.robot;
 
 
-import static edu.wpi.first.units.Units.Microseconds;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -17,7 +14,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import java.util.ArrayList;
@@ -33,7 +29,10 @@ import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import frc.robot.subsystems.swervedrive.Vision;
-/** Add your docs here. */
+
+/**
+ * Camera Enum to select each camera
+ */
 public enum Cameras {
   /**
    * Left Camera
@@ -102,10 +101,6 @@ public enum Cameras {
    * queries.
    */
   public List<PhotonPipelineResult> resultsList = new ArrayList<>();
-  /**
-   * Last read from the camera timestamp to prevent lag due to slow data fetches.
-   */
-  private double lastReadTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
 
   /**
    * Construct a Photon Camera class with help. Standard deviations are fake
@@ -223,14 +218,12 @@ public enum Cameras {
    */
   private void updateUnreadResults() {
     double mostRecentTimestamp = resultsList.isEmpty() ? 0.0 : resultsList.get(0).getTimestampSeconds();
-    double currentTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
-    double debounceTime = Milliseconds.of(15).in(Seconds);
+    
     for (PhotonPipelineResult result : resultsList) {
       mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
     }
 
     resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
-    lastReadTimestamp = currentTimestamp;
     resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
       return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
     });

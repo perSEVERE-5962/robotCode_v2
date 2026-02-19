@@ -50,8 +50,7 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final CommandJoystick driverJoystick = new CommandJoystick(1);
-  private final SendableChooser<Command> autoChooser;
-  
+
   private boolean useLeftOffset = true;
 
   private static RobotContainer instance;
@@ -59,7 +58,9 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve/neo"));
-   // Initialize the vision subsystem
+
+  // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing selection of desired auto
+  private final SendableChooser<Command> autoChooser;
 
   /**
    * 
@@ -134,14 +135,22 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
+    
+    //Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-    // Build an auto chooser. This will use Commands.none() as the default option.
+
+    //Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser();
 
-    // Another option that allows you to specify the default auto by its name
-    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+    //Set the default auto (do nothing) 
+    autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
+    //Add a simple auto option to have the robot drive forward for 1 second then stop
+    autoChooser.addOption("Drive Forward", drivebase.driveForward().withTimeout(1));
+    
+    //Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
   }
 
   /**
@@ -199,8 +208,8 @@ public class RobotContainer {
               () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
 
       // driverXbox.b().whileTrue(
-      // drivebase.driveToPose(
-      // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
+      //     drivebase.driveToPose(
+      //         new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
       // );
       
     }
@@ -208,7 +217,6 @@ public class RobotContainer {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().onTrue(Commands.none());
@@ -230,12 +238,43 @@ public class RobotContainer {
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
       //driverXbox.b().whileTrue(new RunIntake())
-       //   .onFalse(new RetractIntake());
+      //    .onFalse(new RetractIntake());
       driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM));
       driverXbox.a().whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
       driverXbox.x().whileTrue(new SpeedUpThenIndex());
       driverXbox.x().onFalse(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_RPM).andThen(Commands.waitSeconds(0.25)).andThen(new MoveIndexer(0)));
     }
+/*  if (DriverStation.isTest()) {
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
+
+      driverJoystick.button(12).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverJoystick.button(3).onTrue(Commands.runOnce(drivebase::zeroGyro));
+      driverJoystick.button(4).whileTrue(drivebase.centerModulesCommand());
+      driverJoystick.button(1).onTrue(Commands.none());
+      driverJoystick.button(6).onTrue(Commands.none());
+    } else {
+      
+      // driverJoystick.button(999).onTrue(new DriveToHub(drivebase, getHubCenter(), Constants.HubScoringConstants.SCORING_DISTANCE, getScoringSide(), Constants.HubScoringConstants.SCORING_ARC_WIDTH_DEGREES));
+      // driverJoystick.button(12).toggleOnTrue(
+      //   new HubArcDrive(drivebase,
+      //     driverXbox::getLeftX,
+      //     getHubCenter(),
+      //     Constants.HubScoringConstants.SCORING_DISTANCE,
+      //     getScoringSide()
+      //   )
+      // );
+      //driverJoystick.button(12).onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+      driverJoystick.button(3).onTrue(Commands.runOnce(drivebase::zeroGyro));
+      driverJoystick.button(4).whi(leTrue(drivebase.centerModulesCommand());
+      driverJoystick.button(1).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverJoystick.button(6).onTrue(Commands.none());
+      //driverJoystick.button(999).whileTrue(new RunIntake())
+      //    .onFalse(new RetractIntake());
+      driverJoystick.button(11).whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM));
+      driverJoystick.button(999).whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
+      driverJoystick.button(12).whileTrue(new SpeedUpThenIndex());
+      driverJoystick.button(12).onFalse(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_RPM).andThen(Commands.waitSeconds(0.25)).andThen(new MoveIndexer(0)));
+    } */
   }
   
 
@@ -245,8 +284,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return autoChooser.getSelected();      
+    // Pass in the selected auto from the SmartDashboard as our desired autnomous commmand 
+    return autoChooser.getSelected();
   }
 
   public Command driveToTag(int tagId) {
