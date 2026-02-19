@@ -31,7 +31,7 @@ public class Shooter extends Actuator {
     motorConfig.smartCurrentLimit(40);
     motorEncoder = motor.getEncoder();
     
-    motor.configure(motorConfig,ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public double getMotorVelocity() {
