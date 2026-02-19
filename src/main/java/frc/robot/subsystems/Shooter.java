@@ -22,7 +22,7 @@ public class Shooter extends Actuator {
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
     motorConfig.smartCurrentLimit(40);
     
-    motor.configure(motorConfig,ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public static Shooter getInstance() {
