@@ -21,47 +21,36 @@ public class Actuator extends SubsystemBase {
   private SparkAbsoluteEncoder absoluteEncoder;
   private boolean useThroughBoreEncoder;
 
-  public Actuator(
-      int ID,
-      double P,
-      double I,
-      double D,
-      double MinOutput,
-      double MaxOutput,
-      double FF,
-      double Iz,
-      float kUpperSoftLimit,
-      float kLowerSoftLimit,
-      boolean inverted,
-      boolean useThroughBoreEncoder,
-      boolean useSoftLimits) {
+    public Actuator(int kID, double kP, double kI, double kD, double kMinOutput, double kMaxOutput, double kF, double kIz,
+            float kUpperSoftLimit, float kLowerSoftLimit, boolean inverted, boolean useThroughBoreEncoder,
+            boolean useSoftLimits) {
 
-    motor = new SparkMax(ID, SparkLowLevel.MotorType.kBrushless);
-    SparkMaxConfig motorConfig = new SparkMaxConfig();
+        motor = new SparkMax(kID, SparkLowLevel.MotorType.kBrushless);
+        SparkMaxConfig motorConfig = new SparkMaxConfig();
 
     motorConfig.inverted(inverted);
     motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
     motorConfig.smartCurrentLimit(40);
 
-    FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
-    if (useThroughBoreEncoder == true) {
-      feedBackSensor = FeedbackSensor.kAbsoluteEncoder;
-    }
-    motorConfig
-        .closedLoop
-        .feedbackSensor(feedBackSensor)
-        .p(P)
-        .i(I)
-        .d(D)
-        .outputRange(MinOutput, MaxOutput)
-        .iZone(Iz);
-    motorConfig.closedLoop.feedForward.kV(12.0 * FF);
-    if (useThroughBoreEncoder == true) {
-      absoluteEncoder = motor.getAbsoluteEncoder();
-    } else {
-      encoder = motor.getEncoder();
-      encoder.setPosition(0);
-    }
+        FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
+        if (useThroughBoreEncoder == true) {
+            feedBackSensor = FeedbackSensor.kAbsoluteEncoder;
+        }
+        motorConfig.closedLoop
+                .feedbackSensor(feedBackSensor)
+                .p(kP)
+                .i(kI)
+                .d(kD)
+                .outputRange(kMinOutput, kMaxOutput)
+                .iZone(kIz);
+        motorConfig.closedLoop.feedForward
+                .kV(12.0 * kF);
+        if (useThroughBoreEncoder == true) {
+            absoluteEncoder = motor.getAbsoluteEncoder();
+        } else {
+            encoder = motor.getEncoder();
+            encoder.setPosition(0);
+        }
 
     if (useSoftLimits == true) {
 
