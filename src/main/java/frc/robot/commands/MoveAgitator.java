@@ -2,13 +2,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Agitator;
-import frc.robot.Constants;
 
 public class MoveAgitator extends Command {
   private Agitator agitator;
+  private double speed;
   
-  public MoveAgitator() {
+  public MoveAgitator(double speed) {
     agitator = Agitator.getInstance();
+    this.speed = speed;
 
     addRequirements(agitator);
   }
@@ -20,7 +21,7 @@ public class MoveAgitator extends Command {
 
   @Override
   public void execute() {
-    agitator.move(Constants.MotorConstants.DESIRED_AGITATOR_SPEED);
+    agitator.move(speed);
   }
 
   @Override

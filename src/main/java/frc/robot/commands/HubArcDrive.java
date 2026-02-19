@@ -42,7 +42,7 @@ public class HubArcDrive extends Command {
     this.scoringSide = scoringSide;
     
     
-    addRequirements(swerve);
+    addRequirements(swerve, shooter);
   }
 
 

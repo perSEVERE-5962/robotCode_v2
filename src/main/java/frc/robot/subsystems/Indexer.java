@@ -17,8 +17,7 @@ public class Indexer extends Actuator {
     motorConfig = new SparkMaxConfig();
 
     motorConfig
-      .idleMode(SparkMaxConfig.IdleMode.kCoast)
-      .smartCurrentLimit(20);
+      .idleMode(SparkMaxConfig.IdleMode.kCoast);
     
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
