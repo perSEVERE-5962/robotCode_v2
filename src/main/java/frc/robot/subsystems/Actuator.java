@@ -80,7 +80,20 @@ public class Actuator extends SubsystemBase {
             }
             return encoder.getPosition();
         }
+    }
 
+    public double getVelocity() {
+        if (useThroughBoreEncoder == true) {
+            if (absoluteEncoder == null) {
+                return 0;
+            }
+            return absoluteEncoder.getVelocity();
+        } else {
+            if (encoder == null) {
+                return 0;
+            }
+            return encoder.getVelocity();
+        }
     }
 
     /* -1 <= position <= 1 */
