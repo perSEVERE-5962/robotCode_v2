@@ -2,24 +2,24 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 
 public class Agitator extends SubsystemBase {
-  private SparkFlex motor;
-  private SparkFlexConfig motorConfig;
+  private SparkMax motor;
+  private SparkMaxConfig motorConfig;
   private static Agitator instance;
 
   private Agitator() {
-    motor = new SparkFlex(Constants.CANDeviceIDs.kAgitatorID, SparkLowLevel.MotorType.kBrushless);
-    motorConfig = new SparkFlexConfig();
+    motor = new SparkMax(Constants.CANDeviceIDs.kAgitatorID, SparkLowLevel.MotorType.kBrushless);
+    motorConfig = new SparkMaxConfig();
 
     motorConfig
       //.inverted(true)
-      .idleMode(SparkFlexConfig.IdleMode.kBrake)
+      .idleMode(SparkMaxConfig.IdleMode.kBrake)
       .smartCurrentLimit(40);
 
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
