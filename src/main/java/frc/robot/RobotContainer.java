@@ -51,8 +51,6 @@ public class RobotContainer {
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final CommandJoystick driverJoystick = new CommandJoystick(1);
 
-  private boolean useLeftOffset = true;
-
   private static RobotContainer instance;
 
   // The robot's subsystems and commands are defined here...
