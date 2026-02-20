@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
+import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 
@@ -18,14 +19,14 @@ import frc.robot.subsystems.Shooter;
 public class SpeedUpThenIndex extends Command {
   /** Creates a new SpeedUpThenIndex. */
   private Shooter shooter;
-
+  private Agitator agitator;
   private Indexer indexer;
 
   public SpeedUpThenIndex() {
     // Use addRequirements() here to declare subsystem dependencies.
     shooter = Shooter.getInstance();
     indexer = Indexer.getInstance();
-
+    agitator = Agitator.getInstance();
     addRequirements(shooter, indexer);
   }
 
@@ -39,6 +40,7 @@ public class SpeedUpThenIndex extends Command {
     shooter.moveToVelocityWithPID(shooter.getTunableTargetRPM());
     if (shooter.isAtSpeed()) {
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
+      agitator.move(.4);
     }
   }
 

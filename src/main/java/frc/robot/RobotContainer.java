@@ -64,7 +64,9 @@ public class RobotContainer {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);
-  final CommandJoystick driverJoystick = new CommandJoystick(1);
+    final CommandXboxController copilotXbox = new CommandXboxController(1);
+
+  final CommandJoystick driverJoystick = new CommandJoystick(2);
   private final SendableChooser<Command> autoChooser;
 
   private boolean useLeftOffset = true;
@@ -261,8 +263,8 @@ public class RobotContainer {
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
       //driverXbox.b().whileTrue(new RunIntake())
        //   .onFalse(new RetractIntake());
-      driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM, arcDriveOn));
-      driverXbox.rightBumper().whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
+      copilotXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM, arcDriveOn));
+      copilotXbox.rightBumper().whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
 
 
 //       Trigger crossingZone = new Trigger(()->{
