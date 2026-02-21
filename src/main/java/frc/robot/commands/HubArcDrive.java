@@ -50,7 +50,6 @@ public class HubArcDrive extends Command {
     this.scoringDistance = scoringDistance;
     this.shooter = Shooter.getInstance();
     this.scoringSide = scoringSide;
-    shooter = Shooter.getInstance();
     indexer= Indexer.getInstance();
     
     addRequirements(swerve, shooter);
@@ -160,7 +159,6 @@ public class HubArcDrive extends Command {
   public void end(boolean interrupted) {
     swerve.drive(new ChassisSpeeds(0, 0, 0));
     shooter.move(0);
-    indexer.move(0);
   }
 
   @Override
