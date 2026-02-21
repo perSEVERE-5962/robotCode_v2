@@ -143,12 +143,12 @@ public class HubArcDrive extends Command {
     );
 
     swerve.drive(speeds);
-    System.out.println(headingError);
-    System.out.println("velocity:"+robotVelocity.vyMetersPerSecond);
+    //System.out.println(headingError);
+    //System.out.println("velocity:"+robotVelocity.vyMetersPerSecond);
     double shooterSpeed=Constants.MotorConstants.DESIRED_SHOOTER_RPM+( Math.abs(robotVelocity.vyMetersPerSecond*350));
     shooterSpeed = MathUtil.clamp(shooterSpeed, 0, 3760);
     shooter.moveToVelocityWithPID(shooterSpeed);
-    System.out.println("shooter speed" + shooterSpeed);
+    //System.out.println("shooter speed" + shooterSpeed);
     
     
     }

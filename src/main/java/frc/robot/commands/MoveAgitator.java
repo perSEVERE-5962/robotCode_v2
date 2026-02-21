@@ -1,15 +1,24 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Agitator;
+import frc.robot.subsystems.Indexer;
 import frc.robot.telemetry.IndexerTelemetry;
 import frc.robot.Constants;
 
 public class MoveAgitator extends Command {
   private Agitator agitator;
   private double speed;
-    private IndexerTelemetry indextelem = new IndexerTelemetry();
-
+  private BooleanSupplier arcDriveOn;
+    //private IndexerTelemetry indextelem = new IndexerTelemetry();
+public MoveAgitator(double speed, BooleanSupplier arcDriveOn) {
+    this.speed = speed;
+    agitator = Agitator.getInstance();
+    this.arcDriveOn= arcDriveOn;
+    addRequirements(agitator);
+  }
   public MoveAgitator(double speed) {
     agitator = Agitator.getInstance();
     this.speed=speed;
@@ -29,7 +38,7 @@ public class MoveAgitator extends Command {
     // } else {
     //     agitator.move(speed); 
     // }
-    agitator.move(speed); 
+    //agitator.move(speed); 
   }
 
   @Override

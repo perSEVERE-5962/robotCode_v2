@@ -5,7 +5,7 @@ import frc.robot.subsystems.Intake;
 
 public class MoveIntake extends Command {
   private Intake intake;
-
+  
   public MoveIntake() {
     intake = Intake.getInstance();
 

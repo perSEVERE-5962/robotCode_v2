@@ -33,7 +33,9 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AlignToTag;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.DriveToHub;
+import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
+import frc.robot.commands.MoveAgitator;
 //import frc.robot.commands.AlignWithAprilTag;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.RunIntake;
@@ -51,6 +53,7 @@ import java.util.function.BooleanSupplier;
 import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.MoveIntake;
 import frc.robot.commands.MoveShooter;
+import frc.robot.commands.PivotIntake;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
@@ -259,7 +262,7 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
       
-      driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
+      driverXbox.a().whileTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
       driverXbox.x().toggleOnTrue(hubArcDrive);
       //driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
@@ -268,8 +271,12 @@ public class RobotContainer {
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
       //driverXbox.b().whileTrue(new RunIntake())
        //   .onFalse(new RetractIntake());
-      copilotXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM, hubArcDrive::isScheduled));
-      copilotXbox.rightBumper().whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
+      driverXbox.y().whileTrue(new MoveIndexer(400));
+      copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
+      copilotXbox.leftBumper().whileTrue(new PivotIntake(0.2));
+      copilotXbox.b().whileTrue(new MoveIndexer(-5000).alongWith(new MoveAgitator(-0.4)));
+      copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
+      copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
 
 
 //       Trigger crossingZone = new Trigger(()->{
