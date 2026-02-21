@@ -262,7 +262,7 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
       
-      driverXbox.a().whileTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
+      driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
       driverXbox.x().toggleOnTrue(hubArcDrive);
       //driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
@@ -271,7 +271,7 @@ public class RobotContainer {
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
       //driverXbox.b().whileTrue(new RunIntake())
        //   .onFalse(new RetractIntake());
-      driverXbox.y().whileTrue(new MoveIndexer(400));
+      copilotXbox.b().whileTrue(new MoveIntake());
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.2));
       copilotXbox.b().whileTrue(new MoveIndexer(-5000).alongWith(new MoveAgitator(-0.4)));

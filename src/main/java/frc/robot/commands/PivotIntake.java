@@ -28,6 +28,7 @@ public class PivotIntake extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    intakeActuator.move(0);
 
   }
 

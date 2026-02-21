@@ -29,16 +29,12 @@ public class MoveIndexer extends Command {
   public void execute() {
     if(arcDriveOn.getAsBoolean()&&HubArcDrive.checkHeadingError()){
     indexer.moveToVelocityWithPID(rpm);
-    System.out.println("yes");
     }
     else if(arcDriveOn.getAsBoolean()&&!HubArcDrive.checkHeadingError()){
       indexer.moveToVelocityWithPID(0);
-      System.out.println("no");
     }
     else{
     indexer.moveToVelocityWithPID(rpm);
-        System.out.println("yes");
-
     }
   }
 
