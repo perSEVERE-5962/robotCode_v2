@@ -272,7 +272,7 @@ public class RobotContainer {
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
       //driverXbox.b().whileTrue(new RunIntake())
        //   .onFalse(new RetractIntake());
-      copilotXbox.b().whileTrue(new MoveIntake());
+      copilotXbox.x().whileTrue(new MoveIntake());
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.2));
       copilotXbox.b().whileTrue(new MoveIndexer(-5000).alongWith(new MoveAgitator(-0.4)));

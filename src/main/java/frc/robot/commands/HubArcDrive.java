@@ -63,7 +63,7 @@ public class HubArcDrive extends Command {
 
     // joystick input for movement
     double strafeStrength = strafeInput.getAsDouble();
-
+    //double strafeStrength = double strafeStrength = strafeInput.getAsDouble();
     // current robot pose and rotation
     Translation2d robotPos = swerve.getPose().getTranslation();
     Rotation2d currentHeading = swerve.getHeading();
