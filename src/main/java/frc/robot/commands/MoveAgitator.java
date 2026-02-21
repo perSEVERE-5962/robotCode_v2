@@ -32,7 +32,7 @@ public MoveAgitator(double speed, BooleanSupplier arcDriveOn) {
 
   @Override
   public void execute() {
-    agitator.move(speed);
+    //agitator.move(speed);
     // if (indextelem.isJamDetected()) {
     //     agitator.move(-Constants.MotorConstants.DESIRED_AGITATOR_SPEED);
     // } else {

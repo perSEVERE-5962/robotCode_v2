@@ -37,18 +37,19 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public enum Cameras {
   /** Left Camera */
   LEFT_CAM(
-      "left",
-      new Rotation3d(0, 0, 0),
-      new Translation3d(0.31, 0.17, 0.32),
-      VecBuilder.fill(0.3, 0.3, 0.6),
-      VecBuilder.fill(0.1, 0.1, 0.2)),
+      "back-left",
+    new Rotation3d(0, Math.toRadians(-15), Math.toRadians(135)),
+    new Translation3d(-0.293, 0.293, 0.229),
+    VecBuilder.fill(0.3, 0.3, 0.6),
+    VecBuilder.fill(0.1, 0.1, 0.2)),
+
   /** Right Camera */
   RIGHT_CAM(
-      "right",
-      new Rotation3d(0, 0, 0),
-      new Translation3d(0, 0, 0),
-      VecBuilder.fill(0.3, 0.3, 0.6),
-      VecBuilder.fill(0.1, 0.1, 0.2));
+      "back-right",
+    new Rotation3d(0, Math.toRadians(-15), Math.toRadians(-135)),
+    new Translation3d(-0.293, -0.293, 0.229),
+    VecBuilder.fill(0.3, 0.3, 0.6),
+    VecBuilder.fill(0.1, 0.1, 0.2));
 
   /** Center Camera */
   // CENTER_CAM("center",
