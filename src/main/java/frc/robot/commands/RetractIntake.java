@@ -26,6 +26,12 @@ public class RetractIntake extends Command {
 
   @Override
   public boolean isFinished() {
-    return false;
+    double currentPos = intakeActuator.getPosition();
+    if (currentPos>=(Constants.MotorConstants.IN_INTAKE_POS-.2)&&currentPos<=(Constants.MotorConstants.IN_INTAKE_POS+.2)){
+      return true;
+     }
+    else{
+      return false;
+  }
   }
 }

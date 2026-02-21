@@ -7,31 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New New New New New Path"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
+            "pathName": "ScoreToTrench"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "New New New Path"
+            "pathName": "ScoreToHuman"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 3.0
+            "waitTime": 5.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "New New New New Path"
+            "pathName": "HumanToScore"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TimedSpeedUpThenIndex"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TrenchToScore"
           }
         }
       ]

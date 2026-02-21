@@ -1,24 +1,25 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Indexer;
-
+import java.util.function.BooleanSupplier;
 public class MoveIndexer extends Command {
   private Indexer indexer;
   private double rpm;
-  private boolean arcdriveOn;
-  public MoveIndexer(double rpm, boolean arcDriveOn) {
+  private BooleanSupplier arcDriveOn;
+  public MoveIndexer(double rpm, BooleanSupplier arcDriveOn) {
     this.rpm = rpm;
     indexer = Indexer.getInstance();
-    this.arcdriveOn= arcDriveOn;
+    this.arcDriveOn= arcDriveOn;
     addRequirements(indexer);
   }
   public MoveIndexer(double rpm){
     this.rpm = rpm;
     indexer = Indexer.getInstance();
-    arcdriveOn=false;
+    this.arcDriveOn = () -> false;
     addRequirements(indexer);
-
   }
 
   @Override
@@ -26,10 +27,10 @@ public class MoveIndexer extends Command {
 
   @Override
   public void execute() {
-    if(arcdriveOn&&HubArcDrive.checkHeadingError()){
+    if(arcDriveOn.getAsBoolean()&&HubArcDrive.checkHeadingError()){
     indexer.moveToVelocityWithPID(rpm);
     }
-    else if(arcdriveOn&&!HubArcDrive.checkHeadingError()){
+    else if(arcDriveOn.getAsBoolean()&&!HubArcDrive.checkHeadingError()){
       indexer.moveToVelocityWithPID(0);
     }
     else{

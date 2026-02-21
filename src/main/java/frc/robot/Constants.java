@@ -98,7 +98,7 @@ public final class Constants {
     public static final int kIntakeActuatorID = 56;
     public static final int kIntakeID = 55;
     public static final int kHangerID = 992;
-    public static final int kAgitatorID = 993;
+    public static final int kAgitatorID = 54;
   }
 
   public static final class MotorConstants {

@@ -11,15 +11,15 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "DeployIntake"
-          }
-        },
-        {
           "type": "sequential",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DeployIntake"
+                }
+              },
               {
                 "type": "parallel",
                 "data": {
@@ -27,7 +27,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "ShortPickUpBalls"
+                        "pathName": "PickUpBalls"
                       }
                     },
                     {
@@ -45,7 +45,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ShortBallsToScore"
+            "pathName": "BallsToScore"
           }
         },
         {

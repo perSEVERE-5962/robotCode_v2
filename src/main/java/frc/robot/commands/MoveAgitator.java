@@ -24,11 +24,12 @@ public class MoveAgitator extends Command {
   @Override
   public void execute() {
     agitator.move(speed);
-    if (indextelem.isJamDetected()) {
-        agitator.move(-Constants.MotorConstants.DESIRED_AGITATOR_SPEED);
-    } else {
-        agitator.move(speed); 
-    }
+    // if (indextelem.isJamDetected()) {
+    //     agitator.move(-Constants.MotorConstants.DESIRED_AGITATOR_SPEED);
+    // } else {
+    //     agitator.move(speed); 
+    // }
+    agitator.move(speed); 
   }
 
   @Override

@@ -27,7 +27,7 @@ public class SpeedUpThenIndex extends Command {
     shooter = Shooter.getInstance();
     indexer = Indexer.getInstance();
     agitator = Agitator.getInstance();
-    addRequirements(shooter, indexer);
+    addRequirements(shooter, indexer,agitator);
   }
 
   // Called when the command is initially scheduled.
@@ -37,6 +37,7 @@ public class SpeedUpThenIndex extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    System.out.println("one");
     shooter.moveToVelocityWithPID(shooter.getTunableTargetRPM());
     if (shooter.isAtSpeed()) {
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
@@ -48,12 +49,13 @@ public class SpeedUpThenIndex extends Command {
   @Override
   public void end(boolean interrupted) {
     CommandScheduler.getInstance().schedule(new MoveShooter(0));
+    agitator.move(0);
     CommandScheduler.getInstance()
         .schedule(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_RPM));
     final Command waitTime = Commands.waitSeconds(0.25);
     CommandScheduler.getInstance()
         .schedule(new SequentialCommandGroup(waitTime, new MoveIndexer(0)));
-  }
+  }      
 
   // Returns true when the command should end.
   @Override

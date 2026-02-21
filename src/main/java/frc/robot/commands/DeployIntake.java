@@ -22,10 +22,18 @@ public class DeployIntake extends Command {
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+
+  }
 
   @Override
   public boolean isFinished() {
-    return false;
+    double currentPos = intakeActuator.getPosition();
+    if (currentPos>=(Constants.MotorConstants.OUT_INTAKE_POS-.2)&&currentPos<=(Constants.MotorConstants.OUT_INTAKE_POS+.2)){
+      return true;
+     }
+    else{
+  return false;
   }
+}
 }

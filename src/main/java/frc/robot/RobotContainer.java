@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AlignToTag;
+import frc.robot.commands.DeployIntake;
 import frc.robot.commands.DriveToHub;
 import frc.robot.commands.HubArcDrive;
 //import frc.robot.commands.AlignWithAprilTag;
@@ -48,6 +49,7 @@ import java.io.File;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import frc.robot.commands.MoveIndexer;
+import frc.robot.commands.MoveIntake;
 import frc.robot.commands.MoveShooter;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -70,7 +72,6 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   private boolean useLeftOffset = true;
-  private boolean arcDriveOn = true;
   private static RobotContainer instance;
 
   // The robot's subsystems and commands are defined here...
@@ -157,8 +158,19 @@ public class RobotContainer {
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+        NamedCommands.registerCommand("DeployIntake", new DeployIntake());
+        NamedCommands.registerCommand("RunIntake", new MoveIntake().withTimeout(4.3));
+
+    NamedCommands.registerCommand("DeployAndRunIntake", new RunIntake());
+    NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
+        NamedCommands.registerCommand("TimedSpeedUpThenShoot", new SpeedUpThenIndex().withTimeout(8));
+
+
+
+        NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
+
     // Build an auto chooser. This will use Commands.none() as the default option.
-    autoChooser = AutoBuilder.buildAutoChooser("test");//"New New New Auto"
+    autoChooser = AutoBuilder.buildAutoChooser("TestBallPickUp");//"New New New Auto"
 
     // Another option that allows you to specify the default auto by its name
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
@@ -187,7 +199,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-    driverXbox.y().onTrue(Commands.runOnce(() -> toggleOffset()));
+    Command hubArcDrive = new HubArcDrive(drivebase, driverXbox::getLeftX, getHubCenter(), SCORING_DISTANCE, getScoringSide());
 
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
@@ -248,14 +260,7 @@ public class RobotContainer {
     } else {
       
       driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
-      driverXbox.x().toggleOnTrue(
-        new HubArcDrive(drivebase,
-          driverXbox::getLeftX,
-          getHubCenter(),
-          SCORING_DISTANCE,
-          getScoringSide()
-        )
-      );
+      driverXbox.x().toggleOnTrue(hubArcDrive);
       //driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
@@ -263,7 +268,7 @@ public class RobotContainer {
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
       //driverXbox.b().whileTrue(new RunIntake())
        //   .onFalse(new RetractIntake());
-      copilotXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM, arcDriveOn));
+      copilotXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM, hubArcDrive::isScheduled));
       copilotXbox.rightBumper().whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
 
 
@@ -366,9 +371,7 @@ public class RobotContainer {
 
     return instance;
   }
-  public void toggleArcDrive(){ 
-    arcDriveOn = !arcDriveOn; 
-  } 
+
 
   public Cameras getBestCamera(int id) {
     // Replace this with the actual logic to get the best camera
