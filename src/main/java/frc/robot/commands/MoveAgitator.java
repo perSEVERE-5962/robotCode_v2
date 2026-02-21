@@ -39,6 +39,15 @@ public MoveAgitator(double speed, BooleanSupplier arcDriveOn) {
     //     agitator.move(speed); 
     // }
     //agitator.move(speed); 
+    if(arcDriveOn.getAsBoolean()&&HubArcDrive.checkHeadingError()){
+    agitator.move(speed);
+    }
+    else if(arcDriveOn.getAsBoolean()&&!HubArcDrive.checkHeadingError()){
+      agitator.move(0);
+    }
+    else{
+    agitator.move(speed);
+    }
   }
 
   @Override

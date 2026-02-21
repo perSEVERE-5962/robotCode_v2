@@ -25,6 +25,7 @@ import static frc.robot.Constants.MotorConstants;
 
 import java.util.function.DoubleSupplier;
 
+import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Indexer;
 import edu.wpi.first.math.geometry.Pose2d;
 
