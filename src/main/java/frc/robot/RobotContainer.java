@@ -262,7 +262,8 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
       
-      driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES).alongWith(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM)).alongWith(new MoveAgitator(Constants.MotorConstants.DESIRED_AGITATOR_SPEED)));
+      driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
+      driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM,hubArcDrive::isScheduled ).alongWith(new MoveAgitator(Constants.MotorConstants.DESIRED_AGITATOR_SPEED,hubArcDrive::isScheduled)));
       driverXbox.x().toggleOnTrue(hubArcDrive);
       //driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
