@@ -35,6 +35,7 @@ import frc.robot.subsystems.swervedrive.Vision;
 import swervelib.SwerveInputStream;
 import java.io.File;
 import frc.robot.commands.MoveIndexer;
+import frc.robot.commands.MoveAgitator;
 import frc.robot.commands.MoveShooter;
 
 /**
@@ -237,10 +238,10 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
       //driverXbox.b().whileTrue(new RunIntake())
       //    .onFalse(new RetractIntake());
-      driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM));
+      driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM).alongWith(new MoveAgitator(Constants.MotorConstants.DESIRED_AGITATOR_SPEED)));
       driverXbox.a().whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
       driverXbox.x().whileTrue(new SpeedUpThenIndex());
-      driverXbox.x().onFalse(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_RPM).andThen(Commands.waitSeconds(0.25)).andThen(new MoveIndexer(0)));
+      driverXbox.x().onFalse(new MoveIndexer(-Constants.MotorConstants.BACKWARDS_INDEXER_RPM).andThen(Commands.waitSeconds(0.25)).andThen(new MoveIndexer(0)));
     }
 /*  if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
