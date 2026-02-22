@@ -30,6 +30,12 @@ import frc.robot.Constants.OperatorConstants;
 //import frc.robot.commands.RetractIntake;
 //import frc.robot.commands.RunIntake;
 import frc.robot.commands.SpeedUpThenIndex;
+import frc.robot.subsystems.Agitator;
+import frc.robot.subsystems.Hanger;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import swervelib.SwerveInputStream;
@@ -47,6 +53,14 @@ import frc.robot.commands.MoveShooter;
  * trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  static {
+    Agitator.getInstance();
+    Hanger.getInstance();
+    Indexer.getInstance();
+    Intake.getInstance();
+    IntakeActuator.getInstance();
+    Shooter.getInstance();
+  }
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);

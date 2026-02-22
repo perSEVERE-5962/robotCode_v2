@@ -18,7 +18,7 @@ public class Intake extends SubsystemBase {
     motorConfig = new SparkMaxConfig();
 
     motorConfig
-      //.inverted(true)
+      .inverted(true)
       .idleMode(SparkMaxConfig.IdleMode.kCoast)
       .smartCurrentLimit(40);
 
