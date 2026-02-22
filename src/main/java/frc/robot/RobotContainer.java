@@ -280,7 +280,6 @@ public class RobotContainer {
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
       copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
 
-
 //       Trigger crossingZone = new Trigger(()->{
 //     Pose2d pose = drivebase.getPose();
 //     if(pose.getTranslation().getX()<RED_HUB_CENTER.getX()+1&&pose.getTranslation().getX()>RED_HUB_CENTER.getX()-1||

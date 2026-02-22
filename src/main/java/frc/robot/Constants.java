@@ -102,9 +102,9 @@ public final class Constants {
   }
 
   public static final class MotorConstants {
-    public static final double DESIRED_SHOOTER_RPM = 3730;
+    public static final double DESIRED_SHOOTER_RPM = 1760;
     public static final double DESIRED_INDEXER_RPM = 7833; // 8.4 * 3730/4
-    public static final double OUT_INTAKE_POS = 33.55;
+    public static final double OUT_INTAKE_POS = 38.24;
     public static final double IN_INTAKE_POS = 0.4;
     public static final double DESIRED_INTAKE_SPEED = -.92;
     public static final double UP_HANGER_POS = 0;
@@ -133,7 +133,7 @@ public final class Constants {
     public static final double Iz = 0.0;
     
     // Tuning targets
-    public static final double TARGET_RPM = 3730;
+    public static final double TARGET_RPM = 1550;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
     public static final double TARGET_RECOVERY_MS = 150.0;
 
@@ -147,12 +147,12 @@ public final class Constants {
 
   public static final class IndexerConstants {
     // Velocity PID (from Alden)
-    public static final double P = 0.00011;
+    public static final double P = 0.000;
     public static final double I = 0.0;
-    public static final double D = 0.001;
+    public static final double D = 0.00;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.000014;
+    public static final double FF = 0.0003;
     public static final double Iz = 0.0;
 
     // Telemetry constants

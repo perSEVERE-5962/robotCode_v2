@@ -52,7 +52,7 @@ public class Shooter extends Actuator {
 
     motorConfig = new SparkMaxConfig();
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    motorConfig.smartCurrentLimit(47);
+    motorConfig.smartCurrentLimit(40);
     motorEncoder = motor.getEncoder();
     
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);

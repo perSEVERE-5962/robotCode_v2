@@ -36,7 +36,10 @@ public class MoveIndexer extends Command {
     }
     else{
     indexer.moveToVelocityWithPID(rpm);
+    System.out.println(rpm);
+    System.out.println(indexer.getMotorVelocity());
     }
+  
   }
 
   @Override
