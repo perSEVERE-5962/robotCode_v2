@@ -28,7 +28,7 @@ public class HoldAndIntake extends Command {
   @Override
   public void execute() {
     intake.move(intake.getTunableSpeed());
-    intakeActuator.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS);
+    intakeActuator.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS); 
 
   }
 

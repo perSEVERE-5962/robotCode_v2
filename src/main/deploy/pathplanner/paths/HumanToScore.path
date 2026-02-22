@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.537,
-        "y": 0.663
+        "x": 0.5714978601997143,
+        "y": 0.6256633380884444
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.7855902928956212,
-        "y": 0.9761096936207913
+        "x": 1.2587589682351377,
+        "y": 1.2907484869521881
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "HumanPickUp"
     },
     {
       "anchor": {
-        "x": 2.706376604850214,
-        "y": 4.00265335235378
+        "x": 3.0039657631954344,
+        "y": 2.9804992867332385
       },
       "prevControl": {
-        "x": 2.2795616543710606,
-        "y": 3.3613916682672524
+        "x": 2.539376479334793,
+        "y": 2.6579980473172435
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 35.537677791974374
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

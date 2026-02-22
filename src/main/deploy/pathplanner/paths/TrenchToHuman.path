@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.751828776831051,
-        "y": 0.4960774382385768
+        "x": 3.793223965763195,
+        "y": 0.9750071326676175
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.52338078291815,
-        "y": 0.6727520759193351
+        "x": 0.5714978601997143,
+        "y": 0.6256633380884444
       },
       "prevControl": {
-        "x": 0.2744100787613114,
-        "y": 0.65008958550791
+        "x": 0.32252715604287563,
+        "y": 0.6030008476770193
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "HumanPickUp"
     }
   ],
   "rotationTargets": [],
@@ -49,7 +49,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 90.0
   },
   "reversed": false,
   "folder": null,

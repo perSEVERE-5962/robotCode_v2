@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AgitateAndIndex;
 import frc.robot.commands.AlignToTag;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.DriveToHub;
@@ -275,7 +276,7 @@ public class RobotContainer {
       copilotXbox.x().whileTrue(new MoveIntake());
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.2));
-      copilotXbox.b().whileTrue(new MoveIndexer(4000.0).alongWith(new MoveAgitator(0.3)));
+      copilotXbox.b().whileTrue(new AgitateAndIndex(0.3, 5000, hubArcDrive::isScheduled));
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
       copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
 
