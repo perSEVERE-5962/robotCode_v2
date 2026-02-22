@@ -29,7 +29,7 @@ public class DeployIntake extends Command {
   @Override
   public boolean isFinished() {
     double currentPos = intakeActuator.getPosition();
-    if (currentPos>=(Constants.MotorConstants.OUT_INTAKE_POS-.2)&&currentPos<=(Constants.MotorConstants.OUT_INTAKE_POS+.2)){
+    if (currentPos>=(Constants.MotorConstants.OUT_INTAKE_POS-.08)&&currentPos<=(Constants.MotorConstants.OUT_INTAKE_POS+.08)){
       return true;
      }
     else{

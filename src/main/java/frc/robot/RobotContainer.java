@@ -173,7 +173,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
 
     // Build an auto chooser. This will use Commands.none() as the default option.
-    autoChooser = AutoBuilder.buildAutoChooser("TestBallPickUp");//"New New New Auto"
+    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore");//"New New New Auto"
 
     // Another option that allows you to specify the default auto by its name
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
@@ -186,7 +186,7 @@ public class RobotContainer {
     // Wire up telemetry references 
     TelemetryManager.getInstance().setVision(visionSubsystem); 
     TelemetryManager.getInstance().setSwerveSubsystem(drivebase); 
-    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), null); 
+    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID()); 
  
 
   }
@@ -265,7 +265,7 @@ public class RobotContainer {
       driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
       driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM,hubArcDrive::isScheduled ).alongWith(new MoveAgitator(Constants.MotorConstants.DESIRED_AGITATOR_SPEED,hubArcDrive::isScheduled)));
       driverXbox.x().toggleOnTrue(hubArcDrive);
-      //driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+      driverXbox.b().onTrue(new RetractIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
@@ -275,7 +275,7 @@ public class RobotContainer {
       copilotXbox.x().whileTrue(new MoveIntake());
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.2));
-      copilotXbox.b().whileTrue(new MoveIndexer(-5000).alongWith(new MoveAgitator(-0.4)));
+      copilotXbox.b().whileTrue(new MoveIndexer(4000.0).alongWith(new MoveAgitator(0.3)));
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
       copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
 
@@ -390,7 +390,7 @@ public class RobotContainer {
     Optional<Alliance> ally = DriverStation.getAlliance();
 if (ally.isPresent()) {
     if (ally.get() == Alliance.Red) {
-        return true;
+        return false;
     }
     if (ally.get() == Alliance.Blue) {
         return false;

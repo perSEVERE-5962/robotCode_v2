@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "TimedSpeedUpThenShoot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "New Path"
