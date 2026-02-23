@@ -1,0 +1,185 @@
+{
+  "version": "26.0.0",
+  "hubs": [
+    {
+      "x": 100,
+      "y": 100,
+      "width": 1280,
+      "height": 800,
+      "state": {
+        "sidebar": {
+          "width": 300,
+          "expanded": []
+        },
+        "tabs": {
+          "selected": 1,
+          "tabs": [
+            {
+              "type": 0,
+              "title": "",
+              "controller": null,
+              "controllerUUID": "da000001-0000-0000-0000-000000000001",
+              "renderer": null,
+              "controlsHeight": 0
+            },
+            {
+              "type": 3,
+              "title": "Field Replay",
+              "controller": null,
+              "controllerUUID": "da000001-0000-0000-0000-000000000002",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Speed Profile",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/ChassisSpeeds/vXMetersPerSec",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#af2437", "size": "normal" }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/ChassisSpeeds/vYMetersPerSec",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#3b875a", "size": "normal" }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/ChassisSpeeds/Requested/vXMetersPerSec",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#2b66a2", "size": "normal" }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/ChassisSpeeds/Requested/vYMetersPerSec",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#e5b31b", "size": "normal" }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/ChassisSpeeds/omegaRadPerSec",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#80588e", "size": "normal" }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/ChassisSpeeds/Requested/omegaRadPerSec",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#d993aa", "size": "normal" }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null, "rightLockedRange": null,
+                "leftUnitConversion": { "autoTarget": null, "preset": null },
+                "rightUnitConversion": { "autoTarget": null, "preset": null },
+                "leftFilter": 0, "rightFilter": 0
+              },
+              "controllerUUID": "da000001-0000-0000-0000-000000000003",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Path Error",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/Auto/PositionErrorM",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#e5b31b", "size": "normal" }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/Auto/HeadingErrorDeg",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#2b66a2", "size": "normal" }
+                  }
+                ],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Auto/IsFollowing",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#3b875a" }
+                  }
+                ],
+                "leftLockedRange": null, "rightLockedRange": null,
+                "leftUnitConversion": { "autoTarget": null, "preset": null },
+                "rightUnitConversion": { "autoTarget": null, "preset": null },
+                "leftFilter": 0, "rightFilter": 0
+              },
+              "controllerUUID": "da000001-0000-0000-0000-000000000004",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Gyro Angles",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/Gyro/YawRad",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#af2437", "size": "normal" }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/Gyro/PitchRad",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#3b875a", "size": "normal" }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/Gyro/RollRad",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#2b66a2", "size": "normal" }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null, "rightLockedRange": null,
+                "leftUnitConversion": { "autoTarget": null, "preset": null },
+                "rightUnitConversion": { "autoTarget": null, "preset": null },
+                "leftFilter": 0, "rightFilter": 0
+              },
+              "controllerUUID": "da000001-0000-0000-0000-000000000005",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 9,
+              "title": "Swerve Modules",
+              "controller": null,
+              "controllerUUID": "da000001-0000-0000-0000-000000000006",
+              "renderer": null,
+              "controlsHeight": 200
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "satellites": []
+}
