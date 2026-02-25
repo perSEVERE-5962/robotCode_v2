@@ -143,9 +143,16 @@ public class SwerveSubsystem extends SubsystemBase {
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest) {
       swerveDrive.updateOdometry();
-      vision.updatePoseEstimation(swerveDrive);
-      vision.updateVisionField();
-      vision.updateTargetLock();
+      // Vision does network I/O to cameras. CommandScheduler.run() has zero
+      // try-catch, so a camera disconnect here would kill ALL button polling
+      // and command execution for every cycle.
+      try {
+        vision.updatePoseEstimation(swerveDrive);
+        vision.updateVisionField();
+        vision.updateTargetLock();
+      } catch (Throwable t) {
+        // Vision loss is recoverable. Drive loss is not.
+      }
     }
     // Drive telemetry now handled by DriveTelemetry class
   }
