@@ -2,137 +2,499 @@ package frc.robot.util;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.revrobotics.spark.SparkSim;
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.simulation.SimHooks;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.Shooter;
+import frc.robot.telemetry.SafeLog;
+import frc.robot.telemetry.TelemetryManager;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests AlertManager's real alert logic: battery thresholds, hysteresis,
+ * disabled-only gating, stall/jam propagation, and alert list accuracy.
+ *
+ * Failure modes we protect against:
+ * - FALSE POSITIVE: team replaces good battery, investigates non-existent jam
+ * - FALSE NEGATIVE: team goes to match with dead battery, misses stall
+ * - HYSTERESIS BUG: alert oscillates at threshold boundary
+ * - STALE ALERT: condition clears but alert stays active
+ * - DISABLED-ONLY BYPASS: battery warning fires mid-match (distracting)
+ */
 class AlertManagerTest {
 
-  private AlertManager alertManager;
+  private static TelemetryManager tm;
+  private AlertManager am;
+
+  @BeforeAll
+  static void initAll() {
+    HAL.initialize(500, 0);
+    DriverStationSim.setEnabled(false);
+    DriverStationSim.setAutonomous(false);
+    DriverStationSim.setTest(false);
+    DriverStationSim.notifyNewData();
+    RoboRioSim.setVInVoltage(12.8);
+
+    // Subsystems must exist for checkMotorTemps() / checkMotorStalls()
+    Shooter.getInstance();
+    Indexer.getInstance();
+    Intake.getInstance();
+    IntakeActuator.getInstance();
+
+    tm = TelemetryManager.getInstance();
+  }
 
   @BeforeEach
-  void setUp() {
-    HAL.initialize(500, 0);
-    alertManager = AlertManager.getInstance();
-    alertManager.clearDebounce();
+  void setUp() throws Exception {
+    am = AlertManager.getInstance();
+
+    // Reset internal state (singleton persists across tests)
+    setField(am, "inBatteryWarning", false);
+
+    List<String> alerts = getField(am, "activeAlerts");
+    alerts.clear();
+
+    Map<String, Double> times = getField(am, "lastElasticNotifyTimes");
+    times.clear();
+
+    // Replace debouncer with fresh one (clears internal timing state)
+    setField(am, "disabledDebouncer", new Debouncer(1.5, Debouncer.DebounceType.kRising));
+
+    // Reset all WPILib Alert objects
+    String[] alertFields = {
+      "batteryLowAlert", "batteryCriticalAlert",
+      "shooterTempAlert", "indexerTempAlert", "intakeTempAlert", "intakeActuatorTempAlert",
+      "canUtilizationAlert", "canBusOffAlert",
+      "loopTimeWarningAlert", "loopTimeErrorAlert",
+      "indexerJamAlert", "intakeJamAlert",
+      "bandwidthWarningAlert", "bandwidthCriticalAlert",
+      "brownoutRiskAlert",
+      "shooterStallAlert", "indexerStallAlert", "intakeStallAlert"
+    };
+    for (String name : alertFields) {
+      Alert alert = getField(am, name);
+      alert.set(false);
+    }
+
+    // Clear telemetry stall/jam/brownout state from previous tests
+    clearTelemetryState();
+
+    // Healthy defaults
+    RoboRioSim.setVInVoltage(12.8);
+    DriverStationSim.setEnabled(false);
+    DriverStationSim.notifyNewData();
+    SafeLog.logAndReset();
+  }
+
+  @AfterAll
+  static void tearDownAll() {
+    closeSubsystemMotor("frc.robot.subsystems.Shooter");
+    closeSubsystemMotor("frc.robot.subsystems.Indexer");
+    closeSubsystemMotor("frc.robot.subsystems.Intake");
+    closeSubsystemMotor("frc.robot.subsystems.IntakeActuator");
+    resetSingleton("frc.robot.subsystems.Shooter");
+    resetSingleton("frc.robot.subsystems.Indexer");
+    resetSingleton("frc.robot.subsystems.Intake");
+    resetSingleton("frc.robot.subsystems.IntakeActuator");
+    resetSingleton("frc.robot.telemetry.TelemetryManager");
+  }
+
+  // ==================== BATTERY: FALSE POSITIVES ====================
+
+  @Test
+  void testNoBatteryAlertWhenVoltageHealthy() {
+    satisfyDisabledDebouncer();
+    RoboRioSim.setVInVoltage(12.8);
+    am.checkAll();
+
+    assertFalse(am.getActiveAlerts().contains("BatteryLow"),
+        "No BatteryLow alert at 12.8V");
+    assertFalse(am.getActiveAlerts().contains("BatteryCritical"),
+        "No BatteryCritical alert at 12.8V");
+    assertEquals(0, am.getActiveAlertCount(),
+        "No alerts at healthy voltage in disabled mode");
   }
 
   @Test
-  void testGetInstanceNotNull() {
-    assertNotNull(AlertManager.getInstance());
+  void testBatteryWarningSuppressedWhenEnabled() {
+    // Mid-match voltage sag (11.0V) should NOT trigger warning
+    DriverStationSim.setEnabled(true);
+    DriverStationSim.notifyNewData();
+    RoboRioSim.setVInVoltage(11.0);
+    am.checkAll();
+
+    assertFalse(am.getActiveAlerts().contains("BatteryLow"),
+        "Battery warning must not fire mid-match (voltage sag is normal)");
+  }
+
+  // ==================== BATTERY: FALSE NEGATIVES ====================
+
+  @Test
+  void testBatteryWarningFiresWhenLowAndDisabled() {
+    satisfyDisabledDebouncer();
+    RoboRioSim.setVInVoltage(11.0);
+    am.checkAll();
+
+    assertTrue(am.getActiveAlerts().contains("BatteryLow"),
+        "Must warn about 11.0V battery when disabled (pre-match)");
   }
 
   @Test
-  void testGetInstanceReturnsSameInstance() {
-    assertSame(AlertManager.getInstance(), AlertManager.getInstance());
+  void testBatteryCriticalFiresRegardlessOfMode() {
+    // Critical fires even when ENABLED (brownout danger is immediate)
+    DriverStationSim.setEnabled(true);
+    DriverStationSim.notifyNewData();
+    RoboRioSim.setVInVoltage(9.5);
+    am.checkAll();
+
+    assertTrue(am.getActiveAlerts().contains("BatteryCritical"),
+        "CRITICAL must fire regardless of enabled/disabled state");
   }
 
   @Test
-  void testActiveAlertsListNotNull() {
-    assertNotNull(alertManager.getActiveAlerts());
+  void testCriticalOverridesWarning() throws Exception {
+    satisfyDisabledDebouncer();
+    RoboRioSim.setVInVoltage(9.0);
+    am.checkAll();
+
+    assertTrue(am.getActiveAlerts().contains("BatteryCritical"));
+    assertFalse(am.getActiveAlerts().contains("BatteryLow"),
+        "Critical and Warning should not both be active (confusing)");
+
+    Alert critAlert = getField(am, "batteryCriticalAlert");
+    Alert warnAlert = getField(am, "batteryLowAlert");
+    assertTrue(critAlert.get());
+    assertFalse(warnAlert.get());
+  }
+
+  // ==================== BATTERY: HYSTERESIS ====================
+
+  @Test
+  void testHysteresisPreventsPrematureClearing() throws Exception {
+    // Battery dips to 11.0V, then "recovers" to 11.7V (still bad)
+    satisfyDisabledDebouncer();
+    RoboRioSim.setVInVoltage(11.0);
+    am.checkAll();
+    assertTrue(am.getActiveAlerts().contains("BatteryLow"), "Warning should fire at 11.0V");
+
+    // Partial recovery: above WARNING_V (11.5) but below CLEAR_V (12.0)
+    RoboRioSim.setVInVoltage(11.7);
+    am.checkAll();
+    assertTrue(am.getActiveAlerts().contains("BatteryLow"),
+        "Warning must persist at 11.7V (below hysteresis clear threshold 12.0V)");
+
+    boolean inWarning = getField(am, "inBatteryWarning");
+    assertTrue(inWarning, "Hysteresis flag should still be set");
   }
 
   @Test
-  void testActiveAlertCountNonNegative() {
-    assertTrue(alertManager.getActiveAlertCount() >= 0);
+  void testHysteresisClearsAboveThreshold() throws Exception {
+    // Establish warning state
+    satisfyDisabledDebouncer();
+    RoboRioSim.setVInVoltage(11.0);
+    am.checkAll();
+    assertTrue(am.getActiveAlerts().contains("BatteryLow"));
+
+    // Full recovery above CLEAR_V (12.0)
+    RoboRioSim.setVInVoltage(12.5);
+    am.checkAll();
+    assertFalse(am.getActiveAlerts().contains("BatteryLow"),
+        "Warning must clear after voltage recovers above 12.0V");
+
+    boolean inWarning = getField(am, "inBatteryWarning");
+    assertFalse(inWarning, "Hysteresis flag should clear");
   }
 
   @Test
-  void testCheckLoopTimeNormalValue() {
-    assertDoesNotThrow(() -> alertManager.checkLoopTime(15.0));
+  void testHysteresisExactBoundaryClears() throws Exception {
+    // Establish warning state
+    satisfyDisabledDebouncer();
+    RoboRioSim.setVInVoltage(11.0);
+    am.checkAll();
+
+    // Exactly at CLEAR_V (12.0): code checks voltage < 12.0, so 12.0 is NOT < 12.0
+    RoboRioSim.setVInVoltage(12.0);
+    am.checkAll();
+    assertFalse(am.getActiveAlerts().contains("BatteryLow"),
+        "Exactly 12.0V should clear warning (12.0 is not < 12.0)");
+  }
+
+  // ==================== BATTERY: DEBOUNCER GATE ====================
+
+  @Test
+  void testBatteryWarningRequiresDebouncedDisabled() {
+    // Disabled for < 1.5s (brief mode transition) should NOT trigger
+    DriverStationSim.setEnabled(false);
+    DriverStationSim.notifyNewData();
+    // Do NOT step time past debounce period
+    RoboRioSim.setVInVoltage(11.0);
+    am.checkAll();
+
+    assertFalse(am.getActiveAlerts().contains("BatteryLow"),
+        "Warning must not fire before 1.5s disabled debounce (prevents false alarm on mode transition)");
   }
 
   @Test
-  void testCheckLoopTimeWarningValue() {
-    assertDoesNotThrow(() -> alertManager.checkLoopTime(25.0));
+  void testBatteryWarningFiresAfterDebouncePeriod() {
+    satisfyDisabledDebouncer();
+    RoboRioSim.setVInVoltage(11.0);
+    am.checkAll();
+
+    assertTrue(am.getActiveAlerts().contains("BatteryLow"),
+        "Warning must fire after 1.5s debounce satisfied");
   }
 
-  @Test
-  void testCheckLoopTimeCriticalValue() {
-    assertDoesNotThrow(() -> alertManager.checkLoopTime(100.0));
-  }
+  // ==================== ALERT LIST ACCURACY ====================
 
   @Test
-  void testCheckLoopTimeZero() {
-    assertDoesNotThrow(() -> alertManager.checkLoopTime(0.0));
-  }
+  void testCheckAllClearsAlertListEachCall() {
+    // First call: low battery triggers alert
+    satisfyDisabledDebouncer();
+    RoboRioSim.setVInVoltage(11.0);
+    am.checkAll();
+    assertTrue(am.getActiveAlertCount() > 0, "Should have alerts at low voltage");
 
-  @Test
-  void testCheckLoopTimeNegative() {
-    assertDoesNotThrow(() -> alertManager.checkLoopTime(-5.0));
-  }
-
-  @Test
-  void testClearDebounceDoesNotThrow() {
-    assertDoesNotThrow(() -> alertManager.clearDebounce());
-  }
-
-  @Test
-  void testClearDebounceIdempotent() {
-    assertDoesNotThrow(
-        () -> {
-          alertManager.clearDebounce();
-          alertManager.clearDebounce();
-          alertManager.clearDebounce();
-        });
-  }
-
-  @Test
-  void testLogActiveAlertsDoesNotThrow() {
-    assertDoesNotThrow(() -> alertManager.logActiveAlerts());
-  }
-
-  @Test
-  void testBatteryCriticalBelowWarning() {
-    assertTrue(
-        AlertManager.BATTERY_CRITICAL_V < AlertManager.BATTERY_WARNING_V,
-        "Critical voltage should be lower than warning voltage");
-  }
-
-  @Test
-  void testMotorTempWarningBelowCritical() {
-    assertTrue(
-        AlertManager.MOTOR_TEMP_WARNING_C < AlertManager.MOTOR_TEMP_CRITICAL_C,
-        "Warning temp should be lower than critical temp");
-  }
-
-  @Test
-  void testLoopTimeWarningBelowError() {
-    assertTrue(
-        AlertManager.LOOP_TIME_WARNING_MS < AlertManager.LOOP_TIME_ERROR_MS,
-        "Warning loop time should be lower than error loop time");
-  }
-
-  @Test
-  void testCANUtilizationThresholdInRange() {
-    assertTrue(
-        AlertManager.CAN_UTILIZATION_WARNING > 0 && AlertManager.CAN_UTILIZATION_WARNING < 1.0,
-        "CAN utilization should be a fraction between 0 and 1");
-  }
-
-  @Test
-  void testBatteryThresholdsPositive() {
-    assertTrue(AlertManager.BATTERY_CRITICAL_V > 0);
-    assertTrue(AlertManager.BATTERY_WARNING_V > 0);
-  }
-
-  @Test
-  void testBatteryHysteresisAboveWarning() {
-    assertTrue(
-        AlertManager.BATTERY_WARNING_CLEAR_V > AlertManager.BATTERY_WARNING_V,
-        "Hysteresis clear voltage must be above warning voltage");
-  }
-
-  @Test
-  void testMotorTempThresholdsPositive() {
-    assertTrue(AlertManager.MOTOR_TEMP_WARNING_C > 0);
-    assertTrue(AlertManager.MOTOR_TEMP_CRITICAL_C > 0);
+    // Second call: voltage recovered
+    RoboRioSim.setVInVoltage(12.8);
+    am.checkAll();
+    assertFalse(am.getActiveAlerts().contains("BatteryLow"),
+        "Recovered alerts must not persist from previous cycle");
   }
 
   @Test
   void testGetActiveAlertsReturnsCopy() {
-    var list1 = alertManager.getActiveAlerts();
-    var list2 = alertManager.getActiveAlerts();
-    assertNotSame(list1, list2, "Should return a new list each call");
+    am.checkAll();
+    List<String> list1 = am.getActiveAlerts();
+    List<String> list2 = am.getActiveAlerts();
+    assertNotSame(list1, list2, "Must return defensive copy");
+  }
+
+  // ==================== STALL ALERTS VIA TELEMETRY ====================
+
+  @Test
+  void testShooterStallAlertActivates() throws Exception {
+    // Inject stall via TelemetryManager -> shooterTelemetry
+    Object shooterTel = getTelemetryField("shooterTelemetry");
+    setField(shooterTel, "stalled", true);
+
+    am.checkAll();
+
+    assertTrue(am.getActiveAlerts().contains("ShooterStall"),
+        "ShooterStall alert must fire when telemetry reports stall");
+    Alert stallAlert = getField(am, "shooterStallAlert");
+    assertTrue(stallAlert.get());
+  }
+
+  @Test
+  void testShooterStallAlertClearsOnRecovery() throws Exception {
+    // Activate
+    Object shooterTel = getTelemetryField("shooterTelemetry");
+    setField(shooterTel, "stalled", true);
+    am.checkAll();
+    assertTrue(am.getActiveAlerts().contains("ShooterStall"));
+
+    // Recover
+    setField(shooterTel, "stalled", false);
+    am.checkAll();
+    assertFalse(am.getActiveAlerts().contains("ShooterStall"),
+        "ShooterStall must clear when stall condition resolves");
+    Alert stallAlert = getField(am, "shooterStallAlert");
+    assertFalse(stallAlert.get());
+  }
+
+  @Test
+  void testIndexerStallAlertActivates() throws Exception {
+    Object indexerTel = getTelemetryField("indexerTelemetry");
+    setField(indexerTel, "stalled", true);
+    am.checkAll();
+
+    assertTrue(am.getActiveAlerts().contains("IndexerStall"));
+  }
+
+  @Test
+  void testIntakeStallAlertActivates() throws Exception {
+    Object intakeTel = getTelemetryField("intakeTelemetry");
+    setField(intakeTel, "stalled", true);
+    am.checkAll();
+
+    assertTrue(am.getActiveAlerts().contains("IntakeStall"));
+  }
+
+  // ==================== JAM ALERTS VIA TELEMETRY ====================
+
+  @Test
+  void testIndexerJamAlertActivates() throws Exception {
+    Object indexerTel = getTelemetryField("indexerTelemetry");
+    setField(indexerTel, "jamDetected", true);
+    am.checkAll();
+
+    assertTrue(am.getActiveAlerts().contains("IndexerJam"),
+        "IndexerJam alert must fire when telemetry reports jam");
+    Alert jamAlert = getField(am, "indexerJamAlert");
+    assertTrue(jamAlert.get());
+  }
+
+  @Test
+  void testIndexerJamAlertClears() throws Exception {
+    Object indexerTel = getTelemetryField("indexerTelemetry");
+    setField(indexerTel, "jamDetected", true);
+    am.checkAll();
+    assertTrue(am.getActiveAlerts().contains("IndexerJam"));
+
+    setField(indexerTel, "jamDetected", false);
+    am.checkAll();
+    assertFalse(am.getActiveAlerts().contains("IndexerJam"),
+        "IndexerJam must clear when jam resolves");
+  }
+
+  @Test
+  void testIntakeJamAlertActivates() throws Exception {
+    Object intakeTel = getTelemetryField("intakeTelemetry");
+    setField(intakeTel, "jamDetected", true);
+    am.checkAll();
+
+    assertTrue(am.getActiveAlerts().contains("IntakeJam"));
+  }
+
+  // ==================== BROWNOUT RISK ====================
+
+  @Test
+  void testBrownoutRiskAlertActivates() throws Exception {
+    Object sysTel = getTelemetryField("systemHealthTelemetry");
+    setField(sysTel, "brownoutRisk", true);
+    am.checkAll();
+
+    assertTrue(am.getActiveAlerts().contains("BrownoutRisk"),
+        "BrownoutRisk must fire when SystemHealthTelemetry reports risk");
+  }
+
+  @Test
+  void testBrownoutRiskAlertClears() throws Exception {
+    Object sysTel = getTelemetryField("systemHealthTelemetry");
+    setField(sysTel, "brownoutRisk", true);
+    am.checkAll();
+    assertTrue(am.getActiveAlerts().contains("BrownoutRisk"));
+
+    setField(sysTel, "brownoutRisk", false);
+    am.checkAll();
+    assertFalse(am.getActiveAlerts().contains("BrownoutRisk"));
+  }
+
+  // ==================== ELASTIC DEBOUNCE ====================
+
+  @Test
+  void testClearDebounceResetsTimers() throws Exception {
+    // Trigger a notification to populate the map
+    satisfyDisabledDebouncer();
+    RoboRioSim.setVInVoltage(11.0);
+    am.checkAll();
+
+    Map<String, Double> times = getField(am, "lastElasticNotifyTimes");
+    assertFalse(times.isEmpty(), "Should have notification timestamps after alert");
+
+    am.clearDebounce();
+    assertTrue(times.isEmpty(), "clearDebounce() must reset all notification timers");
+  }
+
+  // ==================== NO FALSE ALARMS ON HEALTHY STATE ====================
+
+  @Test
+  void testNoAlertsOnHealthyState() throws Exception {
+    // Ensure TelemetryManager sub-objects report healthy state
+    clearTelemetryState();
+
+    RoboRioSim.setVInVoltage(12.8);
+    DriverStationSim.setEnabled(true);
+    DriverStationSim.notifyNewData();
+    am.checkAll();
+
+    List<String> alerts = am.getActiveAlerts();
+    assertEquals(0, alerts.size(),
+        "Healthy robot should have zero active alerts, got: " + alerts);
+  }
+
+  // ==================== HELPERS ====================
+
+  private void satisfyDisabledDebouncer() {
+    DriverStationSim.setEnabled(false);
+    DriverStationSim.notifyNewData();
+    SimHooks.stepTiming(2.0);
+    // Debouncer needs a calculate() call after time advance
+    // checkAll() -> checkBattery() -> disabledDebouncer.calculate() handles this
+  }
+
+  private void clearTelemetryState() throws Exception {
+    String[] telFields = {"shooterTelemetry", "indexerTelemetry", "intakeTelemetry"};
+    for (String tf : telFields) {
+      Object tel = getTelemetryField(tf);
+      if (tel != null) {
+        try { setField(tel, "stalled", false); } catch (Exception e) { }
+        try { setField(tel, "jamDetected", false); } catch (Exception e) { }
+      }
+    }
+    Object sysTel = getTelemetryField("systemHealthTelemetry");
+    if (sysTel != null) {
+      try { setField(sysTel, "brownoutRisk", false); } catch (Exception e) { }
+    }
+  }
+
+  private Object getTelemetryField(String fieldName) throws Exception {
+    Field f = TelemetryManager.class.getDeclaredField(fieldName);
+    f.setAccessible(true);
+    return f.get(tm);
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> T getField(Object obj, String fieldName) throws Exception {
+    Field f = obj.getClass().getDeclaredField(fieldName);
+    f.setAccessible(true);
+    return (T) f.get(obj);
+  }
+
+  private void setField(Object obj, String fieldName, Object value) throws Exception {
+    Field f = obj.getClass().getDeclaredField(fieldName);
+    f.setAccessible(true);
+    f.set(obj, value);
+  }
+
+  private static void resetSingleton(String className) {
+    try {
+      Class<?> clazz = Class.forName(className);
+      Field f = clazz.getDeclaredField("instance");
+      f.setAccessible(true);
+      f.set(null, null);
+    } catch (Exception e) {
+    }
+  }
+
+  private static void closeSubsystemMotor(String className) {
+    try {
+      Class<?> clazz = Class.forName(className);
+      Field f = clazz.getDeclaredField("instance");
+      f.setAccessible(true);
+      Object instance = f.get(null);
+      if (instance != null) {
+        java.lang.reflect.Method getMotor = clazz.getMethod("getMotor");
+        Object motor = getMotor.invoke(instance);
+        if (motor instanceof AutoCloseable) {
+          ((AutoCloseable) motor).close();
+        }
+      }
+    } catch (Exception e) {
+    }
   }
 }
