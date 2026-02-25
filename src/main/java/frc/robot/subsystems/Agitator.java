@@ -1,32 +1,97 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
+import frc.robot.Constants.AgitatorConstants;
+import frc.robot.util.TunableNumber;
 
-public class Agitator extends SubsystemBase {
+public class Agitator extends Actuator {
   private SparkMax motor;
   private SparkMaxConfig motorConfig;
   private static Agitator instance;
 
+  private static final TunableNumber kP = new TunableNumber("Agitator/kP", AgitatorConstants.P);
+  private static final TunableNumber kI = new TunableNumber("Agitator/kI", AgitatorConstants.I);
+  private static final TunableNumber kD = new TunableNumber("Agitator/kD", AgitatorConstants.D);
+  private static final TunableNumber kF = new TunableNumber("Agitator/FF", AgitatorConstants.FF);
+
+  private static final TunableNumber targetRPM =
+      new TunableNumber("Agitator/TargetRPM", AgitatorConstants.TARGET_RPM);
+
   private Agitator() {
-    motor = new SparkMax(Constants.CANDeviceIDs.kAgitatorID, SparkLowLevel.MotorType.kBrushless);
+    super(
+        Constants.CANDeviceIDs.kAgitatorID,
+        AgitatorConstants.P,
+        AgitatorConstants.I,
+        AgitatorConstants.D,
+        AgitatorConstants.MinOutput,
+        AgitatorConstants.MaxOutput,
+        AgitatorConstants.FF,
+        AgitatorConstants.Iz,
+        0,
+        0,
+        false,
+        false,
+        false);
+    motor = getMotor();
     motorConfig = new SparkMaxConfig();
 
-    motorConfig
-      //.inverted(true)
-      .idleMode(SparkMaxConfig.IdleMode.kBrake)
-      .smartCurrentLimit(40);
+    motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(40);
 
-    motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  public void move(double speed) {
-    motor.set(speed);
+  public double getTemperature() {
+    return motor.getMotorTemperature();
+  }
+
+  @Override
+  public void periodic() {
+    TunableNumber.ifChanged(
+        () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+  }
+
+  public double getAppliedOutput() {
+    return motor.getAppliedOutput();
+  }
+
+  public double getOutputCurrent() {
+    return motor.getOutputCurrent();
+  }
+
+  public double getBusVoltage() {
+    return motor.getBusVoltage();
+  }
+
+  public double getVelocityRPM() {
+    return getMotorVelocity();
+  }
+
+  public boolean isRunning() {
+    return Math.abs(motor.getAppliedOutput()) > 0.05;
+  }
+
+  public double getTunableTargetRPM() {
+    return targetRPM.get();
+  }
+
+  public double getTunableKP() {
+    return kP.get();
+  }
+
+  public double getTunableKI() {
+    return kI.get();
+  }
+
+  public double getTunableKD() {
+    return kD.get();
+  }
+
+  public double getTunableFF() {
+    return kF.get();
   }
 
   public static Agitator getInstance() {
@@ -35,5 +100,4 @@ public class Agitator extends SubsystemBase {
     }
     return instance;
   }
-
 }
