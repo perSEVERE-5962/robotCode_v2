@@ -220,6 +220,92 @@ public final class Constants {
     }
   }
 
+  public static final class LEDConstants {
+    public static final int PWM_PORT = 0;
+    public static final int STRIP_LENGTH = 60;
+    public static final double DIM_DISABLED = 0.15;
+  }
+
+  /**
+   * PDH channel map. Maps physical PDH channel (0-23) to a human-readable circuit name. Update this
+   * when wiring changes. Channels without a label are logged as "Ch{N}".
+   */
+  public static final class PDHChannelMap {
+    public static final int NUM_CHANNELS = 24;
+
+    // Channel labels: index = PDH channel number, value = circuit name
+    // Update these to match your actual wiring harness
+    private static final String[] LABELS = {
+      "FrontLeftDrive", // 0
+      "FrontLeftTurn", // 1
+      "FrontRightDrive", // 2
+      "FrontRightTurn", // 3
+      "BackLeftDrive", // 4
+      "BackLeftTurn", // 5
+      "BackRightDrive", // 6
+      "BackRightTurn", // 7
+      "Shooter", // 8
+      "Indexer", // 9
+      "Agitator", // 10
+      "Intake", // 11
+      "IntakeActuator", // 12
+      "Hanger", // 13
+      "Ch14", // 14 - unused/unknown
+      "Ch15", // 15 - unused/unknown
+      "Ch16", // 16 - unused/unknown
+      "Ch17", // 17 - unused/unknown
+      "Ch18", // 18 - unused/unknown
+      "Ch19", // 19 - unused/unknown
+      "Radio", // 20
+      "RoboRIO", // 21
+      "Ch22", // 22 - unused/unknown
+      "Ch23", // 23 - unused/unknown
+    };
+
+    /** Alert when any single channel exceeds this current (amps). */
+    public static final double CHANNEL_OVERCURRENT_AMPS = 40.0;
+
+    public static String getLabel(int channel) {
+      if (channel >= 0 && channel < LABELS.length) {
+        return LABELS[channel];
+      }
+      return "Ch" + channel;
+    }
+  }
+
+  /** Jam protection: 3-layer debounce + auto-reverse + disable after max attempts */
+  public static final class JamProtectionConstants {
+    // Intake jam protection
+    public static final double INTAKE_JAM_CURRENT_AMPS = 25.0;
+    public static final double INTAKE_JAM_VELOCITY_RPM = 100.0;
+    public static final double INTAKE_STARTUP_IGNORE_SEC = 0.5;
+    public static final double INTAKE_JAM_CONFIRM_SEC = 0.3;
+    public static final double INTAKE_REVERSE_SEC = 0.4;
+    public static final double INTAKE_COOLDOWN_SEC = 0.15;
+    public static final double INTAKE_REVERSE_POWER = -0.4;
+    public static final int INTAKE_MAX_ATTEMPTS = 3;
+
+    // Indexer jam protection
+    public static final double INDEXER_JAM_CURRENT_AMPS = 25.0;
+    public static final double INDEXER_JAM_VELOCITY_RPM = 50.0;
+    public static final double INDEXER_STARTUP_IGNORE_SEC = 0.5;
+    public static final double INDEXER_JAM_CONFIRM_SEC = 0.25;
+    public static final double INDEXER_REVERSE_SEC = 0.3;
+    public static final double INDEXER_COOLDOWN_SEC = 0.15;
+    public static final double INDEXER_REVERSE_POWER = -0.3;
+    public static final int INDEXER_MAX_ATTEMPTS = 3;
+
+    // Agitator jam protection
+    public static final double AGITATOR_JAM_CURRENT_AMPS = 15.0;
+    public static final double AGITATOR_JAM_VELOCITY_RPM = 50.0;
+    public static final double AGITATOR_STARTUP_IGNORE_SEC = 0.5;
+    public static final double AGITATOR_JAM_CONFIRM_SEC = 0.3;
+    public static final double AGITATOR_REVERSE_SEC = 0.4;
+    public static final double AGITATOR_COOLDOWN_SEC = 0.15;
+    public static final double AGITATOR_REVERSE_POWER = -0.3;
+    public static final int AGITATOR_MAX_ATTEMPTS = 3;
+  }
+
   /** Stall = high current + low velocity for debounce time */
   public static final class StallDetectionConstants {
     // Shooter stall thresholds
