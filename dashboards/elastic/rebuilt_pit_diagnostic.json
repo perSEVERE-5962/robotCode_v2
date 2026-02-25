@@ -1,6 +1,6 @@
 {
   "version": 1.0,
-  "grid_size": 128,
+  "grid_size": 64,
   "tabs": [
     {
       "name": "Quick Check",
@@ -8,20 +8,8 @@
         "layouts": [],
         "containers": [
           {
-            "title": "Health Score",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 384.0,
-            "height": 256.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Summary/HealthScore",
-              "period": 0.033
-            }
-          },
-          {
             "title": "Battery",
-            "x": 384.0,
+            "x": 0.0,
             "y": 0.0,
             "width": 640.0,
             "height": 128.0,
@@ -37,23 +25,43 @@
             }
           },
           {
-            "title": "Top Issue 1",
-            "x": 1024.0,
+            "title": "CAN Util",
+            "x": 640.0,
             "y": 0.0,
-            "width": 896.0,
+            "width": 512.0,
             "height": 128.0,
-            "type": "Text Display",
+            "type": "Number Bar",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Summary/TopIssue1",
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/CANUtilization",
               "period": 0.033,
-              "show_submit_button": false
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "All CAN OK",
+            "x": 1152.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/CAN/AllDevicesConnected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           },
           {
             "title": "Browned Out",
-            "x": 384.0,
-            "y": 128.0,
-            "width": 256.0,
+            "x": 1536.0,
+            "y": 0.0,
+            "width": 320.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -66,52 +74,9 @@
             }
           },
           {
-            "title": "Total Current",
-            "x": 640.0,
-            "y": 128.0,
-            "width": 384.0,
-            "height": 128.0,
-            "type": "Number Bar",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/SystemHealth/TotalCurrentAmps",
-              "period": 0.033,
-              "min_value": 0.0,
-              "max_value": 200.0,
-              "divisions": 5,
-              "inverted": false,
-              "orientation": "horizontal"
-            }
-          },
-          {
-            "title": "Top Issue 2",
-            "x": 1024.0,
-            "y": 128.0,
-            "width": 512.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Summary/TopIssue2",
-              "period": 0.033,
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Top Issue 3",
-            "x": 1536.0,
-            "y": 128.0,
-            "width": 384.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Summary/TopIssue3",
-              "period": 0.033,
-              "show_submit_button": false
-            }
-          },
-          {
             "title": "Shooter Temp",
             "x": 0.0,
-            "y": 256.0,
+            "y": 128.0,
             "width": 384.0,
             "height": 128.0,
             "type": "Number Bar",
@@ -128,7 +93,7 @@
           {
             "title": "Indexer Temp",
             "x": 384.0,
-            "y": 256.0,
+            "y": 128.0,
             "width": 384.0,
             "height": 128.0,
             "type": "Number Bar",
@@ -145,7 +110,7 @@
           {
             "title": "Intake Temp",
             "x": 768.0,
-            "y": 256.0,
+            "y": 128.0,
             "width": 384.0,
             "height": 128.0,
             "type": "Number Bar",
@@ -160,14 +125,14 @@
             }
           },
           {
-            "title": "IntakeAct Temp",
+            "title": "Agitator Temp",
             "x": 1152.0,
-            "y": 256.0,
+            "y": 128.0,
             "width": 384.0,
             "height": 128.0,
             "type": "Number Bar",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/TemperatureCelsius",
+              "topic": "/AdvantageKit/RealOutputs/Agitator/TemperatureCelsius",
               "period": 0.033,
               "min_value": 0.0,
               "max_value": 100.0,
@@ -179,8 +144,8 @@
           {
             "title": "Hanger Temp",
             "x": 1536.0,
-            "y": 256.0,
-            "width": 384.0,
+            "y": 128.0,
+            "width": 320.0,
             "height": 128.0,
             "type": "Number Bar",
             "properties": {
@@ -196,7 +161,7 @@
           {
             "title": "Gyro",
             "x": 0.0,
-            "y": 384.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -212,7 +177,7 @@
           {
             "title": "Left Cam",
             "x": 256.0,
-            "y": 384.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -228,7 +193,7 @@
           {
             "title": "Right Cam",
             "x": 512.0,
-            "y": 384.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -242,22 +207,9 @@
             }
           },
           {
-            "title": "Vision Latency",
-            "x": 768.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Vision/LatencyMs",
-              "period": 0.033,
-              "show_submit_button": false
-            }
-          },
-          {
             "title": "Idx Jam",
-            "x": 1024.0,
-            "y": 384.0,
+            "x": 768.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -272,8 +224,8 @@
           },
           {
             "title": "Int Jam",
-            "x": 1280.0,
-            "y": 384.0,
+            "x": 1024.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -287,33 +239,270 @@
             }
           },
           {
-            "title": "CAN Util",
+            "title": "Agit Stall",
+            "x": 1280.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Agitator/Stalled",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Overcurrent",
+            "x": 1536.0,
+            "y": 256.0,
+            "width": 320.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/PDH/OvercurrentAlert",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "FL Drive",
+            "x": 0.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Module/FL/DriveConnected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "FR Drive",
+            "x": 256.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Module/FR/DriveConnected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "BL Drive",
+            "x": 512.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Module/BL/DriveConnected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "BR Drive",
+            "x": 768.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Module/BR/DriveConnected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "FL Turn",
+            "x": 1024.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Module/FL/TurnConnected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "FR Turn",
+            "x": 1280.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Module/FR/TurnConnected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "BL Turn",
             "x": 1536.0,
             "y": 384.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Module/BL/TurnConnected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "BR Turn",
+            "x": 1728.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Module/BR/TurnConnected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Disconnected",
+            "x": 0.0,
+            "y": 512.0,
+            "width": 768.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/CAN/DisconnectedList",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "OC Channel",
+            "x": 768.0,
+            "y": 512.0,
             "width": 384.0,
             "height": 128.0,
-            "type": "Number Bar",
+            "type": "Text Display",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/SystemHealth/CANUtilization",
+              "topic": "/AdvantageKit/RealOutputs/PDH/OvercurrentChannel",
               "period": 0.033,
-              "min_value": 0.0,
-              "max_value": 1.0,
-              "divisions": 5,
-              "inverted": false,
-              "orientation": "horizontal"
+              "show_submit_button": false
             }
           },
           {
             "title": "Alerts",
-            "x": 0.0,
+            "x": 1152.0,
             "y": 512.0,
-            "width": 1920.0,
+            "width": 704.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Alerts/ActiveList",
               "period": 0.033,
               "show_submit_button": false
+            }
+          },
+          {
+            "title": "FL D.Temp",
+            "x": 0.0,
+            "y": 640.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Module/FL/DriveTemperature",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 100.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "FR D.Temp",
+            "x": 512.0,
+            "y": 640.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Module/FR/DriveTemperature",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 100.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "BL D.Temp",
+            "x": 1024.0,
+            "y": 640.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Module/BL/DriveTemperature",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 100.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "BR D.Temp",
+            "x": 1536.0,
+            "y": 640.0,
+            "width": 320.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Module/BR/DriveTemperature",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 100.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
             }
           }
         ]
@@ -381,7 +570,7 @@
             "title": "Step",
             "x": 1280.0,
             "y": 0.0,
-            "width": 640.0,
+            "width": 576.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -589,7 +778,7 @@
             "title": "Bandwidth",
             "x": 1536.0,
             "y": 0.0,
-            "width": 384.0,
+            "width": 320.0,
             "height": 128.0,
             "type": "Number Bar",
             "properties": {
@@ -694,7 +883,7 @@
             "title": "BW Warn",
             "x": 1664.0,
             "y": 128.0,
-            "width": 256.0,
+            "width": 192.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -707,77 +896,9 @@
             }
           },
           {
-            "title": "Shooter Vel",
-            "x": 0.0,
-            "y": 256.0,
-            "width": 384.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Shooter/VelocityRPM",
-              "period": 0.033,
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Shooter Tgt",
-            "x": 384.0,
-            "y": 256.0,
-            "width": 384.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Shooter/TargetRPM",
-              "period": 0.033,
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "At Speed",
-            "x": 768.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Shooter/AtSpeed",
-              "period": 0.033,
-              "true_color": 4278255360,
-              "false_color": 4294927872,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "Spinup ms",
-            "x": 1024.0,
-            "y": 256.0,
-            "width": 384.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Shooter/SpinUpTimeMs",
-              "period": 0.033,
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Shots",
-            "x": 1408.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Shooter/TotalShots",
-              "period": 0.033,
-              "show_submit_button": false
-            }
-          },
-          {
             "title": "Shooter Current",
             "x": 0.0,
-            "y": 384.0,
+            "y": 256.0,
             "width": 640.0,
             "height": 128.0,
             "type": "Number Bar",
@@ -794,7 +915,7 @@
           {
             "title": "Indexer Current",
             "x": 640.0,
-            "y": 384.0,
+            "y": 256.0,
             "width": 640.0,
             "height": 128.0,
             "type": "Number Bar",
@@ -811,8 +932,8 @@
           {
             "title": "Intake Current",
             "x": 1280.0,
-            "y": 384.0,
-            "width": 640.0,
+            "y": 256.0,
+            "width": 576.0,
             "height": 128.0,
             "type": "Number Bar",
             "properties": {
@@ -823,6 +944,241 @@
               "divisions": 5,
               "inverted": false,
               "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Agitator Current",
+            "x": 0.0,
+            "y": 384.0,
+            "width": 640.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Agitator/CurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 30.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Hanger Current",
+            "x": 640.0,
+            "y": 384.0,
+            "width": 640.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Hanger/CurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 60.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Total Current",
+            "x": 1280.0,
+            "y": 384.0,
+            "width": 576.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/TotalCurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 200.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Overcurrent",
+            "x": 0.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/PDH/OvercurrentAlert",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "OC Channel",
+            "x": 256.0,
+            "y": 512.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/PDH/OvercurrentChannel",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Ghost Cmds",
+            "x": 640.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Commands/GhostAlert",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Ghost List",
+            "x": 896.0,
+            "y": 512.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Commands/GhostList",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Brownout Risk",
+            "x": 1408.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/BrownoutRiskLevel",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "BrownedOut",
+            "x": 1664.0,
+            "y": 512.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/BrownedOut",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "3.3V Rail",
+            "x": 0.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/Rio3V3Rail",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "5V Rail",
+            "x": 256.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/Rio5VRail",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "6V Rail",
+            "x": 512.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/Rio6VRail",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Brownout V",
+            "x": 768.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/BrownoutVoltage",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Shooter Torque",
+            "x": 1024.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/TorqueReversalAlert",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Indexer Torque",
+            "x": 1280.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Indexer/TorqueReversalAlert",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "CAN Faults",
+            "x": 1536.0,
+            "y": 640.0,
+            "width": 320.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/CAN/TotalFaults",
+              "period": 0.033,
+              "show_submit_button": false
             }
           }
         ]

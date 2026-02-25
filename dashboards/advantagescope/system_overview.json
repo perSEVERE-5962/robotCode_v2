@@ -559,6 +559,81 @@
                 "highlight": false
               },
               "controlsHeight": 0
+            },
+            {
+              "type": 1,
+              "title": "Diagnostics",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Commands/GhostCount",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#af2437", "size": "normal" }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/PDH/OvercurrentAmps",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#e48b32", "size": "normal" }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Shooter/TorqueReversalsPerSec",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#e5b31b", "size": "normal" }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Indexer/TorqueReversalsPerSec",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#80588e", "size": "normal" }
+                  }
+                ],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Commands/GhostAlert",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#af2437" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/PDH/OvercurrentAlert",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#e48b32" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Shooter/TorqueReversalAlert",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#e5b31b" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Indexer/TorqueReversalAlert",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#80588e" }
+                  }
+                ],
+                "leftLockedRange": null, "rightLockedRange": null,
+                "leftUnitConversion": { "autoTarget": null, "preset": null },
+                "rightUnitConversion": { "autoTarget": null, "preset": null },
+                "leftFilter": 0, "rightFilter": 0
+              },
+              "controllerUUID": "so000001-0000-0000-0000-000000000001",
+              "renderer": null,
+              "controlsHeight": 200
             }
           ]
         }
