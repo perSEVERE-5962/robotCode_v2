@@ -8,11 +8,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.telemetry.CycleTracker;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.AlertManager;
+import frc.robot.util.ChannelCoordinator;
 import frc.robot.util.DiagnosticContext;
+import frc.robot.util.DriverFeedback;
 import frc.robot.util.ElasticUtil;
+import frc.robot.util.LEDStatusDisplay;
 import frc.robot.util.EventMarker;
 import frc.robot.util.LoggedTracer;
 import frc.robot.util.PostMatchSummary;
@@ -114,6 +116,31 @@ public class Robot extends LoggedRobot {
     }
   }
 
+  /** Crash-barrier wrapper: runs action, logs to Health/CrashBarrier/{name} on failure. */
+  private void safeCall(String name, Runnable action) {
+    try {
+      action.run();
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/" + name, true);
+      safeLog("Health/CrashBarrier/LastError", t.getClass().getSimpleName());
+    }
+  }
+
+
+  /** Check critical telemetry values for NaN/Infinity corruption. */
+  private void checkNaNInfinity() {
+    TelemetryManager tm = TelemetryManager.getInstance();
+    checkValue("Shooter/VelocityRPM", tm.getShooterVelocityRPM());
+    checkValue("Shooter/Temperature", tm.getShooterTemperature());
+    checkValue("Health/LoopTimeMs", tm.getLoopTimeMs());
+  }
+
+  private void checkValue(String name, double value) {
+    if (Double.isNaN(value) || Double.isInfinite(value)) {
+      safeLog("Health/NaN/" + name, true);
+    }
+  }
+
   /** Safe logging helper that cannot throw */
   private void safeLog(String key, boolean value) {
     try {
@@ -170,64 +197,52 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotPeriodic() {
-    LoggedTracer.reset();
+    safeCall("Tracer", () -> LoggedTracer.reset());
 
-    // CommandScheduler is CRITICAL - robot must drive
-    // But even this shouldn't crash the entire robot
-    try {
-      CommandScheduler.getInstance().run();
-    } catch (Throwable t) {
-      safeLog("Health/CrashBarrier/CommandScheduler", true);
-      safeLog("Health/CrashBarrier/LastError", t.getClass().getSimpleName());
-    }
-    LoggedTracer.record("CommandsMs");
+    safeCall("CommandScheduler", () -> CommandScheduler.getInstance().run());
+    safeCall("Tracer", () -> LoggedTracer.record("CommandsMs"));
 
-    // Telemetry is IMPORTANT but not critical - robot can play without it
-    try {
-      TelemetryManager.getInstance().updateAll();
-    } catch (Throwable t) {
-      safeLog("Health/CrashBarrier/Telemetry", true);
-      safeLog("Health/CrashBarrier/LastError", t.getClass().getSimpleName());
-    }
-    LoggedTracer.record("TelemetryMs");
+    safeCall("Telemetry", () -> TelemetryManager.getInstance().updateAll());
+    safeCall("NaNGuard", () -> checkNaNInfinity());
+    safeCall("Tracer", () -> LoggedTracer.record("TelemetryMs"));
 
-    // Alerts are OPTIONAL - robot definitely plays without them
-    try {
+    safeCall("ChannelCoordinator", () -> {
+      ChannelCoordinator.getInstance().update();
+      ChannelCoordinator.getInstance().log();
+    });
+
+    safeCall("DriverFeedback", () -> DriverFeedback.getInstance().update());
+    safeCall("LEDStatus", () -> LEDStatusDisplay.getInstance().update());
+
+    safeCall("Alerts", () -> {
       AlertManager.getInstance().checkAll();
       AlertManager.getInstance().checkLoopTime(TelemetryManager.getInstance().getLoopTimeMs());
       AlertManager.getInstance().logActiveAlerts();
-    } catch (Throwable t) {
-      safeLog("Health/CrashBarrier/Alerts", true);
-      safeLog("Health/CrashBarrier/LastError", t.getClass().getSimpleName());
-    }
+    });
 
-    // Predictive alerts are OPTIONAL
-    try {
+    safeCall("Predictive", () -> {
       PredictiveAlerts.getInstance().update();
       PredictiveAlerts.getInstance().log();
-    } catch (Throwable t) {
-      safeLog("Health/CrashBarrier/Predictive", true);
-      safeLog("Health/CrashBarrier/LastError", t.getClass().getSimpleName());
-    }
+    });
 
-    // Post-match tracking is OPTIONAL
-    try {
+    safeCall("PostMatch", () -> {
       if (DriverStation.isEnabled()) {
         PostMatchSummary.getInstance()
             .updateTracking(TelemetryManager.getInstance().getLoopTimeMs());
       }
-    } catch (Throwable t) {
-      safeLog("Health/CrashBarrier/PostMatch", true);
-      safeLog("Health/CrashBarrier/LastError", t.getClass().getSimpleName());
-    }
+    });
 
-    LoggedTracer.record("AlertsMs");
+    safeCall("Tracer", () -> LoggedTracer.record("AlertsMs"));
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    m_robotContainer.setMotorBrake(true);
+    try {
+      m_robotContainer.setMotorBrake(true);
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/DisabledInit", true);
+    }
     disabledTimer.reset();
     disabledTimer.start();
 
@@ -235,6 +250,12 @@ public class Robot extends LoggedRobot {
       EventMarker.modeChange("DISABLED");
     } catch (Throwable t) {
       // Event marker failure not critical
+    }
+
+    try {
+      DriverFeedback.getInstance().stopAll();
+    } catch (Throwable t) {
+      // Not critical
     }
 
     // Generate post-match summary if we were tracking
@@ -250,10 +271,14 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME)) {
-      m_robotContainer.setMotorBrake(false);
-      disabledTimer.stop();
-      disabledTimer.reset();
+    try {
+      if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME)) {
+        m_robotContainer.setMotorBrake(false);
+        disabledTimer.stop();
+        disabledTimer.reset();
+      }
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/DisabledPeriodic", true);
     }
 
     // Run safe diagnostics once after 0.5s delay (let readings stabilize)
@@ -291,22 +316,27 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    // Mode init is called by IterativeRobotBase.loopFunc() with NO try-catch.
+    // An unhandled exception here kills the robot program permanently.
     m_robotContainer.setMotorBrake(true);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    // Reset event markers and cycle tracker for new match
-    EventMarker.reset();
-    CycleTracker.getInstance().reset();
-    EventMarker.modeChange("AUTONOMOUS");
+    try {
+      EventMarker.reset();
+      EventMarker.modeChange("AUTONOMOUS");
+      PostMatchSummary.getInstance().startTracking();
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/AutonomousInit", true);
+    }
 
-    // Start tracking for post-match summary
-    PostMatchSummary.getInstance().startTracking();
-
-    // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
-      String autoName = m_autonomousCommand.getName();
-      EventMarker.autoStart(autoName);
+      try {
+        String autoName = m_autonomousCommand.getName();
+        EventMarker.autoStart(autoName);
+      } catch (Throwable t) {
+        safeLog("Health/CrashBarrier/AutonomousInit", true);
+      }
     }
   }
 
@@ -316,16 +346,15 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-
+    // cancelAll() is critical (stops auto commands). Telemetry helpers are not.
     CommandScheduler.getInstance().cancelAll();
-    EventMarker.modeChange("TELEOP");
 
-    // Start tracking for post-match summary (if not already from auto)
-    PostMatchSummary.getInstance().startTracking();
+    try {
+      EventMarker.modeChange("TELEOP");
+      PostMatchSummary.getInstance().startTracking();
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/TeleopInit", true);
+    }
   }
 
   /** This function is called periodically during operator control. */
@@ -334,9 +363,12 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void testInit() {
-    // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    EventMarker.modeChange("TEST");
+    try {
+      EventMarker.modeChange("TEST");
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/TestInit", true);
+    }
   }
 
   /** This function is called periodically during test mode. */
@@ -362,5 +394,6 @@ public class Robot extends LoggedRobot {
   public void simulationInit() {}
 
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+  }
 }
