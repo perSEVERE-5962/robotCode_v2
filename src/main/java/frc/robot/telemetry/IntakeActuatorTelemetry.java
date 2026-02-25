@@ -1,12 +1,13 @@
 package frc.robot.telemetry;
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.subsystems.IntakeActuator;
 
 /** IntakeActuator telemetry: position and motor health. */
 public class IntakeActuatorTelemetry implements SubsystemTelemetry {
-  private IntakeActuator intakeActuator; // Not final - can re-acquire if null
+  private IntakeActuator intakeActuator; // grabbed again in update() if not ready yet
   private boolean subsystemAvailable = false;
 
   private static final double POSITION_TOLERANCE = 0.05;
@@ -18,11 +19,12 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
   private double currentAmps = 0;
   private double temperatureCelsius = 0;
 
-  // Device health. Debounced to filter CAN bus transients
   private final Debouncer connectDebouncer =
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
   private boolean deviceConnected = false;
   private int deviceFaultsRaw = 0;
+
+  private String activeCommandName = "none";
 
   public IntakeActuatorTelemetry() {
     this.intakeActuator = IntakeActuator.getInstance();
@@ -50,13 +52,19 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
       currentAmps = intakeActuator.getOutputCurrent();
       temperatureCelsius = intakeActuator.getTemperature();
 
-      // Device health
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = intakeActuator.getStickyFaultsRaw();
     } catch (Throwable t) {
       deviceConnected = connectDebouncer.calculate(false);
       deviceFaultsRaw = -1;
       setDefaultValues();
+    }
+
+    try {
+      Command currentCmd = intakeActuator.getCurrentCommand();
+      activeCommandName = (currentCmd != null) ? currentCmd.getName() : "none";
+    } catch (Throwable t) {
+      activeCommandName = "unknown";
     }
   }
 
@@ -79,9 +87,9 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
     SafeLog.put("IntakeActuator/CurrentAmps", currentAmps);
     SafeLog.put("IntakeActuator/TemperatureCelsius", temperatureCelsius);
 
-    // Device health
     SafeLog.put("IntakeActuator/Device/Connected", deviceConnected);
     SafeLog.put("IntakeActuator/Device/FaultsRaw", deviceFaultsRaw);
+    SafeLog.put("IntakeActuator/ActiveCommand", activeCommandName);
   }
 
   @Override
@@ -89,7 +97,6 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
     return "IntakeActuator";
   }
 
-  // Accessors for TelemetryManager
   public double getTemperature() {
     return temperatureCelsius;
   }

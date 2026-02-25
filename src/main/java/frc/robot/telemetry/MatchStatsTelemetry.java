@@ -9,39 +9,33 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
   private final VisionTelemetry visionTelemetry;
   private final ScoringTelemetry scoringTelemetry; // nullable
 
-  // Match phase tracking
   private boolean wasEnabled = false;
   private double matchStartTime = 0;
   private double endgameStartTime = 0;
   private boolean inEndgame = false;
 
-  // Scoring by phase
   private int autoShots = 0;
   private int teleopShots = 0;
   private int endgameShots = 0;
   private int lastTotalShots = 0;
 
-  // Time allocation (ms)
   private double timeShootingMs = 0;
   private double timeIntakingMs = 0;
   private double timeAimingMs = 0;
   private double timeIdleMs = 0;
 
-  // Efficiency metrics
   private double shooterUptimeMs = 0;
   private double visionLockTimeMs = 0;
 
-  // Per-shift shots (REBUILT hub strategy: 4x25s teleop shifts)
   private int shotsShift1 = 0;
   private int shotsShift2 = 0;
   private int shotsShift3 = 0;
   private int shotsShift4 = 0;
+  private int shotsShiftEndgame = 0;
 
-  // Hub effectiveness
   private int activeHubShots = 0;
   private int inactiveHubShots = 0;
 
-  // Hub utilization
   private double activeHubTimeMs = 0;
   private double firingDuringActiveMs = 0;
 
@@ -58,13 +52,11 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
   public void update() {
     double now = Timer.getFPGATimestamp();
 
-    // L1 fix: First-frame guard for dt calculation
     double dt = (lastUpdateTime > 0) ? (now - lastUpdateTime) : 0.02;
     lastUpdateTime = now;
 
     boolean currentlyEnabled = DriverStation.isEnabled();
 
-    // C4 fix: Detect match start BEFORE early return, update wasEnabled unconditionally
     if (!wasEnabled && currentlyEnabled) {
       matchStartTime = now;
       // Reset endgame tracking for new match
@@ -106,6 +98,8 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
           case 2 -> shotsShift2 += newShots;
           case 3 -> shotsShift3 += newShots;
           case 4 -> shotsShift4 += newShots;
+          case 0 -> shotsShiftEndgame += newShots;
+          default -> {} // auto or unexpected shift value
         }
         if (hubActive) activeHubShots += newShots;
         else inactiveHubShots += newShots;
@@ -123,17 +117,14 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
       visionLockTimeMs += dt * 1000;
     }
 
-    // Track time allocation based on cycle phase
-    // H2 fix: Handle all phases including INDEXING and RECOVERING
-    CycleTracker.CyclePhase phase = CycleTracker.getInstance().getCurrentPhase();
+    // Track time allocation based on subsystem activity
     double dtMs = dt * 1000;
-    switch (phase) {
-      case INTAKING -> timeIntakingMs += dtMs;
-      case INDEXING -> timeIntakingMs += dtMs; // count as intake time
-      case AIMING -> timeAimingMs += dtMs;
-      case SHOOTING -> timeShootingMs += dtMs;
-      case RECOVERING -> timeShootingMs += dtMs; // count as shooting time
-      case IDLE -> timeIdleMs += dtMs;
+    if (shooterTelemetry.isAtSpeed()) {
+      timeShootingMs += dtMs;
+    } else if (shooterTelemetry.isSpinningUp()) {
+      timeAimingMs += dtMs;
+    } else {
+      timeIdleMs += dtMs;
     }
 
     // Hub utilization: time at-speed while our hub is active
@@ -149,19 +140,12 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
 
   @Override
   public void log() {
-    // Shots by phase
     int totalShots = autoShots + teleopShots + endgameShots;
     SafeLog.put("MatchStats/AutoShots", autoShots);
     SafeLog.put("MatchStats/TeleopShots", teleopShots);
     SafeLog.put("MatchStats/EndgameShots", endgameShots);
     SafeLog.put("MatchStats/TotalShots", totalShots);
 
-    // Cycles (from CycleTracker)
-    CycleTracker tracker = CycleTracker.getInstance();
-    SafeLog.put("MatchStats/CompletedCycles", tracker.getCompletedCycles());
-    SafeLog.put("MatchStats/FailedCycles", tracker.getFailedCycles());
-
-    // Time allocation (percentages)
     double totalTime = timeShootingMs + timeIntakingMs + timeAimingMs + timeIdleMs;
     if (totalTime > 0) {
       SafeLog.put("MatchStats/Time/ShootingPct", timeShootingMs / totalTime * 100);
@@ -179,21 +163,18 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
     SafeLog.put("MatchStats/ShooterUptimeMs", shooterUptimeMs);
     SafeLog.put("MatchStats/VisionLockTimeMs", visionLockTimeMs);
 
-    // Rates
     double matchDurationMin = (Timer.getFPGATimestamp() - matchStartTime) / 60.0;
     if (matchDurationMin > 0.05) { // Avoid divide by zero at start
       SafeLog.put("MatchStats/ShotsPerMinute", totalShots / matchDurationMin);
-      SafeLog.put("MatchStats/CyclesPerMinute", tracker.getCompletedCycles() / matchDurationMin);
     } else {
       SafeLog.put("MatchStats/ShotsPerMinute", 0.0);
-      SafeLog.put("MatchStats/CyclesPerMinute", 0.0);
     }
 
-    // Per-shift strategy (REBUILT hub timing)
     SafeLog.put("MatchStats/ShotsInShift/1", shotsShift1);
     SafeLog.put("MatchStats/ShotsInShift/2", shotsShift2);
     SafeLog.put("MatchStats/ShotsInShift/3", shotsShift3);
     SafeLog.put("MatchStats/ShotsInShift/4", shotsShift4);
+    SafeLog.put("MatchStats/ShotsInShift/Endgame", shotsShiftEndgame);
     SafeLog.put("MatchStats/ActiveHubShots", activeHubShots);
     SafeLog.put("MatchStats/InactiveHubShots", inactiveHubShots);
     double hubUtil = activeHubTimeMs > 0 ? (firingDuringActiveMs / activeHubTimeMs) * 100 : 0;
@@ -225,6 +206,7 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
     shotsShift2 = 0;
     shotsShift3 = 0;
     shotsShift4 = 0;
+    shotsShiftEndgame = 0;
     activeHubShots = 0;
     inactiveHubShots = 0;
     activeHubTimeMs = 0;
