@@ -15,6 +15,8 @@ import frc.robot.util.DiagnosticContext;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.ElasticUtil;
 import frc.robot.util.LEDStatusDisplay;
+import frc.robot.sim.SimDeviceManager;
+import frc.robot.sim.SimScenarioRunner;
 import frc.robot.util.EventMarker;
 import frc.robot.util.LoggedTracer;
 import frc.robot.util.PostMatchSummary;
@@ -38,6 +40,8 @@ public class Robot extends LoggedRobot {
   private RobotContainer m_robotContainer;
 
   private Timer disabledTimer;
+  private SimScenarioRunner simScenarioRunner;
+  private SimDeviceManager simDeviceManager;
 
   // Diagnostics
   private boolean hasRunDiagnostics = false;
@@ -125,7 +129,6 @@ public class Robot extends LoggedRobot {
       safeLog("Health/CrashBarrier/LastError", t.getClass().getSimpleName());
     }
   }
-
 
   /** Check critical telemetry values for NaN/Infinity corruption. */
   private void checkNaNInfinity() {
@@ -391,9 +394,19 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    simDeviceManager = new SimDeviceManager();
+    simDeviceManager.init();
+    simScenarioRunner = new SimScenarioRunner();
+  }
 
   @Override
   public void simulationPeriodic() {
+    if (simDeviceManager != null) {
+      simDeviceManager.update();
+    }
+    if (simScenarioRunner != null) {
+      simScenarioRunner.update();
+    }
   }
 }
