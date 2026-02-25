@@ -5,9 +5,14 @@ package frc.robot.telemetry;
  * telemetry classes only, no additional CAN reads.
  */
 public class CANHealthTelemetry implements SubsystemTelemetry {
-  private static final int TOTAL_DEVICES = 8; // 5 motors + gyro + 2 cameras
+  private static final int TOTAL_DEVICES = 21; // 6 motors + gyro + 2 cameras + 12 swerve
   private static final String[] DEVICE_NAMES = {
-    "Shooter", "Indexer", "Intake", "IntakeActuator", "Hanger", "Gyro", "LeftCam", "RightCam"
+    "Shooter", "Indexer", "Intake", "IntakeActuator", "Hanger", "Agitator",
+    "Gyro", "LeftCam", "RightCam",
+    "FL-Drive", "FL-Turn", "FL-Encoder",
+    "FR-Drive", "FR-Turn", "FR-Encoder",
+    "BL-Drive", "BL-Turn", "BL-Encoder",
+    "BR-Drive", "BR-Turn", "BR-Encoder"
   };
 
   private final ShooterTelemetry shooterTelemetry;
@@ -15,10 +20,10 @@ public class CANHealthTelemetry implements SubsystemTelemetry {
   private final IntakeTelemetry intakeTelemetry;
   private final IntakeActuatorTelemetry intakeActuatorTelemetry;
   private final HangerTelemetry hangerTelemetry;
+  private final AgitatorTelemetry agitatorTelemetry;
   private final VisionTelemetry visionTelemetry;
   private final DriveTelemetry driveTelemetry;
 
-  // State
   private boolean allConnected = false;
   private int connectedCount = 0;
   private String disconnectedList = "";
@@ -31,6 +36,7 @@ public class CANHealthTelemetry implements SubsystemTelemetry {
       IntakeTelemetry intakeTelemetry,
       IntakeActuatorTelemetry intakeActuatorTelemetry,
       HangerTelemetry hangerTelemetry,
+      AgitatorTelemetry agitatorTelemetry,
       VisionTelemetry visionTelemetry,
       DriveTelemetry driveTelemetry) {
     this.shooterTelemetry = shooterTelemetry;
@@ -38,6 +44,7 @@ public class CANHealthTelemetry implements SubsystemTelemetry {
     this.intakeTelemetry = intakeTelemetry;
     this.intakeActuatorTelemetry = intakeActuatorTelemetry;
     this.hangerTelemetry = hangerTelemetry;
+    this.agitatorTelemetry = agitatorTelemetry;
     this.visionTelemetry = visionTelemetry;
     this.driveTelemetry = driveTelemetry;
   }
@@ -51,9 +58,17 @@ public class CANHealthTelemetry implements SubsystemTelemetry {
     connected[2] = intakeTelemetry != null && intakeTelemetry.isDeviceConnected();
     connected[3] = intakeActuatorTelemetry != null && intakeActuatorTelemetry.isDeviceConnected();
     connected[4] = hangerTelemetry != null && hangerTelemetry.isDeviceConnected();
-    connected[5] = driveTelemetry != null && driveTelemetry.isGyroConnected();
-    connected[6] = visionTelemetry != null && visionTelemetry.isLeftCamConnected();
-    connected[7] = visionTelemetry != null && visionTelemetry.isRightCamConnected();
+    connected[5] = agitatorTelemetry != null && agitatorTelemetry.isDeviceConnected();
+    connected[6] = driveTelemetry != null && driveTelemetry.isGyroConnected();
+    connected[7] = visionTelemetry != null && visionTelemetry.isLeftCamConnected();
+    connected[8] = visionTelemetry != null && visionTelemetry.isRightCamConnected();
+
+    for (int m = 0; m < 4; m++) {
+      int base = 9 + m * 3;
+      connected[base] = driveTelemetry != null && driveTelemetry.isDriveMotorConnected(m);
+      connected[base + 1] = driveTelemetry != null && driveTelemetry.isTurnMotorConnected(m);
+      connected[base + 2] = driveTelemetry != null && driveTelemetry.isEncoderOk(m);
+    }
 
     int count = 0;
     StringBuilder disconnected = new StringBuilder();
@@ -72,13 +87,21 @@ public class CANHealthTelemetry implements SubsystemTelemetry {
     allConnected = (count == TOTAL_DEVICES);
     disconnectedList = disconnected.toString();
 
-    // Fault aggregation across 5 motor telemetry classes
+    // -1 means failed read, skip to avoid masking real faults
     int faults = 0;
-    if (shooterTelemetry != null) faults += shooterTelemetry.getDeviceFaultsRaw();
-    if (indexerTelemetry != null) faults += indexerTelemetry.getDeviceFaultsRaw();
-    if (intakeTelemetry != null) faults += intakeTelemetry.getDeviceFaultsRaw();
-    if (intakeActuatorTelemetry != null) faults += intakeActuatorTelemetry.getDeviceFaultsRaw();
-    if (hangerTelemetry != null) faults += hangerTelemetry.getDeviceFaultsRaw();
+    if (shooterTelemetry != null) faults += Math.max(0, shooterTelemetry.getDeviceFaultsRaw());
+    if (indexerTelemetry != null) faults += Math.max(0, indexerTelemetry.getDeviceFaultsRaw());
+    if (intakeTelemetry != null) faults += Math.max(0, intakeTelemetry.getDeviceFaultsRaw());
+    if (intakeActuatorTelemetry != null)
+      faults += Math.max(0, intakeActuatorTelemetry.getDeviceFaultsRaw());
+    if (hangerTelemetry != null) faults += Math.max(0, hangerTelemetry.getDeviceFaultsRaw());
+    if (agitatorTelemetry != null) faults += Math.max(0, agitatorTelemetry.getDeviceFaultsRaw());
+    if (driveTelemetry != null) {
+      for (int m = 0; m < 4; m++) {
+        faults += Math.max(0, driveTelemetry.getDriveFaultsRaw(m));
+        faults += Math.max(0, driveTelemetry.getTurnFaultsRaw(m));
+      }
+    }
     totalFaults = faults;
     hasFaults = (faults > 0);
   }
@@ -98,7 +121,6 @@ public class CANHealthTelemetry implements SubsystemTelemetry {
     return "CANHealth";
   }
 
-  // Accessors for TelemetryManager
   public boolean isAllConnected() {
     return allConnected;
   }

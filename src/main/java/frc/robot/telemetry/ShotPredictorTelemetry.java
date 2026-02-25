@@ -72,7 +72,6 @@ public class ShotPredictorTelemetry implements SubsystemTelemetry {
     headingSpeedRadPerSec = 0;
   }
 
-  // Accessors for other telemetry classes
   public boolean isCommandActive() {
     return commandActive;
   }

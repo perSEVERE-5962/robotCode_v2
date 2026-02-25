@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 /** Match state: time, mode, FMS, alliance. */
 public class MatchTelemetry implements SubsystemTelemetry {
 
-  // Current state
   private double matchTime = 0;
   private String mode = "DISABLED";
   private boolean enabled = false;

@@ -2,20 +2,21 @@ package frc.robot.telemetry;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.StallDetectionConstants;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.EventMarker;
+import frc.robot.util.JamProtection;
 
 /** Intake telemetry: jam detection, stall tracking. */
 public class IntakeTelemetry implements SubsystemTelemetry {
-  private Intake intake; // Not final - can re-acquire if null
+  private Intake intake; // grabbed again in update() if not ready yet
   private boolean subsystemAvailable = false;
 
   private static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
   private static final double JAM_TIME_THRESHOLD_SECONDS = 0.25;
 
-  // Jam detection
   private final Debouncer jamDebouncer =
       new Debouncer(JAM_TIME_THRESHOLD_SECONDS, Debouncer.DebounceType.kRising);
   private boolean jamDetected = false;
@@ -31,7 +32,6 @@ public class IntakeTelemetry implements SubsystemTelemetry {
 
   private double currentPerSpeedRatio = 0; // drag indicator
 
-  // Device health. Debounced to filter CAN bus transients
   private final Debouncer connectDebouncer =
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
   private boolean deviceConnected = false;
@@ -41,6 +41,12 @@ public class IntakeTelemetry implements SubsystemTelemetry {
   private double stallStartTime = 0;
   private double stallDurationMs = 0;
   private boolean inStallCondition = false;
+
+  private String activeCommandName = "none";
+
+  private String jamProtectionState = "MONITORING";
+  private int jamProtectionAttempts = 0;
+  private boolean jamProtectionIntervening = false;
 
   public IntakeTelemetry() {
     this.intake = Intake.getInstance();
@@ -69,7 +75,6 @@ public class IntakeTelemetry implements SubsystemTelemetry {
       temperatureCelsius = intake.getTemperature();
       velocityRPM = intake.getVelocityRPM();
 
-      // Device health
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = intake.getStickyFaultsRaw();
     } catch (Throwable t) {
@@ -97,10 +102,15 @@ public class IntakeTelemetry implements SubsystemTelemetry {
       stalled = false;
     }
 
-    // Current-to-speed ratio (drag indicator)
+    try {
+      Command currentCmd = intake.getCurrentCommand();
+      activeCommandName = (currentCmd != null) ? currentCmd.getName() : "none";
+    } catch (Throwable t) {
+      activeCommandName = "unknown";
+    }
+
     currentPerSpeedRatio = (Math.abs(velocityRPM) > 10) ? currentAmps / Math.abs(velocityRPM) : 0;
 
-    // Direction
     if (appliedOutput > 0.05) {
       direction = "FORWARD";
     } else if (appliedOutput < -0.05) {
@@ -109,21 +119,22 @@ public class IntakeTelemetry implements SubsystemTelemetry {
       direction = "STOPPED";
     }
 
-    // Cycle tracking: intake started (rising edge, forward direction)
-    if (running && !wasRunning && appliedOutput > 0.05) {
-      SafeLog.run(() -> CycleTracker.getInstance().intakeStarted());
+    try {
+      JamProtection jp = intake.getJamProtection();
+      jamProtectionState = jp.getState().name();
+      jamProtectionAttempts = jp.getReverseAttempts();
+      jamProtectionIntervening = jp.isIntervening();
+    } catch (Throwable t) {
+      jamProtectionState = "UNKNOWN";
     }
 
-    // Jam detection using debouncer
     boolean highCurrent = running && (currentAmps > JAM_CURRENT_THRESHOLD_AMPS);
     boolean wasJammed = jamDetected;
     jamDetected = jamDebouncer.calculate(highCurrent);
 
-    // Count on rising edge only
     if (jamDetected && !wasJammed) {
       totalJamCount++;
       SafeLog.run(() -> EventMarker.jamDetected("Intake"));
-      SafeLog.run(() -> CycleTracker.getInstance().cycleAborted("Intake jam"));
     }
   }
 
@@ -137,6 +148,7 @@ public class IntakeTelemetry implements SubsystemTelemetry {
     stalled = false;
     stallDurationMs = 0;
     inStallCondition = false;
+    jamDetected = false;
   }
 
   @Override
@@ -151,13 +163,15 @@ public class IntakeTelemetry implements SubsystemTelemetry {
     SafeLog.put("Intake/TotalJamCount", totalJamCount);
     SafeLog.put("Intake/CurrentPerSpeedRatio", currentPerSpeedRatio);
 
-    // Device health
     SafeLog.put("Intake/Device/Connected", deviceConnected);
     SafeLog.put("Intake/Device/FaultsRaw", deviceFaultsRaw);
-
     SafeLog.put("Intake/VelocityRPM", velocityRPM);
     SafeLog.put("Intake/Stalled", stalled);
     SafeLog.put("Intake/StallDurationMs", stallDurationMs);
+    SafeLog.put("Intake/ActiveCommand", activeCommandName);
+    SafeLog.put("Intake/JamProtection/State", jamProtectionState);
+    SafeLog.put("Intake/JamProtection/Attempts", jamProtectionAttempts);
+    SafeLog.put("Intake/JamProtection/Intervening", jamProtectionIntervening);
   }
 
   @Override
@@ -165,7 +179,6 @@ public class IntakeTelemetry implements SubsystemTelemetry {
     return "Intake";
   }
 
-  // Accessors for TelemetryManager
   public double getTemperature() {
     return temperatureCelsius;
   }
@@ -185,6 +198,10 @@ public class IntakeTelemetry implements SubsystemTelemetry {
   public void clearJam() {
     jamDetected = false;
     jamDebouncer.calculate(false);
+  }
+
+  public boolean isJamProtectionIntervening() {
+    return jamProtectionIntervening;
   }
 
   public boolean isDeviceConnected() {
