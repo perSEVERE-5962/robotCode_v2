@@ -23,15 +23,15 @@ public class Actuator extends SubsystemBase {
     private boolean useThroughBoreEncoder;
 
     public Actuator(int kID, double kP, double kI, double kD, double kMinOutput, double kMaxOutput, double kF, double kIz,
-            float kUpperSoftLimit, float kLowerSoftLimit, boolean inverted, boolean useThroughBoreEncoder,
+            float kUpperSoftLimit, float kLowerSoftLimit, int kStallLimit, boolean inverted, boolean coast, boolean useThroughBoreEncoder,
             boolean useSoftLimits) {
 
         motor = new SparkMax(kID, SparkLowLevel.MotorType.kBrushless);
         SparkMaxConfig motorConfig = new SparkMaxConfig();
 
         motorConfig.inverted(inverted);
-        motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
-        motorConfig.smartCurrentLimit(40);
+        motorConfig.idleMode(coast ? SparkMaxConfig.IdleMode.kCoast : SparkMaxConfig.IdleMode.kBrake);
+        motorConfig.smartCurrentLimit(kStallLimit);
 
         FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
         if (useThroughBoreEncoder == true) {
