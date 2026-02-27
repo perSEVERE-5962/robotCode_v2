@@ -35,7 +35,7 @@ public class SpeedUpThenIndex extends Command {
   @Override
   public void execute() {
     shooter.moveToVelocityWithPID(Constants.MotorConstants.DESIRED_SHOOTER_RPM);
-    if (Math.abs(Constants.MotorConstants.DESIRED_SHOOTER_RPM - shooter.getVelocity()) < Constants.MotorConstants.SHOOTER_TOLERANCE) {
+    if (Math.abs(Constants.MotorConstants.DESIRED_SHOOTER_RPM - shooter.getVelocity()) < Constants.MotorConstants.SHOOTER_RPM_TOLERANCE) {
       indexer.moveToVelocityWithPID(Constants.MotorConstants.DESIRED_INDEXER_RPM);
       agitator.move(Constants.MotorConstants.DESIRED_AGITATOR_SPEED);
     }
