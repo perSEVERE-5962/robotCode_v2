@@ -44,9 +44,9 @@ public class SpeedUpThenIndex extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.move(0);
-    indexer.move(0);
     agitator.move(0);
+    indexer.move(0);
+    shooter.move(0);
   }
 
   // Returns true when the command should end.
