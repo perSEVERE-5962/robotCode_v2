@@ -3,19 +3,19 @@ package frc.robot.telemetry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-/** Command scheduler telemetry: active commands, execution counts, durations. */
+/** Command scheduler telemetry: active commands, execution counts, durations, ghost detection. */
 public class CommandsTelemetry implements SubsystemTelemetry {
-  // Reference counting handles multiple instances of the same-name command running at once
   private final Map<String, Integer> activeCommandCounts = new HashMap<>();
   private String activeList = "none";
   private int activeCount = 0;
 
-  // Performance tracking
-  // IdentityHashMap so two commands with the same name get separate start times
   private final Map<Command, Double> commandStartTimes = new IdentityHashMap<>();
   private final Map<String, Integer> commandExecutionCounts = new HashMap<>();
   private static final int MAX_EXECUTION_COUNT_ENTRIES = 100;
@@ -23,15 +23,22 @@ public class CommandsTelemetry implements SubsystemTelemetry {
   private String lastCommandName = "none";
   private double lastCommandDurationMs = 0;
 
-  // Command stability metrics
   private int interruptedCount = 0;
   private int finishedCount = 0;
+
+  // Ghost command detection: commands running >GHOST_THRESHOLD_SEC without finishing.
+  // Catches orphaned commands scheduled from end() that run forever (e.g. MoveShooter(0)).
+  private static final double GHOST_THRESHOLD_SEC = 5.0;
+  private static final int MAX_GHOST_ENTRIES = 20;
+  private final Map<Command, String> commandNames = new IdentityHashMap<>();
+  private String ghostCommandList = "none";
+  private int ghostCommandCount = 0;
+  private boolean ghostCommandAlert = false;
 
   public CommandsTelemetry() {
     setupCallbacks();
   }
 
-  // Guard against null or empty names from dynamically generated commands
   private String sanitizeName(Command command) {
     if (command == null) return "NullCommand";
     String name = command.getName();
@@ -39,19 +46,19 @@ public class CommandsTelemetry implements SubsystemTelemetry {
   }
 
   private void setupCallbacks() {
-    // C1: Wrap each callback in try-catch to prevent scheduler disruption
     CommandScheduler.getInstance()
         .onCommandInitialize(
             command -> {
               try {
                 String name = sanitizeName(command);
-                // Increment count for this command name
                 activeCommandCounts.merge(name, 1, Integer::sum);
 
-                // Track start time by command identity (not name)
                 commandStartTimes.put(command, Timer.getFPGATimestamp());
 
-                // Bound execution counts map
+                if (commandNames.size() < MAX_GHOST_ENTRIES) {
+                  commandNames.put(command, name);
+                }
+
                 if (commandExecutionCounts.size() < MAX_EXECUTION_COUNT_ENTRIES) {
                   commandExecutionCounts.merge(name, 1, Integer::sum);
                 }
@@ -64,15 +71,15 @@ public class CommandsTelemetry implements SubsystemTelemetry {
             command -> {
               try {
                 String name = sanitizeName(command);
-                // Decrement count, remove entry when it hits zero
                 activeCommandCounts.compute(name, (k, v) -> (v == null || v <= 1) ? null : v - 1);
 
-                // Track duration by command identity
                 Double startTime = commandStartTimes.remove(command);
                 if (startTime != null) {
                   lastCommandDurationMs = (Timer.getFPGATimestamp() - startTime) * 1000;
                   lastCommandName = name;
                 }
+
+                commandNames.remove(command);
 
                 finishedCount++;
               } catch (Throwable t) {
@@ -83,17 +90,16 @@ public class CommandsTelemetry implements SubsystemTelemetry {
             command -> {
               try {
                 String name = sanitizeName(command);
-                // Decrement count, remove entry when it hits zero
                 activeCommandCounts.compute(name, (k, v) -> (v == null || v <= 1) ? null : v - 1);
 
-                // Track duration by command identity
                 Double startTime = commandStartTimes.remove(command);
                 if (startTime != null) {
                   lastCommandDurationMs = (Timer.getFPGATimestamp() - startTime) * 1000;
                   lastCommandName = name + " (interrupted)";
                 }
 
-                // Track interruptions for stability analysis
+                commandNames.remove(command);
+
                 interruptedCount++;
               } catch (Throwable t) {
               }
@@ -102,7 +108,6 @@ public class CommandsTelemetry implements SubsystemTelemetry {
 
   @Override
   public void update() {
-    // Build active list from reference counts
     if (activeCommandCounts.isEmpty()) {
       activeList = "none";
     } else {
@@ -116,6 +121,21 @@ public class CommandsTelemetry implements SubsystemTelemetry {
       activeList = sb.length() > 0 ? sb.toString() : "none";
     }
     activeCount = activeCommandCounts.size();
+
+    double now = Timer.getFPGATimestamp();
+    List<String> ghosts = new ArrayList<>();
+    Iterator<Map.Entry<Command, Double>> it = commandStartTimes.entrySet().iterator();
+    while (it.hasNext()) {
+      Map.Entry<Command, Double> entry = it.next();
+      double runSec = now - entry.getValue();
+      if (runSec >= GHOST_THRESHOLD_SEC) {
+        String name = commandNames.getOrDefault(entry.getKey(), "unknown");
+        ghosts.add(name + " (" + String.format("%.0f", runSec) + "s)");
+      }
+    }
+    ghostCommandCount = ghosts.size();
+    ghostCommandAlert = ghostCommandCount > 0;
+    ghostCommandList = ghosts.isEmpty() ? "none" : String.join(", ", ghosts);
   }
 
   @Override
@@ -126,9 +146,12 @@ public class CommandsTelemetry implements SubsystemTelemetry {
     SafeLog.put("Commands/LastCommandName", lastCommandName);
     SafeLog.put("Commands/LastCommandDurationMs", lastCommandDurationMs);
 
-    // Command stability metrics
     SafeLog.put("Commands/InterruptedCount", interruptedCount);
     SafeLog.put("Commands/FinishedCount", finishedCount);
+
+    SafeLog.put("Commands/GhostList", ghostCommandList);
+    SafeLog.put("Commands/GhostCount", ghostCommandCount);
+    SafeLog.put("Commands/GhostAlert", ghostCommandAlert);
   }
 
   @Override
@@ -136,12 +159,23 @@ public class CommandsTelemetry implements SubsystemTelemetry {
     return "Commands";
   }
 
-  // Accessors
   public int getTotalExecutions() {
     return totalExecutions;
   }
 
   public double getLastCommandDurationMs() {
     return lastCommandDurationMs;
+  }
+
+  public int getGhostCommandCount() {
+    return ghostCommandCount;
+  }
+
+  public boolean isGhostCommandAlert() {
+    return ghostCommandAlert;
+  }
+
+  public String getGhostCommandList() {
+    return ghostCommandList;
   }
 }

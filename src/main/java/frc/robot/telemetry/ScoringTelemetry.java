@@ -20,7 +20,7 @@ public class ScoringTelemetry implements SubsystemTelemetry {
   private static final double ENDGAME_START = 30.0;
 
   // ReadyToShoot stays true through brief velocity dips during sustained fire.
-  // Manual time-based debounce (not WPILib Debouncer, that has wrong initial baseline).
+  // Manual time-based debounce (not WPILib Debouncer,that has wrong initial baseline).
   private double readyFalseSince = 0;
 
   private boolean scoringAvailable = false;
@@ -31,12 +31,19 @@ public class ScoringTelemetry implements SubsystemTelemetry {
   private boolean hubActive = true;
   private boolean readyToShoot = false;
 
-  // Hub timing state
   private boolean wonAuto = false;
+  private boolean wonAutoFromFMS = false;
   private int hubShiftNumber = 0;
   private double timeToNextShiftSec = 0;
 
-  // Time tracking
+  private boolean previousShooterReady = false;
+  private boolean previousIndexerClear = true;
+  private boolean previousVisionLocked = false;
+  private boolean previousHubActive = true;
+  private boolean previousReadyToShoot = false;
+  private boolean readyStateChanged = false;
+  private String readyLostReason = "";
+
   private double readySinceTimestamp = 0;
   private double timeSinceReadyMs = 0;
   private boolean wasReady = false;
@@ -63,25 +70,32 @@ public class ScoringTelemetry implements SubsystemTelemetry {
 
       scoringAvailable = true;
 
+      previousShooterReady = shooterReady;
+      previousIndexerClear = indexerClear;
+      previousVisionLocked = visionLocked;
+      previousHubActive = hubActive;
+      previousReadyToShoot = readyToShoot;
+
       shooterReady = shooterTelemetry.isAtSpeed();
       indexerClear = !indexerTelemetry.isJamDetected();
       visionLocked = visionTelemetry.isLockedOnTarget();
 
-      hasBall = true; // Stub: read from hopper sensor when available
+      hasBall = true; // Stub: read from hopper sensor when available. Reset in setDefaultValues().
 
       // Hub active/inactive from match timer (REBUILT Section 6.4)
-      wonAuto = SmartDashboard.getBoolean("WonAuto", false);
+      // FMS sends 'R' (Red won) or 'B' (Blue won) via game-specific message
+      wonAuto = parseWonAuto();
       if (DriverStation.isTeleop()) {
         double matchTime = DriverStation.getMatchTime();
         if (matchTime < 0) {
-          hubActive = true; // practice mode, no FMS -- fail-safe to active
+          hubActive = true; // no FMS in practice, just assume hub is active
         } else {
           hubShiftNumber = computeShiftNumber(matchTime);
           hubActive = computeHubActive(matchTime, wonAuto);
           timeToNextShiftSec = computeTimeToNextShift(matchTime);
         }
       } else {
-        hubActive = true; // auto, disabled, test: all hubs active
+        hubActive = true; // auto, disabled, test: all hubs active. Cleared in setDefaultValues().
         hubShiftNumber = 0;
         timeToNextShiftSec = 0;
       }
@@ -93,12 +107,22 @@ public class ScoringTelemetry implements SubsystemTelemetry {
       } else if (!readyToShoot) {
         readyFalseSince = 0;
       } else {
-        // Was true, conditions now false, hold true during debounce window
+        // Was true, conditions now false,hold true during debounce window
         if (readyFalseSince == 0) readyFalseSince = now;
         if ((now - readyFalseSince) >= DeviceHealthConstants.READY_TO_SHOOT_DEBOUNCE_SEC) {
           readyToShoot = false;
         }
       }
+
+      readyStateChanged = (readyToShoot != previousReadyToShoot);
+      if (readyStateChanged && !readyToShoot) {
+        // Ready just dropped: capture which conditions are currently failing
+        readyLostReason = buildNotReadyReason();
+      } else if (readyStateChanged && readyToShoot) {
+        // Ready just gained: clear the reason
+        readyLostReason = "";
+      }
+      // else: no change, preserve existing readyLostReason
 
       if (readyToShoot && !wasReady) {
         readySinceTimestamp = now;
@@ -120,10 +144,34 @@ public class ScoringTelemetry implements SubsystemTelemetry {
     shooterReady = false;
     indexerClear = true; // Safe default: assume clear
     visionLocked = false;
+    hasBall = false;
+    hubActive = false;
     readyToShoot = false;
     timeSinceReadyMs = 0;
     hubShiftNumber = 0;
     timeToNextShiftSec = 0;
+    readyStateChanged = false;
+  }
+
+  /** Build a string naming which subconditions are currently failing. */
+  private String buildNotReadyReason() {
+    StringBuilder sb = new StringBuilder();
+    if (!shooterReady) {
+      sb.append("Shooter");
+    }
+    if (!indexerClear) {
+      if (sb.length() > 0) sb.append("+");
+      sb.append("Indexer");
+    }
+    if (!visionLocked) {
+      if (sb.length() > 0) sb.append("+");
+      sb.append("Vision");
+    }
+    if (!hubActive) {
+      if (sb.length() > 0) sb.append("+");
+      sb.append("Hub");
+    }
+    return sb.length() > 0 ? sb.toString() : "Unknown";
   }
 
   /** Odd shifts (1,3): winner INACTIVE. Even shifts (2,4): winner ACTIVE. */
@@ -154,6 +202,27 @@ public class ScoringTelemetry implements SubsystemTelemetry {
     return matchTime; // time remaining in match
   }
 
+  /**
+   * Parse FMS game-specific message for auto winner. FMS sends 'R' or 'B'. Compare against our
+   * alliance to determine if we won. Falls back to dashboard toggle for practice (no FMS).
+   */
+  private boolean parseWonAuto() {
+    String message = DriverStation.getGameSpecificMessage();
+    if (message != null && !message.isEmpty()) {
+      char winner = message.charAt(0);
+      var ourAlliance = DriverStation.getAlliance();
+      if (ourAlliance.isPresent()) {
+        wonAutoFromFMS = true;
+        boolean redWon = (winner == 'R');
+        boolean weAreRed = (ourAlliance.get() == DriverStation.Alliance.Red);
+        return redWon == weAreRed;
+      }
+    }
+    // No FMS or no alliance data: fall back to dashboard for practice
+    wonAutoFromFMS = false;
+    return SmartDashboard.getBoolean("WonAuto", false);
+  }
+
   @Override
   public void log() {
     SafeLog.put("Scoring/Available", scoringAvailable);
@@ -167,6 +236,15 @@ public class ScoringTelemetry implements SubsystemTelemetry {
     SafeLog.put("Scoring/HubShiftNumber", hubShiftNumber);
     SafeLog.put("Scoring/TimeToNextShiftSec", timeToNextShiftSec);
     SafeLog.put("Scoring/Conditions/WonAuto", wonAuto);
+    SafeLog.put("Scoring/Conditions/WonAutoFromFMS", wonAutoFromFMS);
+
+    SafeLog.put("Scoring/Previous/ShooterReady", previousShooterReady);
+    SafeLog.put("Scoring/Previous/IndexerClear", previousIndexerClear);
+    SafeLog.put("Scoring/Previous/VisionLocked", previousVisionLocked);
+    SafeLog.put("Scoring/Previous/HubActive", previousHubActive);
+    SafeLog.put("Scoring/Previous/ReadyToShoot", previousReadyToShoot);
+    SafeLog.put("Scoring/ReadyStateChanged", readyStateChanged);
+    SafeLog.put("Scoring/ReadyLostReason", readyLostReason);
   }
 
   @Override
@@ -174,7 +252,6 @@ public class ScoringTelemetry implements SubsystemTelemetry {
     return "Scoring";
   }
 
-  // Accessors for TelemetryManager
   public boolean isReadyToShoot() {
     return readyToShoot;
   }
@@ -185,5 +262,17 @@ public class ScoringTelemetry implements SubsystemTelemetry {
 
   public boolean isHubActive() {
     return hubActive;
+  }
+
+  public double getTimeToNextShiftSec() {
+    return timeToNextShiftSec;
+  }
+
+  public boolean isReadyStateChanged() {
+    return readyStateChanged;
+  }
+
+  public String getReadyLostReason() {
+    return readyLostReason;
   }
 }

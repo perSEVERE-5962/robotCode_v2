@@ -4,17 +4,15 @@ import edu.wpi.first.hal.can.CANStatus;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants.PDHChannelMap;
 
 /** System health: battery, CAN bus, roboRIO, loop timing, brownout prediction. */
 public class SystemHealthTelemetry implements SubsystemTelemetry {
-  // 25ms threshold reduces false positives from normal scheduler jitter
   private static final double LOOP_OVERRUN_THRESHOLD_MS = 25.0;
 
-  // L4: Decimation for CANStatus to reduce GC pressure
   private static final int CAN_STATUS_DECIMATION = 10;
   private int cycleCounter = 0;
 
-  // Current state
   private double batteryVoltage = 0;
   private double canUtilization = 0;
   private int canTxErrors = 0;
@@ -27,7 +25,6 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
   private boolean brownedOut = false;
   private boolean rslState = false;
 
-  // Additional voltage signals
   private double brownoutVoltage = 0;
   private double inputVoltage = 0;
 
@@ -37,12 +34,18 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
   private int brownoutRiskLevel = 0; // 0=none, 1=watch, 2=warning, 3=imminent
   private boolean brownoutRisk = false;
 
-  // Total current draw from PDH
   private PowerDistribution pdh = null;
   private double totalCurrentAmps = 0;
   private double peakCurrentAmps = 0;
 
-  // Loop timing (computed here since we're called every cycle)
+  private static final int PDH_CHANNEL_DECIMATION = 5;
+  private int pdhChannelCycleCounter = 0;
+  private final double[] channelCurrents = new double[PDHChannelMap.NUM_CHANNELS];
+  private final double[] channelPeakCurrents = new double[PDHChannelMap.NUM_CHANNELS];
+  private String overcurrentChannel = "none";
+  private double overcurrentAmps = 0;
+  private boolean overcurrentAlert = false;
+
   private double lastLoopTimestamp = 0;
   private double loopTimeMs = 0;
   private int loopOverrunCount = 0;
@@ -58,8 +61,6 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
 
   @Override
   public void update() {
-    // Loop timing - must be first to measure time since last cycle
-    // This section must ALWAYS run, never guarded
     double currentTimestamp = Timer.getFPGATimestamp();
     if (lastLoopTimestamp > 0) {
       loopTimeMs = (currentTimestamp - lastLoopTimestamp) * 1000.0;
@@ -69,9 +70,7 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
     }
     lastLoopTimestamp = currentTimestamp;
 
-    // Guard HAL reads so a HAL failure doesn't break loop timing above
     try {
-      // Battery and power
       batteryVoltage = RobotController.getBatteryVoltage();
 
       double now = Timer.getFPGATimestamp();
@@ -99,7 +98,6 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
       }
       brownoutRisk = (brownoutRiskLevel >= 2);
 
-      // L4: Decimate CANStatus reads to every 10 cycles
       cycleCounter++;
       if (cycleCounter >= CAN_STATUS_DECIMATION) {
         cycleCounter = 0;
@@ -110,7 +108,6 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
         canBusOff = canStatus.busOffCount;
       }
 
-      // roboRIO
       rioCPUTemp = RobotController.getCPUTemp();
       rio3V3Rail = RobotController.getVoltage3V3();
       rio5VRail = RobotController.getVoltage5V();
@@ -118,15 +115,43 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
       brownedOut = RobotController.isBrownedOut();
       rslState = RobotController.getRSLState();
 
-      // Additional voltage signals
       brownoutVoltage = RobotController.getBrownoutVoltage();
       inputVoltage = RobotController.getInputVoltage();
 
-      // Total current draw from PDH
       if (pdh != null) {
         totalCurrentAmps = pdh.getTotalCurrent();
         if (totalCurrentAmps > peakCurrentAmps) {
           peakCurrentAmps = totalCurrentAmps;
+        }
+
+          pdhChannelCycleCounter++;
+        if (pdhChannelCycleCounter >= PDH_CHANNEL_DECIMATION) {
+          pdhChannelCycleCounter = 0;
+          double[] raw = pdh.getAllCurrents();
+          int count = Math.min(raw.length, PDHChannelMap.NUM_CHANNELS);
+          double maxCurrent = 0;
+          int maxChannel = -1;
+
+          for (int i = 0; i < count; i++) {
+            channelCurrents[i] = raw[i];
+            if (raw[i] > channelPeakCurrents[i]) {
+              channelPeakCurrents[i] = raw[i];
+            }
+            if (raw[i] > maxCurrent) {
+              maxCurrent = raw[i];
+              maxChannel = i;
+            }
+          }
+
+          if (maxCurrent >= PDHChannelMap.CHANNEL_OVERCURRENT_AMPS && maxChannel >= 0) {
+            overcurrentAlert = true;
+            overcurrentChannel = PDHChannelMap.getLabel(maxChannel);
+            overcurrentAmps = maxCurrent;
+          } else {
+            overcurrentAlert = false;
+            overcurrentChannel = "none";
+            overcurrentAmps = 0;
+          }
         }
       }
     } catch (Throwable t) {
@@ -159,7 +184,6 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
     SafeLog.put("SystemHealth/BrownedOut", brownedOut);
     SafeLog.put("SystemHealth/RSLState", rslState);
 
-    // Additional voltage signals
     SafeLog.put("SystemHealth/BrownoutVoltage", brownoutVoltage);
     SafeLog.put("SystemHealth/InputVoltage", inputVoltage);
 
@@ -169,6 +193,16 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
 
     SafeLog.put("SystemHealth/TotalCurrentAmps", totalCurrentAmps);
     SafeLog.put("SystemHealth/PeakCurrentAmps", peakCurrentAmps);
+
+    for (int i = 0; i < PDHChannelMap.NUM_CHANNELS; i++) {
+      String label = PDHChannelMap.getLabel(i);
+      SafeLog.put("PDH/" + label + "/Current", channelCurrents[i]);
+      SafeLog.put("PDH/" + label + "/PeakCurrent", channelPeakCurrents[i]);
+    }
+
+    SafeLog.put("PDH/OvercurrentAlert", overcurrentAlert);
+    SafeLog.put("PDH/OvercurrentChannel", overcurrentChannel);
+    SafeLog.put("PDH/OvercurrentAmps", overcurrentAmps);
   }
 
   @Override
@@ -176,7 +210,6 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
     return "SystemHealth";
   }
 
-  // Accessors for AlertManager
   public double getLoopTimeMs() {
     return loopTimeMs;
   }
@@ -203,5 +236,20 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
 
   public double getPeakCurrentAmps() {
     return peakCurrentAmps;
+  }
+
+  public boolean isOvercurrentAlert() {
+    return overcurrentAlert;
+  }
+
+  public String getOvercurrentChannel() {
+    return overcurrentChannel;
+  }
+
+  public double getChannelCurrent(int channel) {
+    if (channel >= 0 && channel < channelCurrents.length) {
+      return channelCurrents[channel];
+    }
+    return 0;
   }
 }
