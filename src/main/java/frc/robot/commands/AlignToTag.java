@@ -13,7 +13,10 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Cameras;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.Cameras;
@@ -21,7 +24,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import java.util.List;
-
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class AlignToTag extends Command {
   private Vision visionSubsystem;
@@ -30,27 +34,23 @@ public class AlignToTag extends Command {
   private int desiredTag;
   private PhotonTrackedTarget target;
   private Transform2d offset;
-  //consider not stopping the robot when hastarget becomes false, allowing the robot to align using gyro.
+  // consider not stopping the robot when hastarget becomes false, allowing the robot to align using
+  // gyro.
   private boolean hasTarget = false;
   private Pose2d targetPose;
  
   private final ProfiledPIDController xPID =
       new ProfiledPIDController(
-          4.0, 0.0, 0.0,
+          4.0,
+          0.0,
+          0.0,
           new TrapezoidProfile.Constraints(
-              3.0,   // max velocity(for tuning)
-              3.0    // max accelleration(for tuning)
-          )
-      );
+              3.0, // max velocity(for tuning)
+              3.0 // max accelleration(for tuning)
+              ));
 
   private final ProfiledPIDController yPID =
-      new ProfiledPIDController(
-          4.0, 0.0, 0.0,
-          new TrapezoidProfile.Constraints(
-              3.0,
-              3.0
-          )
-      );
+      new ProfiledPIDController(4.0, 0.0, 0.0, new TrapezoidProfile.Constraints(3.0, 3.0));
 
   private final ProfiledPIDController rotationPID =
       new ProfiledPIDController(
@@ -63,7 +63,6 @@ public class AlignToTag extends Command {
 
   private final double posTol = 0.07; //7 cm
   private final double angTol = Math.toRadians(2); // 2 degrees
- 
 
   /** Creates a new AlignToTag. */
   public AlignToTag(SwerveSubsystem swerve, int desiredTag, Transform2d offset) {
@@ -72,13 +71,12 @@ public class AlignToTag extends Command {
     this.swerveSubsystem = swerve;
     this.offset = offset;
 
-
     addRequirements(swerveSubsystem);
-    //settling tolerance
+    // settling tolerance
     xPID.setTolerance(posTol);
     yPID.setTolerance(posTol);
 
-    //wrapping and tolerance
+    // wrapping and tolerance
     rotationPID.enableContinuousInput(-Math.PI, Math.PI);
     rotationPID.setTolerance(angTol);
   }
@@ -86,7 +84,7 @@ public class AlignToTag extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-  
+
     camera = visionSubsystem.getbestCamera(desiredTag);
     hasTarget = false;
 
@@ -94,7 +92,6 @@ public class AlignToTag extends Command {
     xPID.reset(pose.getX());
     yPID.reset(pose.getY());
     rotationPID.reset(pose.getRotation().getRadians());
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -108,7 +105,7 @@ public class AlignToTag extends Command {
       SmartDashboard.putBoolean("AlignToReef/HasTarget", false);
       return;
     }
-    
+
     List<PhotonPipelineResult> results = camera.resultsList;
     target = null;
 
@@ -128,8 +125,6 @@ public class AlignToTag extends Command {
         }
       }
     }
-  
-
 
     if (target == null) {
       // Couldn't find the desired tag, stop the robot
@@ -139,8 +134,6 @@ public class AlignToTag extends Command {
       return;
     }
 
-  
-    
     Transform3d cameraToTarget = target.getBestCameraToTarget();
     if (cameraToTarget == null) {
       swerveSubsystem.drive(new ChassisSpeeds(0, 0, 0));
@@ -149,7 +142,6 @@ public class AlignToTag extends Command {
     }
 
     hasTarget = true;
-
 
     // Calculate tag pose using 3D solver data + current robot pose
     Pose2d currentRobotPose = swerveSubsystem.getPose();
@@ -167,19 +159,17 @@ public class AlignToTag extends Command {
     Pose2d calculatedTagPose2d = calculatedTagPose3d.toPose2d();
     Pose2d calculatedTargetPose = calculatedTagPose2d.transformBy(offset);
 
-
     targetPose = calculatedTargetPose;
     Pose2d currentPose = swerveSubsystem.getPose();
 
-        
     double xSpeed = xPID.calculate(currentPose.getX(), targetPose.getX());
     double ySpeed = yPID.calculate(currentPose.getY(), targetPose.getY());
-        
-    double rotSpeed = rotationPID.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+
+    double rotSpeed =
+        rotationPID.calculate(
+            currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
 
     swerveSubsystem.driveFieldOriented(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed));
-   
-
   }
 
   // Called once the command ends or is interrupted.
@@ -191,15 +181,6 @@ public class AlignToTag extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return hasTarget
-      && xPID.atGoal()
-      && yPID.atGoal()
-      && rotationPID.atGoal();
+    return hasTarget && xPID.atGoal() && yPID.atGoal() && rotationPID.atGoal();
   }
 }
-
-
-
-
-
-

@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ScoreToTrench"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ScoreToHuman"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HumanToScore"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TimedSpeedUpThenIndex"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TrenchToScore"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -15,9 +15,7 @@ public class MoveIntake extends Command {
   }
 
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
@@ -33,5 +31,4 @@ public class MoveIntake extends Command {
   public boolean isFinished() {
     return false;
   }
-
 }

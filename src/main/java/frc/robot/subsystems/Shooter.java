@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.util.TunableNumber;
 
 public class Shooter extends Actuator {
   private static Shooter instance;

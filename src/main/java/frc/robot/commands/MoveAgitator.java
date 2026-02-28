@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Agitator;
 
@@ -11,6 +13,11 @@ public class MoveAgitator extends Command {
     agitator = Agitator.getInstance();
     this.speed = speed;
 
+    addRequirements(agitator);
+  }
+  public MoveAgitator(double speed) {
+    agitator = Agitator.getInstance();
+    this.speed=speed;
     addRequirements(agitator);
   }
 

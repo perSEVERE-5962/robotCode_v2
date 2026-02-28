@@ -14,6 +14,7 @@ import frc.robot.Constants;
 public class SpeedUpThenIndex extends Command {
   /** Creates a new SpeedUpThenIndex. */
   private Shooter shooter;
+  private Agitator agitator;
   private Indexer indexer;
   private Agitator agitator;
   public SpeedUpThenIndex() {
@@ -27,9 +28,7 @@ public class SpeedUpThenIndex extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

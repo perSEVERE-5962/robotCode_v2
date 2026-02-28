@@ -22,7 +22,9 @@ public class RetractIntake extends Command {
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    
+  }
 
   @Override
   public boolean isFinished() {
@@ -30,5 +32,6 @@ public class RetractIntake extends Command {
       return true;
     }
     return false;
+  }
   }
 }
