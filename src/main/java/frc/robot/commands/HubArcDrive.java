@@ -13,7 +13,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.util.function.DoubleSupplier;
@@ -26,7 +25,6 @@ public class HubArcDrive extends Command {
   private final double scoringDistance;
   private Shooter shooter;
   private final Rotation2d scoringSide;
-  private Indexer indexer;
   private static double headingError;
 
   // Command for drive mode where robot orbits around hub, maintaining distance and holding its
@@ -45,7 +43,6 @@ public class HubArcDrive extends Command {
     this.scoringDistance = scoringDistance;
     this.shooter = Shooter.getInstance();
     this.scoringSide = scoringSide;
-    indexer = Indexer.getInstance();
 
     addRequirements(swerve, shooter);
   }
