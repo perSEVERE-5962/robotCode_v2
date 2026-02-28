@@ -124,7 +124,7 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
     }
 
     // Track time allocation based on cycle phase
-    // H2 fix: Handle all phases including INDEXING and RECOVERING
+    // Handle all phases including INDEXING and RECOVERING so time adds up to 100%
     CycleTracker.CyclePhase phase = CycleTracker.getInstance().getCurrentPhase();
     double dtMs = dt * 1000;
     switch (phase) {

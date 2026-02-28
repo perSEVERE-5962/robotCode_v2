@@ -161,6 +161,18 @@ public final class Constants {
     public static final double JAM_TIME_THRESHOLD_SECONDS = 0.25;
   }
 
+  public static final class AgitatorConstants {
+    public static final double P = 0.0001;
+    public static final double I = 0.0;
+    public static final double D = 0.0;
+    public static final double MinOutput = -1.0;
+    public static final double MaxOutput = 1.0;
+    public static final double FF = 0.0002;
+    public static final double Iz = 0.0;
+
+    public static final double TARGET_RPM = 2000;
+  }
+
   public static final class HopperConstants {
     public static final int LOW_BALL_THRESHOLD = 3;
     public static final double DETECTION_CONFIDENCE_THRESHOLD = 0.8;

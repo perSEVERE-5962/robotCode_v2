@@ -26,7 +26,7 @@ public class DriverInputTelemetry implements SubsystemTelemetry {
   private boolean driverActive = false;
   private boolean operatorActive = false;
   private double driverIdleTimeMs = 0;
-  private double lastDriverInputTime = -1; // M2: Sentinel value to detect first update
+  private double lastDriverInputTime = -1; // sentinel: -1 means we haven't seen a real update yet
 
   private boolean deadbandActiveX = false;
   private boolean deadbandActiveY = false;
@@ -108,7 +108,7 @@ public class DriverInputTelemetry implements SubsystemTelemetry {
     operatorActive = operatorInputMagnitude > DEADBAND || operatorButtons != 0;
 
     // Track driver idle time
-    // M2: Initialize on first update to avoid FPGA uptime spike
+    // Initialize on first update so idle time doesn't spike from FPGA uptime
     if (lastDriverInputTime < 0) {
       lastDriverInputTime = now;
     }

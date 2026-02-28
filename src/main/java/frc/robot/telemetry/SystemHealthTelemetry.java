@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 /** System health: battery, CAN bus, roboRIO, loop timing, brownout prediction. */
 public class SystemHealthTelemetry implements SubsystemTelemetry {
-  // M4: Increased threshold to reduce false positives from scheduler jitter
+  // 25ms threshold reduces false positives from normal scheduler jitter
   private static final double LOOP_OVERRUN_THRESHOLD_MS = 25.0;
 
   // L4: Decimation for CANStatus to reduce GC pressure
@@ -63,13 +63,13 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
     double currentTimestamp = Timer.getFPGATimestamp();
     if (lastLoopTimestamp > 0) {
       loopTimeMs = (currentTimestamp - lastLoopTimestamp) * 1000.0;
-      if (loopTimeMs > LOOP_OVERRUN_THRESHOLD_MS) { // M4
+      if (loopTimeMs > LOOP_OVERRUN_THRESHOLD_MS) {
         loopOverrunCount++;
       }
     }
     lastLoopTimestamp = currentTimestamp;
 
-    // M8: Guard HAL reads - preserve loop timing even if HAL fails
+    // Guard HAL reads so a HAL failure doesn't break loop timing above
     try {
       // Battery and power
       batteryVoltage = RobotController.getBatteryVoltage();

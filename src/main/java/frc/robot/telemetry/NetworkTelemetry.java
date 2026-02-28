@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 /** Network bandwidth monitoring for R704 compliance (VH-109: 7 Mbps). */
 public class NetworkTelemetry implements SubsystemTelemetry {
-  // R704 limits in Mbps (USA = VH-109)
+  // FRC radio bandwidth limits in Mbps
   private static final double VH109_LIMIT_MBPS = 7.0;
   private static final double WARNING_THRESHOLD = 0.70;
   private static final double CRITICAL_THRESHOLD = 0.90;
