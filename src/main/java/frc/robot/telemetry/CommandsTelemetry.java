@@ -9,13 +9,13 @@ import java.util.Map;
 
 /** Command scheduler telemetry: active commands, execution counts, durations. */
 public class CommandsTelemetry implements SubsystemTelemetry {
-  // M1: Reference counting instead of Set for same-name command tracking
+  // Reference counting handles multiple instances of the same-name command running at once
   private final Map<String, Integer> activeCommandCounts = new HashMap<>();
   private String activeList = "none";
   private int activeCount = 0;
 
   // Performance tracking
-  // H5: Use IdentityHashMap to handle same-name commands
+  // IdentityHashMap so two commands with the same name get separate start times
   private final Map<Command, Double> commandStartTimes = new IdentityHashMap<>();
   private final Map<String, Integer> commandExecutionCounts = new HashMap<>();
   private static final int MAX_EXECUTION_COUNT_ENTRIES = 100;
@@ -31,7 +31,7 @@ public class CommandsTelemetry implements SubsystemTelemetry {
     setupCallbacks();
   }
 
-  // H1: Sanitize null or empty command names
+  // Guard against null or empty names from dynamically generated commands
   private String sanitizeName(Command command) {
     if (command == null) return "NullCommand";
     String name = command.getName();
@@ -45,7 +45,7 @@ public class CommandsTelemetry implements SubsystemTelemetry {
             command -> {
               try {
                 String name = sanitizeName(command);
-                // M1: Increment count for this command name
+                // Increment count for this command name
                 activeCommandCounts.merge(name, 1, Integer::sum);
 
                 // Track start time by command identity (not name)
@@ -64,7 +64,7 @@ public class CommandsTelemetry implements SubsystemTelemetry {
             command -> {
               try {
                 String name = sanitizeName(command);
-                // M1: Decrement count, remove entry if zero
+                // Decrement count, remove entry when it hits zero
                 activeCommandCounts.compute(name, (k, v) -> (v == null || v <= 1) ? null : v - 1);
 
                 // Track duration by command identity
@@ -83,7 +83,7 @@ public class CommandsTelemetry implements SubsystemTelemetry {
             command -> {
               try {
                 String name = sanitizeName(command);
-                // M1: Decrement count, remove entry if zero
+                // Decrement count, remove entry when it hits zero
                 activeCommandCounts.compute(name, (k, v) -> (v == null || v <= 1) ? null : v - 1);
 
                 // Track duration by command identity
@@ -102,7 +102,7 @@ public class CommandsTelemetry implements SubsystemTelemetry {
 
   @Override
   public void update() {
-    // M1: Build active list from reference counts
+    // Build active list from reference counts
     if (activeCommandCounts.isEmpty()) {
       activeList = "none";
     } else {

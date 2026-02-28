@@ -1,16 +1,12 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 import frc.robot.Constants.AgitatorConstants;
 import frc.robot.util.TunableNumber;
 
 public class Agitator extends Actuator {
   private SparkMax motor;
-  private SparkMaxConfig motorConfig;
   private static Agitator instance;
 
   private static final TunableNumber kP = new TunableNumber("Agitator/kP", AgitatorConstants.P);
@@ -22,6 +18,7 @@ public class Agitator extends Actuator {
       new TunableNumber("Agitator/TargetRPM", AgitatorConstants.TARGET_RPM);
 
   private Agitator() {
+    // Actuator base class handles motor creation, PID, brake mode, and 40A current limit
     super(
         Constants.CANDeviceIDs.kAgitatorID,
         AgitatorConstants.P,
@@ -37,11 +34,6 @@ public class Agitator extends Actuator {
         false,
         false);
     motor = getMotor();
-    motorConfig = new SparkMaxConfig();
-
-    motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(40);
-
-    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public double getTemperature() {

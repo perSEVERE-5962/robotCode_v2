@@ -278,7 +278,7 @@ public class TelemetryManager {
     return getSafely(() -> intakeTelemetry.isStalled(), false);
   }
 
-  // Network (for AlertManager - R704 compliance)
+  // Network (for AlertManager bandwidth checks)
   public double getBandwidthPercent() {
     return getSafely(() -> networkTelemetry.getBandwidthPercent(), 0.0);
   }
