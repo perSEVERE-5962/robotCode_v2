@@ -43,7 +43,7 @@ public class SpeedUpThenIndex extends Command {
     if (Math.abs(Constants.MotorConstants.DESIRED_SHOOTER_RPM - shooter.getVelocity())
         < Constants.MotorConstants.SHOOTER_RPM_TOLERANCE) {
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
-      agitator.move(Constants.MotorConstants.DESIRED_AGITATOR_SPEED);
+      agitator.move(.35);
       System.out.println(indexer.getTunableTargetSpeed());
       System.out.println(indexer.getVelocity());
     }

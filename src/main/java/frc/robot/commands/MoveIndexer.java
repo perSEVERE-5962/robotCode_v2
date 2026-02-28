@@ -32,7 +32,7 @@ public class MoveIndexer extends Command {
     if (arcDriveOn.getAsBoolean() && HubArcDrive.checkHeadingError()) {
       indexer.moveToVelocityWithPID(rpm);
     } else if (arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
-      indexer.moveToVelocityWithPID(0);
+      indexer.move(0);
     } else {
       indexer.moveToVelocityWithPID(rpm);
       System.out.println(rpm);

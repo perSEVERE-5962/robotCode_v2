@@ -146,7 +146,7 @@ public class ShootOnTheMove extends Command {
     double timeOfFlight = timeOfFlightMap.get(distanceToHub);
     double shooterRPM = 0;
     Translation2d compensatedTarget = hubCenter; // will be refined each iteration
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i <= 3; i++) {
 
       // how far the piece drifts during flight due to robot motion
       Translation2d drift = robotVel.times(timeOfFlight);

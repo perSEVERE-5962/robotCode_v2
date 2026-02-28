@@ -46,7 +46,7 @@ public class Actuator extends SubsystemBase {
     motorConfig.smartCurrentLimit(kStallLimit);
 
     FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
-    if (useThroughBoreEncoder == true) {
+    if (useThroughBoreEncoder) {
       feedBackSensor = FeedbackSensor.kAbsoluteEncoder;
     }
     motorConfig
@@ -58,14 +58,14 @@ public class Actuator extends SubsystemBase {
         .outputRange(kMinOutput, kMaxOutput)
         .iZone(kIz);
     motorConfig.closedLoop.feedForward.kV(12.0 * kF);
-    if (useThroughBoreEncoder == true) {
+    if (useThroughBoreEncoder) {
       absoluteEncoder = motor.getAbsoluteEncoder();
     } else {
       encoder = motor.getEncoder();
       encoder.setPosition(0);
     }
 
-    if (useSoftLimits == true) {
+    if (useSoftLimits) {
 
       SoftLimitConfig softLimitConfig = new SoftLimitConfig();
       softLimitConfig.forwardSoftLimitEnabled(true);
@@ -80,7 +80,7 @@ public class Actuator extends SubsystemBase {
   }
 
   public double getPosition() {
-    if (useThroughBoreEncoder == true) {
+    if (useThroughBoreEncoder) {
       if (absoluteEncoder == null) {
         return 0;
       }
@@ -94,7 +94,7 @@ public class Actuator extends SubsystemBase {
   }
 
   public double getVelocity() {
-    if (useThroughBoreEncoder == true) {
+    if (useThroughBoreEncoder) {
       if (absoluteEncoder == null) {
         return 0;
       }

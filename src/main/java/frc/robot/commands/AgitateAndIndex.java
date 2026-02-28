@@ -40,7 +40,7 @@ public class AgitateAndIndex extends Command {
       indexer.moveToVelocityWithPID(indexRPM);
       agitator.move(agitateSpeed);
     } else if (arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
-      indexer.moveToVelocityWithPID(0);
+      indexer.move(0);
       agitator.move(0);
     } else {
       indexer.moveToVelocityWithPID(indexRPM);
