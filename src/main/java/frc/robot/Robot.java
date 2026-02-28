@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -138,6 +139,9 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
+    // Lower brownout threshold so motors keep running under heavier loads
+    RobotController.setBrownoutVoltage(6.3);
+
     installExceptionHandler();
     configureLogging();
 
