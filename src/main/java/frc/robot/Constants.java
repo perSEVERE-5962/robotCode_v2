@@ -171,6 +171,8 @@ public final class Constants {
     public static final double Iz = 0.0;
 
     public static final double TARGET_RPM = 2000;
+    public static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
+    public static final double JAM_TIME_THRESHOLD_SECONDS = 0.25;
   }
 
   public static final class HopperConstants {

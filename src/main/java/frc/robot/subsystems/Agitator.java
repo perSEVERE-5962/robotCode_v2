@@ -7,13 +7,25 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.AgitatorConstants;
+import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
+import frc.robot.util.TunableNumber;
 
 public class Agitator extends Actuator {
   private SparkMax motor;
   private static Agitator instance;
-
+  private static final TunableNumber kP = new TunableNumber("Agitator/kP", AgitatorConstants.P);
+  private static final TunableNumber kI = new TunableNumber("Agitator/kI", AgitatorConstants.I);
+  private static final TunableNumber kD = new TunableNumber("Agitator/kD", AgitatorConstants.D);
+  private static final TunableNumber kF = new TunableNumber("Agitator/FF", AgitatorConstants.FF);
+private static final TunableNumber targetSpeed =
+      new TunableNumber("Agitator/TargetSpeed", AgitatorConstants.TARGET_RPM);
+  private static final TunableNumber jamCurrentThreshold =
+      new TunableNumber("Agitator/JamAmps", AgitatorConstants.JAM_CURRENT_THRESHOLD_AMPS);
+  private static final TunableNumber jamTimeThreshold =
+      new TunableNumber("Agitator/JamSeconds", AgitatorConstants.JAM_TIME_THRESHOLD_SECONDS);
   private final JamProtection jamProtection =
       new JamProtection(
           "Agitator",
@@ -30,13 +42,13 @@ public class Agitator extends Actuator {
     // Actuator base class handles motor creation, PID, brake mode, and 40A current limit
     super(
         Constants.CANDeviceIDs.kAgitatorID,
-        AgitatorConstants.P,
-        AgitatorConstants.I,
-        AgitatorConstants.D,
-        AgitatorConstants.MinOutput,
-        AgitatorConstants.MaxOutput,
-        AgitatorConstants.FF,
-        AgitatorConstants.Iz,
+        Constants.AgitatorConstants.P,
+        Constants.AgitatorConstants.I,
+        Constants.AgitatorConstants.D,
+        Constants.AgitatorConstants.MinOutput,
+        Constants.AgitatorConstants.MaxOutput,
+        Constants.AgitatorConstants.FF,
+        Constants.AgitatorConstants.Iz,
         0,
         0,
         false,
@@ -49,19 +61,8 @@ public class Agitator extends Actuator {
     return motor.getMotorTemperature();
   }
 
-  @Override
-  public void periodic() {
-    TunableNumber.ifChanged(
-        () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
-  }
 
-  public double getAppliedOutput() {
-    return motor.getAppliedOutput();
-  }
 
-  public double getTemperature() {
-    return motor.getMotorTemperature();
-  }
 
   public double getAppliedOutput() {
     return motor.getAppliedOutput();
@@ -82,6 +83,8 @@ public class Agitator extends Actuator {
     if (!Double.isNaN(override)) {
       motor.set(override);
     }
+    TunableNumber.ifChanged(
+        () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
   }
 
   public boolean isRunning() {
@@ -103,7 +106,24 @@ public class Agitator extends Actuator {
       return -1;
     }
   }
+public double getTunableKP() {
+    return kP.get();
+  }
 
+  public double getTunableKI() {
+    return kI.get();
+  }
+
+  public double getTunableKD() {
+    return kD.get();
+  }
+
+  public double getTunableFF() {
+    return kF.get();
+  }
+public double getTunableTargetRPM() {
+    return targetSpeed.get();
+  }
   public static Agitator getInstance() {
     if (instance == null) {
       instance = new Agitator();
