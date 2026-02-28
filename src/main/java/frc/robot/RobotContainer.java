@@ -387,16 +387,11 @@ public class RobotContainer {
   }
 
   private boolean isRedAlliance() {
-    Optional<Alliance> ally = DriverStation.getAlliance();
-if (ally.isPresent()) {
-    if (ally.get() == Alliance.Red) {
-        return false;
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      return alliance.get() == DriverStation.Alliance.Red;
     }
-    if (ally.get() == Alliance.Blue) {
-        return false;
-    }
-}
-return false;
+    return false;
   }
 
   private Translation2d getHubCenter() {
