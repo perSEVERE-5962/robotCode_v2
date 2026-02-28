@@ -159,6 +159,14 @@ public enum Cameras {
     }
   }
 
+  public Matrix<N3, N1> getSingleTagStdDevs() {
+    return singleTagStdDevs;
+  }
+
+  public Matrix<N3, N1> getMultiTagStdDevs() {
+    return multiTagStdDevs;
+  }
+
   /**
    * Get the result with the least ambiguity from the best tracked target within the Cache. This may
    * not be the most recent result!
