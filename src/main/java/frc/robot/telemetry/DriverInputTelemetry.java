@@ -68,7 +68,7 @@ public class DriverInputTelemetry implements SubsystemTelemetry {
         packButtons(
             driver.getAButton(), driver.getBButton(),
             driver.getXButton(), driver.getYButton(),
-            driver.getLeftBumper(), driver.getRightBumper(),
+            driver.getLeftBumperButton(), driver.getRightBumperButton(),
             driver.getStartButton(), driver.getBackButton());
 
     // Operator inputs (if available)
@@ -85,7 +85,7 @@ public class DriverInputTelemetry implements SubsystemTelemetry {
           packButtons(
               operator.getAButton(), operator.getBButton(),
               operator.getXButton(), operator.getYButton(),
-              operator.getLeftBumper(), operator.getRightBumper(),
+              operator.getLeftBumperButton(), operator.getRightBumperButton(),
               operator.getStartButton(), operator.getBackButton());
     }
 
