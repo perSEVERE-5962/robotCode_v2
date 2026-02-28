@@ -18,7 +18,7 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
   private VisionTelemetry visionTelemetry;
   private DriveTelemetry driveTelemetry;
   private CANHealthTelemetry telemetry;
-
+  private AgitatorTelemetry agitatorTelemetry;
   @BeforeEach
   void setUp() {
     shooterTelemetry = new ShooterTelemetry();
@@ -28,6 +28,7 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     hangerTelemetry = new HangerTelemetry();
     visionTelemetry = new VisionTelemetry();
     driveTelemetry = new DriveTelemetry();
+    agitatorTelemetry = new AgitatorTelemetry();
     telemetry =
         new CANHealthTelemetry(
             shooterTelemetry,
@@ -35,7 +36,7 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
             intakeTelemetry,
             intakeActuatorTelemetry,
             hangerTelemetry,
-            visionTelemetry,
+            agitatorTelemetry, visionTelemetry,
             driveTelemetry);
   }
 
@@ -130,7 +131,7 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
   @Test
   void testNullTelemetryHandling() {
     CANHealthTelemetry nullTelemetry =
-        new CANHealthTelemetry(null, null, null, null, null, null, null);
+        new CANHealthTelemetry(null, null, null, null, null, null, null, null);
     assertDoesNotThrow(
         () -> {
           nullTelemetry.update();
