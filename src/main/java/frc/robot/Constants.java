@@ -131,7 +131,17 @@ public final class Constants {
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double Iz = 0.0;
-    
+
+    // Aggressive PID gains for post-shot recovery (slot 1).
+    // Higher P means the motor demands way more output when RPM dips after a
+    // ball passes through, so recovery is much faster than with the gentle
+    // steady-state gains above. FF stays the same because the physics of
+    // maintaining a given RPM don't change, just how urgently we get there.
+    public static final double RECOVERY_P = 0.002;
+    public static final double RECOVERY_I = 0.0;
+    public static final double RECOVERY_D = 0.0;
+    public static final double RECOVERY_FF = 0.000172;
+
     // Tuning targets
     public static final double TARGET_RPM = 1550;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
