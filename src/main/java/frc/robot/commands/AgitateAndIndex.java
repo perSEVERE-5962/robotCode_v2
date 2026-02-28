@@ -4,11 +4,10 @@
 
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Indexer;
+import java.util.function.BooleanSupplier;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AgitateAndIndex extends Command {
@@ -18,10 +17,11 @@ public class AgitateAndIndex extends Command {
   private BooleanSupplier arcDriveOn;
   private Indexer indexer;
   private double indexRPM;
+
   public AgitateAndIndex(double agitateSpeed, double indexRPM, BooleanSupplier arcDriveOn) {
     this.agitateSpeed = agitateSpeed;
     agitator = Agitator.getInstance();
-    this.arcDriveOn= arcDriveOn;
+    this.arcDriveOn = arcDriveOn;
     this.indexRPM = indexRPM;
     indexer = Indexer.getInstance();
     addRequirements(agitator);
@@ -36,17 +36,15 @@ public class AgitateAndIndex extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(arcDriveOn.getAsBoolean()&&HubArcDrive.checkHeadingError()){
-    indexer.moveToVelocityWithPID(indexRPM);
-    agitator.move(agitateSpeed);
-    }
-    else if(arcDriveOn.getAsBoolean()&&!HubArcDrive.checkHeadingError()){
+    if (arcDriveOn.getAsBoolean() && HubArcDrive.checkHeadingError()) {
+      indexer.moveToVelocityWithPID(indexRPM);
+      agitator.move(agitateSpeed);
+    } else if (arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
       indexer.moveToVelocityWithPID(0);
       agitator.move(0);
-    }
-    else{
-    indexer.moveToVelocityWithPID(indexRPM);
-    agitator.move(agitateSpeed);
+    } else {
+      indexer.moveToVelocityWithPID(indexRPM);
+      agitator.move(agitateSpeed);
     }
   }
 

@@ -8,6 +8,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.telemetry.CycleTracker;
+import frc.robot.telemetry.TelemetryManager;
+import frc.robot.util.AlertManager;
+import frc.robot.util.DiagnosticContext;
 import frc.robot.util.ElasticUtil;
 import frc.robot.util.EventMarker;
 import frc.robot.util.LoggedTracer;
@@ -290,7 +294,15 @@ public class Robot extends LoggedRobot {
     m_robotContainer.setMotorBrake(true);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    //Print the selected autonomous command upon autonomous init
+    // Reset event markers and cycle tracker for new match
+    EventMarker.reset();
+    CycleTracker.getInstance().reset();
+    EventMarker.modeChange("AUTONOMOUS");
+
+    // Start tracking for post-match summary
+    PostMatchSummary.getInstance().startTracking();
+
+    // Print the selected autonomous command upon autonomous init
     System.out.println("Auto selected: " + m_autonomousCommand);
 
     // schedule the autonomous command selected in the autoChooser
@@ -316,6 +328,11 @@ public class Robot extends LoggedRobot {
     } else {
       CommandScheduler.getInstance().cancelAll();
     }
+
+    EventMarker.modeChange("TELEOP");
+
+    // Start tracking for post-match summary (if not already from auto)
+    PostMatchSummary.getInstance().startTracking();
   }
 
   /** This function is called periodically during operator control. */

@@ -6,7 +6,7 @@ import frc.robot.subsystems.Intake;
 public class MoveIntake extends Command {
   private Intake intake;
   private double speed;
-  
+
   public MoveIntake(double speed) {
     intake = Intake.getInstance();
     this.speed = speed;
@@ -19,7 +19,7 @@ public class MoveIntake extends Command {
 
   @Override
   public void execute() {
-    intake.move(speed);
+    intake.move(intake.getTunableSpeed());
   }
 
   @Override

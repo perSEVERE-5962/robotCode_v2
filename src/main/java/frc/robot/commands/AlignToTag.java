@@ -4,9 +4,7 @@
 
 package frc.robot.commands;
 
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -19,10 +17,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Cameras;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
-import frc.robot.Cameras;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import java.util.List;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -38,7 +32,7 @@ public class AlignToTag extends Command {
   // gyro.
   private boolean hasTarget = false;
   private Pose2d targetPose;
- 
+
   private final ProfiledPIDController xPID =
       new ProfiledPIDController(
           4.0,
@@ -54,14 +48,12 @@ public class AlignToTag extends Command {
 
   private final ProfiledPIDController rotationPID =
       new ProfiledPIDController(
-          4.0, 0.0, 0.0,
-          new TrapezoidProfile.Constraints(
-              Math.toRadians(180), 
-              Math.toRadians(360)  
-          )
-      );
+          4.0,
+          0.0,
+          0.0,
+          new TrapezoidProfile.Constraints(Math.toRadians(180), Math.toRadians(360)));
 
-  private final double posTol = 0.07; //7 cm
+  private final double posTol = 0.07; // 7 cm
   private final double angTol = Math.toRadians(2); // 2 degrees
 
   /** Creates a new AlignToTag. */
@@ -113,11 +105,12 @@ public class AlignToTag extends Command {
       PhotonPipelineResult result = results.get(i);
       if (result.hasTargets()) {
         for (int j = 0; j < result.getTargets().size(); j++) {
-          PhotonTrackedTarget trackedTarget = result.getTargets().get(j); {
-              if (trackedTarget.getFiducialId() == desiredTag) {
-                  target = trackedTarget; 
-                  break;
-              }
+          PhotonTrackedTarget trackedTarget = result.getTargets().get(j);
+          {
+            if (trackedTarget.getFiducialId() == desiredTag) {
+              target = trackedTarget;
+              break;
+            }
           }
           if (target != null) {
             break;
@@ -148,12 +141,12 @@ public class AlignToTag extends Command {
     Transform3d robotToCamera = camera.getRobotToCamera();
     Transform3d robotToTarget = robotToCamera.plus(cameraToTarget);
 
-    Pose3d currentRobotPose3d = new Pose3d(
-        currentRobotPose.getX(), 
-        currentRobotPose.getY(), 
-        0, 
-        new Rotation3d(0, 0, currentRobotPose.getRotation().getRadians())
-    );
+    Pose3d currentRobotPose3d =
+        new Pose3d(
+            currentRobotPose.getX(),
+            currentRobotPose.getY(),
+            0,
+            new Rotation3d(0, 0, currentRobotPose.getRotation().getRadians()));
 
     Pose3d calculatedTagPose3d = currentRobotPose3d.plus(robotToTarget);
     Pose2d calculatedTagPose2d = calculatedTagPose3d.toPose2d();

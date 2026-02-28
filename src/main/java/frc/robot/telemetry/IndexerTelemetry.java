@@ -68,7 +68,7 @@ public class IndexerTelemetry implements SubsystemTelemetry {
       running = indexer.isRunning();
       currentAmps = indexer.getOutputCurrent();
       temperatureCelsius = indexer.getTemperature();
-      velocityRPM = indexer.getVelocityRPM();
+      velocityRPM = indexer.getVelocity();
 
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = indexer.getStickyFaultsRaw();

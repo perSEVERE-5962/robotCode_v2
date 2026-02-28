@@ -1,11 +1,13 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkMax;
 import frc.robot.Constants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.util.TunableNumber;
 
 public class Indexer extends Actuator {
   private static Indexer instance;
+  private SparkMax motor;
 
   // Tunable PID values
   private static final TunableNumber kP = new TunableNumber("Indexer/kP", IndexerConstants.P);
@@ -22,7 +24,76 @@ public class Indexer extends Actuator {
       new TunableNumber("Indexer/JamSeconds", IndexerConstants.JAM_TIME_THRESHOLD_SECONDS);
 
   private Indexer() {
-    super(Constants.CANDeviceIDs.kIndexerID, Constants.IndexerConstants.P, Constants.IndexerConstants.I, Constants.IndexerConstants.D, Constants.IndexerConstants.MinOutput, Constants.IndexerConstants.MaxOutput, Constants.IndexerConstants.FF, Constants.IndexerConstants.Iz, 0, 0, 40, true, true, false, false);
+    super(
+        Constants.CANDeviceIDs.kIndexerID,
+        Constants.IndexerConstants.P,
+        Constants.IndexerConstants.I,
+        Constants.IndexerConstants.D,
+        Constants.IndexerConstants.MinOutput,
+        Constants.IndexerConstants.MaxOutput,
+        Constants.IndexerConstants.FF,
+        Constants.IndexerConstants.Iz,
+        0,
+        0,
+        40,
+        true,
+        true,
+        false,
+        false);
+    motor = getMotor();
+  }
+
+  public double getTemperature() {
+    return motor.getMotorTemperature();
+  }
+
+  @Override
+  public void periodic() {
+    TunableNumber.ifChanged(
+        () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+  }
+
+  // Hardware accessors
+  public double getAppliedOutput() {
+    return motor.getAppliedOutput();
+  }
+
+  public double getOutputCurrent() {
+    return motor.getOutputCurrent();
+  }
+
+  public boolean isRunning() {
+    return Math.abs(motor.getAppliedOutput()) > 0.05;
+  }
+
+  // Tunable accessors
+  public double getTunableTargetSpeed() {
+    return targetSpeed.get();
+  }
+
+  public double getJamCurrentThreshold() {
+    return jamCurrentThreshold.get();
+  }
+
+  public double getJamTimeThreshold() {
+    return jamTimeThreshold.get();
+  }
+
+  // PID gain getters
+  public double getTunableKP() {
+    return kP.get();
+  }
+
+  public double getTunableKI() {
+    return kI.get();
+  }
+
+  public double getTunableKD() {
+    return kD.get();
+  }
+
+  public double getTunableFF() {
+    return kF.get();
   }
 
   public static Indexer getInstance() {

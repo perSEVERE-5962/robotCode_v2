@@ -94,7 +94,7 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     boolean wasAtSpeedBeforeUpdate = wasAtSpeed;
 
     try {
-      velocityRPM = shooter.getVelocityRPM();
+      velocityRPM = shooter.getVelocity();
       targetRPM = shooter.getTargetRPM();
       appliedOutput = shooter.getAppliedOutput();
       currentAmps = shooter.getOutputCurrent();

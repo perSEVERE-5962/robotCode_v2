@@ -14,7 +14,22 @@ public class Hanger extends Actuator {
   private static final TunableNumber kD = new TunableNumber("Hanger/kD", HangerConstants.D);
 
   private Hanger() {
-    super(Constants.CANDeviceIDs.kHangerID, Constants.HangerConstants.P, Constants.HangerConstants.I, Constants.HangerConstants.D, Constants.HangerConstants.MinOutput, Constants.HangerConstants.MaxOutput, Constants.HangerConstants.FF, Constants.HangerConstants.Iz, 0, 0, 40, false, false, false, false);
+    super(
+        Constants.CANDeviceIDs.kHangerID,
+        Constants.HangerConstants.P,
+        Constants.HangerConstants.I,
+        Constants.HangerConstants.D,
+        Constants.HangerConstants.MinOutput,
+        Constants.HangerConstants.MaxOutput,
+        Constants.HangerConstants.FF,
+        Constants.HangerConstants.Iz,
+        0,
+        0,
+        40,
+        false,
+        false,
+        false,
+        false);
   }
 
   @Override

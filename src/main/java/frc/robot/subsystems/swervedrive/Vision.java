@@ -5,6 +5,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Cameras;
 import frc.robot.Robot;
@@ -27,25 +28,24 @@ import swervelib.telemetry.SwerveDriveTelemetry;
  */
 public class Vision {
 
-  /**
-   * April Tag Field Layout of the year.
-   */
-  public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(
-      AprilTagFields.kDefaultField);
+  /** April Tag Field Layout of the year. */
+  public static final AprilTagFieldLayout fieldLayout =
+      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
-  /**
-   * Photon Vision Simulation
-   */
+  /** Photon Vision Simulation */
   public VisionSystemSim visionSim;
 
-  /**
-   * Current pose from the pose estimator using wheel odometry.
-   */
+  /** Current pose from the pose estimator using wheel odometry. */
   private Supplier<Pose2d> currentPose;
 
   /** Field from {@link swervelib.SwerveDrive#field} */
   private Field2d field2d;
 
+  // Target lock tracking (for ReadyToShoot composite)
+  private static final int LOCK_THRESHOLD_FRAMES = 5;
+  private int consecutiveTargetFrames = 0;
+  private double lastTargetTimestamp = 0;
+  private boolean lastHasTarget = false;
 
   /**
    * Constructor for the Vision class.
@@ -93,7 +93,8 @@ public class Vision {
    * @param swerveDrive {@link SwerveDrive} instance.
    */
   public void updatePoseEstimation(SwerveDrive swerveDrive) {
-    if (SwerveDriveTelemetry.isSimulation && swerveDrive.getSimulationDriveTrainPose().isPresent()) {
+    if (SwerveDriveTelemetry.isSimulation
+        && swerveDrive.getSimulationDriveTrainPose().isPresent()) {
       /*
        * In the maple-sim, odometry is simulated using encoder values, accounting for
        * factors like skidding and drifting.
@@ -140,7 +141,7 @@ public class Vision {
     }
     return poseEst;
   }
-  
+
   /**
    * Get distance of the robot from the AprilTag pose.
    *
@@ -201,9 +202,7 @@ public class Vision {
     }
   }
 
-  /**
-   * Update the {@link Field2d} to include tracked targets/
-   */
+  /** Update the {@link Field2d} to include tracked targets/ */
   public void updateVisionField() {
 
     List<PhotonTrackedTarget> targets = new ArrayList<PhotonTrackedTarget>();
@@ -246,6 +245,17 @@ public class Vision {
       }
     }
     return bestCamEnum; // can be null if no camera sees the target
+  }
+
+  /** Check if any camera currently sees a target. */
+  public boolean hasTarget() {
+    for (Cameras c : Cameras.values()) {
+      Optional<PhotonPipelineResult> result = c.getLatestResult();
+      if (result.isPresent() && result.get().hasTargets()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

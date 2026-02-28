@@ -71,13 +71,13 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param directory Directory of swerve drive config files.
    */
   public SwerveSubsystem(File directory) {
-    boolean blueAlliance = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue;
-    Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
-        Meter.of(4)),
-        Rotation2d.fromDegrees(0))
-        : new Pose2d(new Translation2d(Meter.of(16),
-            Meter.of(4)),
-            Rotation2d.fromDegrees(180));
+    boolean blueAlliance =
+        DriverStation.getAlliance().isPresent()
+            && DriverStation.getAlliance().get() == Alliance.Blue;
+    Pose2d startingPose =
+        blueAlliance
+            ? new Pose2d(new Translation2d(Meter.of(1), Meter.of(4)), Rotation2d.fromDegrees(0))
+            : new Pose2d(new Translation2d(Meter.of(16), Meter.of(4)), Rotation2d.fromDegrees(180));
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
     // objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -144,7 +144,9 @@ public class SwerveSubsystem extends SubsystemBase {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
       vision.updateVisionField();
+      vision.updateTargetLock();
     }
+    // Drive telemetry now handled by DriveTelemetry class
   }
 
   @Override
@@ -372,11 +374,11 @@ public class SwerveSubsystem extends SubsystemBase {
    *
    * @return a Command that tells the robot to drive forward until the command ends
    */
-  public Command driveForward()
-  {
+  public Command driveForward() {
     return run(() -> {
-      swerveDrive.drive(new Translation2d(1, 0), 0, false, false);
-    }).finallyDo(() -> swerveDrive.drive(new Translation2d(0, 0), 0, false, false));
+          swerveDrive.drive(new Translation2d(1, 0), 0, false, false);
+        })
+        .finallyDo(() -> swerveDrive.drive(new Translation2d(0, 0), 0, false, false));
   }
 
   /**

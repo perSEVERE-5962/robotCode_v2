@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,6 +14,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import frc.robot.subsystems.swervedrive.Vision;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,27 +27,24 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
-import frc.robot.subsystems.swervedrive.Vision;
 
-/**
- * Camera Enum to select each camera
- */
+/** Camera Enum to select each camera */
 public enum Cameras {
   /** Left Camera */
   LEFT_CAM(
       "back-left",
-    new Rotation3d(0, Math.toRadians(-15), Math.toRadians(135)),
-    new Translation3d(-0.293, 0.293, 0.229),
-    VecBuilder.fill(0.3, 0.3, 0.6),
-    VecBuilder.fill(0.1, 0.1, 0.2)),
+      new Rotation3d(0, Math.toRadians(-15), Math.toRadians(135)),
+      new Translation3d(-0.293, 0.293, 0.229),
+      VecBuilder.fill(0.3, 0.3, 0.6),
+      VecBuilder.fill(0.1, 0.1, 0.2)),
 
   /** Right Camera */
   RIGHT_CAM(
       "back-right",
-    new Rotation3d(0, Math.toRadians(-15), Math.toRadians(-135)),
-    new Translation3d(-0.293, -0.293, 0.229),
-    VecBuilder.fill(0.3, 0.3, 0.6),
-    VecBuilder.fill(0.1, 0.1, 0.2));
+      new Rotation3d(0, Math.toRadians(-15), Math.toRadians(-135)),
+      new Translation3d(-0.293, -0.293, 0.229),
+      VecBuilder.fill(0.3, 0.3, 0.6),
+      VecBuilder.fill(0.1, 0.1, 0.2));
 
   /** Center Camera */
   // CENTER_CAM("center",
@@ -201,16 +197,19 @@ public enum Cameras {
    * timestamp.
    */
   private void updateUnreadResults() {
-    double mostRecentTimestamp = resultsList.isEmpty() ? 0.0 : resultsList.get(0).getTimestampSeconds();
-    
+    double mostRecentTimestamp =
+        resultsList.isEmpty() ? 0.0 : resultsList.get(0).getTimestampSeconds();
+
     for (PhotonPipelineResult result : resultsList) {
       mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
     }
 
-    resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
-    resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
-      return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
-    });
+    resultsList =
+        Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
+    resultsList.sort(
+        (PhotonPipelineResult a, PhotonPipelineResult b) -> {
+          return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
+        });
     if (!resultsList.isEmpty()) {
       updateEstimatedGlobalPose();
     }
@@ -294,5 +293,4 @@ public enum Cameras {
   public Transform3d getRobotToCamera() {
     return robotToCamTransform;
   }
-
 }

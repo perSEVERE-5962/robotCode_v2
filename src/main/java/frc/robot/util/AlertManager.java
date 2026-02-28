@@ -115,7 +115,8 @@ public class AlertManager {
           "Battery Critical",
           String.format("Battery at %.1fV - REPLACE NOW!", voltage),
           true);
-    } else if (voltage < BATTERY_WARNING_V || (inBatteryWarning && voltage < BATTERY_WARNING_CLEAR_V)) {
+    } else if (voltage < BATTERY_WARNING_V
+        || (inBatteryWarning && voltage < BATTERY_WARNING_CLEAR_V)) {
       inBatteryWarning = true;
       batteryCriticalAlert.set(false);
       batteryLowAlert.set(true);

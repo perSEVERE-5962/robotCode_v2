@@ -5,18 +5,21 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Agitator;
 import frc.robot.Constants;
+import frc.robot.subsystems.Agitator;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Shooter;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/*
+ * Command to speed up shooter then run indexer.
+ */
 public class SpeedUpThenIndex extends Command {
   /** Creates a new SpeedUpThenIndex. */
   private Shooter shooter;
+
   private Agitator agitator;
   private Indexer indexer;
-  private Agitator agitator;
+
   public SpeedUpThenIndex() {
     // Use addRequirements() here to declare subsystem dependencies.
     shooter = Shooter.getInstance();
@@ -33,10 +36,16 @@ public class SpeedUpThenIndex extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.moveToVelocityWithPID(Constants.MotorConstants.DESIRED_SHOOTER_RPM);
-    if (Math.abs(Constants.MotorConstants.DESIRED_SHOOTER_RPM - shooter.getVelocity()) < Constants.MotorConstants.SHOOTER_RPM_TOLERANCE) {
-      indexer.moveToVelocityWithPID(Constants.MotorConstants.DESIRED_INDEXER_RPM);
+    // System.out.println("one");
+    shooter.moveToVelocityWithPID(shooter.getTunableTargetRPM());
+    // System.out.println(shooter.getTunableTargetRPM());
+    // System.out.println(shooter.getVelocity());
+    if (Math.abs(Constants.MotorConstants.DESIRED_SHOOTER_RPM - shooter.getVelocity())
+        < Constants.MotorConstants.SHOOTER_RPM_TOLERANCE) {
+      indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
       agitator.move(Constants.MotorConstants.DESIRED_AGITATOR_SPEED);
+      System.out.println(indexer.getTunableTargetSpeed());
+      System.out.println(indexer.getVelocity());
     }
   }
 

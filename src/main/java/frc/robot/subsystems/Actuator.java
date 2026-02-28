@@ -21,36 +21,49 @@ public class Actuator extends SubsystemBase {
   private SparkAbsoluteEncoder absoluteEncoder;
   private boolean useThroughBoreEncoder;
 
-    public Actuator(int kID, double kP, double kI, double kD, double kMinOutput, double kMaxOutput, double kF, double kIz,
-            float kUpperSoftLimit, float kLowerSoftLimit, int kStallLimit, boolean inverted, boolean coast, boolean useThroughBoreEncoder,
-            boolean useSoftLimits) {
+  public Actuator(
+      int kID,
+      double kP,
+      double kI,
+      double kD,
+      double kMinOutput,
+      double kMaxOutput,
+      double kF,
+      double kIz,
+      float kUpperSoftLimit,
+      float kLowerSoftLimit,
+      int kStallLimit,
+      boolean inverted,
+      boolean coast,
+      boolean useThroughBoreEncoder,
+      boolean useSoftLimits) {
 
-        motor = new SparkMax(kID, SparkLowLevel.MotorType.kBrushless);
-        SparkMaxConfig motorConfig = new SparkMaxConfig();
+    motor = new SparkMax(kID, SparkLowLevel.MotorType.kBrushless);
+    SparkMaxConfig motorConfig = new SparkMaxConfig();
 
-        motorConfig.inverted(inverted);
-        motorConfig.idleMode(coast ? SparkMaxConfig.IdleMode.kCoast : SparkMaxConfig.IdleMode.kBrake);
-        motorConfig.smartCurrentLimit(kStallLimit);
+    motorConfig.inverted(inverted);
+    motorConfig.idleMode(coast ? SparkMaxConfig.IdleMode.kCoast : SparkMaxConfig.IdleMode.kBrake);
+    motorConfig.smartCurrentLimit(kStallLimit);
 
-        FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
-        if (useThroughBoreEncoder == true) {
-            feedBackSensor = FeedbackSensor.kAbsoluteEncoder;
-        }
-        motorConfig.closedLoop
-                .feedbackSensor(feedBackSensor)
-                .p(kP)
-                .i(kI)
-                .d(kD)
-                .outputRange(kMinOutput, kMaxOutput)
-                .iZone(kIz);
-        motorConfig.closedLoop.feedForward
-                .kV(12.0 * kF);
-        if (useThroughBoreEncoder == true) {
-            absoluteEncoder = motor.getAbsoluteEncoder();
-        } else {
-            encoder = motor.getEncoder();
-            encoder.setPosition(0);
-        }
+    FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
+    if (useThroughBoreEncoder == true) {
+      feedBackSensor = FeedbackSensor.kAbsoluteEncoder;
+    }
+    motorConfig
+        .closedLoop
+        .feedbackSensor(feedBackSensor)
+        .p(kP)
+        .i(kI)
+        .d(kD)
+        .outputRange(kMinOutput, kMaxOutput)
+        .iZone(kIz);
+    motorConfig.closedLoop.feedForward.kV(12.0 * kF);
+    if (useThroughBoreEncoder == true) {
+      absoluteEncoder = motor.getAbsoluteEncoder();
+    } else {
+      encoder = motor.getEncoder();
+      encoder.setPosition(0);
+    }
 
     if (useSoftLimits == true) {
 
@@ -66,38 +79,22 @@ public class Actuator extends SubsystemBase {
     this.useThroughBoreEncoder = useThroughBoreEncoder;
   }
 
-    public double getPosition() {
-        if (useThroughBoreEncoder == true) {
-            if (absoluteEncoder == null) {
-                return 0;
-            }
-            return absoluteEncoder.getPosition();
-        } else {
-            if (encoder == null) {
-                return 0;
-            }
-            return encoder.getPosition();
-        }
-    }
-
-    public double getVelocity() {
-        if (useThroughBoreEncoder == true) {
-            if (absoluteEncoder == null) {
-                return 0;
-            }
-            return absoluteEncoder.getVelocity();
-        } else {
-            if (encoder == null) {
-                return 0;
-            }
-            return encoder.getVelocity();
-        }
+  public double getPosition() {
+    if (useThroughBoreEncoder == true) {
+      if (absoluteEncoder == null) {
+        return 0;
+      }
+      return absoluteEncoder.getPosition();
+    } else {
+      if (encoder == null) {
+        return 0;
+      }
+      return encoder.getPosition();
     }
   }
 
-  /** Returns motor velocity in RPM */
-  public double getMotorVelocity() {
-    if (useThroughBoreEncoder) {
+  public double getVelocity() {
+    if (useThroughBoreEncoder == true) {
       if (absoluteEncoder == null) {
         return 0;
       }

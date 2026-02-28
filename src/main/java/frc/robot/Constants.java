@@ -12,8 +12,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -34,11 +32,12 @@ public final class Constants {
   public static final boolean TUNING_MODE = true;
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
-  public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
+  public static final Matter CHASSIS =
+      new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED = Units.feetToMeters(14.5);
+
   // Maximum speed of the robot in meters per second, used to limit acceleration.
-  
 
   public static final class DrivebaseConstants {
 
@@ -104,17 +103,17 @@ public final class Constants {
   }
 
   public static final class MotorConstants {
-    public static final double DESIRED_SHOOTER_RPM = 3730;
+    public static final double DESIRED_SHOOTER_RPM = 1760;
     public static final double SHOOTER_RPM_TOLERANCE = 999;
     public static final double DESIRED_INDEXER_RPM = 7833; // 8.4 * 3730/4
     public static final double BACKWARDS_INDEXER_RPM = 999;
-    public static final double OUT_INTAKE_POS = 1;
-    public static final double IN_INTAKE_POS = 1;
-    public static final double INTAKE_POS_TOLERANCE = 999; 
-    public static final double DESIRED_INTAKE_SPEED = 999;
-    public static final double UP_HANGER_POS = 999;
-    public static final double DOWN_HANGER_POS = 999;
-    public static final double DESIRED_AGITATOR_SPEED = 999;
+    public static final double OUT_INTAKE_POS = 38.24;
+    public static final double IN_INTAKE_POS = 0.4;
+    public static final double INTAKE_POS_TOLERANCE = .2;
+    public static final double DESIRED_INTAKE_SPEED = -.92;
+    public static final double UP_HANGER_POS = 0;
+    public static final double DOWN_HANGER_POS = 0;
+    public static final double DESIRED_AGITATOR_SPEED = .5;
   }
 
   public static final class IntakeConstants {
@@ -136,7 +135,7 @@ public final class Constants {
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double Iz = 0.0;
-    
+
     // Tuning targets
     public static final double TARGET_RPM = 1550;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
@@ -212,7 +211,8 @@ public final class Constants {
     public static boolean isSafeForDeploy() {
       return !TUNING_MODE;
     }
-//back left left 11.54, 11.54, 45 degrees 15 desgrees
+
+    // back left left 11.54, 11.54, 45 degrees 15 desgrees
     /** Gradle entry point: exits 1 if deploy is unsafe. */
     public static void main(String... args) {
       if (!isSafeForDeploy()) {
