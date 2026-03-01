@@ -124,7 +124,7 @@ public final class Constants {
 
   public static final class ShooterConstants {
     // Velocity PID tuning (from Kfir2026)
-    public static final double P = 0.0001;
+    public static final double P = 0.00011;
     public static final double I = 0.0;
     public static final double D = 0.0;
     public static final double FF = 0.000172;
@@ -157,8 +157,8 @@ public final class Constants {
 
     // Telemetry constants
     public static final double TARGET_SPEED = 7833;
-    public static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
-    public static final double JAM_TIME_THRESHOLD_SECONDS = 0.25;
+    public static final double JAM_CURRENT_THRESHOLD_AMPS = 35.0;
+    public static final double JAM_TIME_THRESHOLD_SECONDS = 0.3;
   }
 
   public static final class AgitatorConstants {
@@ -172,7 +172,7 @@ public final class Constants {
 
     public static final double TARGET_RPM = 2000;
     public static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
-    public static final double JAM_TIME_THRESHOLD_SECONDS = 0.25;
+    public static final double JAM_TIME_THRESHOLD_SECONDS = 0.4;
   }
 
   public static final class HopperConstants {

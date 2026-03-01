@@ -19,7 +19,6 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
   private VisionTelemetry visionTelemetry;
   private DriveTelemetry driveTelemetry;
   private CANHealthTelemetry telemetry;
-  private AgitatorTelemetry agitatorTelemetry;
   @BeforeEach
   void setUp() {
     shooterTelemetry = new ShooterTelemetry();

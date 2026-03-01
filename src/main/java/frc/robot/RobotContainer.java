@@ -41,6 +41,7 @@ import frc.robot.commands.MoveAgitator;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SpeedUpThenIndex;
+import frc.robot.sim.SimDriveOverride;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.telemetry.TelemetryManager;
