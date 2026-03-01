@@ -44,6 +44,7 @@ import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.telemetry.TelemetryManager;
+import frc.robot.util.DriverFeedback;
 import frc.robot.util.DriverTuning;
 import swervelib.SwerveInputStream;
 import frc.robot.Constants;
@@ -186,9 +187,9 @@ public class RobotContainer {
  
     // Wire up telemetry references 
     TelemetryManager.getInstance().setVision(visionSubsystem); 
-    TelemetryManager.getInstance().setSwerveSubsystem(drivebase); 
-    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID()); 
- 
+    TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
+    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
+    DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
 
   }
 
@@ -270,9 +271,6 @@ public class RobotContainer {
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
-      //driverXbox.b().whileTrue(new RunIntake())
-       //   .onFalse(new RetractIntake());
       copilotXbox.x().whileTrue(new MoveIntake());
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.2));
