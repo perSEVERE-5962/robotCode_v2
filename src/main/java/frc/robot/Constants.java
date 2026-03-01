@@ -152,7 +152,7 @@ public final class Constants {
     public static final double D = 0.00;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0005;
+    public static final double FF = 0.0004;
     public static final double Iz = 0.0;
 
     // Telemetry constants

@@ -44,7 +44,7 @@ public class SpeedUpThenIndex extends Command {
   public void execute() {
     if (shooter.isAtSpeed()) {
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
-      System.out.println(agitator.getMotorVelocity());
+      System.out.println(indexer.getMotorVelocity());
       agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM());
   }
   // if(AgitatorTelemetry.isStalled()){
