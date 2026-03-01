@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.telemetry.SafeLog;
 import frc.robot.telemetry.TelemetryManager;
 
 public class DriverFeedback {
@@ -137,6 +138,7 @@ public class DriverFeedback {
 
   // --- Jam protection edge detection ---
   private boolean prevJamIntervening = false;
+  private String lastJamSource = "none";
 
   // --- Progressive aim ---
   private boolean progressiveAimActive = false;
@@ -283,6 +285,12 @@ public class DriverFeedback {
     // --- Jam protection events (HIGH -> COPILOT) ---
     if (jamIntervening && !prevJamIntervening) {
       playPattern(JAM_DETECTED);
+      // Capture which subsystem triggered so pit crew can see it in telemetry
+      try {
+        lastJamSource = TelemetryManager.getInstance().getJamSource();
+      } catch (Throwable t) {
+        lastJamSource = "unknown";
+      }
     }
 
     // Save edge detection state
@@ -356,6 +364,13 @@ public class DriverFeedback {
         (rumbleTarget == HapticTarget.COPILOT || rumbleTarget == HapticTarget.BOTH);
     applyRumble(controller, driverRumble ? left : 0, driverRumble ? right : 0);
     applyRumble(copilotController, copilotRumble ? left : 0, copilotRumble ? right : 0);
+
+    // Diagnostic signals so pit crew can verify copilot is actually connected
+    SafeLog.put("DriverFeedback/CopilotConnected", hasCopilot);
+    if (copilotController != null) {
+      SafeLog.put("DriverFeedback/CopilotPort", copilotController.getPort());
+    }
+    SafeLog.put("DriverFeedback/JamSource", lastJamSource);
   }
 
   private void applyRumble(GenericHID hid, double left, double right) {
@@ -449,6 +464,14 @@ public class DriverFeedback {
 
   public String getActiveTargetName() {
     return activeTarget.name();
+  }
+
+  public String getLastJamSource() {
+    return lastJamSource;
+  }
+
+  public boolean isCopilotConnected() {
+    return copilotController != null;
   }
 
   /** Human-readable description of the active pattern. */

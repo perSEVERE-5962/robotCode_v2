@@ -299,19 +299,19 @@ public final class Constants {
     public static final double INTAKE_REVERSE_POWER = -0.4;
     public static final int INTAKE_MAX_ATTEMPTS = 3;
 
-    // Indexer jam protection
+    // Indexer jam protection (raised confirm + velocity to avoid false triggers during ball passage)
     public static final double INDEXER_JAM_CURRENT_AMPS = 25.0;
-    public static final double INDEXER_JAM_VELOCITY_RPM = 50.0;
+    public static final double INDEXER_JAM_VELOCITY_RPM = 200.0;
     public static final double INDEXER_STARTUP_IGNORE_SEC = 0.5;
-    public static final double INDEXER_JAM_CONFIRM_SEC = 0.25;
+    public static final double INDEXER_JAM_CONFIRM_SEC = 0.5;
     public static final double INDEXER_REVERSE_SEC = 0.3;
     public static final double INDEXER_COOLDOWN_SEC = 0.15;
     public static final double INDEXER_REVERSE_POWER = -0.3;
     public static final int INDEXER_MAX_ATTEMPTS = 3;
 
-    // Agitator jam protection
-    public static final double AGITATOR_JAM_CURRENT_AMPS = 15.0;
-    public static final double AGITATOR_JAM_VELOCITY_RPM = 50.0;
+    // Agitator jam protection (raised current threshold, needs real stall current measurement)
+    public static final double AGITATOR_JAM_CURRENT_AMPS = 20.0;
+    public static final double AGITATOR_JAM_VELOCITY_RPM = 100.0;
     public static final double AGITATOR_STARTUP_IGNORE_SEC = 0.5;
     public static final double AGITATOR_JAM_CONFIRM_SEC = 0.3;
     public static final double AGITATOR_REVERSE_SEC = 0.4;

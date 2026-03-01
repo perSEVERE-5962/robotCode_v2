@@ -291,6 +291,19 @@ public class TelemetryManager {
         || getSafely(() -> agitatorTelemetry.isJamProtectionIntervening(), false);
   }
 
+  /** Returns which subsystem is currently jamming, or "none" if no jam. */
+  public String getJamSource() {
+    boolean intake = getSafely(() -> intakeTelemetry.isJamProtectionIntervening(), false);
+    boolean indexer = getSafely(() -> indexerTelemetry.isJamProtectionIntervening(), false);
+    boolean agitator = getSafely(() -> agitatorTelemetry.isJamProtectionIntervening(), false);
+    if (!intake && !indexer && !agitator) return "none";
+    StringBuilder sb = new StringBuilder();
+    if (intake) sb.append("Intake");
+    if (indexer) { if (sb.length() > 0) sb.append("+"); sb.append("Indexer"); }
+    if (agitator) { if (sb.length() > 0) sb.append("+"); sb.append("Agitator"); }
+    return sb.toString();
+  }
+
   public boolean isReadyToShoot() {
     return getSafely(() -> scoringTelemetry.isReadyToShoot(), false);
   }

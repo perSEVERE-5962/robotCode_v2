@@ -83,10 +83,12 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/neo"));
-  // Initialize the vision subsystem
 
   private final Field2d field = new Field2d();
 
+  // NOTE: This creates a second Vision instance. SwerveSubsystem already creates one internally.
+  // Both call getAllUnreadResults() on the same Cameras singletons, causing a race condition.
+  // Safe to remove this line and use drivebase.getVision() everywhere instead.
   public final Vision visionSubsystem = new Vision(drivebase::getPose, field);
 
   /**
@@ -194,7 +196,7 @@ public class RobotContainer {
     DriverTuning.initialize(); 
  
     // Wire up telemetry references 
-    //TelemetryManager.getInstance().setVision(visionSubsystem); 
+    TelemetryManager.getInstance().setVision(drivebase.getVision());
     TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
     TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
     DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
@@ -391,7 +393,7 @@ public class RobotContainer {
 
   public Cameras getBestCamera(int id) {
     // Replace this with the actual logic to get the best camera
-    return visionSubsystem.getbestCamera(id);
+    return drivebase.getVision().getbestCamera(id);
   }
 
   private boolean isRedAlliance() {
