@@ -73,10 +73,12 @@ public class Indexer extends Actuator {
     TunableNumber.ifChanged(
         () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
 
-    jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
-    double override = jamProtection.getMotorOverride();
-    if (!Double.isNaN(override)) {
-      move(override);
+    // JamProtection detects and reports only. It never overrides the motor.
+    // Telemetry reads the state; the driver decides what to do about it.
+    try {
+      jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
+    } catch (Throwable t) {
+      // CAN failure degrades jam detection, never kills drive control
     }
   }
 

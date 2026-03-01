@@ -7,11 +7,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.AgitatorConstants;
-import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
-import frc.robot.util.TunableNumber;
 
 public class Agitator extends Actuator {
   private SparkMax motor;
@@ -26,6 +23,18 @@ private static final TunableNumber targetSpeed =
       new TunableNumber("Agitator/JamAmps", AgitatorConstants.JAM_CURRENT_THRESHOLD_AMPS);
   private static final TunableNumber jamTimeThreshold =
       new TunableNumber("Agitator/JamSeconds", AgitatorConstants.JAM_TIME_THRESHOLD_SECONDS);
+  private final JamProtection jamProtection =
+      new JamProtection(
+          "Agitator",
+          JamProtectionConstants.AGITATOR_JAM_CURRENT_AMPS,
+          JamProtectionConstants.AGITATOR_JAM_VELOCITY_RPM,
+          JamProtectionConstants.AGITATOR_STARTUP_IGNORE_SEC,
+          JamProtectionConstants.AGITATOR_JAM_CONFIRM_SEC,
+          JamProtectionConstants.AGITATOR_REVERSE_SEC,
+          JamProtectionConstants.AGITATOR_COOLDOWN_SEC,
+          JamProtectionConstants.AGITATOR_REVERSE_POWER,
+          JamProtectionConstants.AGITATOR_MAX_ATTEMPTS);
+
   private final JamProtection jamProtection =
       new JamProtection(
           "Agitator",
@@ -72,19 +81,31 @@ private static final TunableNumber targetSpeed =
     return motor.getOutputCurrent();
   }
 
+  public double getTemperature() {
+    return motor.getMotorTemperature();
+  }
+
+  public double getAppliedOutput() {
+    return motor.getAppliedOutput();
+  }
+
+  public double getOutputCurrent() {
+    return motor.getOutputCurrent();
+  }
+
   public double getVelocityRPM() {
     return motor.getEncoder().getVelocity();
   }
 
   @Override
   public void periodic() {
-    jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
-    double override = jamProtection.getMotorOverride();
-    if (!Double.isNaN(override)) {
-      motor.set(override);
+    // JamProtection detects and reports only. It never overrides the motor.
+    // Telemetry reads the state; the driver decides what to do about it.
+    try {
+      jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
+    } catch (Throwable t) {
+      // CAN failure degrades jam detection, never kills drive control
     }
-    TunableNumber.ifChanged(
-        () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
   }
 
   public boolean isRunning() {
@@ -106,24 +127,7 @@ private static final TunableNumber targetSpeed =
       return -1;
     }
   }
-public double getTunableKP() {
-    return kP.get();
-  }
 
-  public double getTunableKI() {
-    return kI.get();
-  }
-
-  public double getTunableKD() {
-    return kD.get();
-  }
-
-  public double getTunableFF() {
-    return kF.get();
-  }
-public double getTunableTargetRPM() {
-    return targetSpeed.get();
-  }
   public static Agitator getInstance() {
     if (instance == null) {
       instance = new Agitator();

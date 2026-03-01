@@ -48,10 +48,12 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
-    double override = jamProtection.getMotorOverride();
-    if (!Double.isNaN(override)) {
-      motor.set(override);
+    // JamProtection detects and reports only. It never overrides the motor.
+    // Telemetry reads the state; the driver decides what to do about it.
+    try {
+      jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
+    } catch (Throwable t) {
+      // CAN failure degrades jam detection, never kills drive control
     }
   }
 
