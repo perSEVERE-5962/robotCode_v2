@@ -90,14 +90,21 @@ public class RobotContainer {
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular
-   * velocity.
+   * velocity. In sim, SimDriveOverride values are combined with joystick so scenario playback
+   * and manual SimGUI control both work.
    */
   SwerveInputStream driveAngularVelocity =
       SwerveInputStream.of(
               drivebase.getSwerveDrive(),
-              () -> driverXbox.getLeftY() * -1,
-              () -> driverXbox.getLeftX() * -1)
-          .withControllerRotationAxis(() -> driverXbox.getRightX() * -1)
+              () -> RobotBase.isSimulation()
+                  ? -(driverXbox.getLeftY() + SimDriveOverride.getY())
+                  : driverXbox.getLeftY() * -1,
+              () -> RobotBase.isSimulation()
+                  ? -(driverXbox.getLeftX() + SimDriveOverride.getX())
+                  : driverXbox.getLeftX() * -1)
+          .withControllerRotationAxis(() -> RobotBase.isSimulation()
+              ? -(driverXbox.getRightX() + SimDriveOverride.getOmega())
+              : driverXbox.getRightX() * -1)
           .deadband(OperatorConstants.DEADBAND)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);

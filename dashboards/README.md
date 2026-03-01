@@ -1,109 +1,123 @@
-# Dashboards
+# Dashboard Reference
 
-We have two dashboard tools and they do different things. Elastic is for live matches (driver station monitor), AdvantageScope is for after the match (log replay in the pit).
-
-```mermaid
-flowchart LR
-    A[Before Match] -->|Elastic| B[Pit Diagnostic]
-    C[During Match] -->|Elastic| D[Competition]
-    E[After Match] -->|AdvantageScope| F[Log Analysis]
-    G[Practice] -->|Elastic| H[Tuning]
-    G -->|AdvantageScope| I[Shooter Tuning]
-```
-
-## Whats in this folder
-
-```
-dashboards/
-  README.md                              <- you are here
-  TESTING_CHECKLIST.md                   <- how to test on the robot
-  elastic/                               <- Elastic layouts (live)
-    LAYOUTS.md                           <- what each layout does
-    rebuilt_driver_competition.json       <- Match + Coach tabs
-    rebuilt_pit_diagnostic.json          <- Quick Check + Diagnostics + System Detail
-    rebuilt_tuning_session.json          <- Shooter + Subsystems tabs
-  advantagescope/                         <- AdvantageScope layouts (post-match)
-    LAYOUTS.md                           <- what each layout does
-    match_review.json
-    cycle_and_strategy.json
-    pit_triage.json
-    mechanism_debug.json
-    power_and_health.json
-    drive_and_auto.json
-    shooter_tuning.json
-    system_overview.json
-    vision_debug.json
-```
-
-These are all reference copies. Import them into AdvantageScope or Elastic on your laptop, nothing here gets deployed to the robot.
+Two tools, two purposes:
+- **Elastic Dashboard** -- live, behind the glass, for the driver (3 layouts, 7 tabs)
+- **AdvantageScope** -- post-match, in the pit, for engineers (9 layouts)
 
 ---
 
-## Elastic Dashboard (3 layouts, 7 tabs total)
+## Folder Structure
 
-This is what shows up on the driver station laptop during matches. Drivers are reading it from 3-6 feet away under match stress, so everything is big and simple.
+```
+ref/dashboards/
+├── README.md                              <- this file
+├── elastic/                               <- Elastic: designs + JSON copies
+│   ├── LAYOUTS.md                         <- Layout reference & tips
+│   ├── driver_competition_design.md       <- Competition dashboard spec
+│   ├── rebuilt_driver_competition.json     <- 2 tabs: Match + Coach
+│   ├── pit_diagnostic_design.md           <- Pit diagnostic spec
+│   ├── rebuilt_pit_diagnostic.json         <- 3 tabs: Quick Check + Diagnostics + System Detail
+│   └── rebuilt_tuning_session.json         <- 2 tabs: Shooter + Subsystems
+└── advantagescope/                         <- AdvantageScope: importable .json
+    ├── LAYOUTS.md                         <- Layout reference & troubleshooting guide
+    ├── match_review.json                  <- Post-match debrief (scoring, cycles, field position)
+    ├── cycle_and_strategy.json            <- Hub strategy, cycle timing, intake pipeline
+    ├── pit_triage.json                    <- Quick pit health check between matches
+    ├── mechanism_debug.json               <- Mechanism PID debugging (shooter/indexer/hanger)
+    ├── power_and_health.json              <- Brownout/CAN/loop analysis
+    ├── drive_and_auto.json                <- Swerve drive + auto path analysis
+    ├── shooter_tuning.json                <- Shooter PID tuning (11 tabs)
+    ├── system_overview.json               <- General health check + post-match summary
+    └── vision_debug.json                  <- Vision target tracking
+```
 
-Check [elastic/LAYOUTS.md](elastic/LAYOUTS.md) for the full widget breakdown and tips.
+**Deployed Elastic JSONs** live in `robotcode2026-lab/src/main/deploy/elastic/` (authoritative for robot). Copies here for reference.
 
-| Layout | File | Tabs | Who uses it |
-|--------|------|------|-------------|
-| Competition | `rebuilt_driver_competition.json` | **Match** (10 widgets) + **Coach** (12 widgets) | Driver + coach behind the glass |
-| Pit Diagnostic | `rebuilt_pit_diagnostic.json` | **Quick Check** (20) + **Diagnostics** (15) + **System Detail** (19) | Pit crew between matches |
-| Tuning | `rebuilt_tuning_session.json` | **Shooter** (30, has RPM graph + ShotPredictor) + **Subsystems** (19, has current graph) | Programmers during practice |
+**Archived V1-V5 role-specific dashboards** (over-engineered, 56-97 widgets each) in `ref/archive/dashboards_role_specific_20260205/`.
+
+---
+
+## Elastic Dashboard (3 layouts, 7 tabs)
+
+Real-time dashboard on the driver station monitor. Keep it simple -- drivers view from 3-6 feet under match stress.
+
+See [elastic/LAYOUTS.md](elastic/LAYOUTS.md) for details and tips.
+
+| Layout | JSON File | Tabs | Audience |
+|--------|-----------|------|----------|
+| Competition (v3) | `rebuilt_driver_competition.json` | **Match** (10 widgets) + **Coach** (12 widgets) | Driver + coach |
+| Pit Diagnostic (v3) | `rebuilt_pit_diagnostic.json` | **Quick Check** (20) + **Diagnostics** (15) + **System Detail** (19) | Pit crew |
+| Tuning (v3) | `rebuilt_tuning_session.json` | **Shooter** (30, RPM Graph + ShotPredictor) + **Subsystems** (19, Current Graph) | Programmer |
+
+**Key widget upgrades in v3:** Match Time (color-coded timer), Voltage View (battery), Graph (time-series for PID tuning), Large Text Display (shot count for coach), Boolean Box for CAN Bus Off.
 
 ---
 
 ## AdvantageScope (9 layouts)
 
-Post-match log analysis. To load one: **File > Import Layout** and pick a `.json` from `dashboards/advantagescope/`.
+Post-match log analysis. Import via **File > Import Layout > select .json**.
 
-Check [advantagescope/LAYOUTS.md](advantagescope/LAYOUTS.md) for details on every tab and what to look for.
+See [advantagescope/LAYOUTS.md](advantagescope/LAYOUTS.md) for details and troubleshooting guide.
 
-### Workflow layouts, use these between matches
+### Workflow Layouts (use between matches)
 
-| Layout | File | Tabs | When |
-|--------|------|------|------|
-| Match Review | [match_review.json](advantagescope/match_review.json) | 5 | After every match. Scoring timeline (heading error + prediction active), 3D field, cycles, driver inputs |
-| Cycle and Strategy | [cycle_and_strategy.json](advantagescope/cycle_and_strategy.json) | 5 | Hub shift analysis, cycle timing, intake-to-score pipeline |
-| Pit Triage | [pit_triage.json](advantagescope/pit_triage.json) | 4 | Quick health check. Battery, faults, performance |
-| Mechanism Debug | [mechanism_debug.json](advantagescope/mechanism_debug.json) | 7 | Shooter/indexer/intake/hanger PID, jams, temps |
-| Power and Health | [power_and_health.json](advantagescope/power_and_health.json) | 5 | Brownouts, CAN errors, loop overruns, crash barriers |
+| Layout | File | Tabs | When to Use |
+|--------|------|------|-------------|
+| Match Review | [match_review.json](advantagescope/match_review.json) | 7 | After every match -- scoring timeline (heading error + prediction active), 3D field with shot arc, cycles, driver inputs |
+| Cycle & Strategy | [cycle_and_strategy.json](advantagescope/cycle_and_strategy.json) | 5 | Hub shift analysis, cycle timing, intake-to-score pipeline, scoring positions |
+| Pit Triage | [pit_triage.json](advantagescope/pit_triage.json) | 5 | Quick pit health check -- battery, faults, performance, field replay |
+| Mechanism Debug | [mechanism_debug.json](advantagescope/mechanism_debug.json) | 8 | Shooter/indexer/intake/hanger PID response, jams, temps |
+| Power & Health | [power_and_health.json](advantagescope/power_and_health.json) | 6 | Brownout, CAN errors, loop overruns, thermals, crash barriers |
 
-### Utility layouts, focused debugging
+### Utility Layouts (focused debugging)
 
 | Layout | File | Tabs | Focus |
 |--------|------|------|-------|
-| Drive and Auto | [drive_and_auto.json](advantagescope/drive_and_auto.json) | 5 | Swerve pose, speeds, path following, gyro, modules |
-| Shooter Tuning | [shooter_tuning.json](advantagescope/shooter_tuning.json) | 12 | Velocity curves, PID response, fire rate, recovery time, shot prediction, drift compensation |
-| System Overview | [system_overview.json](advantagescope/system_overview.json) | 8 | Battery, CAN, temps, alerts. General "is anything broken" check |
-| Vision Debug | [vision_debug.json](advantagescope/vision_debug.json) | 4 | Target lock, latency, camera connectivity, aim offset |
+| Drive & Auto | [drive_and_auto.json](advantagescope/drive_and_auto.json) | 6 | Swerve pose, speeds, path error, gyro, modules |
+| Shooter Tuning | [shooter_tuning.json](advantagescope/shooter_tuning.json) | 12 | Velocity, PID, shot detection, fire rate, recovery time, shot prediction, drift compensation |
+| System Overview | [system_overview.json](advantagescope/system_overview.json) | 10 | Battery, CAN, loop timing, temps, alerts, post-match summary |
+| Vision Debug | [vision_debug.json](advantagescope/vision_debug.json) | 6 | Target lock, latency, consecutive frames, target offset |
 
 ---
 
-## Which dashboard do I open?
+## Quick Reference
 
-If you're standing at the field or in the pit and thinking one of these things, here's where to look.
-
-| You're thinking... | Tool | Open this |
-|---------------------|------|-----------|
-| Match is about to start | Elastic | Competition > Match tab |
-| Coach needs shot counts | Elastic | Competition > Coach tab |
-| Quick pit health check | Elastic | Pit Diagnostic > Quick Check |
-| Run pre-match diagnostics | Elastic | Pit Diagnostic > Diagnostics |
-| Tune shooter PID | Elastic | Tuning > Shooter |
-| How did that match go? | AdvantageScope | match_review |
-| Are our cycles getting slower? | AdvantageScope | cycle_and_strategy, tab 2 |
-| Are we using hub windows well? | AdvantageScope | cycle_and_strategy, tab 4 |
-| Shooter stopped spinning mid-match | AdvantageScope | mechanism_debug, tab 1 |
-| Indexer kept jamming | AdvantageScope | mechanism_debug, tab 3 |
-| We browned out | AdvantageScope | power_and_health, tab 1 |
-| CAN errors in driver station log | AdvantageScope | power_and_health, tab 2 |
-| Auto path was off | AdvantageScope | drive_and_auto, tab 3 |
-| Swerve drifting | AdvantageScope | drive_and_auto, tab 5 |
-| Shot prediction working? | AdvantageScope | shooter_tuning, tab 10 |
-| Heading off when shooting? | AdvantageScope | match_review, tab 1 |
-| Vision kept dropping targets | AdvantageScope | vision_debug |
+| Problem | Tool | Layout |
+|---------|------|--------|
+| Match in progress | Elastic | Competition > Match |
+| Coach strategy | Elastic | Competition > Coach |
+| Pre-match check | Elastic | Pit Diagnostic > Quick Check |
+| Run diagnostics | Elastic | Pit Diagnostic > Diagnostics |
+| Deep system check | Elastic | Pit Diagnostic > System Detail |
+| Tune shooter PID | Elastic | Tuning > Shooter (Graph) |
+| Tune other subsystems | Elastic | Tuning > Subsystems |
+| "Did we score enough?" | AdvantageScope | match_review |
+| "Are our cycles fast?" | AdvantageScope | cycle_and_strategy (Tab 2) |
+| "Hub strategy working?" | AdvantageScope | cycle_and_strategy (Tab 1) |
+| "Quick pit health check" | AdvantageScope | pit_triage |
+| "Auto went sideways" | AdvantageScope | drive_and_auto (Tab 3) |
+| "Shooter won't spin up" | AdvantageScope | mechanism_debug (Tab 1) |
+| "Indexer keeps jamming" | AdvantageScope | mechanism_debug (Tab 3) |
+| "We browned out" | AdvantageScope | power_and_health (Tab 1) |
+| "CAN errors in DS log" | AdvantageScope | power_and_health (Tab 2) |
+| "Swerve is drifting" | AdvantageScope | drive_and_auto (Tab 5) |
+| "Tune shooter PID" | AdvantageScope | shooter_tuning |
+| "Shot prediction working?" | AdvantageScope | shooter_tuning (Tab 10-11) |
+| "Heading off when shooting?" | AdvantageScope | match_review (Tab 1) |
+| "Vision dropping targets" | AdvantageScope | vision_debug |
 
 ---
 
-12 dashboards total (3 Elastic with 7 tabs + 9 AdvantageScope layouts) covering about 295 telemetry signals.
+*12 dashboards total (3 Elastic / 7 tabs + 9 AdvantageScope) covering ~425 telemetry signals*
+
+## Signal Validation Notes
+
+All dashboard signal paths were audited against actual `SafeLog.put()` and `Logger.recordOutput()` calls in the codebase (Feb 5, 2026). Key findings:
+
+- **~425 actual signals** in code (more than the ~240 previously documented)
+- **Phantom signals removed:** `SystemHealth/HeapUsagePercent`, `Drive/ChassisSpeeds/Requested/*`
+- **Naming fixes applied:** `Drive/Gyro/Yaw` -> `Drive/Gyro/YawRad`, chassis speed path corrections
+- **Known stubs:** `Scoring/Conditions/HasBall` (always true -- no ball sensor hardware)
+- **HubActive unstubbed:** Now computed from match timer (Session 18), added to driver competition dashboard
+- **v5.1 signals added:** Shooter/Indexer PID audit trails, mechanism health indicators, driver coaching signals
+- **Dashboard updates:** HubActive on competition, gyro/camera/latency on pit, yaw/pitch on tuning, requested speeds + connectivity on AdvantageScope layouts

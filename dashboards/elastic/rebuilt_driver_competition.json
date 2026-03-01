@@ -1,6 +1,6 @@
 {
   "version": 1.0,
-  "grid_size": 128,
+  "grid_size": 64,
   "tabs": [
     {
       "name": "Match",
@@ -11,7 +11,7 @@
             "title": "Match Time",
             "x": 0.0,
             "y": 0.0,
-            "width": 1920.0,
+            "width": 1856.0,
             "height": 128.0,
             "type": "Match Time",
             "properties": {
@@ -71,7 +71,7 @@
             "title": "Battery",
             "x": 1280.0,
             "y": 128.0,
-            "width": 640.0,
+            "width": 576.0,
             "height": 128.0,
             "type": "Voltage View",
             "properties": {
@@ -88,7 +88,7 @@
             "title": "Shooter RPM",
             "x": 1280.0,
             "y": 256.0,
-            "width": 640.0,
+            "width": 576.0,
             "height": 128.0,
             "type": "Number Bar",
             "properties": {
@@ -118,19 +118,29 @@
             }
           },
           {
-            "title": "JAM!",
+            "title": "Hub Shift#",
             "x": 1280.0,
             "y": 384.0,
-            "width": 640.0,
+            "width": 256.0,
             "height": 128.0,
-            "type": "Boolean Box",
+            "type": "Text Display",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Indexer/JamDetected",
+              "topic": "/AdvantageKit/RealOutputs/Scoring/HubShiftNumber",
               "period": 0.033,
-              "true_color": 4294901760,
-              "false_color": 4278233600,
-              "true_icon": "None",
-              "false_icon": "None"
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Shift Timer",
+            "x": 1536.0,
+            "y": 384.0,
+            "width": 320.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Scoring/TimeToNextShiftSec",
+              "period": 0.033,
+              "show_submit_button": false
             }
           },
           {
@@ -147,10 +157,84 @@
             }
           },
           {
-            "title": "Alerts",
+            "title": "AMDA Mode",
             "x": 640.0,
             "y": 512.0,
-            "width": 1280.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/AMDA/Mode",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Confidence",
+            "x": 896.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/AMDA/Confidence",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "JAM!",
+            "x": 1152.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Indexer/JamDetected",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Intake Jam",
+            "x": 1408.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Intake/JamDetected",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Agitator",
+            "x": 1664.0,
+            "y": 512.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Agitator/Running",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4281545523,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Alerts",
+            "x": 0.0,
+            "y": 640.0,
+            "width": 1856.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -202,7 +286,7 @@
             "title": "Battery",
             "x": 1408.0,
             "y": 0.0,
-            "width": 512.0,
+            "width": 448.0,
             "height": 128.0,
             "type": "Voltage View",
             "properties": {
@@ -260,7 +344,7 @@
             "title": "Shooter RPM",
             "x": 1408.0,
             "y": 128.0,
-            "width": 512.0,
+            "width": 448.0,
             "height": 128.0,
             "type": "Number Bar",
             "properties": {
@@ -274,10 +358,49 @@
             }
           },
           {
-            "title": "Total Current",
+            "title": "Hub Util",
+            "x": 384.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/MatchStats/HubUtilization",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Active Shots",
+            "x": 640.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/MatchStats/ActiveHubShots",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Shift Timer",
             "x": 896.0,
             "y": 256.0,
-            "width": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Scoring/TimeToNextShiftSec",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Total Current",
+            "x": 1408.0,
+            "y": 256.0,
+            "width": 448.0,
             "height": 128.0,
             "type": "Number Bar",
             "properties": {
@@ -291,22 +414,35 @@
             }
           },
           {
-            "title": "Hub Shift",
-            "x": 384.0,
-            "y": 256.0,
+            "title": "Cycles",
+            "x": 0.0,
+            "y": 384.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Scoring/HubShiftNumber",
+              "topic": "/AdvantageKit/RealOutputs/MatchStats/CompletedCycles",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Failed",
+            "x": 256.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/MatchStats/FailedCycles",
               "period": 0.033,
               "show_submit_button": false
             }
           },
           {
             "title": "JAM!",
-            "x": 640.0,
-            "y": 256.0,
+            "x": 512.0,
+            "y": 384.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -320,9 +456,67 @@
             }
           },
           {
+            "title": "Agitator",
+            "x": 768.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Agitator/Running",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4281545523,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "AMDA",
+            "x": 1024.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/AMDA/Mode",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Brownout Risk",
+            "x": 1280.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/BrownoutRiskLevel",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "BrownedOut",
+            "x": 1536.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/BrownedOut",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
             "title": "Auto Selector",
             "x": 0.0,
-            "y": 384.0,
+            "y": 512.0,
             "width": 640.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
@@ -335,8 +529,8 @@
           {
             "title": "Alerts",
             "x": 640.0,
-            "y": 384.0,
-            "width": 1280.0,
+            "y": 512.0,
+            "width": 1216.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {

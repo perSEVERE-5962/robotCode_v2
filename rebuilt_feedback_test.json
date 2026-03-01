@@ -1,0 +1,220 @@
+{
+  "version": 1.0,
+  "grid_size": 128,
+  "tabs": [
+    {
+      "name": "Feedback Test",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "HAPTIC TEST",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/DriverFeedback/ActivePattern",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Haptic Pattern (0=off, 1-5)",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/DriverFeedback/TestPattern",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 5.0,
+              "divisions": 5,
+              "publish_all": false
+            }
+          },
+          {
+            "title": "Haptic Description",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/DriverFeedback/Description",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Priority",
+            "x": 0.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/DriverFeedback/Priority",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Left Motor",
+            "x": 256.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/DriverFeedback/LeftMotor",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "orientation": "vertical"
+            }
+          },
+          {
+            "title": "Right Motor",
+            "x": 384.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/DriverFeedback/RightMotor",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "orientation": "vertical"
+            }
+          },
+          {
+            "title": "Pattern Count",
+            "x": 0.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/DriverFeedback/PatternCount",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Aim Error",
+            "x": 256.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/DriverFeedback/ProgressiveAimError",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "LED TEST",
+            "x": 640.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/LED/State",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "LED State (0=off, 1-10)",
+            "x": 640.0,
+            "y": 128.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/LED/TestState",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 10.0,
+              "divisions": 10,
+              "publish_all": false
+            }
+          },
+          {
+            "title": "LED Description",
+            "x": 640.0,
+            "y": 256.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/LED/Description",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "LED Hardware",
+            "x": 640.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/LED/HardwareAvailable",
+              "period": 0.033,
+              "true_color": 4278238420,
+              "false_color": 4294901760
+            }
+          },
+          {
+            "title": "Brightness",
+            "x": 896.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/LED/brightness",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 10,
+              "publish_all": false
+            }
+          },
+          {
+            "title": "State Changes",
+            "x": 640.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/LED/StateChangeCount",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Haptic Scale",
+            "x": 896.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/DriverFeedback/hapticScale",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 2.0,
+              "divisions": 10,
+              "publish_all": false
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

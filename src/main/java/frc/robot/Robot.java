@@ -15,6 +15,8 @@ import frc.robot.util.DiagnosticContext;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.ElasticUtil;
 import frc.robot.util.LEDStatusDisplay;
+import frc.robot.sim.SimDeviceManager;
+import frc.robot.sim.SimScenarioRunner;
 import frc.robot.util.EventMarker;
 import frc.robot.util.LoggedTracer;
 import frc.robot.util.PostMatchSummary;
@@ -38,6 +40,8 @@ public class Robot extends LoggedRobot {
   private RobotContainer m_robotContainer;
 
   private Timer disabledTimer;
+  private SimScenarioRunner simScenarioRunner;
+  private SimDeviceManager simDeviceManager;
 
   // Diagnostics
   private boolean hasRunDiagnostics = false;
@@ -126,7 +130,6 @@ public class Robot extends LoggedRobot {
     }
   }
 
-
   /** Check critical telemetry values for NaN/Infinity corruption. */
   private void checkNaNInfinity() {
     TelemetryManager tm = TelemetryManager.getInstance();
@@ -197,14 +200,14 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotPeriodic() {
-    LoggedTracer.reset();
+    safeCall("Tracer", () -> LoggedTracer.reset());
 
     safeCall("CommandScheduler", () -> CommandScheduler.getInstance().run());
-    LoggedTracer.record("CommandsMs");
+    safeCall("Tracer", () -> LoggedTracer.record("CommandsMs"));
 
     safeCall("Telemetry", () -> TelemetryManager.getInstance().updateAll());
     safeCall("NaNGuard", () -> checkNaNInfinity());
-    LoggedTracer.record("TelemetryMs");
+    safeCall("Tracer", () -> LoggedTracer.record("TelemetryMs"));
 
     safeCall("ChannelCoordinator", () -> {
       ChannelCoordinator.getInstance().update();
@@ -232,13 +235,17 @@ public class Robot extends LoggedRobot {
       }
     });
 
-    LoggedTracer.record("AlertsMs");
+    safeCall("Tracer", () -> LoggedTracer.record("AlertsMs"));
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    m_robotContainer.setMotorBrake(true);
+    try {
+      m_robotContainer.setMotorBrake(true);
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/DisabledInit", true);
+    }
     disabledTimer.reset();
     disabledTimer.start();
 
@@ -267,10 +274,14 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME)) {
-      m_robotContainer.setMotorBrake(false);
-      disabledTimer.stop();
-      disabledTimer.reset();
+    try {
+      if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME)) {
+        m_robotContainer.setMotorBrake(false);
+        disabledTimer.stop();
+        disabledTimer.reset();
+      }
+    } catch (Throwable t) {
+      safeLog("Health/CrashBarrier/DisabledPeriodic", true);
     }
 
     // Run safe diagnostics once after 0.5s delay (let readings stabilize)
@@ -383,9 +394,19 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    simDeviceManager = new SimDeviceManager();
+    simDeviceManager.init();
+    simScenarioRunner = new SimScenarioRunner();
+  }
 
   @Override
   public void simulationPeriodic() {
+    if (simDeviceManager != null) {
+      simDeviceManager.update();
+    }
+    if (simScenarioRunner != null) {
+      simScenarioRunner.update();
+    }
   }
 }
