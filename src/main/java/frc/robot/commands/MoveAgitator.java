@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Agitator;
 
@@ -32,6 +34,7 @@ public class MoveAgitator extends Command {
       agitator.moveToVelocityWithPID(0);
     } else {
       agitator.moveToVelocityWithPID(rpm);
+      System.out.println(agitator.getMotorVelocity());
     }
   }
 
