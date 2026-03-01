@@ -19,8 +19,8 @@ import org.junit.jupiter.api.Test;
 
 class DriverFeedbackTest {
 
-  private static final int DRIVER_PORT = 4;
-  private static final int COPILOT_PORT = 5;
+  private static final int DRIVER_PORT = 0;
+  private static final int COPILOT_PORT = 1;
   private DriverFeedback feedback;
   private GenericHID driverController;
   private GenericHIDSim driverSim;

@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -49,16 +50,24 @@ public enum Cameras {
     new Rotation3d(0, Math.toRadians(-15), Math.toRadians(-135)),
     new Translation3d(-0.293, -0.293, 0.229),
     VecBuilder.fill(0.3, 0.3, 0.6),
+    VecBuilder.fill(0.1, 0.1, 0.2)),
+
+   //Center Camera 
+  FRONT_LEFT_CAM("front-left",
+      new Rotation3d(0, Math.toRadians(0), Math.toRadians(45)),
+      new Translation3d(Math.toRadians(-4.44),
+          Units.inchesToMeters(5.7),
+          Units.inchesToMeters(19)),
+      VecBuilder.fill(0.3, 0.3, 0.6),
+    VecBuilder.fill(0.1, 0.1, 0.2)),
+
+  FRONT_RIGHT_CAM("front-right",
+      new Rotation3d(0, Math.toRadians(0), Math.toRadians(45)),
+      new Translation3d(Math.toRadians(-4.44),
+          Units.inchesToMeters(-5.7),
+          Units.inchesToMeters(19)),
+      VecBuilder.fill(0.3, 0.3, 0.6),
     VecBuilder.fill(0.1, 0.1, 0.2));
-
-  /** Center Camera */
-  // CENTER_CAM("center",
-  //     new Rotation3d(0, Units.degreesToRadians(18), 0),
-  //     new Translation3d(Units.inchesToMeters(-4.628),
-  //         Units.inchesToMeters(-10.687),
-  //         Units.inchesToMeters(16.129)),
-  //     VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
-
   /** Latency alert to use when high latency is detected. */
   public final Alert latencyAlert;
 

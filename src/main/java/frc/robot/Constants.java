@@ -152,7 +152,7 @@ public final class Constants {
     public static final double D = 0.00;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0003;
+    public static final double FF = 0.0005;
     public static final double Iz = 0.0;
 
     // Telemetry constants
@@ -172,7 +172,7 @@ public final class Constants {
 
     public static final double TARGET_RPM = 2000;
     public static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
-    public static final double JAM_TIME_THRESHOLD_SECONDS = 0.4;
+    public static final double JAM_TIME_THRESHOLD_SECONDS = 0.3;
   }
 
   public static final class HopperConstants {

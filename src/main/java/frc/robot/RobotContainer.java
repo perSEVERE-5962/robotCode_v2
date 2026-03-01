@@ -194,7 +194,7 @@ public class RobotContainer {
     DriverTuning.initialize(); 
  
     // Wire up telemetry references 
-    TelemetryManager.getInstance().setVision(visionSubsystem); 
+    //TelemetryManager.getInstance().setVision(visionSubsystem); 
     TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
     TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
     DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());

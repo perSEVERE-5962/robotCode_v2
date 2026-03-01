@@ -12,6 +12,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
+import frc.robot.telemetry.AgitatorTelemetry;
 
 /*
  * Command to speed up shooter then run indexer.
@@ -21,12 +22,13 @@ public class SpeedUpThenIndex extends Command {
   private Shooter shooter;
   private Agitator agitator;
   private Indexer indexer;
-
+  private AgitatorTelemetry agitatorTelemetry;
   public SpeedUpThenIndex() {
     // Use addRequirements() here to declare subsystem dependencies.
     shooter = Shooter.getInstance();
     indexer = Indexer.getInstance();
     agitator = Agitator.getInstance();
+    agitatorTelemetry = new AgitatorTelemetry();
     addRequirements(shooter, indexer,agitator);
   }
 
@@ -45,6 +47,10 @@ public class SpeedUpThenIndex extends Command {
       System.out.println(agitator.getMotorVelocity());
       agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM());
   }
+  // if(AgitatorTelemetry.isStalled()){
+  //         agitator.moveToVelocityWithPID(-2000);
+
+  // }
     //System.out.println("one");
     //System.out.println(shooter.getTunableTargetRPM());
   }
