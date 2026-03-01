@@ -29,7 +29,6 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     agitatorTelemetry = new AgitatorTelemetry();
     visionTelemetry = new VisionTelemetry();
     driveTelemetry = new DriveTelemetry();
-    agitatorTelemetry = new AgitatorTelemetry();
     telemetry =
         new CANHealthTelemetry(
             shooterTelemetry,

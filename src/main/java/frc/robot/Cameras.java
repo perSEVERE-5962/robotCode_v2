@@ -53,17 +53,19 @@ public enum Cameras {
     VecBuilder.fill(0.1, 0.1, 0.2)),
 
    //Center Camera 
-  FRONT_LEFT_CAM("front-left",
+  FRONT_LEFT_CAM(
+    "front-left",
       new Rotation3d(0, Math.toRadians(0), Math.toRadians(45)),
-      new Translation3d(Math.toRadians(-4.44),
+      new Translation3d(Units.inchesToMeters(-4.44),
           Units.inchesToMeters(5.7),
           Units.inchesToMeters(19)),
       VecBuilder.fill(0.3, 0.3, 0.6),
     VecBuilder.fill(0.1, 0.1, 0.2)),
 
-  FRONT_RIGHT_CAM("front-right",
+  FRONT_RIGHT_CAM(
+    "front-right",
       new Rotation3d(0, Math.toRadians(0), Math.toRadians(45)),
-      new Translation3d(Math.toRadians(-4.44),
+      new Translation3d(Units.inchesToMeters(-4.44),
           Units.inchesToMeters(-5.7),
           Units.inchesToMeters(19)),
       VecBuilder.fill(0.3, 0.3, 0.6),

@@ -160,6 +160,11 @@ public class Vision {
 
     for (Cameras camera : Cameras.values()) {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
+            if (poseEst.isPresent()) {
+        var pose = poseEst.get();
+        swerveDrive.addVisionMeasurement(
+            pose.estimatedPose.toPose2d(), pose.timestampSeconds, camera.curStdDevs);
+
       if (poseEst.isEmpty()) {
         continue;
       }
@@ -214,7 +219,7 @@ public class Vision {
       }
 
       swerveDrive.addVisionMeasurement(poseToUse, est.timestampSeconds, stdDevs);
-    }
+            }}
   }
 
   /** Get the worst (highest) ambiguity across all targets in an estimate. */
