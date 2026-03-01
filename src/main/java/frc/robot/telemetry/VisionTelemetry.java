@@ -41,6 +41,8 @@ public class VisionTelemetry implements SubsystemTelemetry {
   private double latencyMs = 0;
   private boolean leftCamConnected = false;
   private boolean rightCamConnected = false;
+  private boolean frontLeftCamConnected = false;
+  private boolean frontRightCamConnected = false;
 
   private String bestCameraName = "NONE";
   private int camerasWithTarget = 0;
@@ -159,8 +161,9 @@ public class VisionTelemetry implements SubsystemTelemetry {
       try {
         int count = 0;
         if (currentTagID != -1) {
-          if (vision.getTargetFromId(currentTagID, Cameras.LEFT_CAM) != null) count++;
-          if (vision.getTargetFromId(currentTagID, Cameras.RIGHT_CAM) != null) count++;
+          for (Cameras cam : Cameras.values()) {
+            if (vision.getTargetFromId(currentTagID, cam) != null) count++;
+          }
         }
         camerasWithTarget = count;
       } catch (Throwable t) {
@@ -177,9 +180,13 @@ public class VisionTelemetry implements SubsystemTelemetry {
       try {
         leftCamConnected = vision.isCameraConnected(Cameras.LEFT_CAM);
         rightCamConnected = vision.isCameraConnected(Cameras.RIGHT_CAM);
+        frontLeftCamConnected = vision.isCameraConnected(Cameras.FRONT_LEFT_CAM);
+        frontRightCamConnected = vision.isCameraConnected(Cameras.FRONT_RIGHT_CAM);
       } catch (Throwable t) {
         leftCamConnected = false;
         rightCamConnected = false;
+        frontLeftCamConnected = false;
+        frontRightCamConnected = false;
       }
 
       visionHealthy = true;
@@ -229,6 +236,8 @@ public class VisionTelemetry implements SubsystemTelemetry {
     latencyMs = 0;
     leftCamConnected = false;
     rightCamConnected = false;
+    frontLeftCamConnected = false;
+    frontRightCamConnected = false;
     bestCameraName = "NONE";
     camerasWithTarget = 0;
   }
@@ -286,6 +295,8 @@ public class VisionTelemetry implements SubsystemTelemetry {
     SafeLog.put("Vision/LatencyMs", latencyMs);
     SafeLog.put("Vision/Camera/LeftCam/Connected", leftCamConnected);
     SafeLog.put("Vision/Camera/RightCam/Connected", rightCamConnected);
+    SafeLog.put("Vision/Camera/FrontLeftCam/Connected", frontLeftCamConnected);
+    SafeLog.put("Vision/Camera/FrontRightCam/Connected", frontRightCamConnected);
 
     SafeLog.put("Vision/BestCamera", bestCameraName);
     SafeLog.put("Vision/CamerasWithTarget", camerasWithTarget);

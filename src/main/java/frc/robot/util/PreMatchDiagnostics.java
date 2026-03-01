@@ -454,13 +454,14 @@ public class PreMatchDiagnostics {
   private void checkVisionSampled() {
     try {
       RobotContainer container = RobotContainer.getInstance();
-      if (container == null || container.visionSubsystem == null) {
+      if (container == null || container.getSwerveSubsystem() == null
+          || container.getSwerveSubsystem().getVision() == null) {
         addResult("Vision", CheckResult.WARN, "Vision not initialized");
         Logger.recordOutput("Diagnostics/VisionDropoutPct", 0.0);
         return;
       }
 
-      var vision = container.visionSubsystem;
+      var vision = container.getSwerveSubsystem().getVision();
       int totalSamples = 0;
       int missedSamples = 0;
       double startTime = Timer.getFPGATimestamp();
