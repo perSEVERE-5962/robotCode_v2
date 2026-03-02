@@ -24,7 +24,7 @@ public class AgitateAndIndex extends Command {
     this.arcDriveOn = arcDriveOn;
     this.indexRPM = indexRPM;
     indexer = Indexer.getInstance();
-    addRequirements(agitator);
+    addRequirements(agitator, indexer);
 
     // Use addRequirements() here to declare subsystem dependencies.
   }

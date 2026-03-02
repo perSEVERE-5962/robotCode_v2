@@ -9,6 +9,8 @@ public class MoveAgitator extends Command {
   private double speed;
   private BooleanSupplier arcDriveOn;
 
+  // private IndexerTelemetry indextelem = new IndexerTelemetry();
+
   public MoveAgitator(double speed, BooleanSupplier arcDriveOn) {
     this.speed = speed;
     agitator = Agitator.getInstance();
