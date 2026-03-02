@@ -22,6 +22,8 @@ public class MoveAgitator extends Command {
   public MoveAgitator(double speed) {
     agitator = Agitator.getInstance();
     this.speed = speed;
+    arcDriveOn = () -> false;
+
     addRequirements(agitator);
   }
 
