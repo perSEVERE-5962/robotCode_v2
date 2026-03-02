@@ -83,12 +83,13 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/neo"));
-  // Initialize the vision subsystem
 
   private final Field2d field = new Field2d();
 
-  // Removed: duplicate Vision instance conflicted with SwerveSubsystem's internal Vision.
-  // VisionTelemetry now reads from drivebase.getVision() instead.
+  // NOTE: This creates a second Vision instance. SwerveSubsystem already creates one internally.
+  // Both call getAllUnreadResults() on the same Cameras singletons, causing a race condition.
+  // Safe to remove this line and use drivebase.getVision() everywhere instead.
+  public final Vision visionSubsystem = new Vision(drivebase::getPose, field);
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular

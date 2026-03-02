@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.telemetry.SafeLog;
 import frc.robot.telemetry.TelemetryManager;
 
 public class DriverFeedback {
@@ -137,6 +138,7 @@ public class DriverFeedback {
 
   // --- Jam protection edge detection ---
   private boolean prevJamIntervening = false;
+  private String lastJamSource = "none";
 
   // --- Progressive aim ---
   private boolean progressiveAimActive = false;
@@ -283,6 +285,14 @@ public class DriverFeedback {
     // --- Jam protection events (HIGH -> COPILOT) ---
     if (jamIntervening && !prevJamIntervening) {
       playPattern(JAM_DETECTED);
+      // Capture which subsystem triggered so pit crew can see it in telemetry
+      try {
+        lastJamSource = TelemetryManager.getInstance().getJamSource();
+      } catch (Throwable t) {
+        lastJamSource = "unknown";
+      }
+    } else if (!jamIntervening && prevJamIntervening) {
+      lastJamSource = "none";
     }
 
     // Save edge detection state
@@ -348,14 +358,21 @@ public class DriverFeedback {
     double right = Math.max(0, Math.min(1, currentRight * scale));
 
     // Route rumble to appropriate controller(s)
-    // If no copilot connected, fallback COPILOT-targeted patterns to driver
-    boolean hasCopilot = (copilotController != null);
+    // Null check + physical connection check: WPILib creates the object even if no
+    // controller is plugged in, so we need isConnected() to detect the real hardware.
+    boolean hasCopilot = (copilotController != null && copilotController.isConnected());
     boolean driverRumble = (rumbleTarget == HapticTarget.DRIVER || rumbleTarget == HapticTarget.BOTH)
         || (rumbleTarget == HapticTarget.COPILOT && !hasCopilot);
     boolean copilotRumble =
         (rumbleTarget == HapticTarget.COPILOT || rumbleTarget == HapticTarget.BOTH);
     applyRumble(controller, driverRumble ? left : 0, driverRumble ? right : 0);
     applyRumble(copilotController, copilotRumble ? left : 0, copilotRumble ? right : 0);
+
+    // Diagnostic signals so pit crew can verify copilot is actually connected
+    SafeLog.put("DriverFeedback/CopilotConnected", hasCopilot);
+    SafeLog.put("DriverFeedback/CopilotPort",
+        copilotController != null ? copilotController.getPort() : -1);
+    SafeLog.put("DriverFeedback/JamSource", lastJamSource);
   }
 
   private void applyRumble(GenericHID hid, double left, double right) {
@@ -449,6 +466,14 @@ public class DriverFeedback {
 
   public String getActiveTargetName() {
     return activeTarget.name();
+  }
+
+  public String getLastJamSource() {
+    return lastJamSource;
+  }
+
+  public boolean isCopilotConnected() {
+    return copilotController != null && copilotController.isConnected();
   }
 
   /** Human-readable description of the active pattern. */
