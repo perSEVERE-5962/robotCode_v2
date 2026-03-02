@@ -291,6 +291,8 @@ public class DriverFeedback {
       } catch (Throwable t) {
         lastJamSource = "unknown";
       }
+    } else if (!jamIntervening && prevJamIntervening) {
+      lastJamSource = "none";
     }
 
     // Save edge detection state
@@ -367,9 +369,8 @@ public class DriverFeedback {
 
     // Diagnostic signals so pit crew can verify copilot is actually connected
     SafeLog.put("DriverFeedback/CopilotConnected", hasCopilot);
-    if (copilotController != null) {
-      SafeLog.put("DriverFeedback/CopilotPort", copilotController.getPort());
-    }
+    SafeLog.put("DriverFeedback/CopilotPort",
+        copilotController != null ? copilotController.getPort() : -1);
     SafeLog.put("DriverFeedback/JamSource", lastJamSource);
   }
 
