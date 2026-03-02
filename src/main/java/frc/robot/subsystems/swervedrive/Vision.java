@@ -141,8 +141,11 @@ public class Vision {
       autoStartTimestamp = 0;
     }
 
+    // Skip POSE_JUMP gate until we've accepted at least one pose, otherwise
+    // the first vision correction after boot gets rejected and vision locks out forever
     double autoElapsed =
-        (autoStartTimestamp > 0) ? Timer.getFPGATimestamp() - autoStartTimestamp : 999;
+        (acceptedCount == 0) ? 0
+            : (autoStartTimestamp > 0) ? Timer.getFPGATimestamp() - autoStartTimestamp : 999;
 
     if (manualOverride) {
       return;

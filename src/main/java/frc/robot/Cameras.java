@@ -52,24 +52,28 @@ public enum Cameras {
     VecBuilder.fill(0.3, 0.3, 0.6),
     VecBuilder.fill(0.1, 0.1, 0.2)),
 
-   //Center Camera 
+  /** Front-left camera, angled 45 deg outward */
   FRONT_LEFT_CAM(
-    "front-left",
-      new Rotation3d(0, Math.toRadians(0), Math.toRadians(45)),
-      new Translation3d(Units.inchesToMeters(-4.44),
-          Units.inchesToMeters(5.7),
-          Units.inchesToMeters(19)),
-      VecBuilder.fill(0.3, 0.3, 0.6),
+      "front-left",
+    new Rotation3d(0, Math.toRadians(0), Math.toRadians(45)),
+    new Translation3d(
+        Units.inchesToMeters(-4.44),
+        Units.inchesToMeters(5.7),
+        Units.inchesToMeters(19)),
+    VecBuilder.fill(0.3, 0.3, 0.6),
     VecBuilder.fill(0.1, 0.1, 0.2)),
 
+  /** Front-right camera, angled 45 deg outward (mirrored from front-left) */
   FRONT_RIGHT_CAM(
-    "front-right",
-      new Rotation3d(0, Math.toRadians(0), Math.toRadians(-45)),
-      new Translation3d(Units.inchesToMeters(-4.44),
-          Units.inchesToMeters(-5.7),
-          Units.inchesToMeters(19)),
-      VecBuilder.fill(0.3, 0.3, 0.6),
+      "front-right",
+    new Rotation3d(0, Math.toRadians(0), Math.toRadians(-45)),
+    new Translation3d(
+        Units.inchesToMeters(-4.44),
+        Units.inchesToMeters(-5.7),
+        Units.inchesToMeters(19)),
+    VecBuilder.fill(0.3, 0.3, 0.6),
     VecBuilder.fill(0.1, 0.1, 0.2));
+
   /** Latency alert to use when high latency is detected. */
   public final Alert latencyAlert;
 

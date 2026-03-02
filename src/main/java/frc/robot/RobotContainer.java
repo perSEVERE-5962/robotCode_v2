@@ -87,7 +87,8 @@ public class RobotContainer {
 
   private final Field2d field = new Field2d();
 
-  public final Vision visionSubsystem = new Vision(drivebase::getPose, field);
+  // Removed: duplicate Vision instance conflicted with SwerveSubsystem's internal Vision.
+  // VisionTelemetry now reads from drivebase.getVision() instead.
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular
@@ -194,7 +195,7 @@ public class RobotContainer {
     DriverTuning.initialize(); 
  
     // Wire up telemetry references 
-    //TelemetryManager.getInstance().setVision(visionSubsystem); 
+    TelemetryManager.getInstance().setVision(drivebase.getVision());
     TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
     TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
     DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
@@ -391,7 +392,7 @@ public class RobotContainer {
 
   public Cameras getBestCamera(int id) {
     // Replace this with the actual logic to get the best camera
-    return visionSubsystem.getbestCamera(id);
+    return drivebase.getVision().getbestCamera(id);
   }
 
   private boolean isRedAlliance() {
