@@ -34,7 +34,6 @@ import frc.robot.commands.AgitateAndIndex;
 import frc.robot.commands.AlignToTag;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.DriveToHub;
-import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
 import frc.robot.commands.MoveAgitator;
 //import frc.robot.commands.AlignWithAprilTag;
@@ -277,7 +276,7 @@ public class RobotContainer {
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.2));
       copilotXbox.b().whileTrue(new AgitateAndIndex(0.3, 5000, hubArcDrive::isScheduled));
-      copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
+      copilotXbox.a().whileTrue(new RunIntake());
       copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
 
 //       Trigger crossingZone = new Trigger(()->{
