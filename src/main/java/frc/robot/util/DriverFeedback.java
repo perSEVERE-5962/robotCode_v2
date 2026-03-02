@@ -358,8 +358,9 @@ public class DriverFeedback {
     double right = Math.max(0, Math.min(1, currentRight * scale));
 
     // Route rumble to appropriate controller(s)
-    // If no copilot connected, fallback COPILOT-targeted patterns to driver
-    boolean hasCopilot = (copilotController != null);
+    // Null check + physical connection check: WPILib creates the object even if no
+    // controller is plugged in, so we need isConnected() to detect the real hardware.
+    boolean hasCopilot = (copilotController != null && copilotController.isConnected());
     boolean driverRumble = (rumbleTarget == HapticTarget.DRIVER || rumbleTarget == HapticTarget.BOTH)
         || (rumbleTarget == HapticTarget.COPILOT && !hasCopilot);
     boolean copilotRumble =
@@ -472,7 +473,7 @@ public class DriverFeedback {
   }
 
   public boolean isCopilotConnected() {
-    return copilotController != null;
+    return copilotController != null && copilotController.isConnected();
   }
 
   /** Human-readable description of the active pattern. */

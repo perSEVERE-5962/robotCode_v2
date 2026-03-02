@@ -41,6 +41,14 @@ class DriverFeedbackTest {
     copilotController = new GenericHID(COPILOT_PORT);
     copilotSim = new GenericHIDSim(copilotController);
 
+    // Mark both controllers as physically connected so isConnected() returns true.
+    // WPILib checks axisCount > 0 || buttonCount > 0 || povCount > 0.
+    driverSim.setAxisCount(6);
+    driverSim.setButtonCount(10);
+    copilotSim.setAxisCount(6);
+    copilotSim.setButtonCount(10);
+    DriverStationSim.notifyNewData();
+
     feedback = DriverFeedback.getInstance();
     feedback.initialize(driverController, copilotController);
   }
