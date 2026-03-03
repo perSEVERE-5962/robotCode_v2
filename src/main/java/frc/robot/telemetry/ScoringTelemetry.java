@@ -76,7 +76,7 @@ public class ScoringTelemetry implements SubsystemTelemetry {
       previousHubActive = hubActive;
       previousReadyToShoot = readyToShoot;
 
-      shooterReady = shooterTelemetry.isAtSpeed();
+      shooterReady = shooterTelemetry.isAtSpeed() || shooterTelemetry.isFiring();
       indexerClear = !indexerTelemetry.isJamDetected();
       visionLocked = visionTelemetry.isLockedOnTarget();
 
@@ -274,5 +274,9 @@ public class ScoringTelemetry implements SubsystemTelemetry {
 
   public String getReadyLostReason() {
     return readyLostReason;
+  }
+
+  public boolean isWonAuto() {
+    return wonAuto;
   }
 }

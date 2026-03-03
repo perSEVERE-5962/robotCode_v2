@@ -68,9 +68,8 @@ class IntakeTelemetryTest extends SparkSimTestBase {
   }
 
   @Test
-  void testClearJamResetsState() {
+  void testJamDefaultsToFalse() {
     telemetry.update();
-    telemetry.clearJam();
     assertFalse(telemetry.isJamDetected());
   }
 

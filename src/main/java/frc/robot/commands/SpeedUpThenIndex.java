@@ -4,68 +4,96 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
-import frc.robot.telemetry.AgitatorTelemetry;
+import frc.robot.util.TunableNumber;
 
-/*
- * Command to speed up shooter then run indexer.
+/**
+ * Spins up the shooter, then feeds balls once at speed. Uses a firing latch so
+ * the indexer keeps running through brief RPM dips from ball impacts. Only stops
+ * feeding if RPM drops below an under-shooting threshold for a sustained period.
  */
 public class SpeedUpThenIndex extends Command {
-  /** Creates a new SpeedUpThenIndex. */
   private Shooter shooter;
   private Agitator agitator;
   private Indexer indexer;
-  private AgitatorTelemetry agitatorTelemetry;
+
+  // Firing hysteresis state
+  private boolean reachedSpeed = false;
+  private boolean feeding = false;
+  private double underShootingSince = -1;
+
+  // Tunable thresholds for the under-shooting exit
+  private static final TunableNumber underShootPct =
+      new TunableNumber("Shooter/Firing/UnderShootPct", 0.85);
+  private static final TunableNumber underShootDebounceMs =
+      new TunableNumber("Shooter/Firing/DebounceMs", 400);
+
   public SpeedUpThenIndex() {
-    // Use addRequirements() here to declare subsystem dependencies.
     shooter = Shooter.getInstance();
     indexer = Indexer.getInstance();
     agitator = Agitator.getInstance();
-    agitatorTelemetry = new AgitatorTelemetry();
-    addRequirements(shooter, indexer,agitator);
+    addRequirements(shooter, indexer, agitator);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-        shooter.moveToVelocityWithPID(shooter.getTunableTargetRPM());
-        agitator.moveToVelocityWithPID(-500);
-}
+    reachedSpeed = false;
+    feeding = false;
+    underShootingSince = -1;
+    shooter.moveToVelocityWithPID(shooter.getTunableTargetRPM());
+    agitator.moveToVelocityWithPID(-500);
+  }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (shooter.isAtSpeed()) {
+    boolean atSpeed = shooter.isAtSpeed();
+
+    // Latch: once we reach speed, start feeding
+    if (atSpeed && !reachedSpeed) {
+      reachedSpeed = true;
+      feeding = true;
+    }
+
+    // Under-shooting check: only matters while we're in the firing latch
+    if (reachedSpeed) {
+      double velocity = shooter.getVelocityRPM();
+      double target = shooter.getTargetRPM();
+      double threshold = target * underShootPct.get();
+
+      if (velocity < threshold) {
+        double now = Timer.getFPGATimestamp();
+        if (underShootingSince < 0) {
+          underShootingSince = now;
+        } else if ((now - underShootingSince) * 1000.0 > underShootDebounceMs.get()) {
+          // Sustained under-shooting, stop feeding until RPM recovers
+          feeding = false;
+        }
+      } else {
+        underShootingSince = -1;
+        // RPM recovered above threshold, resume feeding if we'd stopped
+        if (!feeding) {
+          feeding = true;
+        }
+      }
+    }
+
+    if (feeding) {
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
-      System.out.println(indexer.getMotorVelocity());
       agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM());
-  }
-  // if(AgitatorTelemetry.isStalled()){
-  //         agitator.moveToVelocityWithPID(-2000);
-
-  // }
-    //System.out.println("one");
-    //System.out.println(shooter.getTunableTargetRPM());
+    }
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     shooter.moveToVelocityWithPID(0);
-      
-indexer.moveToVelocityWithPID(0);
-      System.out.println();
-      agitator.moveToVelocityWithPID(0);
-  }      
+    indexer.moveToVelocityWithPID(0);
+    agitator.moveToVelocityWithPID(0);
+  }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

@@ -195,11 +195,6 @@ public class IntakeTelemetry implements SubsystemTelemetry {
     return stalled;
   }
 
-  public void clearJam() {
-    jamDetected = false;
-    jamDebouncer.calculate(false);
-  }
-
   public boolean isJamProtectionIntervening() {
     return jamProtectionIntervening;
   }

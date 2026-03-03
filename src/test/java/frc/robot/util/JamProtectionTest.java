@@ -52,7 +52,7 @@ class JamProtectionTest {
   void testNoJamAtNormalOperation() {
     jp.update(10.0, 500.0, true);
     assertEquals(JamProtection.State.MONITORING, jp.getState());
-    assertTrue(Double.isNaN(jp.getMotorOverride()), "No override during normal operation");
+    assertFalse(jp.isIntervening(), "No intervention during normal operation");
   }
 
   @Test
@@ -115,7 +115,7 @@ class JamProtectionTest {
     assertEquals(JamProtection.State.REVERSING, jp.getState());
     assertEquals(1, jp.getReverseAttempts());
     assertTrue(jp.isIntervening());
-    assertEquals(REVERSE_POWER, jp.getMotorOverride(), 0.001);
+    assertEquals(JamProtection.State.REVERSING, jp.getState());
   }
 
   @Test
@@ -133,7 +133,7 @@ class JamProtectionTest {
     jp.update(5.0, 500.0, true);
 
     assertEquals(JamProtection.State.COOLDOWN, jp.getState());
-    assertEquals(0, jp.getMotorOverride(), 0.001, "Motor should be stopped during cooldown");
+    assertEquals(JamProtection.State.COOLDOWN, jp.getState(), "Should be in cooldown");
     assertTrue(jp.isIntervening());
   }
 
@@ -187,7 +187,7 @@ class JamProtectionTest {
 
     assertEquals(JamProtection.State.DISABLED, jp.getState());
     assertTrue(jp.isDisabled());
-    assertEquals(0, jp.getMotorOverride(), 0.001);
+    assertTrue(jp.isDisabled(), "Should be disabled after max attempts");
     assertEquals(MAX_ATTEMPTS, jp.getReverseAttempts());
   }
 

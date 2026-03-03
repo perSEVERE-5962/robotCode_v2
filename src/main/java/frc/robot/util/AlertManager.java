@@ -13,6 +13,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakeActuator;
 import frc.robot.subsystems.Shooter;
 import frc.robot.telemetry.TelemetryManager;
+import frc.robot.util.TunableNumber;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,11 @@ public class AlertManager {
   // threshold
   public static final double BATTERY_WARNING_CLEAR_V = 12.0;
   private boolean inBatteryWarning = false;
+
+  // Battery critical must stay below threshold for this long before alerting.
+  // Motor inrush causes brief sags to ~6V that recover in <100ms, don't alert on those.
+  private static final double BATTERY_CRITICAL_SUSTAIN_SEC = 1.0;
+  private double criticalStartTime = -1;
 
   // Only warn about low battery when disabled (pre-match). Mid-match sag is normal.
   private final Debouncer disabledDebouncer = new Debouncer(1.5, Debouncer.DebounceType.kRising);
@@ -74,10 +80,33 @@ public class AlertManager {
   private final Alert indexerStallAlert = new Alert("Indexer motor stalled", AlertType.kWarning);
   private final Alert intakeStallAlert = new Alert("Intake motor stalled", AlertType.kWarning);
 
+  // M15: runtime diagnostics (tunable thresholds, suppress by setting extreme values)
+  private static final TunableNumber visionStaleThresholdMs =
+      new TunableNumber("Alerts/VisionStaleThresholdMs", 5000.0);
+  private static final TunableNumber visionRejectThreshold =
+      new TunableNumber("Alerts/VisionRejectRateThreshold", 20.0);
+  private static final TunableNumber shooterTrackingThreshold =
+      new TunableNumber("Alerts/ShooterTrackingErrorPct", 20.0);
+
+  private final Alert visionStaleAlert =
+      new Alert("Vision: no target for >5s", AlertType.kWarning);
+  private final Alert visionRejectAlert =
+      new Alert("Vision: accept rate critically low", AlertType.kWarning);
+  private final Alert shooterTrackingAlert =
+      new Alert("Shooter: velocity tracking error >20%", AlertType.kWarning);
+
+  // Sustained condition timers (must stay bad for N seconds before alerting)
+  private double visionStaleSince = -1;
+  private double visionRejectSince = -1;
+  private double shooterTrackingSince = -1;
+
   private final List<String> activeAlerts = new ArrayList<>();
 
   // Elastic notification debouncing
   private final Map<String, Double> lastElasticNotifyTimes = new HashMap<>();
+
+  // Suppress alerts during JVM warmup to avoid false positives from startup transients
+  private static final double WARMUP_SEC = 45.0;
 
   private AlertManager() {}
 
@@ -99,6 +128,9 @@ public class AlertManager {
     checkCANBus();
     checkJams();
     checkBandwidth();
+    checkVisionStaleness();
+    checkVisionRejectRate();
+    checkShooterTracking();
   }
 
   /** Log active alerts. Call after checkAll() and checkLoopTime() complete. */
@@ -110,29 +142,38 @@ public class AlertManager {
 
   private void checkBattery() {
     double voltage = RobotController.getBatteryVoltage();
+    double now = Timer.getFPGATimestamp();
     boolean isDisabled = disabledDebouncer.calculate(DriverStation.isDisabled());
 
     if (voltage < BATTERY_CRITICAL_V) {
-      // CRITICAL: always on, brownout danger
-      inBatteryWarning = true;
-      batteryCriticalAlert.set(true);
-      batteryLowAlert.set(false);
-      addAlert("BatteryCritical");
-      notifyElastic(
-          "BatteryCritical",
-          "Battery Critical",
-          String.format("Battery at %.1fV - REPLACE NOW!", voltage),
-          true);
+      // Track how long voltage has been below critical.
+      // Motor inrush sags to ~6V but recovers in <100ms, don't alert on transients.
+      if (criticalStartTime < 0) {
+        criticalStartTime = now;
+      }
+      if ((now - criticalStartTime) >= BATTERY_CRITICAL_SUSTAIN_SEC) {
+        inBatteryWarning = true;
+        batteryCriticalAlert.set(true);
+        batteryLowAlert.set(false);
+        addAlert("BatteryCritical");
+        notifyElastic(
+            "BatteryCritical",
+            "Battery Critical",
+            String.format("Battery at %.1fV - REPLACE NOW!", voltage),
+            true);
+      }
     } else if (isDisabled
         && (voltage < BATTERY_WARNING_V
             || (inBatteryWarning && voltage < BATTERY_WARNING_CLEAR_V))) {
       // WARNING: only when disabled (pre-match). Mid-match sag is normal.
+      criticalStartTime = -1;
       inBatteryWarning = true;
       batteryCriticalAlert.set(false);
       batteryLowAlert.set(true);
       addAlert("BatteryLow");
       notifyElastic("BatteryLow", "Battery Low", String.format("Battery at %.1fV", voltage), false);
     } else {
+      criticalStartTime = -1;
       inBatteryWarning = false;
       batteryCriticalAlert.set(false);
       batteryLowAlert.set(false);
@@ -315,13 +356,113 @@ public class AlertManager {
     }
   }
 
+  /** Catches bumped or disconnected camera: no target seen for sustained period during teleop. */
+  private void checkVisionStaleness() {
+    try {
+      double now = Timer.getFPGATimestamp();
+      if (now < WARMUP_SEC || !DriverStation.isTeleopEnabled()) {
+        visionStaleSince = -1;
+        visionStaleAlert.set(false);
+        return;
+      }
+      TelemetryManager tm = TelemetryManager.getInstance();
+      if (!tm.isVisionAvailable()) {
+        visionStaleSince = -1;
+        visionStaleAlert.set(false);
+        return;
+      }
+      double staleMs = tm.getVisionTimeSinceLastTargetMs();
+      if (staleMs > visionStaleThresholdMs.get()) {
+        if (visionStaleSince < 0) visionStaleSince = now;
+        if ((now - visionStaleSince) >= 5.0) {
+          visionStaleAlert.set(true);
+          addAlert("VisionStale");
+          notifyElastic("VisionStale", "Vision Stale",
+              String.format("No target for %.0fs - check cameras", staleMs / 1000.0), false);
+        }
+      } else {
+        visionStaleSince = -1;
+        visionStaleAlert.set(false);
+      }
+    } catch (Throwable t) {
+      visionStaleAlert.set(false);
+    }
+  }
+
+  /** Catches camera returning garbage poses: filter rejects nearly everything. */
+  private void checkVisionRejectRate() {
+    try {
+      double now = Timer.getFPGATimestamp();
+      if (now < WARMUP_SEC || !DriverStation.isTeleopEnabled()) {
+        visionRejectSince = -1;
+        visionRejectAlert.set(false);
+        return;
+      }
+      TelemetryManager tm = TelemetryManager.getInstance();
+      if (!tm.isVisionAvailable()) {
+        visionRejectSince = -1;
+        visionRejectAlert.set(false);
+        return;
+      }
+      double acceptPct = tm.getVisionAcceptRatePct();
+      if (acceptPct < visionRejectThreshold.get()) {
+        if (visionRejectSince < 0) visionRejectSince = now;
+        if ((now - visionRejectSince) >= 10.0) {
+          visionRejectAlert.set(true);
+          addAlert("VisionRejectRate");
+          notifyElastic("VisionRejectRate", "Vision Reject Rate",
+              String.format("Accept rate %.0f%% - camera may be misaligned", acceptPct), false);
+        }
+      } else {
+        visionRejectSince = -1;
+        visionRejectAlert.set(false);
+      }
+    } catch (Throwable t) {
+      visionRejectAlert.set(false);
+    }
+  }
+
+  /** Catches broken belt or stripped gear: shooter can't track setpoint. */
+  private void checkShooterTracking() {
+    try {
+      double now = Timer.getFPGATimestamp();
+      if (now < WARMUP_SEC || !DriverStation.isEnabled()) {
+        shooterTrackingSince = -1;
+        shooterTrackingAlert.set(false);
+        return;
+      }
+      TelemetryManager tm = TelemetryManager.getInstance();
+      double errorPct = tm.getShooterTrackingErrorPct();
+      if (errorPct > shooterTrackingThreshold.get()) {
+        if (shooterTrackingSince < 0) shooterTrackingSince = now;
+        if ((now - shooterTrackingSince) >= 2.0) {
+          shooterTrackingAlert.set(true);
+          addAlert("ShooterTrackingError");
+          notifyElastic("ShooterTrackingError", "Shooter Tracking",
+              String.format("Velocity error %.0f%% - check belt/gears", errorPct), true);
+        }
+      } else {
+        shooterTrackingSince = -1;
+        shooterTrackingAlert.set(false);
+      }
+    } catch (Throwable t) {
+      shooterTrackingAlert.set(false);
+    }
+  }
+
   private void addAlert(String alertName) {
     activeAlerts.add(alertName);
   }
 
-  /** Sends notification to Elastic with debouncing. */
+  /** Sends notification to Elastic with debouncing. Non-critical alerts suppressed during warmup. */
   private void notifyElastic(String key, String title, String message, boolean isError) {
     double now = Timer.getFPGATimestamp();
+
+    // Suppress non-critical Elastic popups during startup transients
+    if (now < WARMUP_SEC && !key.equals("BatteryCritical")) {
+      return;
+    }
+
     Double lastTime = lastElasticNotifyTimes.get(key);
 
     if (lastTime == null || (now - lastTime) > DEBOUNCE_TIME_S) {

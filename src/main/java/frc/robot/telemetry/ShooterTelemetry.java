@@ -31,6 +31,17 @@ public class ShooterTelemetry implements SubsystemTelemetry {
   private static final double FIRE_RATE_WINDOW_SEC = 2.0;
   private final Deque<Double> shotTimestamps = new ArrayDeque<>();
 
+  // M12: wider window for rolling throughput metrics (pit crew "how fast are we scoring NOW")
+  private static final double WIDE_WINDOW_SEC = 30.0;
+  private final Deque<Double> wideWindowTimestamps = new ArrayDeque<>();
+  private double fireRate10s = 0;
+  private double fireRate30s = 0;
+  private double peakBPS5s = 0;
+  private int currentStreak = 0;
+  private int longestStreak = 0;
+  private double lastShotTimestampForStreak = 0;
+  private static final double STREAK_GAP_SEC = 3.0;
+
   private double shotDipTimestamp = 0;
   private boolean trackingRecovery = false;
   private double lastRecoveryMs = 0;
@@ -71,6 +82,8 @@ public class ShooterTelemetry implements SubsystemTelemetry {
   private double stallStartTime = 0;
   private double stallDurationMs = 0;
   private boolean inStallCondition = false;
+
+  private boolean firing = false;
 
   private String shooterState = "IDLE";
   private String previousShooterState = "IDLE";
@@ -190,9 +203,20 @@ public class ShooterTelemetry implements SubsystemTelemetry {
       totalShotCount++;
       lastShotVelocityRPM = previousVelocityRPM;
       shotTimestamps.addLast(now);
+      wideWindowTimestamps.addLast(now);
       shotDipTimestamp = now;
       trackingRecovery = true;
       wasAtSpeedBeforeShot = true;
+
+      // Streak tracking: >3s gap between shots resets current streak
+      if ((now - lastShotTimestampForStreak) > STREAK_GAP_SEC
+          && lastShotTimestampForStreak > 0) {
+        currentStreak = 0;
+      }
+      currentStreak++;
+      lastShotTimestampForStreak = now;
+      longestStreak = Math.max(longestStreak, currentStreak);
+
       // Isolate external calls
       SafeLog.run(() -> EventMarker.shotFired(totalShotCount));
     }
@@ -230,6 +254,20 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     }
     actualFireRate = shotTimestamps.size() / FIRE_RATE_WINDOW_SEC;
 
+    // Clean wide window and compute rolling rates
+    while (!wideWindowTimestamps.isEmpty()
+        && (now - wideWindowTimestamps.peekFirst()) > WIDE_WINDOW_SEC) {
+      wideWindowTimestamps.pollFirst();
+    }
+    fireRate10s = countInWindow(wideWindowTimestamps, now, 10.0) / 10.0;
+    fireRate30s = wideWindowTimestamps.size() / WIDE_WINDOW_SEC;
+
+    // Peak 5s burst rate only updates on shot detection
+    if (shotDetected) {
+      double burst5s = countInWindow(wideWindowTimestamps, now, 5.0) / 5.0;
+      peakBPS5s = Math.max(peakBPS5s, burst5s);
+    }
+
     if (trackingRecovery && atSpeed) {
       lastRecoveryMs = (now - shotDipTimestamp) * 1000.0;
       trackingRecovery = false;
@@ -260,6 +298,9 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     }
     torqueReversalAlert = torqueReversalCount >= TORQUE_REVERSAL_ALERT_THRESHOLD;
 
+    // Firing = was at speed, still commanded, and either at speed or recovering from shot dip
+    firing = hasReachedSpeed && targetRPM > 0 && (atSpeed || trackingRecovery);
+
     previousShooterState = shooterState;
     shooterState = computeShooterState();
     stateChangedThisCycle = !shooterState.equals(previousShooterState);
@@ -283,6 +324,19 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     inStallCondition = false;
     torqueReversalAlert = false;
     temperatureWarning = false;
+    firing = false;
+    fireRate10s = 0;
+    fireRate30s = 0;
+    currentStreak = 0;
+  }
+
+  /** Count entries in a timestamp deque that fall within a window ending at `now`. */
+  private int countInWindow(Deque<Double> timestamps, double now, double windowSec) {
+    int count = 0;
+    for (Double t : timestamps) {
+      if ((now - t) <= windowSec) count++;
+    }
+    return count;
   }
 
   /**
@@ -346,6 +400,12 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     SafeLog.put("Shooter/ActiveCommand", activeCommandName);
     SafeLog.put("Shooter/TorqueReversalsPerSec", torqueReversalCount);
     SafeLog.put("Shooter/TorqueReversalAlert", torqueReversalAlert);
+    SafeLog.put("Shooter/Firing", firing);
+    SafeLog.put("Shooter/FireRate10s", fireRate10s);
+    SafeLog.put("Shooter/FireRate30s", fireRate30s);
+    SafeLog.put("Shooter/PeakBPS5s", peakBPS5s);
+    SafeLog.put("Shooter/ScoringStreak", currentStreak);
+    SafeLog.put("Shooter/LongestStreak", longestStreak);
   }
 
   @Override
@@ -415,5 +475,23 @@ public class ShooterTelemetry implements SubsystemTelemetry {
 
   public boolean isTorqueReversalAlert() {
     return torqueReversalAlert;
+  }
+
+  public boolean isFiring() {
+    return firing;
+  }
+
+  public double getFireRate10s() {
+    return fireRate10s;
+  }
+
+  public int getScoringStreak() {
+    return currentStreak;
+  }
+
+  /** Returns 0 during spin-up or recovery to avoid false positives in alert checks. */
+  public double getVelocityTrackingErrorPct() {
+    if (targetRPM <= 0 || isSpinningUp || trackingRecovery) return 0;
+    return Math.abs(velocityError / targetRPM) * 100.0;
   }
 }
