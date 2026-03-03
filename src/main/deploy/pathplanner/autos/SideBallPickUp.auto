@@ -7,31 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ScoreToTrench"
+            "pathName": "TrenchToBalls"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "ScoreToHuman"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
+            "pathName": "ShortPickUpBalls"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "HumanToScore"
+            "pathName": "ShortBallsToScore"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "TimedSpeedUpThenShoot"
+            "name": "SpeedUpThenIndex"
           }
         }
       ]

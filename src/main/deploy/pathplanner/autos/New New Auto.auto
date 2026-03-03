@@ -3,58 +3,7 @@
   "command": {
     "type": "sequential",
     "data": {
-      "commands": [
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TrenchToBalls"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "DeployIntake"
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "parallel",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "ShortPickUpBalls"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "RunIntake"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ShortBallsToScore"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SpeedUpThenIndex"
-          }
-        }
-      ]
+      "commands": []
     }
   },
   "resetOdom": true,

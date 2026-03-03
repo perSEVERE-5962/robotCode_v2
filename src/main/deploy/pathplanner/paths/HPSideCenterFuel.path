@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.62,
-        "y": 4.0
+        "x": 4.0,
+        "y": 0.603
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0569051408962067,
-        "y": 4.022790136879077
+        "x": 5.0,
+        "y": 0.6029999999999998
       },
       "isLocked": false,
-      "linkedName": "ScorePosition"
+      "linkedName": "HumanPlayTrench"
     },
     {
       "anchor": {
-        "x": 0.5714978601997143,
-        "y": 0.6256633380884444
+        "x": 7.491180679785331,
+        "y": 0.603
       },
       "prevControl": {
-        "x": 0.8570157802376512,
-        "y": 1.5307962080890176
+        "x": 6.491180679785331,
+        "y": 0.6030000000000001
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "HumanPickUp"
+      "linkedName": "HPSidePickup"
     }
   ],
   "rotationTargets": [],
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

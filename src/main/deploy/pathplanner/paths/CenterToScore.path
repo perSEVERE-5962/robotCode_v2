@@ -3,35 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.62,
-        "y": 4.0
+        "x": 3.5484078711985685,
+        "y": 4.010661896243291
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0569051408962067,
-        "y": 4.022790136879077
+        "x": 2.380178890876565,
+        "y": 3.994436493738819
       },
       "isLocked": false,
-      "linkedName": "ScorePosition"
+      "linkedName": "CenterStart"
     },
     {
       "anchor": {
-        "x": 0.5714978601997143,
-        "y": 0.6256633380884444
+        "x": 2.62,
+        "y": 4.0
       },
       "prevControl": {
-        "x": 0.8570157802376512,
-        "y": 1.5307962080890176
+        "x": 3.434830053667263,
+        "y": 4.010661896243291
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "HumanPickUp"
+      "linkedName": "ScorePosition"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,7 +49,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,
