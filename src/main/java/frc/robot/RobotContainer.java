@@ -39,7 +39,6 @@ import frc.robot.commands.HubArcDrive;
 import frc.robot.commands.MoveAgitator;
 //import frc.robot.commands.AlignWithAprilTag;
 import frc.robot.commands.RetractIntake;
-import frc.robot.commands.RunIntake;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.sim.SimDriveOverride;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -174,11 +173,10 @@ public class RobotContainer {
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
         NamedCommands.registerCommand("DeployIntake", new DeployIntake());
-        NamedCommands.registerCommand("RunIntake", new MoveIntake().withTimeout(4.3));
 
-    NamedCommands.registerCommand("DeployAndRunIntake", new RunIntake());
+    NamedCommands.registerCommand("HoldAndRunIntake", new HoldAndIntake());
     NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
-        NamedCommands.registerCommand("TimedSpeedUpThenShoot", new SpeedUpThenIndex().withTimeout(8));
+        NamedCommands.registerCommand("TimedShoot", new SpeedUpThenIndex().withTimeout(8));
 
 
 
