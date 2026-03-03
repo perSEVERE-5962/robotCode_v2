@@ -378,6 +378,90 @@
               "inverted": false,
               "orientation": "horizontal"
             }
+          },
+          {
+            "title": "UnderShoot %",
+            "x": 0,
+            "y": 614,
+            "width": 307,
+            "height": 102,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter/Firing/UnderShootPct",
+              "period": 0.033,
+              "min_value": 0.5,
+              "max_value": 1.0,
+              "divisions": 10,
+              "default_value": 0.85
+            }
+          },
+          {
+            "title": "Debounce Ms",
+            "x": 307,
+            "y": 614,
+            "width": 307,
+            "height": 102,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter/Firing/DebounceMs",
+              "period": 0.033,
+              "min_value": 100.0,
+              "max_value": 2000.0,
+              "divisions": 19,
+              "default_value": 400.0
+            }
+          },
+          {
+            "title": "FireRate 10s",
+            "x": 614,
+            "y": 614,
+            "width": 256,
+            "height": 102,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/FireRate10s",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Peak BPS 5s",
+            "x": 870,
+            "y": 614,
+            "width": 256,
+            "height": 102,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/PeakBPS5s",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Streak",
+            "x": 1126,
+            "y": 614,
+            "width": 180,
+            "height": 102,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/ScoringStreak",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Best Streak",
+            "x": 1306,
+            "y": 614,
+            "width": 180,
+            "height": 102,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/LongestStreak",
+              "period": 0.033,
+              "show_submit_button": false
+            }
           }
         ]
       }

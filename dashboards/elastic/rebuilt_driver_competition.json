@@ -525,6 +525,84 @@
               "period": 0.033,
               "show_submit_button": false
             }
+          },
+          {
+            "title": "Rate 10s",
+            "x": 0,
+            "y": 512,
+            "width": 307,
+            "height": 102,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/FireRate10s",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Rate 30s",
+            "x": 307,
+            "y": 512,
+            "width": 307,
+            "height": 102,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/FireRate30s",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Peak BPS",
+            "x": 614,
+            "y": 512,
+            "width": 205,
+            "height": 102,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/PeakBPS5s",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Streak",
+            "x": 819,
+            "y": 512,
+            "width": 205,
+            "height": 102,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/ScoringStreak",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Best Streak",
+            "x": 1024,
+            "y": 512,
+            "width": 205,
+            "height": 102,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/LongestStreak",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Vis Accept %",
+            "x": 1229,
+            "y": 512,
+            "width": 256,
+            "height": 102,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Vision/Filter/AcceptRatePct",
+              "period": 0.033,
+              "show_submit_button": false
+            }
           }
         ]
       }
