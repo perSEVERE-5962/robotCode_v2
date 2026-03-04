@@ -257,10 +257,6 @@ public class TelemetryManager {
     return getSafely(() -> !indexerTelemetry.isJamDetected(), true);
   }
 
-  public void clearIndexerJam() {
-    runSafely(() -> indexerTelemetry.clearJam(), "Indexer/clearJam");
-  }
-
   public int getIndexerJamCount() {
     return getSafely(() -> indexerTelemetry.getTotalJamCount(), 0);
   }
@@ -271,10 +267,6 @@ public class TelemetryManager {
 
   public boolean isIntakeJamDetected() {
     return getSafely(() -> intakeTelemetry.isJamDetected(), false);
-  }
-
-  public void clearIntakeJam() {
-    runSafely(() -> intakeTelemetry.clearJam(), "Intake/clearJam");
   }
 
   public int getIntakeJamCount() {
@@ -402,5 +394,9 @@ public class TelemetryManager {
 
   public double getTimeToNextShiftSec() {
     return getSafely(() -> scoringTelemetry.getTimeToNextShiftSec(), 0.0);
+  }
+
+  public boolean isWonAuto() {
+    return getSafely(() -> scoringTelemetry.isWonAuto(), false);
   }
 }

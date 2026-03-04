@@ -200,8 +200,8 @@ class FeedbackPipelineIntegrationTest {
     DriverStationSim.notifyNewData();
     pipelineCycle();
 
-    assertEquals("TELEOP_START", feedback.getActivePatternName(),
-        "TELEOP_START haptic should fire on auto-to-teleop transition");
+    assertEquals("AUTO_LOST", feedback.getActivePatternName(),
+        "AUTO_LOST haptic should fire on auto-to-teleop transition (default wonAuto=false)");
     assertTrue(feedback.getLeftMotor() > 0, "Left rumble should be active");
     assertTrue(feedback.getRightMotor() > 0, "Right rumble should be active");
   }

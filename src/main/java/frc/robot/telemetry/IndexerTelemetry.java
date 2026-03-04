@@ -270,11 +270,6 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     return stalled;
   }
 
-  public void clearJam() {
-    jamDetected = false;
-    inJamCondition = false;
-  }
-
   public boolean isJamProtectionIntervening() {
     return jamProtectionIntervening;
   }

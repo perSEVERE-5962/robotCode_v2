@@ -275,4 +275,8 @@ public class ScoringTelemetry implements SubsystemTelemetry {
   public String getReadyLostReason() {
     return readyLostReason;
   }
+
+  public boolean isWonAuto() {
+    return wonAuto;
+  }
 }

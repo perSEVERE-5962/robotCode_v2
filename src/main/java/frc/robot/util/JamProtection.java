@@ -9,9 +9,8 @@ import java.util.function.DoubleSupplier;
  * <p>Layer 1: Startup ignore (suppress false triggers from inrush current). Layer 2: Sustained jam
  * confirmation (current + velocity debounce). Layer 3: Reverse-and-retry with attempt limiting.
  *
- * <p>Call {@link #update(double, double, boolean)} from the subsystem's periodic(). When the
- * returned state is REVERSING, override the motor to the reverse power. When DISABLED, cut motor
- * power. Otherwise let the command run normally.
+ * <p>Call {@link #update(double, double, boolean)} from the subsystem's periodic(). The state
+ * machine is observe-only; telemetry reads the state for logging but never overrides motors.
  */
 public class JamProtection {
 
@@ -109,7 +108,7 @@ public class JamProtection {
    * @param currentAmps motor output current
    * @param velocityRPM motor velocity
    * @param running true if the motor is commanded to run
-   * @return the current state; caller should override motor output for REVERSING and DISABLED
+   * @return the current state for telemetry observation
    */
   public State update(double currentAmps, double velocityRPM, boolean running) {
     double now = clock.getAsDouble();
@@ -184,20 +183,6 @@ public class JamProtection {
     }
 
     return state;
-  }
-
-  /** Get the motor output override, or NaN if the command should run normally. */
-  public double getMotorOverride() {
-    switch (state) {
-      case REVERSING:
-        return reversePower;
-      case COOLDOWN:
-        return 0;
-      case DISABLED:
-        return 0;
-      default:
-        return Double.NaN;
-    }
   }
 
   /** Reset jam protection (e.g., driver presses a button). Clears attempts and re-enables. */

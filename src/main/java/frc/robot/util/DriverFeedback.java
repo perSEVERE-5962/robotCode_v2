@@ -32,10 +32,33 @@ public class DriverFeedback {
 
   // --- Haptic patterns ---
 
-  // CRITICAL: match phase -> BOTH controllers
-  public static final HapticPattern TELEOP_START =
+  // CRITICAL: auto result at teleop start -> BOTH controllers
+  // Both start with a strong buzz (teleop started!), then indicate win/loss.
+  // Right follow-up = won auto (right side = scoring/positive in our pattern language)
+  // Left follow-up = lost auto (left side = warning/alert)
+  public static final HapticPattern AUTO_WON =
       new HapticPattern(
-          "TELEOP_START", new Step[] {new Step(1.0, 1.0, 0.3)}, Priority.CRITICAL, HapticTarget.BOTH);
+          "AUTO_WON",
+          new Step[] {
+            new Step(1.0, 1.0, 0.2),
+            new Step(0, 0, 0.1),
+            new Step(0, 0.5, 0.15),
+            new Step(0, 0, 0.05),
+            new Step(0, 0.5, 0.15)
+          },
+          Priority.CRITICAL,
+          HapticTarget.BOTH);
+
+  public static final HapticPattern AUTO_LOST =
+      new HapticPattern(
+          "AUTO_LOST",
+          new Step[] {
+            new Step(1.0, 1.0, 0.2),
+            new Step(0, 0, 0.1),
+            new Step(0.7, 0, 0.3)
+          },
+          Priority.CRITICAL,
+          HapticTarget.BOTH);
 
   public static final HapticPattern ENDGAME_WARNING =
       new HapticPattern(
@@ -72,50 +95,85 @@ public class DriverFeedback {
           HapticTarget.COPILOT);
 
   // HIGH: jam protection intervening -> COPILOT
+  // Left-right-left alternating feels "stuck/rocking", distinct from GAME_DATA_MISSING's symmetric pulses
   public static final HapticPattern JAM_DETECTED =
       new HapticPattern(
           "JAM_DETECTED",
           new Step[] {
-            new Step(0.8, 0.8, 0.2),
+            new Step(0.8, 0, 0.2),
             new Step(0, 0, 0.1),
-            new Step(0.8, 0.8, 0.2),
+            new Step(0, 0.8, 0.2),
             new Step(0, 0, 0.1),
-            new Step(0.8, 0.8, 0.2)
+            new Step(0.8, 0, 0.2)
           },
           Priority.HIGH,
           HapticTarget.COPILOT);
 
-  // MEDIUM: predictive warning -> BOTH controllers
-  public static final HapticPattern HUB_SHIFT_WARNING =
+  // CRITICAL: game data missing alert -> BOTH (repeats every 2s during transition)
+  // FMS attached but no 'R'/'B' auto-winner message yet. Hub shift logic is guessing.
+  public static final HapticPattern GAME_DATA_MISSING =
       new HapticPattern(
-          "HUB_SHIFT_WARNING",
+          "GAME_DATA_MISSING",
           new Step[] {
-            new Step(0.3, 0.3, 0.1),
-            new Step(0, 0, 0.05),
-            new Step(0.3, 0.3, 0.1),
-            new Step(0, 0, 0.05),
-            new Step(0.3, 0.3, 0.1)
+            new Step(1.0, 1.0, 0.2),
+            new Step(0, 0, 0.1),
+            new Step(1.0, 1.0, 0.2),
+            new Step(0, 0, 0.1),
+            new Step(1.0, 1.0, 0.2)
           },
-          Priority.MEDIUM,
+          Priority.CRITICAL,
           HapticTarget.BOTH);
 
-  // --- Test pattern table (indexed 1-7 from Elastic slider) ---
+  // MEDIUM: graduated hub countdown (5s to 1s before shift, intensity ramps up)
+  public static final HapticPattern HUB_COUNTDOWN_5 =
+      new HapticPattern(
+          "HUB_COUNTDOWN_5", new Step[] {new Step(0.25, 0.25, 0.1)},
+          Priority.MEDIUM, HapticTarget.BOTH);
+
+  public static final HapticPattern HUB_COUNTDOWN_4 =
+      new HapticPattern(
+          "HUB_COUNTDOWN_4", new Step[] {new Step(0.25, 0.25, 0.1)},
+          Priority.MEDIUM, HapticTarget.BOTH);
+
+  public static final HapticPattern HUB_COUNTDOWN_3 =
+      new HapticPattern(
+          "HUB_COUNTDOWN_3", new Step[] {new Step(0.40, 0.40, 0.12)},
+          Priority.MEDIUM, HapticTarget.BOTH);
+
+  public static final HapticPattern HUB_COUNTDOWN_2 =
+      new HapticPattern(
+          "HUB_COUNTDOWN_2", new Step[] {new Step(0.60, 0.60, 0.15)},
+          Priority.MEDIUM, HapticTarget.BOTH);
+
+  public static final HapticPattern HUB_COUNTDOWN_1 =
+      new HapticPattern(
+          "HUB_COUNTDOWN_1", new Step[] {new Step(0.85, 0.85, 0.2)},
+          Priority.MEDIUM, HapticTarget.BOTH);
+
+  // Array for indexed access: index 0 = 5s, index 4 = 1s
+  static final HapticPattern[] HUB_COUNTDOWN = {
+    HUB_COUNTDOWN_5, HUB_COUNTDOWN_4, HUB_COUNTDOWN_3, HUB_COUNTDOWN_2, HUB_COUNTDOWN_1
+  };
+
+  // --- Test pattern table (indexed 1-9 from Elastic slider) ---
   private static final HapticPattern[] TEST_PATTERNS = {
-    TELEOP_START, ENDGAME_WARNING, READY_TO_SHOOT, HUB_ACTIVATED, HUB_DEACTIVATED,
-    HUB_SHIFT_WARNING, JAM_DETECTED
+    AUTO_WON, AUTO_LOST, ENDGAME_WARNING, READY_TO_SHOOT, HUB_ACTIVATED,
+    HUB_DEACTIVATED, HUB_COUNTDOWN_3, JAM_DETECTED, GAME_DATA_MISSING
   };
 
   private static final String[] TEST_DESCRIPTIONS = {
-    "1: TELEOP_START - Full buzz, teleop begins",
-    "2: ENDGAME_WARNING - 2 pulses, 30s warning",
-    "3: READY_TO_SHOOT - Right tap, ready to fire",
-    "4: HUB_ACTIVATED - 2 right pings, hub live",
-    "5: HUB_DEACTIVATED - Left thump, hub off",
-    "6: HUB_SHIFT_WARNING - 3 quick taps, shift coming",
-    "7: JAM_DETECTED - 3 strong pulses, jam auto-reverse"
+    "1: AUTO_WON - Buzz + 2 right pings, we won auto",
+    "2: AUTO_LOST - Buzz + left thump, we lost auto",
+    "3: ENDGAME_WARNING - 2 pulses, 30s warning",
+    "4: READY_TO_SHOOT - Right tap, ready to fire",
+    "5: HUB_ACTIVATED - 2 right pings, hub live",
+    "6: HUB_DEACTIVATED - Left thump, hub off",
+    "7: HUB_COUNTDOWN_3 - Mid countdown pulse, shift coming",
+    "8: JAM_DETECTED - 3 strong pulses, jam auto-reverse",
+    "9: GAME_DATA_MISSING - 3 strong, FMS data missing"
   };
 
-  // Elastic slider: set 1-7 to play that pattern, 0 = off
+  // Elastic slider: set 1-9 to play that pattern, 0 = off
   private static final TunableNumber testPattern =
       new TunableNumber("DriverFeedback/TestPattern", 0);
   private int lastTestPatternValue = 0;
@@ -149,10 +207,16 @@ public class DriverFeedback {
   // --- Spin-up rumble (continuous background on DRIVER) ---
   private double spinUpPercent = 0;
 
-  // --- Hub countdown warning ---
-  private static final double HUB_SHIFT_WARN_THRESHOLD_SEC = 2.5;
-  private boolean hubShiftWarningPlayed = false;
-  private double prevTimeToNextShift = 0;
+  // --- Hub graduated countdown ---
+  private int prevCountdownSecond = -1;
+
+  // --- Game data missing alert (repeats during transition) ---
+  // Transition period is ~10s from teleop start. If FMS is attached but hasn't
+  // sent the 'R'/'B' auto-winner message, hub shift logic is running blind.
+  private static final double GAME_DATA_TRANSITION_SEC = 10.0;
+  private static final double GAME_DATA_ALERT_INTERVAL_SEC = 2.0;
+  private double lastGameDataAlertTime = 0;
+  private double teleopStartTime = -1;
 
   // --- Accessibility ---
   private static final TunableNumber hapticScale =
@@ -207,6 +271,7 @@ public class DriverFeedback {
     boolean isEnabled = false;
     boolean isAutonomous = false;
     boolean jamIntervening = false;
+    boolean wonAuto = false;
 
     try {
       TelemetryManager tm = TelemetryManager.getInstance();
@@ -215,6 +280,7 @@ public class DriverFeedback {
       timeToNextShift = tm.getTimeToNextShiftSec();
       spinUpPercent = tm.getFilteredSpinUpPercent();
       jamIntervening = tm.isAnyJamIntervening();
+      wonAuto = tm.isWonAuto();
       matchTime = DriverStation.getMatchTime();
       isEnabled = DriverStation.isEnabled();
       isAutonomous = DriverStation.isAutonomous();
@@ -225,7 +291,7 @@ public class DriverFeedback {
     // Reset edge detection flags on enable
     if (isEnabled && !prevEnabled) {
       endgameWarningPlayed = false;
-      hubShiftWarningPlayed = false;
+      prevCountdownSecond = -1;
       prevHubActive = hubActive;
     }
 
@@ -237,7 +303,7 @@ public class DriverFeedback {
       prevJamIntervening = jamIntervening;
       prevEnabled = isEnabled;
       prevAutonomous = isAutonomous;
-      prevTimeToNextShift = timeToNextShift;
+      prevCountdownSecond = -1;
       // Zero any leftover rumble
       applyRumble(controller, 0, 0);
       applyRumble(copilotController, 0, 0);
@@ -245,13 +311,34 @@ public class DriverFeedback {
     }
 
     // --- Match phase events (CRITICAL -> BOTH) ---
+    // At auto-to-teleop transition, signal whether we won or lost auto.
+    // FMS sends 'R' or 'B' via game-specific message; ScoringTelemetry parses it.
+    // Won auto = our hub inactive first (collect/defend), lost = hub active (score NOW).
     if (matchTime >= 0 && isEnabled) {
       if (!isAutonomous && prevAutonomous) {
-        playPattern(TELEOP_START);
+        playPattern(wonAuto ? AUTO_WON : AUTO_LOST);
+        teleopStartTime = now;
       }
       if (!isAutonomous && matchTime <= 30 && !endgameWarningPlayed) {
         playPattern(ENDGAME_WARNING);
         endgameWarningPlayed = true;
+      }
+    }
+
+    // --- Game data missing alert (CRITICAL -> BOTH, repeats every 2s) ---
+    // FMS attached but no auto-winner data during transition period = hub logic is guessing
+    if (isEnabled && !isAutonomous && teleopStartTime > 0) {
+      double teleopElapsed = now - teleopStartTime;
+      String gameMsg = DriverStation.getGameSpecificMessage();
+      boolean gameDataMissing = DriverStation.isFMSAttached()
+          && (gameMsg == null || gameMsg.isEmpty())
+          && teleopElapsed < GAME_DATA_TRANSITION_SEC;
+      if (gameDataMissing && (now - lastGameDataAlertTime) >= GAME_DATA_ALERT_INTERVAL_SEC) {
+        playPattern(GAME_DATA_MISSING);
+        lastGameDataAlertTime = now;
+      }
+      if (!gameDataMissing) {
+        lastGameDataAlertTime = 0;
       }
     }
 
@@ -263,19 +350,13 @@ public class DriverFeedback {
       playPattern(HUB_DEACTIVATED);
     }
 
-    // --- Hub countdown warning (MEDIUM -> BOTH, edge-triggered per shift) ---
-    if (timeToNextShift > 0
-        && timeToNextShift <= HUB_SHIFT_WARN_THRESHOLD_SEC
-        && prevTimeToNextShift > HUB_SHIFT_WARN_THRESHOLD_SEC
-        && !hubShiftWarningPlayed) {
-      playPattern(HUB_SHIFT_WARNING);
-      hubShiftWarningPlayed = true;
+    // --- Graduated hub countdown (5s to 1s, MEDIUM -> BOTH) ---
+    int countdownSec = (timeToNextShift > 0 && timeToNextShift <= 5.5)
+        ? (int) Math.ceil(timeToNextShift) : -1;
+    if (countdownSec >= 1 && countdownSec <= 5 && countdownSec != prevCountdownSecond) {
+      playPattern(HUB_COUNTDOWN[countdownSec - 1]);
     }
-    // Reset flag when countdown resets (new shift window)
-    if (timeToNextShift > HUB_SHIFT_WARN_THRESHOLD_SEC) {
-      hubShiftWarningPlayed = false;
-    }
-    prevTimeToNextShift = timeToNextShift;
+    prevCountdownSecond = (timeToNextShift > 0) ? countdownSec : -1;
 
     // --- Scoring events (HIGH -> COPILOT) ---
     if (readyToShoot && !prevReadyToShoot) {
@@ -425,8 +506,9 @@ public class DriverFeedback {
     progressiveAimError = -1;
     lastProgressiveAimUpdateSec = -1;
     spinUpPercent = 0;
-    hubShiftWarningPlayed = false;
-    prevTimeToNextShift = 0;
+    prevCountdownSecond = -1;
+    lastGameDataAlertTime = 0;
+    teleopStartTime = -1;
 
     applyRumble(controller, 0, 0);
     applyRumble(copilotController, 0, 0);

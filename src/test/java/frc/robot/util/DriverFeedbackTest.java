@@ -188,25 +188,25 @@ class DriverFeedbackTest {
   @Test
   void testRumbleRoutesToBothForCriticalPattern() {
     setEnabled(true);
-    // TELEOP_START targets BOTH, so both controllers should rumble
-    feedback.playPattern(DriverFeedback.TELEOP_START);
+    // AUTO_WON targets BOTH, so both controllers should rumble
+    feedback.playPattern(DriverFeedback.AUTO_WON);
     feedback.update();
 
     double driverLeft = driverSim.getRumble(GenericHID.RumbleType.kLeftRumble);
     double driverRight = driverSim.getRumble(GenericHID.RumbleType.kRightRumble);
-    assertTrue(driverLeft > 0, "Driver left rumble should be active for TELEOP_START");
-    assertTrue(driverRight > 0, "Driver right rumble should be active for TELEOP_START");
+    assertTrue(driverLeft > 0, "Driver left rumble should be active for AUTO_WON");
+    assertTrue(driverRight > 0, "Driver right rumble should be active for AUTO_WON");
 
     double copilotLeft = copilotSim.getRumble(GenericHID.RumbleType.kLeftRumble);
     double copilotRight = copilotSim.getRumble(GenericHID.RumbleType.kRightRumble);
-    assertTrue(copilotLeft > 0, "Copilot left rumble should be active for TELEOP_START");
-    assertTrue(copilotRight > 0, "Copilot right rumble should be active for TELEOP_START");
+    assertTrue(copilotLeft > 0, "Copilot left rumble should be active for AUTO_WON");
+    assertTrue(copilotRight > 0, "Copilot right rumble should be active for AUTO_WON");
   }
 
   @Test
   void testDisabledModeClearsActiveRumble() {
     setEnabled(true);
-    feedback.playPattern(DriverFeedback.TELEOP_START);
+    feedback.playPattern(DriverFeedback.AUTO_WON);
     feedback.update();
 
     assertTrue(driverSim.getRumble(GenericHID.RumbleType.kLeftRumble) > 0);
@@ -242,16 +242,37 @@ class DriverFeedbackTest {
   // Pattern 7 from FMEA: "If it turns on, prove it turns off"
 
   @Test
-  void testTeleopStartActivatesAndExpires() {
+  void testAutoWonActivatesAndExpires() {
     setEnabled(true);
-    feedback.playPattern(DriverFeedback.TELEOP_START);
-    assertEquals("TELEOP_START", feedback.getActivePatternName());
+    feedback.playPattern(DriverFeedback.AUTO_WON);
+    assertEquals("AUTO_WON", feedback.getActivePatternName());
     assertTrue(feedback.getLeftMotor() > 0, "Left motor should be active");
     assertTrue(feedback.getRightMotor() > 0, "Right motor should be active");
 
-    // TELEOP_START is 1 step of 0.3s. Advance past it.
-    SimHooks.stepTiming(0.35);
-    feedback.update();
+    // AUTO_WON: 5 steps (0.2+0.1+0.15+0.05+0.15 = 0.65s total)
+    for (int i = 0; i < 5; i++) {
+      SimHooks.stepTiming(0.25);
+      feedback.update();
+    }
+
+    assertEquals("none", feedback.getActivePatternName());
+    assertEquals(0, feedback.getLeftMotor(), 0.01);
+    assertEquals(0, feedback.getRightMotor(), 0.01);
+  }
+
+  @Test
+  void testAutoLostActivatesAndExpires() {
+    setEnabled(true);
+    feedback.playPattern(DriverFeedback.AUTO_LOST);
+    assertEquals("AUTO_LOST", feedback.getActivePatternName());
+    assertTrue(feedback.getLeftMotor() > 0, "Left motor should be active");
+    assertTrue(feedback.getRightMotor() > 0, "Right motor should be active");
+
+    // AUTO_LOST: 3 steps (0.2+0.1+0.3 = 0.6s total)
+    for (int i = 0; i < 3; i++) {
+      SimHooks.stepTiming(0.35);
+      feedback.update();
+    }
 
     assertEquals("none", feedback.getActivePatternName());
     assertEquals(0, feedback.getLeftMotor(), 0.01);
@@ -325,20 +346,31 @@ class DriverFeedbackTest {
   }
 
   @Test
-  void testHubShiftWarningActivatesAndExpires() {
+  void testHubCountdownActivatesAndExpires() {
     setEnabled(true);
-    feedback.playPattern(DriverFeedback.HUB_SHIFT_WARNING);
-    assertEquals("HUB_SHIFT_WARNING", feedback.getActivePatternName());
+    feedback.playPattern(DriverFeedback.HUB_COUNTDOWN_3);
+    assertEquals("HUB_COUNTDOWN_3", feedback.getActivePatternName());
 
-    // HUB_SHIFT_WARNING: 5 steps (0.1+0.05+0.1+0.05+0.1 = 0.40s total)
-    for (int i = 0; i < 5; i++) {
-      SimHooks.stepTiming(0.15);
-      feedback.update();
-    }
+    // HUB_COUNTDOWN_3: 1 step of 0.12s
+    SimHooks.stepTiming(0.15);
+    feedback.update();
 
     assertEquals("none", feedback.getActivePatternName());
     assertEquals(0, feedback.getLeftMotor(), 0.01);
     assertEquals(0, feedback.getRightMotor(), 0.01);
+  }
+
+  @Test
+  void testGraduatedCountdownIntensityIncreases() {
+    // HUB_COUNTDOWN_5 (gentle) should be weaker than HUB_COUNTDOWN_1 (strong)
+    feedback.playPattern(DriverFeedback.HUB_COUNTDOWN_5);
+    double gentleLeft = feedback.getLeftMotor();
+
+    feedback.playPattern(DriverFeedback.HUB_COUNTDOWN_1);
+    double strongLeft = feedback.getLeftMotor();
+
+    assertTrue(strongLeft > gentleLeft,
+        "HUB_COUNTDOWN_1 (" + strongLeft + ") should be stronger than HUB_COUNTDOWN_5 (" + gentleLeft + ")");
   }
 
   @Test
@@ -371,7 +403,7 @@ class DriverFeedbackTest {
   @Test
   void testPatternNeverActivatesWhenDisabled() {
     setEnabled(false);
-    feedback.playPattern(DriverFeedback.TELEOP_START);
+    feedback.playPattern(DriverFeedback.AUTO_WON);
     feedback.update();
 
     // Pattern is queued but rumble should be zero because disabled
@@ -387,10 +419,11 @@ class DriverFeedbackTest {
 
     // Play every pattern and verify each one expires to zero rumble
     HapticPattern[] allPatterns = {
-      DriverFeedback.TELEOP_START, DriverFeedback.ENDGAME_WARNING,
+      DriverFeedback.AUTO_WON, DriverFeedback.AUTO_LOST,
+      DriverFeedback.ENDGAME_WARNING,
       DriverFeedback.READY_TO_SHOOT, DriverFeedback.HUB_ACTIVATED,
-      DriverFeedback.HUB_DEACTIVATED, DriverFeedback.HUB_SHIFT_WARNING,
-      DriverFeedback.JAM_DETECTED
+      DriverFeedback.HUB_DEACTIVATED, DriverFeedback.HUB_COUNTDOWN_3,
+      DriverFeedback.JAM_DETECTED, DriverFeedback.GAME_DATA_MISSING
     };
 
     for (HapticPattern pattern : allPatterns) {
