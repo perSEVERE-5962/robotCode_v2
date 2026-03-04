@@ -173,7 +173,7 @@ public class DriverFeedback {
     "9: GAME_DATA_MISSING - 3 strong, FMS data missing"
   };
 
-  // Elastic slider: set 1-7 to play that pattern, 0 = off
+  // Elastic slider: set 1-9 to play that pattern, 0 = off
   private static final TunableNumber testPattern =
       new TunableNumber("DriverFeedback/TestPattern", 0);
   private int lastTestPatternValue = 0;

@@ -20,7 +20,7 @@
             }
           },
           {
-            "title": "Haptic Pattern (0=off, 1-5)",
+            "title": "Haptic Pattern (0=off, 1-9)",
             "x": 0,
             "y": 102,
             "width": 512,
@@ -30,8 +30,8 @@
               "topic": "/SmartDashboard/DriverFeedback/TestPattern",
               "period": 0.033,
               "min_value": 0.0,
-              "max_value": 5.0,
-              "divisions": 5,
+              "max_value": 9.0,
+              "divisions": 9,
               "publish_all": false
             }
           },
