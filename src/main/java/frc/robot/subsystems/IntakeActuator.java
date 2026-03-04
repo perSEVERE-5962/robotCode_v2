@@ -24,11 +24,11 @@ public class IntakeActuator extends Actuator {
         Constants.IntakeConstants.MaxOutput,
         Constants.IntakeConstants.FF,
         Constants.IntakeConstants.Iz,
-        0,
         38.25f,
+        0,
         false,
         false,
-        false);
+        true);
         motor = getMotor();
     motorConfig = new SparkMaxConfig();
 
