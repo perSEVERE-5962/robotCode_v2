@@ -51,6 +51,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.HubScoringConstants;
 import java.io.File;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.MoveIntake;
@@ -212,7 +213,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-    Command hubArcDrive = new HubArcDrive(drivebase, driverXbox::getLeftX, getHubCenter(), SCORING_DISTANCE, getScoringSide());
+    Command hubArcDrive = Commands.defer(() -> new HubArcDrive(drivebase, driverXbox::getLeftX, getHubCenter(), SCORING_DISTANCE, getScoringSide()), Set.of(drivebase));
 
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
@@ -272,7 +273,7 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
       
-      driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
+      driverXbox.a().onTrue(Commands.defer(()-> new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES), Set.of(drivebase)));
       driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM,hubArcDrive::isScheduled ).alongWith(new MoveAgitator(Constants.AgitatorConstants.TARGET_RPM,hubArcDrive::isScheduled)));
       driverXbox.x().toggleOnTrue(hubArcDrive);
       driverXbox.b().onTrue(new RetractIntake());
