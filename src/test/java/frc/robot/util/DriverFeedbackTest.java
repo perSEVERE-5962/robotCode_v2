@@ -346,20 +346,31 @@ class DriverFeedbackTest {
   }
 
   @Test
-  void testHubShiftWarningActivatesAndExpires() {
+  void testHubCountdownActivatesAndExpires() {
     setEnabled(true);
-    feedback.playPattern(DriverFeedback.HUB_SHIFT_WARNING);
-    assertEquals("HUB_SHIFT_WARNING", feedback.getActivePatternName());
+    feedback.playPattern(DriverFeedback.HUB_COUNTDOWN_3);
+    assertEquals("HUB_COUNTDOWN_3", feedback.getActivePatternName());
 
-    // HUB_SHIFT_WARNING: 5 steps (0.1+0.05+0.1+0.05+0.1 = 0.40s total)
-    for (int i = 0; i < 5; i++) {
-      SimHooks.stepTiming(0.15);
-      feedback.update();
-    }
+    // HUB_COUNTDOWN_3: 1 step of 0.12s
+    SimHooks.stepTiming(0.15);
+    feedback.update();
 
     assertEquals("none", feedback.getActivePatternName());
     assertEquals(0, feedback.getLeftMotor(), 0.01);
     assertEquals(0, feedback.getRightMotor(), 0.01);
+  }
+
+  @Test
+  void testGraduatedCountdownIntensityIncreases() {
+    // HUB_COUNTDOWN_5 (gentle) should be weaker than HUB_COUNTDOWN_1 (strong)
+    feedback.playPattern(DriverFeedback.HUB_COUNTDOWN_5);
+    double gentleLeft = feedback.getLeftMotor();
+
+    feedback.playPattern(DriverFeedback.HUB_COUNTDOWN_1);
+    double strongLeft = feedback.getLeftMotor();
+
+    assertTrue(strongLeft > gentleLeft,
+        "HUB_COUNTDOWN_1 (" + strongLeft + ") should be stronger than HUB_COUNTDOWN_5 (" + gentleLeft + ")");
   }
 
   @Test
@@ -411,7 +422,7 @@ class DriverFeedbackTest {
       DriverFeedback.AUTO_WON, DriverFeedback.AUTO_LOST,
       DriverFeedback.ENDGAME_WARNING,
       DriverFeedback.READY_TO_SHOOT, DriverFeedback.HUB_ACTIVATED,
-      DriverFeedback.HUB_DEACTIVATED, DriverFeedback.HUB_SHIFT_WARNING,
+      DriverFeedback.HUB_DEACTIVATED, DriverFeedback.HUB_COUNTDOWN_3,
       DriverFeedback.JAM_DETECTED, DriverFeedback.GAME_DATA_MISSING
     };
 

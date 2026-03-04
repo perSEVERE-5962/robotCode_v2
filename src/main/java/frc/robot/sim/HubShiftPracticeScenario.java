@@ -15,7 +15,7 @@ import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
  * <ul>
  *   <li>HUB_ACTIVATED: hub becomes active (right-only pulse)
  *   <li>HUB_DEACTIVATED: hub becomes inactive (left-only buzz)
- *   <li>HUB_SHIFT_WARNING: 2.5s before each shift boundary (triple pulse)
+ *   <li>HUB_COUNTDOWN: graduated countdown (5s to 1s before each shift, intensity ramps up)
  * </ul>
  *
  * <p>Hub shift schedule (REBUILT Section 6.4):

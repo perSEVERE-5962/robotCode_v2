@@ -15,7 +15,7 @@ import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
  *
  * <p>Naturally triggered haptic patterns (5/7): TELEOP_START (auto->teleop transition),
  * ENDGAME_WARNING (matchTime<=30), HUB_ACTIVATED (hub becomes active), HUB_DEACTIVATED (hub
- * becomes inactive), HUB_SHIFT_WARNING (timeToNextShift crosses 2.5s).
+ * becomes inactive), HUB_COUNTDOWN (graduated 5s-1s countdown pulses before shift).
  *
  * <p>Naturally triggered LED states (7/10): DISABLED, IDLE, AUTO_RUNNING, SHOOTER_SPINUP, WARNING
  * (low voltage), CRITICAL_ALERT (very low voltage), MATCH_OVER (matchTime crosses 0).
@@ -128,7 +128,7 @@ public class AMDAShowcaseScenario implements SimScenario {
       case 4:
         return "HubDeactivate_Haptic_HUB_DEACTIVATED";
       case 5:
-        return "ShiftWarn_Haptic_HUB_SHIFT_WARNING";
+        return "ShiftWarn_Haptic_HUB_COUNTDOWN";
       case 6:
         return "HubReactivate_Haptic_HUB_ACTIVATED";
       case 7:
@@ -207,15 +207,14 @@ public class AMDAShowcaseScenario implements SimScenario {
         SafeLog.put("Sim/AMDA/ExpectedHaptic", "HUB_ACTIVATED");
         break;
 
-      case 5: // Approach shift boundary -> Haptic: HUB_SHIFT_WARNING
-        // Stop shooter, set matchTime so timeToNextShift will cross 2.5s
+      case 5: // Approach shift boundary -> Haptic: HUB_COUNTDOWN (graduated)
+        // Stop shooter, set matchTime so countdown fires 5s-1s before shift
         input.copilotSetRightTrigger(0);
-        // matchTime 82.5 -> next shift at 80 -> timeToNextShift = 2.5
-        // We'll ramp matchTime from 84 down to 78 over this phase
-        DriverStationSim.setMatchTime(84.0);
+        // Next shift at 80, ramp matchTime from 86 down to 78 over this phase
+        DriverStationSim.setMatchTime(86.0);
         DriverStationSim.notifyNewData();
         SafeLog.put("Sim/AMDA/ExpectedLED", "IDLE");
-        SafeLog.put("Sim/AMDA/ExpectedHaptic", "HUB_SHIFT_WARNING");
+        SafeLog.put("Sim/AMDA/ExpectedHaptic", "HUB_COUNTDOWN");
         break;
 
       case 6: // Hub reactivation after shift -> Haptic: HUB_ACTIVATED (or DEACTIVATED)
@@ -281,11 +280,10 @@ public class AMDAShowcaseScenario implements SimScenario {
         DriverStationSim.notifyNewData();
         break;
 
-      case 5: // Shift warning: ramp matchTime from 84 down through 80 boundary
-        // Over 5s, matchTime goes 84 -> 78, crossing shift 3 boundary at 80
-        // HUB_SHIFT_WARNING fires when timeToNextShift crosses 2.5s (at matchTime 82.5)
+      case 5: // Shift countdown: ramp matchTime from 86 down through 80 boundary
+        // Over 5s, matchTime goes 86 -> 78, graduated countdown fires at 5s,4s,3s,2s,1s
         double warnT = t - HUB_DEACTIVATE_END;
-        double matchTime = 84.0 - (warnT / 5.0) * 6.0;
+        double matchTime = 86.0 - (warnT / 5.0) * 8.0;
         DriverStationSim.setMatchTime(Math.max(78.0, matchTime));
         DriverStationSim.notifyNewData();
         break;
