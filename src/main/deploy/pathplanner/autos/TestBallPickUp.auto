@@ -11,29 +11,9 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "DeployIntake"
-                }
-              },
-              {
-                "type": "parallel",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "PickUpBalls"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "pathName": "PickUpBalls"
           }
         },
         {
