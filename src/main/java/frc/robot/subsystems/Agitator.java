@@ -1,18 +1,11 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
 public class Agitator extends Actuator {
-  private SparkMax motor;
   private static Agitator instance;
   private static final TunableNumber kP = new TunableNumber("Agitator/kP", Constants.AgitatorConstants.P);
   private static final TunableNumber kI = new TunableNumber("Agitator/kI", Constants.AgitatorConstants.I);
@@ -52,26 +45,25 @@ private static final TunableNumber targetSpeed =
         false,
         false,
         false);
-    motor = getMotor();
   }
 
   public double getTemperature() {
-    return motor.getMotorTemperature();
+    return getMotor().getMotorTemperature();
   }
 
 
 
 
   public double getAppliedOutput() {
-    return motor.getAppliedOutput();
+    return getMotor().getAppliedOutput();
   }
 
   public double getOutputCurrent() {
-    return motor.getOutputCurrent();
+    return getMotor().getOutputCurrent();
   }
 
   public double getVelocityRPM() {
-    return motor.getEncoder().getVelocity();
+    return getMotor().getEncoder().getVelocity();
   }
 
   @Override
@@ -86,24 +78,13 @@ private static final TunableNumber targetSpeed =
   }
 
   public boolean isRunning() {
-    return Math.abs(motor.getAppliedOutput()) > 0.05;
+    return Math.abs(getMotor().getAppliedOutput()) > 0.05;
   }
 
   public JamProtection getJamProtection() {
     return jamProtection;
   }
 
-  public SparkMax getMotor() {
-    return motor;
-  }
-
-  public int getStickyFaultsRaw() {
-    try {
-      return (int) motor.getStickyFaults().rawBits;
-    } catch (Throwable t) {
-      return -1;
-    }
-  }
 public double getTunableTargetRPM() {
     return targetSpeed.get();
   }
