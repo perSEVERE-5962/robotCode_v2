@@ -201,7 +201,7 @@ class FeedbackPipelineIntegrationTest {
     pipelineCycle();
 
     assertEquals("AUTO_LOST", feedback.getActivePatternName(),
-        "Auto result haptic should fire on auto-to-teleop transition (defaults to lost without FMS)");
+        "AUTO_LOST haptic should fire on auto-to-teleop transition (default wonAuto=false)");
     assertTrue(feedback.getLeftMotor() > 0, "Left rumble should be active");
     assertTrue(feedback.getRightMotor() > 0, "Right rumble should be active");
   }

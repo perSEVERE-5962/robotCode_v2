@@ -340,16 +340,4 @@ public class VisionTelemetry implements SubsystemTelemetry {
   public double getPoseConfidence() {
     return poseConfidence;
   }
-
-  public double getTimeSinceLastTargetMs() {
-    return timeSinceLastTargetMs;
-  }
-
-  public double getFilterAcceptRatePct() {
-    return filterAcceptRatePct;
-  }
-
-  public boolean isSubsystemAvailable() {
-    return subsystemAvailable;
-  }
 }

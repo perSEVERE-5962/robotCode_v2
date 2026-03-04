@@ -399,20 +399,4 @@ public class TelemetryManager {
   public boolean isWonAuto() {
     return getSafely(() -> scoringTelemetry.isWonAuto(), false);
   }
-
-  public boolean isVisionAvailable() {
-    return getSafely(() -> visionTelemetry.isSubsystemAvailable(), false);
-  }
-
-  public double getVisionTimeSinceLastTargetMs() {
-    return getSafely(() -> visionTelemetry.getTimeSinceLastTargetMs(), 0.0);
-  }
-
-  public double getVisionAcceptRatePct() {
-    return getSafely(() -> visionTelemetry.getFilterAcceptRatePct(), 100.0);
-  }
-
-  public double getShooterTrackingErrorPct() {
-    return getSafely(() -> shooterTelemetry.getVelocityTrackingErrorPct(), 0.0);
-  }
 }

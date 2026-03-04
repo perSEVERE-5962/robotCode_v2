@@ -76,7 +76,7 @@ public class ScoringTelemetry implements SubsystemTelemetry {
       previousHubActive = hubActive;
       previousReadyToShoot = readyToShoot;
 
-      shooterReady = shooterTelemetry.isAtSpeed() || shooterTelemetry.isFiring();
+      shooterReady = shooterTelemetry.isAtSpeed();
       indexerClear = !indexerTelemetry.isJamDetected();
       visionLocked = visionTelemetry.isLockedOnTarget();
 

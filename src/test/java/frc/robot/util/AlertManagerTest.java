@@ -64,7 +64,6 @@ class AlertManagerTest {
 
     // Reset internal state (singleton persists across tests)
     setField(am, "inBatteryWarning", false);
-    setField(am, "criticalStartTime", -1.0);
 
     List<String> alerts = getField(am, "activeAlerts");
     alerts.clear();
@@ -76,11 +75,6 @@ class AlertManagerTest {
     setField(am, "disabledDebouncer", new Debouncer(1.5, Debouncer.DebounceType.kRising));
 
     // Reset all WPILib Alert objects
-    // Reset M15 sustained timers
-    setField(am, "visionStaleSince", -1.0);
-    setField(am, "visionRejectSince", -1.0);
-    setField(am, "shooterTrackingSince", -1.0);
-
     String[] alertFields = {
       "batteryLowAlert", "batteryCriticalAlert",
       "shooterTempAlert", "indexerTempAlert", "intakeTempAlert", "intakeActuatorTempAlert",
@@ -89,8 +83,7 @@ class AlertManagerTest {
       "indexerJamAlert", "intakeJamAlert",
       "bandwidthWarningAlert", "bandwidthCriticalAlert",
       "brownoutRiskAlert",
-      "shooterStallAlert", "indexerStallAlert", "intakeStallAlert",
-      "visionStaleAlert", "visionRejectAlert", "shooterTrackingAlert"
+      "shooterStallAlert", "indexerStallAlert", "intakeStallAlert"
     };
     for (String name : alertFields) {
       Alert alert = getField(am, name);
@@ -162,32 +155,20 @@ class AlertManagerTest {
 
   @Test
   void testBatteryCriticalFiresRegardlessOfMode() {
-    // Critical fires even when ENABLED, but only after sustained low voltage (0.5s).
-    // Brief motor inrush sag should NOT trigger this.
+    // Critical fires even when ENABLED (brownout danger is immediate)
     DriverStationSim.setEnabled(true);
     DriverStationSim.notifyNewData();
     RoboRioSim.setVInVoltage(9.5);
     am.checkAll();
 
-    assertFalse(am.getActiveAlerts().contains("BatteryCritical"),
-        "Should NOT fire on first reading (could be motor inrush transient)");
-
-    // Sustain low voltage past the 1.0s debounce window
-    SimHooks.stepTiming(1.1);
-    am.checkAll();
-
     assertTrue(am.getActiveAlerts().contains("BatteryCritical"),
-        "CRITICAL must fire after sustained low voltage regardless of enabled/disabled state");
+        "CRITICAL must fire regardless of enabled/disabled state");
   }
 
   @Test
   void testCriticalOverridesWarning() throws Exception {
     satisfyDisabledDebouncer();
     RoboRioSim.setVInVoltage(9.0);
-    am.checkAll();
-
-    // First call starts the sustain timer, doesn't fire yet
-    SimHooks.stepTiming(1.1);
     am.checkAll();
 
     assertTrue(am.getActiveAlerts().contains("BatteryCritical"));
@@ -417,9 +398,6 @@ class AlertManagerTest {
 
   @Test
   void testClearDebounceResetsTimers() throws Exception {
-    // Advance past warmup so Elastic notifications aren't suppressed
-    SimHooks.stepTiming(46.0);
-
     // Trigger a notification to populate the map
     satisfyDisabledDebouncer();
     RoboRioSim.setVInVoltage(11.0);
@@ -449,152 +427,6 @@ class AlertManagerTest {
         "Healthy robot should have zero active alerts, got: " + alerts);
   }
 
-  // ==================== M15: VISION STALENESS ====================
-
-  @Test
-  void testVisionStaleAlertFires() throws Exception {
-    // Advance past warmup
-    SimHooks.stepTiming(46.0);
-
-    // Enable teleop
-    DriverStationSim.setEnabled(true);
-    DriverStationSim.setAutonomous(false);
-    DriverStationSim.setTest(false);
-    DriverStationSim.notifyNewData();
-
-    // Set vision stale: no target for 6000ms (above 5000ms threshold)
-    Object visionTel = getTelemetryField("visionTelemetry");
-    setField(visionTel, "subsystemAvailable", true);
-    setField(visionTel, "timeSinceLastTargetMs", 6000.0);
-
-    // First call starts sustained timer
-    am.checkAll();
-    assertFalse(am.getActiveAlerts().contains("VisionStale"),
-        "Should not fire immediately (needs 5s sustained)");
-
-    // Sustain past 5s
-    SimHooks.stepTiming(5.5);
-    am.checkAll();
-
-    assertTrue(am.getActiveAlerts().contains("VisionStale"),
-        "VisionStale should fire after sustained staleness during teleop");
-  }
-
-  @Test
-  void testVisionStaleNoAlertInDisabled() throws Exception {
-    SimHooks.stepTiming(46.0);
-    DriverStationSim.setEnabled(false);
-    DriverStationSim.notifyNewData();
-
-    Object visionTel = getTelemetryField("visionTelemetry");
-    setField(visionTel, "subsystemAvailable", true);
-    setField(visionTel, "timeSinceLastTargetMs", 60000.0);
-
-    SimHooks.stepTiming(10.0);
-    am.checkAll();
-
-    assertFalse(am.getActiveAlerts().contains("VisionStale"),
-        "Vision stale should not fire when disabled (no target expected)");
-  }
-
-  @Test
-  void testVisionStaleClears() throws Exception {
-    SimHooks.stepTiming(46.0);
-    DriverStationSim.setEnabled(true);
-    DriverStationSim.setAutonomous(false);
-    DriverStationSim.setTest(false);
-    DriverStationSim.notifyNewData();
-
-    Object visionTel = getTelemetryField("visionTelemetry");
-    setField(visionTel, "subsystemAvailable", true);
-    setField(visionTel, "timeSinceLastTargetMs", 6000.0);
-
-    am.checkAll();
-    SimHooks.stepTiming(5.5);
-    am.checkAll();
-    assertTrue(am.getActiveAlerts().contains("VisionStale"));
-
-    // Target returns
-    setField(visionTel, "timeSinceLastTargetMs", 100.0);
-    am.checkAll();
-    assertFalse(am.getActiveAlerts().contains("VisionStale"),
-        "VisionStale must clear when target returns");
-  }
-
-  // ==================== M15: VISION REJECT RATE ====================
-
-  @Test
-  void testVisionRejectRateAlertFires() throws Exception {
-    SimHooks.stepTiming(46.0);
-    DriverStationSim.setEnabled(true);
-    DriverStationSim.setAutonomous(false);
-    DriverStationSim.setTest(false);
-    DriverStationSim.notifyNewData();
-
-    Object visionTel = getTelemetryField("visionTelemetry");
-    setField(visionTel, "subsystemAvailable", true);
-    setField(visionTel, "filterAcceptRatePct", 5.0); // well below 20% threshold
-
-    am.checkAll();
-    assertFalse(am.getActiveAlerts().contains("VisionRejectRate"),
-        "Should not fire immediately (needs 10s sustained)");
-
-    SimHooks.stepTiming(10.5);
-    am.checkAll();
-
-    assertTrue(am.getActiveAlerts().contains("VisionRejectRate"),
-        "VisionRejectRate should fire after 10s of low accept rate during teleop");
-  }
-
-  // ==================== M15: SHOOTER TRACKING ====================
-
-  @Test
-  void testShooterTrackingAlertFires() throws Exception {
-    SimHooks.stepTiming(46.0);
-    DriverStationSim.setEnabled(true);
-    DriverStationSim.setAutonomous(false);
-    DriverStationSim.setTest(false);
-    DriverStationSim.notifyNewData();
-
-    // Inject large tracking error via ShooterTelemetry fields
-    Object shooterTel = getTelemetryField("shooterTelemetry");
-    setField(shooterTel, "targetRPM", 4000.0);
-    setField(shooterTel, "velocityError", 1200.0); // 30% error
-    setField(shooterTel, "isSpinningUp", false);
-    setField(shooterTel, "trackingRecovery", false);
-
-    am.checkAll();
-    assertFalse(am.getActiveAlerts().contains("ShooterTrackingError"),
-        "Should not fire immediately (needs 2s sustained)");
-
-    SimHooks.stepTiming(2.5);
-    am.checkAll();
-
-    assertTrue(am.getActiveAlerts().contains("ShooterTrackingError"),
-        "ShooterTrackingError should fire after 2s of large velocity error");
-  }
-
-  @Test
-  void testShooterTrackingNoAlertDuringSpinUp() throws Exception {
-    SimHooks.stepTiming(46.0);
-    DriverStationSim.setEnabled(true);
-    DriverStationSim.setAutonomous(false);
-    DriverStationSim.setTest(false);
-    DriverStationSim.notifyNewData();
-
-    Object shooterTel = getTelemetryField("shooterTelemetry");
-    setField(shooterTel, "targetRPM", 4000.0);
-    setField(shooterTel, "velocityError", 3000.0); // 75% error
-    setField(shooterTel, "isSpinningUp", true); // spin-up gate
-    setField(shooterTel, "trackingRecovery", false);
-
-    SimHooks.stepTiming(5.0);
-    am.checkAll();
-
-    assertFalse(am.getActiveAlerts().contains("ShooterTrackingError"),
-        "Tracking error alert must be suppressed during spin-up (getVelocityTrackingErrorPct returns 0)");
-  }
-
   // ==================== HELPERS ====================
 
   private void satisfyDisabledDebouncer() {
@@ -617,19 +449,6 @@ class AlertManagerTest {
     Object sysTel = getTelemetryField("systemHealthTelemetry");
     if (sysTel != null) {
       try { setField(sysTel, "brownoutRisk", false); } catch (Exception e) { }
-    }
-    // Reset vision state so M15 alerts don't fire unexpectedly
-    Object visionTel = getTelemetryField("visionTelemetry");
-    if (visionTel != null) {
-      try { setField(visionTel, "timeSinceLastTargetMs", 0.0); } catch (Exception e) { }
-      try { setField(visionTel, "filterAcceptRatePct", 100.0); } catch (Exception e) { }
-      try { setField(visionTel, "subsystemAvailable", false); } catch (Exception e) { }
-    }
-    // Reset shooter tracking state so M15 alerts don't fire unexpectedly
-    Object shooterTel = getTelemetryField("shooterTelemetry");
-    if (shooterTel != null) {
-      try { setField(shooterTel, "isSpinningUp", false); } catch (Exception e) { }
-      try { setField(shooterTel, "trackingRecovery", false); } catch (Exception e) { }
     }
   }
 
