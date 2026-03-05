@@ -1,6 +1,6 @@
 {
   "version": 1.0,
-  "grid_size": 64,
+  "grid_size": 128,
   "tabs": [
     {
       "name": "Quick Check",
@@ -9,10 +9,10 @@
         "containers": [
           {
             "title": "Battery",
-            "x": 0,
-            "y": 0,
-            "width": 512,
-            "height": 102,
+            "x": 0.0,
+            "y": 0.0,
+            "width": 517.2,
+            "height": 99.7,
             "type": "Voltage View",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/BatteryVoltage",
@@ -26,10 +26,10 @@
           },
           {
             "title": "CAN Util",
-            "x": 512,
-            "y": 0,
-            "width": 410,
-            "height": 102,
+            "x": 517.2,
+            "y": 0.0,
+            "width": 414.1,
+            "height": 99.7,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/CANUtilization",
@@ -43,10 +43,10 @@
           },
           {
             "title": "All CAN OK",
-            "x": 922,
-            "y": 0,
-            "width": 307,
-            "height": 102,
+            "x": 931.3,
+            "y": 0.0,
+            "width": 310.1,
+            "height": 99.7,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/CAN/AllDevicesConnected",
@@ -59,10 +59,10 @@
           },
           {
             "title": "Browned Out",
-            "x": 1229,
-            "y": 0,
-            "width": 256,
-            "height": 102,
+            "x": 1241.4,
+            "y": 0.0,
+            "width": 258.6,
+            "height": 99.7,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/BrownedOut",
@@ -75,10 +75,10 @@
           },
           {
             "title": "Shooter Temp",
-            "x": 0,
-            "y": 102,
-            "width": 307,
-            "height": 102,
+            "x": 0.0,
+            "y": 99.7,
+            "width": 310.1,
+            "height": 99.7,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/TemperatureCelsius",
@@ -92,10 +92,10 @@
           },
           {
             "title": "Indexer Temp",
-            "x": 307,
-            "y": 102,
-            "width": 307,
-            "height": 102,
+            "x": 310.1,
+            "y": 99.7,
+            "width": 310.1,
+            "height": 99.7,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/TemperatureCelsius",
@@ -109,10 +109,10 @@
           },
           {
             "title": "Intake Temp",
-            "x": 614,
-            "y": 102,
-            "width": 307,
-            "height": 102,
+            "x": 620.2,
+            "y": 99.7,
+            "width": 310.1,
+            "height": 99.7,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/TemperatureCelsius",
@@ -126,10 +126,10 @@
           },
           {
             "title": "Agitator Temp",
-            "x": 922,
-            "y": 102,
-            "width": 307,
-            "height": 102,
+            "x": 931.3,
+            "y": 99.7,
+            "width": 310.1,
+            "height": 99.7,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Agitator/TemperatureCelsius",
@@ -143,10 +143,10 @@
           },
           {
             "title": "Hanger Temp",
-            "x": 1229,
-            "y": 102,
-            "width": 256,
-            "height": 102,
+            "x": 1241.4,
+            "y": 99.7,
+            "width": 258.6,
+            "height": 99.7,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Hanger/TemperatureCelsius",
@@ -160,10 +160,10 @@
           },
           {
             "title": "Gyro",
-            "x": 0,
-            "y": 205,
-            "width": 205,
-            "height": 102,
+            "x": 0.0,
+            "y": 200.4,
+            "width": 207.1,
+            "height": 99.7,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/Gyro/Connected",
@@ -176,10 +176,10 @@
           },
           {
             "title": "Left Cam",
-            "x": 205,
-            "y": 205,
-            "width": 205,
-            "height": 102,
+            "x": 207.1,
+            "y": 200.4,
+            "width": 207.0,
+            "height": 99.7,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Vision/Camera/LeftCam/Connected",
@@ -192,10 +192,10 @@
           },
           {
             "title": "Right Cam",
-            "x": 410,
-            "y": 205,
-            "width": 205,
-            "height": 102,
+            "x": 414.1,
+            "y": 200.4,
+            "width": 207.1,
+            "height": 99.7,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Vision/Camera/RightCam/Connected",
@@ -208,10 +208,10 @@
           },
           {
             "title": "Idx Jam",
-            "x": 614,
-            "y": 205,
-            "width": 205,
-            "height": 102,
+            "x": 620.2,
+            "y": 200.4,
+            "width": 207.1,
+            "height": 99.7,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/JamDetected",
@@ -224,10 +224,10 @@
           },
           {
             "title": "Int Jam",
-            "x": 819,
-            "y": 205,
-            "width": 205,
-            "height": 102,
+            "x": 827.3,
+            "y": 200.4,
+            "width": 207.0,
+            "height": 99.7,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/JamDetected",
@@ -240,10 +240,10 @@
           },
           {
             "title": "Agit Stall",
-            "x": 1024,
-            "y": 205,
-            "width": 205,
-            "height": 102,
+            "x": 1034.3,
+            "y": 200.4,
+            "width": 207.1,
+            "height": 99.7,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Agitator/Stalled",
@@ -256,10 +256,10 @@
           },
           {
             "title": "Overcurrent",
-            "x": 1229,
-            "y": 205,
-            "width": 256,
-            "height": 102,
+            "x": 1241.4,
+            "y": 200.4,
+            "width": 258.6,
+            "height": 99.7,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/PDH/OvercurrentAlert",
@@ -272,10 +272,10 @@
           },
           {
             "title": "FL Drive",
-            "x": 0,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 0.0,
+            "y": 300.1,
+            "width": 207.1,
+            "height": 99.8,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/Module/FL/DriveConnected",
@@ -288,10 +288,10 @@
           },
           {
             "title": "FR Drive",
-            "x": 205,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 207.1,
+            "y": 300.1,
+            "width": 207.0,
+            "height": 99.8,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/Module/FR/DriveConnected",
@@ -304,10 +304,10 @@
           },
           {
             "title": "BL Drive",
-            "x": 410,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 414.1,
+            "y": 300.1,
+            "width": 207.1,
+            "height": 99.8,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/Module/BL/DriveConnected",
@@ -320,10 +320,10 @@
           },
           {
             "title": "BR Drive",
-            "x": 614,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 620.2,
+            "y": 300.1,
+            "width": 207.1,
+            "height": 99.8,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/Module/BR/DriveConnected",
@@ -336,10 +336,10 @@
           },
           {
             "title": "FL Turn",
-            "x": 819,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 827.3,
+            "y": 300.1,
+            "width": 207.0,
+            "height": 99.8,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/Module/FL/TurnConnected",
@@ -352,10 +352,10 @@
           },
           {
             "title": "FR Turn",
-            "x": 1024,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 1034.3,
+            "y": 300.1,
+            "width": 207.1,
+            "height": 99.8,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/Module/FR/TurnConnected",
@@ -368,10 +368,10 @@
           },
           {
             "title": "BL Turn",
-            "x": 1229,
-            "y": 307,
-            "width": 154,
-            "height": 102,
+            "x": 1241.4,
+            "y": 300.1,
+            "width": 155.6,
+            "height": 99.8,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/Module/BL/TurnConnected",
@@ -384,10 +384,10 @@
           },
           {
             "title": "BR Turn",
-            "x": 1382,
-            "y": 307,
-            "width": 102,
-            "height": 102,
+            "x": 1396.0,
+            "y": 300.1,
+            "width": 103.0,
+            "height": 99.8,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/Module/BR/TurnConnected",
@@ -400,10 +400,10 @@
           },
           {
             "title": "Disconnected",
-            "x": 0,
-            "y": 410,
-            "width": 614,
-            "height": 102,
+            "x": 0.0,
+            "y": 400.8,
+            "width": 620.2,
+            "height": 99.8,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/CAN/DisconnectedList",
@@ -413,10 +413,10 @@
           },
           {
             "title": "OC Channel",
-            "x": 614,
-            "y": 410,
-            "width": 307,
-            "height": 102,
+            "x": 620.2,
+            "y": 400.8,
+            "width": 310.1,
+            "height": 99.8,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/PDH/OvercurrentChannel",
@@ -426,10 +426,10 @@
           },
           {
             "title": "Alerts",
-            "x": 922,
-            "y": 410,
-            "width": 563,
-            "height": 102,
+            "x": 931.3,
+            "y": 400.8,
+            "width": 568.7,
+            "height": 99.8,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Alerts/ActiveList",
@@ -439,10 +439,10 @@
           },
           {
             "title": "FL D.Temp",
-            "x": 0,
-            "y": 512,
-            "width": 410,
-            "height": 102,
+            "x": 0.0,
+            "y": 500.6,
+            "width": 414.1,
+            "height": 99.7,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/Module/FL/DriveTemperature",
@@ -456,10 +456,10 @@
           },
           {
             "title": "FR D.Temp",
-            "x": 410,
-            "y": 512,
-            "width": 410,
-            "height": 102,
+            "x": 414.1,
+            "y": 500.6,
+            "width": 414.2,
+            "height": 99.7,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/Module/FR/DriveTemperature",
@@ -473,10 +473,10 @@
           },
           {
             "title": "BL D.Temp",
-            "x": 819,
-            "y": 512,
-            "width": 410,
-            "height": 102,
+            "x": 827.3,
+            "y": 500.6,
+            "width": 414.1,
+            "height": 99.7,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/Module/BL/DriveTemperature",
@@ -490,10 +490,10 @@
           },
           {
             "title": "BR D.Temp",
-            "x": 1229,
-            "y": 512,
-            "width": 256,
-            "height": 102,
+            "x": 1241.4,
+            "y": 500.6,
+            "width": 258.6,
+            "height": 99.7,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Drive/Module/BR/DriveTemperature",
@@ -507,10 +507,10 @@
           },
           {
             "title": "Vis Stale Ms",
-            "x": 0,
-            "y": 614,
-            "width": 307,
-            "height": 102,
+            "x": 0.0,
+            "y": 600.3,
+            "width": 310.1,
+            "height": 99.7,
             "type": "Number Slider",
             "properties": {
               "topic": "/SmartDashboard/Alerts/VisionStaleThresholdMs",
@@ -523,10 +523,10 @@
           },
           {
             "title": "Vis Reject %",
-            "x": 307,
-            "y": 614,
-            "width": 307,
-            "height": 102,
+            "x": 310.1,
+            "y": 600.3,
+            "width": 310.1,
+            "height": 99.7,
             "type": "Number Slider",
             "properties": {
               "topic": "/SmartDashboard/Alerts/VisionRejectRateThreshold",
@@ -539,10 +539,10 @@
           },
           {
             "title": "Track Err %",
-            "x": 614,
-            "y": 614,
-            "width": 307,
-            "height": 102,
+            "x": 620.2,
+            "y": 600.3,
+            "width": 310.1,
+            "height": 99.7,
             "type": "Number Slider",
             "properties": {
               "topic": "/SmartDashboard/Alerts/ShooterTrackingErrorPct",
@@ -555,10 +555,10 @@
           },
           {
             "title": "Vis Accept %",
-            "x": 922,
-            "y": 614,
-            "width": 307,
-            "height": 102,
+            "x": 931.3,
+            "y": 600.3,
+            "width": 310.1,
+            "height": 99.7,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Vision/Filter/AcceptRatePct",
@@ -572,10 +572,10 @@
           },
           {
             "title": "Vis Stale Ms",
-            "x": 1229,
-            "y": 614,
-            "width": 256,
-            "height": 102,
+            "x": 1241.4,
+            "y": 600.3,
+            "width": 258.6,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Vision/TimeSinceLastTargetMs",
@@ -593,10 +593,10 @@
         "containers": [
           {
             "title": "Safe Check",
-            "x": 0,
-            "y": 0,
-            "width": 307,
-            "height": 102,
+            "x": 0.0,
+            "y": 0.0,
+            "width": 310.1,
+            "height": 174.6,
             "type": "Toggle Button",
             "properties": {
               "topic": "/SmartDashboard/Diagnostics/TriggerSafe",
@@ -605,10 +605,10 @@
           },
           {
             "title": "Full Check",
-            "x": 307,
-            "y": 0,
-            "width": 307,
-            "height": 102,
+            "x": 310.1,
+            "y": 0.0,
+            "width": 310.1,
+            "height": 174.6,
             "type": "Toggle Button",
             "properties": {
               "topic": "/SmartDashboard/Diagnostics/TriggerFull",
@@ -617,10 +617,10 @@
           },
           {
             "title": "Running",
-            "x": 614,
-            "y": 0,
-            "width": 205,
-            "height": 102,
+            "x": 620.2,
+            "y": 0.0,
+            "width": 207.1,
+            "height": 174.6,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Diagnostics/Running",
@@ -633,10 +633,10 @@
           },
           {
             "title": "Mode",
-            "x": 819,
-            "y": 0,
-            "width": 205,
-            "height": 102,
+            "x": 827.3,
+            "y": 0.0,
+            "width": 207.0,
+            "height": 174.6,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Diagnostics/Mode",
@@ -646,10 +646,10 @@
           },
           {
             "title": "Step",
-            "x": 1024,
-            "y": 0,
-            "width": 461,
-            "height": 102,
+            "x": 1034.3,
+            "y": 0.0,
+            "width": 465.7,
+            "height": 174.6,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Diagnostics/Step",
@@ -659,10 +659,10 @@
           },
           {
             "title": "ALL PASSED",
-            "x": 0,
-            "y": 102,
-            "width": 512,
-            "height": 205,
+            "x": 0.0,
+            "y": 174.6,
+            "width": 517.2,
+            "height": 350.8,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Diagnostics/AllPassed",
@@ -675,10 +675,10 @@
           },
           {
             "title": "Pass",
-            "x": 512,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 517.2,
+            "y": 174.6,
+            "width": 207.0,
+            "height": 174.5,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Diagnostics/PassCount",
@@ -688,10 +688,10 @@
           },
           {
             "title": "Warn",
-            "x": 717,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 724.2,
+            "y": 174.6,
+            "width": 207.1,
+            "height": 174.5,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Diagnostics/WarnCount",
@@ -701,10 +701,10 @@
           },
           {
             "title": "Fail",
-            "x": 922,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 931.3,
+            "y": 174.6,
+            "width": 207.1,
+            "height": 174.5,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Diagnostics/FailCount",
@@ -714,10 +714,10 @@
           },
           {
             "title": "Skip",
-            "x": 1126,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 1137.4,
+            "y": 174.6,
+            "width": 207.0,
+            "height": 174.5,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Diagnostics/SkippedCount",
@@ -727,10 +727,10 @@
           },
           {
             "title": "Gyro Drift",
-            "x": 512,
-            "y": 205,
-            "width": 307,
-            "height": 102,
+            "x": 517.2,
+            "y": 350.9,
+            "width": 310.1,
+            "height": 174.5,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Diagnostics/GyroMaxDrift",
@@ -740,10 +740,10 @@
           },
           {
             "title": "Gyro OK",
-            "x": 819,
-            "y": 205,
-            "width": 205,
-            "height": 102,
+            "x": 827.3,
+            "y": 350.9,
+            "width": 207.0,
+            "height": 174.5,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Diagnostics/GyroHealthy",
@@ -756,10 +756,10 @@
           },
           {
             "title": "Vision Drop %",
-            "x": 1024,
-            "y": 205,
-            "width": 307,
-            "height": 102,
+            "x": 1034.3,
+            "y": 350.9,
+            "width": 310.1,
+            "height": 174.5,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Diagnostics/VisionDropoutPct",
@@ -769,10 +769,10 @@
           },
           {
             "title": "Drive Response",
-            "x": 0,
-            "y": 307,
-            "width": 307,
-            "height": 102,
+            "x": 0.0,
+            "y": 525.4,
+            "width": 310.1,
+            "height": 174.6,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Diagnostics/DriveResponseMs",
@@ -782,10 +782,10 @@
           },
           {
             "title": "Shooter Spinup",
-            "x": 307,
-            "y": 307,
-            "width": 307,
-            "height": 102,
+            "x": 310.1,
+            "y": 525.4,
+            "width": 310.1,
+            "height": 174.6,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Diagnostics/ShooterSpinupMs",
@@ -803,10 +803,10 @@
         "containers": [
           {
             "title": "Battery",
-            "x": 0,
-            "y": 0,
-            "width": 410,
-            "height": 102,
+            "x": 0.0,
+            "y": 0.0,
+            "width": 414.1,
+            "height": 116.3,
             "type": "Voltage View",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/BatteryVoltage",
@@ -820,10 +820,10 @@
           },
           {
             "title": "CAN Util",
-            "x": 410,
-            "y": 0,
-            "width": 410,
-            "height": 102,
+            "x": 414.1,
+            "y": 0.0,
+            "width": 414.2,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/CANUtilization",
@@ -837,10 +837,10 @@
           },
           {
             "title": "Loop Time",
-            "x": 819,
-            "y": 0,
-            "width": 410,
-            "height": 102,
+            "x": 827.3,
+            "y": 0.0,
+            "width": 414.1,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/LoopTimeMs",
@@ -854,10 +854,10 @@
           },
           {
             "title": "Bandwidth",
-            "x": 1229,
-            "y": 0,
-            "width": 256,
-            "height": 102,
+            "x": 1241.4,
+            "y": 0.0,
+            "width": 258.6,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Network/BandwidthPercent",
@@ -871,10 +871,10 @@
           },
           {
             "title": "CAN TX",
-            "x": 0,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 0.0,
+            "y": 116.3,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/CANTxErrors",
@@ -884,10 +884,10 @@
           },
           {
             "title": "CAN RX",
-            "x": 205,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 207.1,
+            "y": 116.3,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/CANRxErrors",
@@ -897,10 +897,10 @@
           },
           {
             "title": "CAN Off",
-            "x": 410,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 414.1,
+            "y": 116.3,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/CANBusOff",
@@ -913,10 +913,10 @@
           },
           {
             "title": "Overruns",
-            "x": 614,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 620.2,
+            "y": 116.3,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/LoopOverruns",
@@ -926,10 +926,10 @@
           },
           {
             "title": "CPU Temp",
-            "x": 819,
-            "y": 102,
-            "width": 307,
-            "height": 102,
+            "x": 827.3,
+            "y": 116.3,
+            "width": 310.1,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/RioCPUTemp",
@@ -943,10 +943,10 @@
           },
           {
             "title": "RSL",
-            "x": 1126,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 1137.4,
+            "y": 116.3,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/RSLState",
@@ -959,10 +959,10 @@
           },
           {
             "title": "BW Warn",
-            "x": 1331,
-            "y": 102,
-            "width": 154,
-            "height": 102,
+            "x": 1344.4,
+            "y": 116.3,
+            "width": 155.6,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Network/BandwidthCritical",
@@ -975,10 +975,10 @@
           },
           {
             "title": "Shooter Current",
-            "x": 0,
-            "y": 205,
-            "width": 512,
-            "height": 102,
+            "x": 0.0,
+            "y": 233.7,
+            "width": 517.2,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/CurrentAmps",
@@ -992,10 +992,10 @@
           },
           {
             "title": "Indexer Current",
-            "x": 512,
-            "y": 205,
-            "width": 512,
-            "height": 102,
+            "x": 517.2,
+            "y": 233.7,
+            "width": 517.1,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/CurrentAmps",
@@ -1009,10 +1009,10 @@
           },
           {
             "title": "Intake Current",
-            "x": 1024,
-            "y": 205,
-            "width": 461,
-            "height": 102,
+            "x": 1034.3,
+            "y": 233.7,
+            "width": 465.7,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/CurrentAmps",
@@ -1026,10 +1026,10 @@
           },
           {
             "title": "Agitator Current",
-            "x": 0,
-            "y": 307,
-            "width": 512,
-            "height": 102,
+            "x": 0.0,
+            "y": 350.0,
+            "width": 517.2,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Agitator/CurrentAmps",
@@ -1043,10 +1043,10 @@
           },
           {
             "title": "Hanger Current",
-            "x": 512,
-            "y": 307,
-            "width": 512,
-            "height": 102,
+            "x": 517.2,
+            "y": 350.0,
+            "width": 517.1,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Hanger/CurrentAmps",
@@ -1060,10 +1060,10 @@
           },
           {
             "title": "Total Current",
-            "x": 1024,
-            "y": 307,
-            "width": 461,
-            "height": 102,
+            "x": 1034.3,
+            "y": 350.0,
+            "width": 465.7,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/TotalCurrentAmps",
@@ -1077,10 +1077,10 @@
           },
           {
             "title": "Overcurrent",
-            "x": 0,
-            "y": 410,
-            "width": 205,
-            "height": 102,
+            "x": 0.0,
+            "y": 467.4,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/PDH/OvercurrentAlert",
@@ -1093,10 +1093,10 @@
           },
           {
             "title": "OC Channel",
-            "x": 205,
-            "y": 410,
-            "width": 307,
-            "height": 102,
+            "x": 207.1,
+            "y": 467.4,
+            "width": 310.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/PDH/OvercurrentChannel",
@@ -1106,10 +1106,10 @@
           },
           {
             "title": "Ghost Cmds",
-            "x": 512,
-            "y": 410,
-            "width": 205,
-            "height": 102,
+            "x": 517.2,
+            "y": 467.4,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Commands/GhostAlert",
@@ -1122,10 +1122,10 @@
           },
           {
             "title": "Ghost List",
-            "x": 717,
-            "y": 410,
-            "width": 410,
-            "height": 102,
+            "x": 724.2,
+            "y": 467.4,
+            "width": 414.2,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Commands/GhostList",
@@ -1135,10 +1135,10 @@
           },
           {
             "title": "Brownout Risk",
-            "x": 1126,
-            "y": 410,
-            "width": 205,
-            "height": 102,
+            "x": 1137.4,
+            "y": 467.4,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/BrownoutRiskLevel",
@@ -1148,10 +1148,10 @@
           },
           {
             "title": "BrownedOut",
-            "x": 1331,
-            "y": 410,
-            "width": 154,
-            "height": 102,
+            "x": 1344.4,
+            "y": 467.4,
+            "width": 155.6,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/BrownedOut",
@@ -1164,10 +1164,10 @@
           },
           {
             "title": "3.3V Rail",
-            "x": 0,
-            "y": 512,
-            "width": 205,
-            "height": 102,
+            "x": 0.0,
+            "y": 583.7,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/Rio3V3Rail",
@@ -1177,10 +1177,10 @@
           },
           {
             "title": "5V Rail",
-            "x": 205,
-            "y": 512,
-            "width": 205,
-            "height": 102,
+            "x": 207.1,
+            "y": 583.7,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/Rio5VRail",
@@ -1190,10 +1190,10 @@
           },
           {
             "title": "6V Rail",
-            "x": 410,
-            "y": 512,
-            "width": 205,
-            "height": 102,
+            "x": 414.1,
+            "y": 583.7,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/Rio6VRail",
@@ -1203,10 +1203,10 @@
           },
           {
             "title": "Brownout V",
-            "x": 614,
-            "y": 512,
-            "width": 205,
-            "height": 102,
+            "x": 620.2,
+            "y": 583.7,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/BrownoutVoltage",
@@ -1216,10 +1216,10 @@
           },
           {
             "title": "Shooter Torque",
-            "x": 819,
-            "y": 512,
-            "width": 205,
-            "height": 102,
+            "x": 827.3,
+            "y": 583.7,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/TorqueReversalAlert",
@@ -1232,10 +1232,10 @@
           },
           {
             "title": "Indexer Torque",
-            "x": 1024,
-            "y": 512,
-            "width": 205,
-            "height": 102,
+            "x": 1034.3,
+            "y": 583.7,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/TorqueReversalAlert",
@@ -1248,10 +1248,10 @@
           },
           {
             "title": "CAN Faults",
-            "x": 1229,
-            "y": 512,
-            "width": 256,
-            "height": 102,
+            "x": 1241.4,
+            "y": 583.7,
+            "width": 258.6,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/CAN/TotalFaults",

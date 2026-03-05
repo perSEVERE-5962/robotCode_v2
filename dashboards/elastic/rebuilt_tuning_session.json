@@ -1,6 +1,6 @@
 {
   "version": 1.0,
-  "grid_size": 64,
+  "grid_size": 128,
   "tabs": [
     {
       "name": "Shooter",
@@ -9,10 +9,10 @@
         "containers": [
           {
             "title": "RPM Graph",
-            "x": 0,
-            "y": 0,
-            "width": 819,
-            "height": 307,
+            "x": 0.0,
+            "y": 0.0,
+            "width": 826.7,
+            "height": 300.1,
             "type": "Graph",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/VelocityRPM",
@@ -24,10 +24,10 @@
           },
           {
             "title": "kP",
-            "x": 819,
-            "y": 0,
-            "width": 205,
-            "height": 102,
+            "x": 826.7,
+            "y": 0.0,
+            "width": 206.9,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Shooter/kP",
@@ -37,10 +37,10 @@
           },
           {
             "title": "kI",
-            "x": 1024,
-            "y": 0,
-            "width": 205,
-            "height": 102,
+            "x": 1033.6,
+            "y": 0.0,
+            "width": 207.0,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Shooter/kI",
@@ -50,10 +50,10 @@
           },
           {
             "title": "kD",
-            "x": 1229,
-            "y": 0,
-            "width": 154,
-            "height": 102,
+            "x": 1240.6,
+            "y": 0.0,
+            "width": 155.4,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Shooter/kD",
@@ -63,10 +63,10 @@
           },
           {
             "title": "FF",
-            "x": 1382,
-            "y": 0,
-            "width": 102,
-            "height": 102,
+            "x": 1395.0,
+            "y": 0.0,
+            "width": 103.0,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Shooter/FF",
@@ -76,10 +76,10 @@
           },
           {
             "title": "Target RPM",
-            "x": 819,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 826.7,
+            "y": 99.7,
+            "width": 206.9,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Shooter/TargetRPM",
@@ -89,10 +89,10 @@
           },
           {
             "title": "Tolerance",
-            "x": 1024,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 1033.6,
+            "y": 99.7,
+            "width": 207.0,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Shooter/ToleranceRPM",
@@ -102,10 +102,10 @@
           },
           {
             "title": "Shot Drop",
-            "x": 1229,
-            "y": 102,
-            "width": 256,
-            "height": 102,
+            "x": 1240.6,
+            "y": 99.7,
+            "width": 258.4,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Shooter/ShotDropRPM",
@@ -115,10 +115,10 @@
           },
           {
             "title": "AT SPEED",
-            "x": 819,
-            "y": 205,
-            "width": 307,
-            "height": 102,
+            "x": 826.7,
+            "y": 200.4,
+            "width": 309.9,
+            "height": 99.7,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/AtSpeed",
@@ -131,10 +131,10 @@
           },
           {
             "title": "At Speed %",
-            "x": 1126,
-            "y": 205,
-            "width": 358,
-            "height": 102,
+            "x": 1136.6,
+            "y": 200.4,
+            "width": 361.4,
+            "height": 99.7,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/AtSpeedPercent",
@@ -148,10 +148,10 @@
           },
           {
             "title": "Spin Up",
-            "x": 0,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 0.0,
+            "y": 300.1,
+            "width": 206.9,
+            "height": 99.8,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/SpinUpTimeMs",
@@ -161,10 +161,10 @@
           },
           {
             "title": "Vel Error",
-            "x": 205,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 206.9,
+            "y": 300.1,
+            "width": 207.0,
+            "height": 99.8,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/VelocityError",
@@ -174,10 +174,10 @@
           },
           {
             "title": "Recovery",
-            "x": 410,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 413.9,
+            "y": 300.1,
+            "width": 206.9,
+            "height": 99.8,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/ActualRecoveryMs",
@@ -187,10 +187,10 @@
           },
           {
             "title": "Tgt Rec",
-            "x": 614,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 619.8,
+            "y": 300.1,
+            "width": 206.9,
+            "height": 99.8,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/TargetRecoveryMs",
@@ -200,10 +200,10 @@
           },
           {
             "title": "SHOT!",
-            "x": 819,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 826.7,
+            "y": 300.1,
+            "width": 206.9,
+            "height": 99.8,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/ShotDetected",
@@ -216,10 +216,10 @@
           },
           {
             "title": "Total Shots",
-            "x": 1024,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 1033.6,
+            "y": 300.1,
+            "width": 207.0,
+            "height": 99.8,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/TotalShots",
@@ -229,10 +229,10 @@
           },
           {
             "title": "State",
-            "x": 1229,
-            "y": 307,
-            "width": 256,
-            "height": 102,
+            "x": 1240.6,
+            "y": 300.1,
+            "width": 258.4,
+            "height": 99.8,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/ActiveCommand",
@@ -242,10 +242,10 @@
           },
           {
             "title": "Motor Temp",
-            "x": 0,
-            "y": 410,
-            "width": 512,
-            "height": 102,
+            "x": 0.0,
+            "y": 400.8,
+            "width": 516.8,
+            "height": 99.8,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/TemperatureCelsius",
@@ -259,10 +259,10 @@
           },
           {
             "title": "Motor Current",
-            "x": 512,
-            "y": 410,
-            "width": 512,
-            "height": 102,
+            "x": 516.8,
+            "y": 400.8,
+            "width": 516.8,
+            "height": 99.8,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/CurrentAmps",
@@ -276,10 +276,10 @@
           },
           {
             "title": "Applied Output",
-            "x": 1024,
-            "y": 410,
-            "width": 461,
-            "height": 102,
+            "x": 1033.6,
+            "y": 400.8,
+            "width": 465.4,
+            "height": 99.8,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/AppliedOutput",
@@ -293,10 +293,10 @@
           },
           {
             "title": "PREDICTOR",
-            "x": 0,
-            "y": 512,
-            "width": 205,
-            "height": 102,
+            "x": 0.0,
+            "y": 500.6,
+            "width": 206.9,
+            "height": 99.7,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Scoring/ShotPredictor/Active",
@@ -309,10 +309,10 @@
           },
           {
             "title": "Distance (m)",
-            "x": 205,
-            "y": 512,
-            "width": 205,
-            "height": 102,
+            "x": 206.9,
+            "y": 500.6,
+            "width": 207.0,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Scoring/ShotPredictor/DistanceToHubM",
@@ -322,10 +322,10 @@
           },
           {
             "title": "Heading Err",
-            "x": 410,
-            "y": 512,
-            "width": 205,
-            "height": 102,
+            "x": 413.9,
+            "y": 500.6,
+            "width": 206.9,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Scoring/ShotPredictor/HeadingErrorRad",
@@ -335,10 +335,10 @@
           },
           {
             "title": "Pred RPM",
-            "x": 614,
-            "y": 512,
-            "width": 205,
-            "height": 102,
+            "x": 619.8,
+            "y": 500.6,
+            "width": 206.9,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Scoring/ShotPredictor/ComputedRPM",
@@ -348,10 +348,10 @@
           },
           {
             "title": "Ready To Shoot",
-            "x": 819,
-            "y": 512,
-            "width": 307,
-            "height": 102,
+            "x": 826.7,
+            "y": 500.6,
+            "width": 309.9,
+            "height": 99.7,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Scoring/ReadyToShoot",
@@ -364,10 +364,10 @@
           },
           {
             "title": "Battery",
-            "x": 1126,
-            "y": 512,
-            "width": 358,
-            "height": 102,
+            "x": 1136.6,
+            "y": 500.6,
+            "width": 361.4,
+            "height": 99.7,
             "type": "Voltage View",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/BatteryVoltage",
@@ -381,10 +381,10 @@
           },
           {
             "title": "UnderShoot %",
-            "x": 0,
-            "y": 614,
-            "width": 307,
-            "height": 102,
+            "x": 0.0,
+            "y": 600.3,
+            "width": 309.9,
+            "height": 99.7,
             "type": "Number Slider",
             "properties": {
               "topic": "/SmartDashboard/Shooter/Firing/UnderShootPct",
@@ -397,10 +397,10 @@
           },
           {
             "title": "Debounce Ms",
-            "x": 307,
-            "y": 614,
-            "width": 307,
-            "height": 102,
+            "x": 309.9,
+            "y": 600.3,
+            "width": 309.9,
+            "height": 99.7,
             "type": "Number Slider",
             "properties": {
               "topic": "/SmartDashboard/Shooter/Firing/DebounceMs",
@@ -413,10 +413,10 @@
           },
           {
             "title": "FireRate 10s",
-            "x": 614,
-            "y": 614,
-            "width": 256,
-            "height": 102,
+            "x": 619.8,
+            "y": 600.3,
+            "width": 258.4,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/FireRate10s",
@@ -426,10 +426,10 @@
           },
           {
             "title": "Peak BPS 5s",
-            "x": 870,
-            "y": 614,
-            "width": 256,
-            "height": 102,
+            "x": 878.2,
+            "y": 600.3,
+            "width": 258.4,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/PeakBPS5s",
@@ -439,10 +439,10 @@
           },
           {
             "title": "Streak",
-            "x": 1126,
-            "y": 614,
-            "width": 180,
-            "height": 102,
+            "x": 1136.6,
+            "y": 600.3,
+            "width": 181.7,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/ScoringStreak",
@@ -452,10 +452,10 @@
           },
           {
             "title": "Best Streak",
-            "x": 1306,
-            "y": 614,
-            "width": 180,
-            "height": 102,
+            "x": 1318.3,
+            "y": 600.3,
+            "width": 181.7,
+            "height": 99.7,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/LongestStreak",
@@ -473,10 +473,10 @@
         "containers": [
           {
             "title": "Pivot Position Graph",
-            "x": 0,
-            "y": 0,
-            "width": 819,
-            "height": 307,
+            "x": 0.0,
+            "y": 0.0,
+            "width": 827.3,
+            "height": 350.0,
             "type": "Graph",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/IntakeActuator/PositionRotations",
@@ -488,10 +488,10 @@
           },
           {
             "title": "Pivot kP",
-            "x": 819,
-            "y": 0,
-            "width": 205,
-            "height": 102,
+            "x": 827.3,
+            "y": 0.0,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/IntakeActuator/kP",
@@ -501,10 +501,10 @@
           },
           {
             "title": "Pivot kI",
-            "x": 1024,
-            "y": 0,
-            "width": 205,
-            "height": 102,
+            "x": 1034.3,
+            "y": 0.0,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/IntakeActuator/kI",
@@ -514,10 +514,10 @@
           },
           {
             "title": "Pivot kD",
-            "x": 1229,
-            "y": 0,
-            "width": 154,
-            "height": 102,
+            "x": 1241.4,
+            "y": 0.0,
+            "width": 155.6,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/IntakeActuator/kD",
@@ -527,10 +527,10 @@
           },
           {
             "title": "Pivot FF",
-            "x": 1382,
-            "y": 0,
-            "width": 102,
-            "height": 102,
+            "x": 1396.0,
+            "y": 0.0,
+            "width": 103.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/IntakeActuator/FF",
@@ -540,10 +540,10 @@
           },
           {
             "title": "Deploy Pos",
-            "x": 819,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 827.3,
+            "y": 116.3,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/IntakeActuator/DeployPos",
@@ -553,10 +553,10 @@
           },
           {
             "title": "Retract Pos",
-            "x": 1024,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 1034.3,
+            "y": 116.3,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/IntakeActuator/RetractPos",
@@ -566,10 +566,10 @@
           },
           {
             "title": "Tolerance",
-            "x": 1229,
-            "y": 102,
-            "width": 154,
-            "height": 102,
+            "x": 1241.4,
+            "y": 116.3,
+            "width": 155.6,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/IntakeActuator/Tolerance",
@@ -579,10 +579,10 @@
           },
           {
             "title": "Roller Speed",
-            "x": 1382,
-            "y": 102,
-            "width": 102,
-            "height": 102,
+            "x": 1396.0,
+            "y": 116.3,
+            "width": 103.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Intake/Speed",
@@ -592,10 +592,10 @@
           },
           {
             "title": "AT TARGET",
-            "x": 819,
-            "y": 205,
-            "width": 307,
-            "height": 102,
+            "x": 827.3,
+            "y": 233.7,
+            "width": 310.1,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/IntakeActuator/AtTarget",
@@ -608,10 +608,10 @@
           },
           {
             "title": "Pivot Pos",
-            "x": 1126,
-            "y": 205,
-            "width": 205,
-            "height": 102,
+            "x": 1137.4,
+            "y": 233.7,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/IntakeActuator/PositionRotations",
@@ -621,10 +621,10 @@
           },
           {
             "title": "Pivot Tgt",
-            "x": 1331,
-            "y": 205,
-            "width": 154,
-            "height": 102,
+            "x": 1344.4,
+            "y": 233.7,
+            "width": 155.6,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/IntakeActuator/TargetPosition",
@@ -634,10 +634,10 @@
           },
           {
             "title": "ROLLER ON",
-            "x": 0,
-            "y": 307,
-            "width": 307,
-            "height": 102,
+            "x": 0.0,
+            "y": 350.0,
+            "width": 310.1,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/Running",
@@ -650,10 +650,10 @@
           },
           {
             "title": "JAM",
-            "x": 307,
-            "y": 307,
-            "width": 307,
-            "height": 102,
+            "x": 310.1,
+            "y": 350.0,
+            "width": 310.1,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/JamDetected",
@@ -666,10 +666,10 @@
           },
           {
             "title": "Intake RPM",
-            "x": 614,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 620.2,
+            "y": 350.0,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/VelocityRPM",
@@ -679,10 +679,10 @@
           },
           {
             "title": "Intake Output",
-            "x": 819,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 827.3,
+            "y": 350.0,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/AppliedOutput",
@@ -692,10 +692,10 @@
           },
           {
             "title": "Stalled",
-            "x": 1024,
-            "y": 307,
-            "width": 307,
-            "height": 102,
+            "x": 1034.3,
+            "y": 350.0,
+            "width": 310.1,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/Stalled",
@@ -708,10 +708,10 @@
           },
           {
             "title": "Connected",
-            "x": 1331,
-            "y": 307,
-            "width": 154,
-            "height": 102,
+            "x": 1344.4,
+            "y": 350.0,
+            "width": 155.6,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/Device/Connected",
@@ -724,10 +724,10 @@
           },
           {
             "title": "Pivot Temp",
-            "x": 0,
-            "y": 410,
-            "width": 512,
-            "height": 102,
+            "x": 0.0,
+            "y": 467.4,
+            "width": 517.2,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/IntakeActuator/TemperatureCelsius",
@@ -741,10 +741,10 @@
           },
           {
             "title": "Pivot Current",
-            "x": 512,
-            "y": 410,
-            "width": 512,
-            "height": 102,
+            "x": 517.2,
+            "y": 467.4,
+            "width": 517.1,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/IntakeActuator/CurrentAmps",
@@ -758,10 +758,10 @@
           },
           {
             "title": "Pivot Output",
-            "x": 1024,
-            "y": 410,
-            "width": 461,
-            "height": 102,
+            "x": 1034.3,
+            "y": 467.4,
+            "width": 465.7,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/IntakeActuator/AppliedOutput",
@@ -775,10 +775,10 @@
           },
           {
             "title": "Roller Temp",
-            "x": 0,
-            "y": 512,
-            "width": 410,
-            "height": 102,
+            "x": 0.0,
+            "y": 583.7,
+            "width": 414.1,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/TemperatureCelsius",
@@ -792,10 +792,10 @@
           },
           {
             "title": "Roller Current",
-            "x": 410,
-            "y": 512,
-            "width": 410,
-            "height": 102,
+            "x": 414.1,
+            "y": 583.7,
+            "width": 414.2,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Intake/CurrentAmps",
@@ -809,10 +809,10 @@
           },
           {
             "title": "Pivot Conn",
-            "x": 819,
-            "y": 512,
-            "width": 205,
-            "height": 102,
+            "x": 827.3,
+            "y": 583.7,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/IntakeActuator/Device/Connected",
@@ -825,10 +825,10 @@
           },
           {
             "title": "Battery",
-            "x": 1024,
-            "y": 512,
-            "width": 461,
-            "height": 102,
+            "x": 1034.3,
+            "y": 583.7,
+            "width": 465.7,
+            "height": 116.3,
             "type": "Voltage View",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/BatteryVoltage",
@@ -850,10 +850,10 @@
         "containers": [
           {
             "title": "Indexer Current Graph",
-            "x": 0,
-            "y": 0,
-            "width": 819,
-            "height": 307,
+            "x": 0.0,
+            "y": 0.0,
+            "width": 827.3,
+            "height": 350.0,
             "type": "Graph",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/CurrentAmps",
@@ -865,10 +865,10 @@
           },
           {
             "title": "Idx kP",
-            "x": 819,
-            "y": 0,
-            "width": 205,
-            "height": 102,
+            "x": 827.3,
+            "y": 0.0,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Indexer/kP",
@@ -878,10 +878,10 @@
           },
           {
             "title": "Idx kI",
-            "x": 1024,
-            "y": 0,
-            "width": 205,
-            "height": 102,
+            "x": 1034.3,
+            "y": 0.0,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Indexer/kI",
@@ -891,10 +891,10 @@
           },
           {
             "title": "Idx kD",
-            "x": 1229,
-            "y": 0,
-            "width": 154,
-            "height": 102,
+            "x": 1241.4,
+            "y": 0.0,
+            "width": 155.6,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Indexer/kD",
@@ -904,10 +904,10 @@
           },
           {
             "title": "Idx FF",
-            "x": 1382,
-            "y": 0,
-            "width": 102,
-            "height": 102,
+            "x": 1396.0,
+            "y": 0.0,
+            "width": 103.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Indexer/FF",
@@ -917,10 +917,10 @@
           },
           {
             "title": "Idx TgtSpd",
-            "x": 819,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 827.3,
+            "y": 116.3,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Indexer/TargetSpeed",
@@ -930,10 +930,10 @@
           },
           {
             "title": "Jam Amps",
-            "x": 1024,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 1034.3,
+            "y": 116.3,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Indexer/JamAmps",
@@ -943,10 +943,10 @@
           },
           {
             "title": "Jam Sec",
-            "x": 1229,
-            "y": 102,
-            "width": 256,
-            "height": 102,
+            "x": 1241.4,
+            "y": 116.3,
+            "width": 258.6,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Indexer/JamSeconds",
@@ -956,10 +956,10 @@
           },
           {
             "title": "INDEXER JAM",
-            "x": 819,
-            "y": 205,
-            "width": 307,
-            "height": 102,
+            "x": 827.3,
+            "y": 233.7,
+            "width": 310.1,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/JamDetected",
@@ -972,10 +972,10 @@
           },
           {
             "title": "Idx Stalled",
-            "x": 1126,
-            "y": 205,
-            "width": 205,
-            "height": 102,
+            "x": 1137.4,
+            "y": 233.7,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/Stalled",
@@ -988,10 +988,10 @@
           },
           {
             "title": "Idx StallMs",
-            "x": 1331,
-            "y": 205,
-            "width": 154,
-            "height": 102,
+            "x": 1344.4,
+            "y": 233.7,
+            "width": 155.6,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/StallDurationMs",
@@ -1001,10 +1001,10 @@
           },
           {
             "title": "Idx Running",
-            "x": 0,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 0.0,
+            "y": 350.0,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/Running",
@@ -1017,10 +1017,10 @@
           },
           {
             "title": "Direction",
-            "x": 205,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 207.1,
+            "y": 350.0,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/Direction",
@@ -1030,10 +1030,10 @@
           },
           {
             "title": "Idx RPM",
-            "x": 410,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 414.1,
+            "y": 350.0,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/VelocityRPM",
@@ -1043,10 +1043,10 @@
           },
           {
             "title": "Idx Output",
-            "x": 614,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 620.2,
+            "y": 350.0,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/AppliedOutput",
@@ -1056,10 +1056,10 @@
           },
           {
             "title": "Jam Count",
-            "x": 819,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 827.3,
+            "y": 350.0,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/TotalJamCount",
@@ -1069,10 +1069,10 @@
           },
           {
             "title": "JamFreq/Min",
-            "x": 1024,
-            "y": 307,
-            "width": 205,
-            "height": 102,
+            "x": 1034.3,
+            "y": 350.0,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/JamFrequencyPerMin",
@@ -1082,10 +1082,10 @@
           },
           {
             "title": "Idx Conn",
-            "x": 1229,
-            "y": 307,
-            "width": 256,
-            "height": 102,
+            "x": 1241.4,
+            "y": 350.0,
+            "width": 258.6,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/Device/Connected",
@@ -1098,10 +1098,10 @@
           },
           {
             "title": "AGITATOR ON",
-            "x": 0,
-            "y": 410,
-            "width": 307,
-            "height": 102,
+            "x": 0.0,
+            "y": 467.4,
+            "width": 310.1,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Agitator/Running",
@@ -1114,10 +1114,10 @@
           },
           {
             "title": "Agit RPM",
-            "x": 307,
-            "y": 410,
-            "width": 205,
-            "height": 102,
+            "x": 310.1,
+            "y": 467.4,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Agitator/VelocityRPM",
@@ -1127,10 +1127,10 @@
           },
           {
             "title": "Agit Output",
-            "x": 512,
-            "y": 410,
-            "width": 205,
-            "height": 102,
+            "x": 517.2,
+            "y": 467.4,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Agitator/AppliedOutput",
@@ -1140,10 +1140,10 @@
           },
           {
             "title": "Agit Stalled",
-            "x": 717,
-            "y": 410,
-            "width": 205,
-            "height": 102,
+            "x": 724.2,
+            "y": 467.4,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Agitator/Stalled",
@@ -1156,10 +1156,10 @@
           },
           {
             "title": "Agit StallMs",
-            "x": 922,
-            "y": 410,
-            "width": 205,
-            "height": 102,
+            "x": 931.3,
+            "y": 467.4,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Agitator/StallDurationMs",
@@ -1169,10 +1169,10 @@
           },
           {
             "title": "Agit Conn",
-            "x": 1126,
-            "y": 410,
-            "width": 205,
-            "height": 102,
+            "x": 1137.4,
+            "y": 467.4,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Agitator/Device/Connected",
@@ -1185,10 +1185,10 @@
           },
           {
             "title": "Agit Current",
-            "x": 1331,
-            "y": 410,
-            "width": 154,
-            "height": 102,
+            "x": 1344.4,
+            "y": 467.4,
+            "width": 155.6,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Agitator/CurrentAmps",
@@ -1202,10 +1202,10 @@
           },
           {
             "title": "Idx Temp",
-            "x": 0,
-            "y": 512,
-            "width": 410,
-            "height": 102,
+            "x": 0.0,
+            "y": 583.7,
+            "width": 414.1,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/TemperatureCelsius",
@@ -1219,10 +1219,10 @@
           },
           {
             "title": "Idx Current",
-            "x": 410,
-            "y": 512,
-            "width": 410,
-            "height": 102,
+            "x": 414.1,
+            "y": 583.7,
+            "width": 414.2,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/CurrentAmps",
@@ -1236,10 +1236,10 @@
           },
           {
             "title": "Agit Temp",
-            "x": 819,
-            "y": 512,
-            "width": 307,
-            "height": 102,
+            "x": 827.3,
+            "y": 583.7,
+            "width": 310.1,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Agitator/TemperatureCelsius",
@@ -1253,10 +1253,10 @@
           },
           {
             "title": "Torque Alert",
-            "x": 1126,
-            "y": 512,
-            "width": 205,
-            "height": 102,
+            "x": 1137.4,
+            "y": 583.7,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/TorqueReversalAlert",
@@ -1269,10 +1269,10 @@
           },
           {
             "title": "Battery",
-            "x": 1331,
-            "y": 512,
-            "width": 154,
-            "height": 102,
+            "x": 1344.4,
+            "y": 583.7,
+            "width": 155.6,
+            "height": 116.3,
             "type": "Voltage View",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/BatteryVoltage",
@@ -1294,10 +1294,10 @@
         "containers": [
           {
             "title": "kP",
-            "x": 0,
-            "y": 0,
-            "width": 307,
-            "height": 102,
+            "x": 0.0,
+            "y": 0.0,
+            "width": 310.1,
+            "height": 232.6,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Hanger/kP",
@@ -1307,10 +1307,10 @@
           },
           {
             "title": "kD",
-            "x": 307,
-            "y": 0,
-            "width": 307,
-            "height": 102,
+            "x": 310.1,
+            "y": 0.0,
+            "width": 310.1,
+            "height": 232.6,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Hanger/kD",
@@ -1320,10 +1320,10 @@
           },
           {
             "title": "Position",
-            "x": 614,
-            "y": 0,
-            "width": 307,
-            "height": 102,
+            "x": 620.2,
+            "y": 0.0,
+            "width": 310.1,
+            "height": 232.6,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Hanger/PositionRotations",
@@ -1333,10 +1333,10 @@
           },
           {
             "title": "Target",
-            "x": 922,
-            "y": 0,
-            "width": 307,
-            "height": 102,
+            "x": 931.3,
+            "y": 0.0,
+            "width": 310.1,
+            "height": 232.6,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Hanger/TargetPosition",
@@ -1346,10 +1346,10 @@
           },
           {
             "title": "At Position",
-            "x": 1229,
-            "y": 0,
-            "width": 256,
-            "height": 102,
+            "x": 1241.4,
+            "y": 0.0,
+            "width": 258.6,
+            "height": 232.6,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Hanger/AtTarget",
@@ -1362,10 +1362,10 @@
           },
           {
             "title": "Deployed",
-            "x": 0,
-            "y": 102,
-            "width": 307,
-            "height": 102,
+            "x": 0.0,
+            "y": 232.6,
+            "width": 310.1,
+            "height": 232.5,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Hanger/Deployed",
@@ -1378,10 +1378,10 @@
           },
           {
             "title": "Climbing",
-            "x": 307,
-            "y": 102,
-            "width": 307,
-            "height": 102,
+            "x": 310.1,
+            "y": 232.6,
+            "width": 310.1,
+            "height": 232.5,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Hanger/Climbing",
@@ -1394,10 +1394,10 @@
           },
           {
             "title": "Progress",
-            "x": 614,
-            "y": 102,
-            "width": 410,
-            "height": 102,
+            "x": 620.2,
+            "y": 232.6,
+            "width": 414.1,
+            "height": 232.5,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Hanger/ClimbProgress",
@@ -1411,10 +1411,10 @@
           },
           {
             "title": "Connected",
-            "x": 1024,
-            "y": 102,
-            "width": 205,
-            "height": 102,
+            "x": 1034.3,
+            "y": 232.6,
+            "width": 207.1,
+            "height": 232.5,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Hanger/Device/Connected",
@@ -1427,10 +1427,10 @@
           },
           {
             "title": "Soft Limit",
-            "x": 1229,
-            "y": 102,
-            "width": 256,
-            "height": 102,
+            "x": 1241.4,
+            "y": 232.6,
+            "width": 258.6,
+            "height": 232.5,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Hanger/SoftLimitHit",
@@ -1443,10 +1443,10 @@
           },
           {
             "title": "Temp",
-            "x": 0,
-            "y": 205,
-            "width": 512,
-            "height": 102,
+            "x": 0.0,
+            "y": 467.4,
+            "width": 517.2,
+            "height": 232.6,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Hanger/TemperatureCelsius",
@@ -1460,10 +1460,10 @@
           },
           {
             "title": "Current",
-            "x": 512,
-            "y": 205,
-            "width": 512,
-            "height": 102,
+            "x": 517.2,
+            "y": 467.4,
+            "width": 517.1,
+            "height": 232.6,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Hanger/CurrentAmps",
@@ -1477,10 +1477,10 @@
           },
           {
             "title": "Output",
-            "x": 1024,
-            "y": 205,
-            "width": 461,
-            "height": 102,
+            "x": 1034.3,
+            "y": 467.4,
+            "width": 465.7,
+            "height": 232.6,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Hanger/AppliedOutput",
