@@ -263,20 +263,19 @@ public class RobotContainer {
     } else {
       
       driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
-      driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM,hubArcDrive::isScheduled ).alongWith(new MoveAgitator(Constants.MotorConstants.DESIRED_AGITATOR_SPEED,hubArcDrive::isScheduled)));
+      driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM).alongWith(new MoveAgitator(Constants.MotorConstants.DESIRED_AGITATOR_SPEED)));
       driverXbox.x().toggleOnTrue(hubArcDrive);
-      driverXbox.b().onTrue(new RetractIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //driverXbox.rightBumper().onTrue(new AlignWithAprilTag());
       //driverXbox.b().whileTrue(new RunIntake())
        //   .onFalse(new RetractIntake());
-      copilotXbox.x().whileTrue(new MoveIntake());
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.2));
       copilotXbox.b().whileTrue(new AgitateAndIndex(0.3, 5000, hubArcDrive::isScheduled));
       copilotXbox.a().whileTrue(new RunIntake());
+      copilotXbox.x().onTrue(new RetractIntake());
       copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
 
 //       Trigger crossingZone = new Trigger(()->{
