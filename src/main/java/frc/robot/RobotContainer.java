@@ -288,6 +288,7 @@ public class RobotContainer {
       copilotXbox.b().whileTrue(new AgitateAndIndex(-Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
       copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
+      copilotXbox.leftTrigger().whileTrue(new PivotIntake(-0.2).andThen(new PivotIntake(0.2)).repeatedly());
 
 //       Trigger crossingZone = new Trigger(()->{
 //     Pose2d pose = drivebase.getPose();
