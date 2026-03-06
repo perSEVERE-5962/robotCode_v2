@@ -3,7 +3,9 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.commands;
 
+import static frc.robot.Constants.HubScoringConstants.BLUE_HUB_CENTER;
 import static frc.robot.Constants.HubScoringConstants.BLUE_SCORING_SIDE;
+import static frc.robot.Constants.HubScoringConstants.RED_HUB_CENTER;
 import static frc.robot.Constants.HubScoringConstants.RED_SCORING_SIDE;
 
 import edu.wpi.first.math.MathUtil;
@@ -25,6 +27,8 @@ public class HubArcDrive extends Command {
   private final double scoringDistance;
   private Shooter shooter;
   private final Rotation2d scoringSide;
+  private final double arcWidthDegrees;
+
   private static double headingError;
 
   // Command for drive mode where robot orbits around hub, maintaining distance and holding its
@@ -36,13 +40,15 @@ public class HubArcDrive extends Command {
       DoubleSupplier strafeInput,
       Translation2d hubCenter,
       double scoringDistance,
-      Rotation2d scoringSide) {
+      Rotation2d scoringSide,
+      double arcWidthDegrees) {
     this.swerve = swerve;
     this.strafeInput = strafeInput;
     this.hubCenter = hubCenter;
     this.scoringDistance = scoringDistance;
     this.shooter = Shooter.getInstance();
     this.scoringSide = scoringSide;
+    this.arcWidthDegrees = arcWidthDegrees;
 
     addRequirements(swerve, shooter);
   }
@@ -55,7 +61,6 @@ public class HubArcDrive extends Command {
 
     // joystick input for movement
     double strafeStrength = strafeInput.getAsDouble();
-    // double strafeStrength = double strafeStrength = strafeInput.getAsDouble();
     // current robot pose and rotation
     Translation2d robotPos = swerve.getPose().getTranslation();
     Rotation2d currentHeading = swerve.getHeading();
@@ -67,9 +72,9 @@ public class HubArcDrive extends Command {
 
     // Check arc limits
     double centerAngle = scoringSide.getRadians();
-    double halfArcWidth = Math.toRadians(90 / 2.0);
+    double halfArcWidth = Math.toRadians(arcWidthDegrees / 2.0);
     double angleDifference = angleFromHub - centerAngle;
-    angleDifference = Math.atan2(Math.sin(angleDifference), Math.cos(angleDifference));
+    angleDifference = MathUtil.angleModulus(angleDifference);
 
     boolean atLeftLimit = angleDifference >= halfArcWidth;
     boolean atRightLimit = angleDifference <= -halfArcWidth;
@@ -81,15 +86,15 @@ public class HubArcDrive extends Command {
     }
 
     // get desired distance vs real distance
-    double distanceError = distanceFromHub - scoringDistance;
-    double radialSpeed = -distanceError * 1.5; // p controller to keep distance
+    double distanceError = scoringDistance - distanceFromHub;
+    double radialSpeed = distanceError * 1.5; // p controller to keep distance
     radialSpeed = MathUtil.clamp(radialSpeed, -1.0, 1.0); // get speed
 
     if (Math.abs(distanceError) < 0.05) {
       radialSpeed = 0;
     }
     // movement around the arc
-    double tangentialSpeed = strafeStrength;
+    double tangentialSpeed = strafeStrength * 1.0;
 
     // get x and y from distance to hub
     double radialX = Math.cos(angleFromHub);
@@ -117,10 +122,9 @@ public class HubArcDrive extends Command {
     ChassisSpeeds robotVelocity = swerve.getFieldVelocity();
     Translation2d robotVel =
         new Translation2d(robotVelocity.vxMetersPerSecond, robotVelocity.vyMetersPerSecond);
-    // get shooter velocity
+
     // Time for game piece to reach hub
     double timeToHub = 1.14; // 1.16 sec
-
     // velocity drift compensation, calculates distance the ball would drift due to do robot
     // velocity, and calculated the new target, factoring in said drift.
     Translation2d velocityDrift = robotVel.times(timeToHub);
@@ -131,7 +135,7 @@ public class HubArcDrive extends Command {
     // Heading control with velocity compensation, to compensate for the velocity of ball due to
     // robot speed
     headingError = compensatedAim.minus(currentHeading).getRadians();
-    headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));
+    headingError = MathUtil.angleModulus(headingError);
     double headingSpeed = headingError * 4.5; // tune pid
     headingSpeed += tangentialSpeed / scoringDistance;
     double maxHeadingSpeed = swerve.getSwerveDrive().getMaximumChassisAngularVelocity();
@@ -148,7 +152,7 @@ public class HubArcDrive extends Command {
     // System.out.println("velocity:"+robotVelocity.vyMetersPerSecond);
     double shooterSpeed =
         Constants.MotorConstants.DESIRED_SHOOTER_RPM
-            + (Math.abs(robotVelocity.vyMetersPerSecond * 350));
+            + Math.abs(robotVelocity.vyMetersPerSecond * 350);
     shooterSpeed = MathUtil.clamp(shooterSpeed, 0, 3760);
     shooter.moveToVelocityWithPID(shooterSpeed);
     // System.out.println("shooter speed" + shooterSpeed);
@@ -164,11 +168,11 @@ public class HubArcDrive extends Command {
   @Override
   public boolean isFinished() {
     Pose2d pose = swerve.getPose();
-    if (scoringSide == BLUE_SCORING_SIDE && pose.getX() > 4.611) {
+    if (scoringSide == BLUE_SCORING_SIDE && pose.getX() < BLUE_HUB_CENTER.getX()) {
       System.out.print("Wrong side");
       return true;
 
-    } else if (scoringSide == RED_SCORING_SIDE && pose.getX() < 11.901424) {
+    } else if (scoringSide == RED_SCORING_SIDE && pose.getX() > RED_HUB_CENTER.getX()) {
       System.out.print("Wrong side");
       return true;
     }

@@ -210,7 +210,7 @@ public class RobotContainer {
             driverXbox::getLeftX,
             getHubCenter(),
             Constants.HubScoringConstants.SCORING_DISTANCE,
-            getScoringSide());
+            getScoringSide(), Constants.HubScoringConstants.SCORING_ARC_WIDTH_DEGREES);
 
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
