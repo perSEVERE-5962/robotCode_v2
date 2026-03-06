@@ -84,32 +84,32 @@ public class Shooter extends Actuator {
   }
 
   // Tunable accessors
-  public double getTunableTargetRPM() {
+  public static double getTunableTargetRPM() {
     return targetRPMTunable.get();
   }
 
-  public double getToleranceRPM() {
+  public static double getToleranceRPM() {
     return toleranceRPM.get();
   }
 
-  public double getShotDropThreshold() {
+  public static double getShotDropThreshold() {
     return shotDropRPM.get();
   }
 
   // PID gain getters
-  public double getTunableKP() {
+  public static double getTunableKP() {
     return kP.get();
   }
 
-  public double getTunableKI() {
+  public static double getTunableKI() {
     return kI.get();
   }
 
-  public double getTunableKD() {
+  public static double getTunableKD() {
     return kD.get();
   }
 
-  public double getTunableFF() {
+  public static double getTunableFF() {
     return kF.get();
   }
 

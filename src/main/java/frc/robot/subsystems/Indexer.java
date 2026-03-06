@@ -67,32 +67,32 @@ public class Indexer extends Actuator {
   }
 
   // Tunable accessors
-  public double getTunableTargetSpeed() {
+  public static double getTunableTargetSpeed() {
     return targetSpeed.get();
   }
 
-  public double getJamCurrentThreshold() {
+  public static double getJamCurrentThreshold() {
     return jamCurrentThreshold.get();
   }
 
-  public double getJamTimeThreshold() {
+  public static double getJamTimeThreshold() {
     return jamTimeThreshold.get();
   }
 
   // PID gain getters
-  public double getTunableKP() {
+  public static double getTunableKP() {
     return kP.get();
   }
 
-  public double getTunableKI() {
+  public static double getTunableKI() {
     return kI.get();
   }
 
-  public double getTunableKD() {
+  public static double getTunableKD() {
     return kD.get();
   }
 
-  public double getTunableFF() {
+  public static double getTunableFF() {
     return kF.get();
   }
 

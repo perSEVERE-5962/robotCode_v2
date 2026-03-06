@@ -58,7 +58,7 @@ public class Intake extends SubsystemBase {
   }
 
   // Tunable value accessor
-  public double getTunableSpeed() {
+  public static double getTunableSpeed() {
     return intakeSpeed.get();
   }
 
