@@ -29,11 +29,22 @@ public class LEDStatusDisplay {
     CRITICAL_ALERT
   }
 
-  // Colorblind-safe palette
+  // Green instead of white bc Kfir said white wasn't visible enough on the field
   private static final int BLUE_R = 0, BLUE_G = 100, BLUE_B = 255;
   private static final int ORANGE_R = 255, ORANGE_G = 100, ORANGE_B = 0;
-  private static final int WHITE_R = 255, WHITE_G = 255, WHITE_B = 255;
+  private static final int GREEN_R = 0, GREEN_G = 255, GREEN_B = 0;
   private static final int RED_R = 255, RED_G = 0, RED_B = 0;
+
+  // R203-M says flashing > 5 Hz is illegal and seizures can trigger at 3+ Hz,
+  // so everything here stays under 1.5 Hz and nothing ever goes full black.
+  private static final double MIN_BREATHE_PERIOD = 0.667; // 1.5 Hz max breathe rate
+  private static final double BREATHE_FLOOR = 0.15; // never go fully dark (max 6.7:1 contrast)
+  private static final double CHASE_DIM_FACTOR = 0.15; // dim background for "off" segments
+  private static final int CHASE_SEGMENT_SIZE = 5; // LEDs per chase group
+
+  // If battery voltage flickers right at the CRITICAL_V threshold, the state would
+  // toggle green/red at 50 Hz without this hold. 0.5s minimum locks it to 1 Hz max.
+  private static final double MIN_STATE_HOLD_SEC = 0.5;
 
   private final AddressableLED led;
   private final AddressableLEDBuffer buffer;
@@ -43,6 +54,7 @@ public class LEDStatusDisplay {
   private LEDState currentState = LEDState.DISABLED;
   private LEDState previousState = LEDState.DISABLED;
   private int stateChangeCount = 0;
+  private double lastStateChangeTime = 0;
 
   // Match-over latch
   private boolean matchEndDetected = false;
@@ -52,6 +64,11 @@ public class LEDStatusDisplay {
   // Rainbow pattern for auto
   private final LEDPattern rainbowPattern;
 
+  // Tracks where we are in the aim breathe cycle so changing the period
+  // doesn't make the brightness jump to a random spot.
+  private double aimPhaseAccumulator = 0;
+  private double aimLastUpdateTime = 0;
+
   private static final TunableNumber brightness = new TunableNumber("LED/brightness", 0.8);
 
   // --- Test state override (slider 0-11 from Elastic, FMS-locked) ---
@@ -59,22 +76,22 @@ public class LEDStatusDisplay {
 
   private static final String[] TEST_DESCRIPTIONS = {
     "0: Normal (no override)",
-    "1: DISABLED - Dim white",
-    "2: IDLE - Solid white",
-    "3: MATCH_OVER - White breathing",
+    "1: DISABLED - Dim green",
+    "2: IDLE - Solid green",
+    "3: MATCH_OVER - Green breathing",
     "4: VISION_LOCKED - Blue breathing",
     "5: AUTO_RUNNING - Rainbow scroll",
-    "6: WARNING - Orange breathing",
+    "6: WARNING - Orange chase",
     "7: SHOOTER_SPINUP - Blue progress bar",
     "8: AIM_PROGRESS - Blue pulse (speed varies)",
     "9: READY_TO_SHOOT - Solid blue",
-    "10: CRITICAL_ALERT - Red/orange flash"
+    "10: CRITICAL_ALERT - Red/orange chase"
   };
 
   private static final TunableNumber testState = new TunableNumber("LED/TestState", 0);
   private int lastTestStateValue = 0;
 
-  // Snapshot of all inputs needed for state resolution
+  // All the inputs we need to figure out which LED state to show
   record StateSnapshot(
       boolean enabled,
       boolean autonomous,
@@ -134,7 +151,7 @@ public class LEDStatusDisplay {
       int testVal = (int) testState.get();
       if (testVal >= 1 && testVal <= TEST_STATES.length) {
         resolved = TEST_STATES[testVal - 1];
-        // Fake snapshot values so animated states render visibly
+        // Fake snapshot so the animated ones actually show up in test mode
         if (resolved == LEDState.SHOOTER_SPINUP || resolved == LEDState.AIM_PROGRESS) {
           snapshot =
               new StateSnapshot(
@@ -145,10 +162,12 @@ public class LEDStatusDisplay {
       lastTestStateValue = testVal;
     }
 
-    if (resolved != currentState) {
+    double now = Timer.getFPGATimestamp();
+    if (resolved != currentState && (now - lastStateChangeTime) >= MIN_STATE_HOLD_SEC) {
       previousState = currentState;
       currentState = resolved;
       stateChangeCount++;
+      lastStateChangeTime = now;
     }
 
     renderState(currentState, snapshot);
@@ -274,19 +293,19 @@ public class LEDStatusDisplay {
     switch (state) {
       case DISABLED ->
           fillSolid(
-              scale(WHITE_R, LEDConstants.DIM_DISABLED * bright),
-              scale(WHITE_G, LEDConstants.DIM_DISABLED * bright),
-              scale(WHITE_B, LEDConstants.DIM_DISABLED * bright));
+              scale(GREEN_R, LEDConstants.DIM_DISABLED * bright),
+              scale(GREEN_G, LEDConstants.DIM_DISABLED * bright),
+              scale(GREEN_B, LEDConstants.DIM_DISABLED * bright));
 
       case IDLE ->
-          fillSolid(scale(WHITE_R, bright), scale(WHITE_G, bright), scale(WHITE_B, bright));
+          fillSolid(scale(GREEN_R, bright), scale(GREEN_G, bright), scale(GREEN_B, bright));
 
       case MATCH_OVER -> {
         double phase = breathePhase(now, 3.0);
         fillSolid(
-            scale(WHITE_R, phase * bright),
-            scale(WHITE_G, phase * bright),
-            scale(WHITE_B, phase * bright));
+            scale(GREEN_R, phase * bright),
+            scale(GREEN_G, phase * bright),
+            scale(GREEN_B, phase * bright));
       }
 
       case VISION_LOCKED -> {
@@ -300,11 +319,8 @@ public class LEDStatusDisplay {
       case AUTO_RUNNING -> rainbowPattern.applyTo(buffer);
 
       case WARNING -> {
-        double phase = breathePhase(now, 1.5);
-        fillSolid(
-            scale(ORANGE_R, phase * bright),
-            scale(ORANGE_G, phase * bright),
-            scale(ORANGE_B, phase * bright));
+        // Orange dots slide along the strip, 1 Hz per LED, dim background.
+        renderChase(now, 1.0, ORANGE_R, ORANGE_G, ORANGE_B, bright);
       }
 
       case SHOOTER_SPINUP -> {
@@ -314,15 +330,28 @@ public class LEDStatusDisplay {
           if (i < litCount) {
             buffer.setRGB(i, scale(BLUE_R, bright), scale(BLUE_G, bright), scale(BLUE_B, bright));
           } else {
-            buffer.setRGB(i, 0, 0, 0);
+            // Dim blue shows the "unfilled" portion of the bar
+            buffer.setRGB(
+                i,
+                scale(BLUE_R, CHASE_DIM_FACTOR * bright),
+                scale(BLUE_G, CHASE_DIM_FACTOR * bright),
+                scale(BLUE_B, CHASE_DIM_FACTOR * bright));
           }
         }
       }
 
       case AIM_PROGRESS -> {
         double error = Math.max(0, s.progressiveAimError());
-        double period = 0.3 + (error / 10.0) * 2.2;
-        double phase = breathePhase(now, period);
+        // Closer aim = faster pulse. Clamped so it can't go above 1.5 Hz.
+        double period = Math.max(MIN_BREATHE_PERIOD, 0.5 + (error / 10.0) * 2.0);
+        // Integrate dt/period so changing period doesn't jump the brightness.
+        double dt = now - aimLastUpdateTime;
+        if (dt > 0 && dt < 0.5) {
+          aimPhaseAccumulator += dt / period;
+        }
+        aimLastUpdateTime = now;
+        double raw = (Math.sin(2 * Math.PI * aimPhaseAccumulator) + 1.0) / 2.0;
+        double phase = BREATHE_FLOOR + raw * (1.0 - BREATHE_FLOOR);
         fillSolid(
             scale(BLUE_R, phase * bright),
             scale(BLUE_G, phase * bright),
@@ -333,12 +362,48 @@ public class LEDStatusDisplay {
           fillSolid(scale(BLUE_R, bright), scale(BLUE_G, bright), scale(BLUE_B, bright));
 
       case CRITICAL_ALERT -> {
-        boolean useRed = ((int) (now / 0.05)) % 2 == 0;
-        if (useRed) {
-          fillSolid(scale(RED_R, bright), scale(RED_G, bright), scale(RED_B, bright));
-        } else {
-          fillSolid(scale(ORANGE_R, bright), scale(ORANGE_G, bright), scale(ORANGE_B, bright));
-        }
+        // Red and orange bands that slide along the strip at 1 Hz, no LED goes dark.
+        // The old 20 Hz strobe broke R203-M and could trigger seizures.
+        renderDualChase(now, 0.5, RED_R, RED_G, RED_B, ORANGE_R, ORANGE_G, ORANGE_B, bright);
+      }
+    }
+  }
+
+  /** Slides a bright chunk along the strip with the rest dimmed. */
+  private void renderChase(double now, double period, int r, int g, int b, double bright) {
+    int totalSegments = (length + CHASE_SEGMENT_SIZE - 1) / CHASE_SEGMENT_SIZE;
+    int activeSegment = (int) ((now / period) * totalSegments) % totalSegments;
+
+    for (int i = 0; i < length; i++) {
+      int seg = i / CHASE_SEGMENT_SIZE;
+      if (seg == activeSegment || seg == (activeSegment + 1) % totalSegments) {
+        buffer.setRGB(i, scale(r, bright), scale(g, bright), scale(b, bright));
+      } else {
+        // Dim instead of black so nothing ever fully turns off
+        buffer.setRGB(
+            i,
+            scale(r, CHASE_DIM_FACTOR * bright),
+            scale(g, CHASE_DIM_FACTOR * bright),
+            scale(b, CHASE_DIM_FACTOR * bright));
+      }
+    }
+  }
+
+  /** Two colors in alternating chunks that scroll together like a barber pole. */
+  private void renderDualChase(
+      double now, double period,
+      int r1, int g1, int b1,
+      int r2, int g2, int b2,
+      double bright) {
+    // Shift the pattern over time so it looks like it's moving
+    int offset = (int) (now / period * CHASE_SEGMENT_SIZE) % (CHASE_SEGMENT_SIZE * 2);
+
+    for (int i = 0; i < length; i++) {
+      int pos = (i + offset) % (CHASE_SEGMENT_SIZE * 2);
+      if (pos < CHASE_SEGMENT_SIZE) {
+        buffer.setRGB(i, scale(r1, bright), scale(g1, bright), scale(b1, bright));
+      } else {
+        buffer.setRGB(i, scale(r2, bright), scale(g2, bright), scale(b2, bright));
       }
     }
   }
@@ -354,7 +419,9 @@ public class LEDStatusDisplay {
   }
 
   private static double breathePhase(double time, double period) {
-    return (Math.sin(2 * Math.PI * time / period) + 1.0) / 2.0;
+    double raw = (Math.sin(2 * Math.PI * time / period) + 1.0) / 2.0;
+    // Floor so breathing never goes fully dark
+    return BREATHE_FLOOR + raw * (1.0 - BREATHE_FLOOR);
   }
 
   // --- Accessors for telemetry ---
