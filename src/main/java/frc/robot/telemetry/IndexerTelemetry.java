@@ -112,8 +112,8 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     }
 
     // Jam detection: manual time-based (reads both JamAmps and JamSeconds tunables live)
-    double jamThreshold = indexer.getJamCurrentThreshold();
-    double jamTimeSec = indexer.getJamTimeThreshold();
+    double jamThreshold = Indexer.getJamCurrentThreshold();
+    double jamTimeSec = Indexer.getJamTimeThreshold();
     boolean highCurrent = running && (currentAmps > jamThreshold);
     boolean wasJammed = jamDetected;
 
@@ -145,10 +145,10 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     // PID audit trail
     pidTuningEvent = false;
     try {
-      double curKP = indexer.getTunableKP();
-      double curKI = indexer.getTunableKI();
-      double curKD = indexer.getTunableKD();
-      double curFF = indexer.getTunableFF();
+      double curKP = Indexer.getTunableKP();
+      double curKI = Indexer.getTunableKI();
+      double curKD = Indexer.getTunableKD();
+      double curFF = Indexer.getTunableFF();
       if (prevKP >= 0
           && (curKP != prevKP || curKI != prevKI || curKD != prevKD || curFF != prevFF)) {
         pidTuningEvent = true;
@@ -181,7 +181,7 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     SafeLog.put("Indexer/Direction", direction);
     SafeLog.put("Indexer/ReadyToFire", !jamDetected);
     SafeLog.put("Indexer/AppliedOutput", appliedOutput);
-    SafeLog.put("Indexer/TargetSpeed", indexer != null ? indexer.getTunableTargetSpeed() : 0.0);
+    SafeLog.put("Indexer/TargetSpeed", indexer != null ? Indexer.getTunableTargetSpeed() : 0.0);
     SafeLog.put("Indexer/CurrentAmps", currentAmps);
     SafeLog.put("Indexer/TemperatureCelsius", temperatureCelsius);
     SafeLog.put("Indexer/JamDetected", jamDetected);

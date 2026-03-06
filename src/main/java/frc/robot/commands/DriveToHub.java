@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.util.HubScoringUtil;
 
+/* Create and schedule drive to hub command; automatically self-cancels */
 public class DriveToHub extends Command {
 
   private final SwerveSubsystem swerve;
@@ -54,14 +55,12 @@ public class DriveToHub extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    if (driveCommand != null && driveCommand.isScheduled()) {
-      driveCommand.cancel();
-    }
+    // driveCommand cancels this command
   }
 
   @Override
   public boolean isFinished() {
-    // Finish when the drive command completes
-    return driveCommand != null && !driveCommand.isScheduled();
+    // driveCommand cancels this command
+    return false;
   }
 }

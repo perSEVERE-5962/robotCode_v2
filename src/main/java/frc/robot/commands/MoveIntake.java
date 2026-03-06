@@ -19,7 +19,7 @@ public class MoveIntake extends Command {
 
   @Override
   public void execute() {
-    intake.move(intake.getTunableSpeed());
+    intake.move(speed);
   }
 
   @Override

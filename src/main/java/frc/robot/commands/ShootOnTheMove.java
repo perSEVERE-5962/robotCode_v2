@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -99,7 +98,6 @@ public class ShootOnTheMove extends Command {
   private final SwerveSubsystem swerve;
   private final Shooter shooter;
   private Translation2d lastDrift;
-  private final double WHEEL_RADIUS_METERS = Units.inchesToMeters(2.0);
   private final DoubleSupplier forwardInput;
   private final DoubleSupplier strafeInput;
   private final Translation2d hubCenter;
@@ -120,8 +118,8 @@ public class ShootOnTheMove extends Command {
     addRequirements(swerve, shooter);
     // distance and time
     timeOfFlightMap.put(1.2, 2.0);
-    // distance and rpm, more effeicent and consistent than physics for testing and tuning
     timeOfFlightMap.put(2.0, 3.0);
+    // distance and rpm, more efficient and consistent than physics for testing and tuning
     RPMMap.put(1.2, 3720.0);
     RPMMap.put(2.0, 4000.0);
   }

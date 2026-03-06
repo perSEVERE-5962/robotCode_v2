@@ -566,7 +566,7 @@ public class PreMatchDiagnostics {
       }
 
       double startTime = Timer.getFPGATimestamp();
-      double targetRPM = shooter.getTunableTargetRPM();
+      double targetRPM = Shooter.getTunableTargetRPM();
       shooter.moveToVelocityWithPID(targetRPM);
 
       double timeout = SHOOTER_SPINUP_FAIL_MS / 1000.0 + 0.5;

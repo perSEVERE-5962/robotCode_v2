@@ -162,7 +162,7 @@ public class ShooterTelemetry implements SubsystemTelemetry {
 
     // Shot detection: velocity drop while previously at speed and still commanded to spin
     velocityDrop = previousVelocityRPM - velocityRPM;
-    double shotDropThreshold = shooter.getShotDropThreshold();
+    double shotDropThreshold = Shooter.getShotDropThreshold();
     shotDetected =
         (velocityDrop > shotDropThreshold)
             && (previousVelocityRPM > ShooterConstants.SHOT_DETECTION_MIN_RPM)
@@ -187,10 +187,10 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     // PID audit trail: detect when tunable gains change
     pidTuningEvent = false;
     try {
-      double curKP = shooter.getTunableKP();
-      double curKI = shooter.getTunableKI();
-      double curKD = shooter.getTunableKD();
-      double curFF = shooter.getTunableFF();
+      double curKP = Shooter.getTunableKP();
+      double curKI = Shooter.getTunableKI();
+      double curKD = Shooter.getTunableKD();
+      double curFF = Shooter.getTunableFF();
       if (prevKP >= 0
           && (curKP != prevKP || curKI != prevKI || curKD != prevKD || curFF != prevFF)) {
         pidTuningEvent = true;
