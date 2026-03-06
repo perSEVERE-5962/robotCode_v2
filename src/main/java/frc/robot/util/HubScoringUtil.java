@@ -4,7 +4,7 @@
 
 package frc.robot.util;
 
-/** Add your docs here. */
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -35,17 +35,13 @@ public class HubScoringUtil {
     double angleDiff =
         angleToRobot
             - centerAngle; // calculate the difference between desired angle vs current angle
-    angleDiff =
-        Math.atan2(
-            Math.sin(angleDiff),
-            Math.cos(angleDiff)); // WRAPS THE ANGLE USING MATH(this took a while)
+    angleDiff = MathUtil.angleModulus(angleDiff);
 
     double clampedAngleDiff =
-        Math.max(
+        MathUtil.clamp(
+            angleDiff,
             -halfArcRadians,
-            Math.min(
-                halfArcRadians,
-                angleDiff)); // the current angle on the arc of the robot relative to the hub is
+            halfArcRadians); // the current angle on the arc of the robot relative to the hub is
     // then clamped to the scoring arc(determines closest angle on arc)
     double targetAngle =
         centerAngle
