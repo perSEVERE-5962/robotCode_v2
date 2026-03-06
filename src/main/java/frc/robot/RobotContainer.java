@@ -281,14 +281,14 @@ public class RobotContainer {
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
-      copilotXbox.y().whileTrue(new MoveAgitator(2000));
+      copilotXbox.y().whileTrue(new AgitateAndIndex(Constants.AgitatorConstants.TARGET_RPM, Constants.IndexerConstants.TARGET_SPEED, hubArcDrive::isScheduled));
       copilotXbox.x().whileTrue(new MoveIntake());
-      copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
-      copilotXbox.leftBumper().whileTrue(new PivotIntake(0.2));
+      copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.4));
+      copilotXbox.leftBumper().whileTrue(new PivotIntake(0.4));
       copilotXbox.b().whileTrue(new AgitateAndIndex(-Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
       copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
-      copilotXbox.leftTrigger().whileTrue(new PivotIntake(-0.2).andThen(new PivotIntake(0.2)).repeatedly());
+      copilotXbox.leftTrigger().whileTrue((new PivotIntake(-0.3).withTimeout(1).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly());
 
 //       Trigger crossingZone = new Trigger(()->{
 //     Pose2d pose = drivebase.getPose();
@@ -301,8 +301,15 @@ public class RobotContainer {
 //     }
 // });
 // crossingZone.whileTrue(Commands.run(() -> {
-//   Rotation2d current = drivebase.getHeading();
-//   Rotation2d target;
+//   new DeployIntake();
+//     }
+// ));
+
+//     }
+  }}
+  
+  // Rotation2d current = drivebase.getHeading();
+  // Rotation2d target;
 
 // if (Math.abs(current.getDegrees()) < 90 || Math.abs(current.getDegrees()) > 270) {
 //     target = Rotation2d.fromDegrees(0);   
@@ -318,9 +325,7 @@ public class RobotContainer {
 //     drivebase.driveFieldOriented(speeds);
 // }, drivebase));
 
-//     }
-  }
-}
+
 /*     if (DriverStation.isTest()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 

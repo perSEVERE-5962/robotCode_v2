@@ -105,7 +105,7 @@ public final class Constants {
     public static final double DESIRED_SHOOTER_RPM = 2500;
     public static final double DESIRED_INDEXER_RPM = 7833; // 8.4 * 3730/4
     public static final double OUT_INTAKE_POS = 38.24;
-    public static final double IN_INTAKE_POS = 3;
+    public static final double IN_INTAKE_POS = 11.6;
     public static final double DESIRED_INTAKE_SPEED = -.99;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
@@ -133,7 +133,7 @@ public final class Constants {
     public static final double Iz = 0.0;
     
     // Tuning targets
-    public static final double TARGET_RPM = 2500;
+    public static final double TARGET_RPM = 3730;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
     public static final double TARGET_RECOVERY_MS = 150.0;
 
@@ -236,7 +236,7 @@ public final class Constants {
 
   public static final class LEDConstants {
     public static final int PWM_PORT = 0;
-    public static final int STRIP_LENGTH = 19;
+    public static final int STRIP_LENGTH = 74;
     public static final double DIM_DISABLED = 0.15;
   }
 

@@ -25,7 +25,7 @@ public class IntakeActuator extends Actuator {
         Constants.IntakeConstants.FF,
         Constants.IntakeConstants.Iz,
         38.25f,
-        0,
+        11.5f,
         false,
         false,
         true);
