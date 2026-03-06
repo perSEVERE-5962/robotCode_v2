@@ -274,9 +274,9 @@ public class RobotContainer {
     } else {
       
       driverXbox.a().onTrue(Commands.defer(()-> new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES), Set.of(drivebase)));
-      driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM,hubArcDrive::isScheduled ).alongWith(new MoveAgitator(Constants.AgitatorConstants.TARGET_RPM,hubArcDrive::isScheduled)));
+      driverXbox.y().whileTrue(new RetractIntake());
       driverXbox.x().toggleOnTrue(hubArcDrive);
-      driverXbox.b().onTrue(new RetractIntake());
+      driverXbox.b().onTrue(new DeployIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
@@ -288,7 +288,7 @@ public class RobotContainer {
       copilotXbox.b().whileTrue(new AgitateAndIndex(-Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
       copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
-      copilotXbox.leftTrigger().whileTrue((new PivotIntake(-0.3).withTimeout(1).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly());
+      copilotXbox.leftTrigger().whileTrue((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly());
 
 //       Trigger crossingZone = new Trigger(()->{
 //     Pose2d pose = drivebase.getPose();
