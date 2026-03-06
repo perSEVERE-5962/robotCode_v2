@@ -40,7 +40,7 @@ public class AlignToTag extends Command {
           0.0,
           new TrapezoidProfile.Constraints(
               3.0, // max velocity(for tuning)
-              3.0 // max accelleration(for tuning)
+              3.0 // max acceleration(for tuning)
               ));
 
   private final ProfiledPIDController yPID =

@@ -28,9 +28,9 @@ public class AbsoluteDriveAdv extends Command {
 
   /**
    * Used to drive a swerve robot in full field-centric mode. vX and vY supply translation inputs,
-   * where x is torwards/away from alliance wall and y is left/right. Heading Adjust changes the
-   * current heading after being multipied by a constant. The look booleans are shortcuts to get the
-   * robot to face a certian direction. Based off of ideas in
+   * where x is towards/away from alliance wall and y is left/right. Heading Adjust changes the
+   * current heading after being multiplied by a constant. The look booleans are shortcuts to get the
+   * robot to face a certain direction. Based off of ideas in
    * https://www.chiefdelphi.com/t/experiments-with-a-swerve-steering-knob/446172
    *
    * @param swerve The swerve drivebase subsystem.
@@ -100,7 +100,7 @@ public class AbsoluteDriveAdv extends Command {
     // Prevent Movement After Auto
     if (resetHeading) {
       if (headingX == 0 && headingY == 0 && Math.abs(headingAdjust.getAsDouble()) == 0) {
-        // Get the curret Heading
+        // Get the current Heading
         Rotation2d currentHeading = swerve.getHeading();
 
         // Set the Current Heading to the desired Heading

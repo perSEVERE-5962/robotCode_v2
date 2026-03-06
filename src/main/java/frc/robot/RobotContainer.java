@@ -376,7 +376,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // Pass in the selected auto from the SmartDashboard as our desired autnomous commmand
+    // Pass in the selected auto from the SmartDashboard as our desired autonomous command
     return autoChooser.getSelected();
   }
 

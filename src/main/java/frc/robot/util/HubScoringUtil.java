@@ -51,7 +51,7 @@ public class HubScoringUtil {
         centerAngle
             + clampedAngleDiff; // sets the target angle on the arc as nearest point on the arc
 
-    // caclulate the pose on the arc
+    // calculate the pose on the arc
     Translation2d targetPosition =
         new Translation2d(
             hubCenter.getX() + scoringDistance * Math.cos(targetAngle),
