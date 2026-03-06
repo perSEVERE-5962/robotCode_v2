@@ -141,7 +141,6 @@ public class ShootOnTheMove extends Command {
         new Translation2d(robotVelocity.vxMetersPerSecond, robotVelocity.vyMetersPerSecond);
 
     double distanceToHub = robotPos.getDistance(hubCenter);
-    System.out.println(distanceToHub);
 
     double timeOfFlight = timeOfFlightMap.get(distanceToHub);
     double shooterRPM = 0;
@@ -172,7 +171,6 @@ public class ShootOnTheMove extends Command {
             currentHeading);
     swerve.drive(speeds);
 
-    System.out.println(shooterRPM);
     shooter.moveToVelocityWithPID(shooterRPM);
 
     // Telemetry snapshot

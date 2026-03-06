@@ -26,7 +26,6 @@ public class PivotIntake extends Command {
   @Override
   public void execute() {
     intakeActuator.move(speed);
-    // System.out.println(intakeActuator.getPosition());
   }
 
   @Override

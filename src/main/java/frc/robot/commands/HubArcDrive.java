@@ -148,15 +148,11 @@ public class HubArcDrive extends Command {
         ChassisSpeeds.fromFieldRelativeSpeeds(maxX, maxY, headingSpeed, currentHeading);
 
     swerve.drive(speeds);
-    // System.out.println(headingError);
-    // System.out.println("velocity:"+robotVelocity.vyMetersPerSecond);
     double shooterSpeed =
         Constants.MotorConstants.DESIRED_SHOOTER_RPM
             + Math.abs(robotVelocity.vyMetersPerSecond * 350);
     shooterSpeed = MathUtil.clamp(shooterSpeed, 0, 3760);
     shooter.moveToVelocityWithPID(shooterSpeed);
-    // System.out.println("shooter speed" + shooterSpeed);
-
   }
 
   @Override
@@ -169,11 +165,8 @@ public class HubArcDrive extends Command {
   public boolean isFinished() {
     Pose2d pose = swerve.getPose();
     if (scoringSide == BLUE_SCORING_SIDE && pose.getX() < BLUE_HUB_CENTER.getX()) {
-      System.out.print("Wrong side");
       return true;
-
     } else if (scoringSide == RED_SCORING_SIDE && pose.getX() > RED_HUB_CENTER.getX()) {
-      System.out.print("Wrong side");
       return true;
     }
     return false;
