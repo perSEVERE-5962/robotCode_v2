@@ -5,7 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.IterativeRobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.telemetry.CycleTracker;
@@ -18,6 +20,7 @@ import frc.robot.util.LoggedTracer;
 import frc.robot.util.PostMatchSummary;
 import frc.robot.util.PreMatchDiagnostics;
 import frc.robot.util.PredictiveAlerts;
+import java.lang.reflect.Field;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -140,6 +143,16 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
     installExceptionHandler();
     configureLogging();
+
+    if (Constants.disableLoopOverrun) {
+      try {
+        Field watchdogField = IterativeRobotBase.class.getDeclaredField("m_watchdog");
+        watchdogField.setAccessible(true);
+        Watchdog watchdog = (Watchdog) watchdogField.get(this);
+        watchdog.setTimeout(0.5);
+      } catch (Exception e) {
+      }
+    }
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.

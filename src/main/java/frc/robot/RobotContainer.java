@@ -16,7 +16,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -51,7 +50,6 @@ import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.DriverTuning;
 import java.io.File;
-import java.util.Optional;
 import swervelib.SwerveInputStream;
 
 /**
@@ -417,17 +415,10 @@ public class RobotContainer {
   }
 
   private boolean isRedAlliance() {
-    Optional<Alliance> ally = DriverStation.getAlliance();
+    var alliance = DriverStation.getAlliance();
 
-    if (ally.isPresent()) {
-      if (ally.get() == Alliance.Red) {
-        return false;
-      }
-      if (ally.get() == Alliance.Blue) {
-        return false;
-      }
-    }
-    return false;
+    // If no alliance present, assume blue.
+    return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
   }
 
   private Translation2d getHubCenter() {
