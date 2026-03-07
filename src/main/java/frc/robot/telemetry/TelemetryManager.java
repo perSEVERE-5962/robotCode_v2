@@ -31,6 +31,7 @@ public class TelemetryManager {
   private DriveTelemetry driveTelemetry;
   private SystemHealthTelemetry systemHealthTelemetry;
   private CommandsTelemetry commandsTelemetry;
+  private MatchTelemetry matchTelemetry;
   private NetworkTelemetry networkTelemetry;
   private DriverInputTelemetry driverInputTelemetry;
   private MatchStatsTelemetry matchStatsTelemetry;
@@ -57,6 +58,7 @@ public class TelemetryManager {
     driveTelemetry = new DriveTelemetry();
     systemHealthTelemetry = new SystemHealthTelemetry();
     commandsTelemetry = new CommandsTelemetry();
+    matchTelemetry = new MatchTelemetry();
     networkTelemetry = new NetworkTelemetry();
     driverInputTelemetry = new DriverInputTelemetry();
     matchStatsTelemetry =
@@ -84,7 +86,7 @@ public class TelemetryManager {
     telemetryList.add(hangerTelemetry);
     telemetryList.add(visionTelemetry);
     telemetryList.add(scoringTelemetry);
-    telemetryList.add(new MatchTelemetry());
+    telemetryList.add(matchTelemetry);
     telemetryList.add(networkTelemetry);
     telemetryList.add(driverInputTelemetry);
     telemetryList.add(matchStatsTelemetry);

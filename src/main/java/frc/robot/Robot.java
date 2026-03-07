@@ -154,11 +154,7 @@ public class Robot extends LoggedRobot {
     }
 
     // Send test notification to Elastic Dashboard (protected)
-    try {
-      ElasticUtil.sendInfo("Robot", "Code initialized successfully");
-    } catch (Throwable t) {
-      // Dashboard notification failed - not critical
-    }
+    ElasticUtil.sendInfo("Robot", "Code initialized successfully");
   }
 
   /**

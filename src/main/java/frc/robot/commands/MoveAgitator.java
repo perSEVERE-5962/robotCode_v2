@@ -9,8 +9,6 @@ public class MoveAgitator extends Command {
   private double speed;
   private BooleanSupplier arcDriveOn;
 
-  // private IndexerTelemetry indextelem = new IndexerTelemetry();
-
   public MoveAgitator(double speed, BooleanSupplier arcDriveOn) {
     this.speed = speed;
     agitator = Agitator.getInstance();
@@ -32,21 +30,14 @@ public class MoveAgitator extends Command {
 
   @Override
   public void execute() {
-    // agitator.move(speed);
-    // if (indextelem.isJamDetected()) {
-    //     agitator.move(-Constants.MotorConstants.DESIRED_AGITATOR_SPEED);
-    // } else {
-    //     agitator.move(speed);
+    // if (arcDriveOn.getAsBoolean() && HubArcDrive.checkHeadingError()) {
+    //   agitator.move(speed);
     // }
-    // agitator.move(speed);
-    // if(arcDriveOn.getAsBoolean()&&HubArcDrive.checkHeadingError()){
-    // agitator.move(speed);
-    // }
-    // else if(arcDriveOn.getAsBoolean()&&!HubArcDrive.checkHeadingError()){
+    // else if (arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
     //   agitator.move(0);
     // }
-    // else{
-    // agitator.move(speed);
+    // else {
+    //  agitator.move(speed);
     // }
     agitator.move(speed);
   }

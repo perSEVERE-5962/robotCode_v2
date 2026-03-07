@@ -116,7 +116,7 @@ public class RobotContainer {
               drivebase.getSwerveDrive(),
               () -> -driverXbox.getLeftY(),
               () -> -driverXbox.getLeftX())
-          .withControllerRotationAxis(() -> driverXbox.getRawAxis(2))
+          .withControllerRotationAxis(() -> -driverXbox.getRawAxis(2))
           .deadband(OperatorConstants.DEADBAND)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);
@@ -170,7 +170,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("DeployAndRunIntake", new RunIntake());
     NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
     NamedCommands.registerCommand("TimedSpeedUpThenShoot", new SpeedUpThenIndex().withTimeout(8));
-    NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
 
     // Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
@@ -297,7 +296,13 @@ public class RobotContainer {
       copilotXbox.x().whileTrue(new MoveIntake(Constants.MotorConstants.DESIRED_INTAKE_SPEED));
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.2));
-      copilotXbox.b().whileTrue(new AgitateAndIndex(0.3, 5000, hubArcDrive::isScheduled));
+      copilotXbox
+          .b()
+          .whileTrue(
+              new AgitateAndIndex(
+                  Constants.MotorConstants.DESIRED_AGITATOR_SPEED,
+                  Constants.MotorConstants.DESIRED_INDEXER_RPM,
+                  hubArcDrive::isScheduled));
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
       copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
       copilotXbox
