@@ -76,12 +76,12 @@ public class HubArcDrive extends Command {
     double angleDifference = angleFromHub - centerAngle;
     angleDifference = MathUtil.angleModulus(angleDifference);
 
-    boolean atLeftLimit = angleDifference >= halfArcWidth;
-    boolean atRightLimit = angleDifference <= -halfArcWidth;
-    if (atLeftLimit && strafeStrength > 0) {
+    boolean atRightLimit = angleDifference >= halfArcWidth;
+    boolean atLeftLimit = angleDifference <= -halfArcWidth;
+    if (atRightLimit && strafeStrength > 0) {
       strafeStrength = 0;
     }
-    if (atRightLimit && strafeStrength < 0) {
+    if (atLeftLimit && strafeStrength < 0) {
       strafeStrength = 0;
     }
 
@@ -164,9 +164,9 @@ public class HubArcDrive extends Command {
   @Override
   public boolean isFinished() {
     Pose2d pose = swerve.getPose();
-    if (scoringSide == BLUE_SCORING_SIDE && pose.getX() < BLUE_HUB_CENTER.getX()) {
+    if (scoringSide == BLUE_SCORING_SIDE && pose.getX() > BLUE_HUB_CENTER.getX()) {
       return true;
-    } else if (scoringSide == RED_SCORING_SIDE && pose.getX() > RED_HUB_CENTER.getX()) {
+    } else if (scoringSide == RED_SCORING_SIDE && pose.getX() < RED_HUB_CENTER.getX()) {
       return true;
     }
     return false;
