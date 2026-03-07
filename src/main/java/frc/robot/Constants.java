@@ -102,7 +102,7 @@ public final class Constants {
   }
 
   public static final class MotorConstants {
-    public static final double DESIRED_SHOOTER_RPM = 2500;
+    public static final double DESIRED_SHOOTER_RPM = 3730;
     public static final double DESIRED_INDEXER_RPM = 7833; // 8.4 * 3730/4
     public static final double OUT_INTAKE_POS = 38.24;
     public static final double IN_INTAKE_POS = 11.6;
@@ -236,7 +236,7 @@ public final class Constants {
 
   public static final class LEDConstants {
     public static final int PWM_PORT = 0;
-    public static final int STRIP_LENGTH = 74;
+    public static final int STRIP_LENGTH = 19;
     public static final double DIM_DISABLED = 0.15;
   }
 

@@ -24,8 +24,8 @@ public class IntakeActuator extends Actuator {
         Constants.IntakeConstants.MaxOutput,
         Constants.IntakeConstants.FF,
         Constants.IntakeConstants.Iz,
-        38.25f,
-        11.5f,
+        60f,
+        11.5F,
         false,
         false,
         true);
@@ -55,7 +55,9 @@ public class IntakeActuator extends Actuator {
   public double getTargetPosition() {
     return targetPosition;
   }
-
+  public void setMotorPositionToScoring(){
+    getMotor().getEncoder().setPosition(38.24);
+  }
   public double getAppliedOutput() {
     return getMotor().getAppliedOutput();
   }

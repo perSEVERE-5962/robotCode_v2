@@ -3,46 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.778330955777461,
-        "y": 3.0063766048502147
+        "x": 7.801213483146068,
+        "y": 0.603
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.291662921348315,
-        "y": -0.2044606741573025
+        "x": 7.795781639744116,
+        "y": 0.04607640581804506
       },
       "isLocked": false,
-      "linkedName": "EndShortBallPickUp"
+      "linkedName": "HPSidePickup"
     },
     {
       "anchor": {
-        "x": 2.62,
-        "y": 4.0
+        "x": 7.778330955777461,
+        "y": 3.0063766048502147
       },
       "prevControl": {
-        "x": 1.4827865168539325,
-        "y": -0.9280224719101122
+        "x": 7.778274441726759,
+        "y": 3.267692404527588
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScorePosition"
+      "linkedName": "EndShortBallPickUp"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.23149606299212366,
-      "rotationDegrees": 180.0
-    },
-    {
-      "waypointRelativePos": 0.5828877005347594,
-      "rotationDegrees": 180.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 1.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -51,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "reversed": false,
   "folder": null,
@@ -59,5 +50,5 @@
     "velocity": 0,
     "rotation": 90.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

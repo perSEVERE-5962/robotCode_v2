@@ -39,6 +39,7 @@ import frc.robot.commands.HubArcDrive;
 import frc.robot.commands.MoveAgitator;
 //import frc.robot.commands.AlignWithAprilTag;
 import frc.robot.commands.RetractIntake;
+import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.sim.SimDriveOverride;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -89,7 +90,7 @@ public class RobotContainer {
   // NOTE: This creates a second Vision instance. SwerveSubsystem already creates one internally.
   // Both call getAllUnreadResults() on the same Cameras singletons, causing a race condition.
   // Safe to remove this line and use drivebase.getVision() everywhere instead.
-  public final Vision visionSubsystem = new Vision(drivebase::getPose, field);
+  //public final Vision visionSubsystem = new Vision(drivebase::getPose, field);
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular
@@ -176,9 +177,14 @@ public class RobotContainer {
         NamedCommands.registerCommand("DeployIntake", new DeployIntake());
 
     NamedCommands.registerCommand("HoldAndRunIntake", new HoldAndIntake());
+        NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(3));
+
     NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
         NamedCommands.registerCommand("TimedShoot", new SpeedUpThenIndex().withTimeout(8));
 
+          NamedCommands.registerCommand("ShakeIntake", (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly());
+          NamedCommands.registerCommand("ShakeIntake", (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly().withTimeout(8));
+             NamedCommands.registerCommand("ShakeIntakeAndScore", ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly()).alongWith(new SpeedUpThenIndex()));
 
 
         NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
@@ -279,10 +285,10 @@ public class RobotContainer {
       driverXbox.b().onTrue(new DeployIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      //driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
       copilotXbox.y().whileTrue(new AgitateAndIndex(Constants.AgitatorConstants.TARGET_RPM, Constants.IndexerConstants.TARGET_SPEED, hubArcDrive::isScheduled));
-      copilotXbox.x().whileTrue(new MoveIntake());
+      copilotXbox.x().whileTrue(new SetIntakePosition());
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.4));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.4));
       copilotXbox.b().whileTrue(new AgitateAndIndex(-Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
