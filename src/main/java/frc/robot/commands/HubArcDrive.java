@@ -68,7 +68,7 @@ public class HubArcDrive extends Command {
     // position relative to hub
     Translation2d hubToRobot = robotPos.minus(hubCenter);
     double distanceFromHub = hubToRobot.getNorm();
-    double angleFromHub = Math.atan2(hubToRobot.getY(), hubToRobot.getX());
+    double angleFromHub = hubToRobot.getAngle().getRadians();
 
     // Check arc limits
     double centerAngle = scoringSide.getRadians();
@@ -90,6 +90,7 @@ public class HubArcDrive extends Command {
     double radialSpeed = distanceError * 1.5; // p controller to keep distance
     radialSpeed = MathUtil.clamp(radialSpeed, -1.0, 1.0); // get speed
 
+    // if within tolerance stop moving
     if (Math.abs(distanceError) < 0.05) {
       radialSpeed = 0;
     }
@@ -164,9 +165,9 @@ public class HubArcDrive extends Command {
   @Override
   public boolean isFinished() {
     Pose2d pose = swerve.getPose();
-    if (scoringSide == BLUE_SCORING_SIDE && pose.getX() > BLUE_HUB_CENTER.getX()) {
+    if (scoringSide.equals(BLUE_SCORING_SIDE) && pose.getX() > BLUE_HUB_CENTER.getX()) {
       return true;
-    } else if (scoringSide == RED_SCORING_SIDE && pose.getX() < RED_HUB_CENTER.getX()) {
+    } else if (scoringSide.equals(RED_SCORING_SIDE) && pose.getX() < RED_HUB_CENTER.getX()) {
       return true;
     }
     return false;

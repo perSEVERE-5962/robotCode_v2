@@ -151,7 +151,7 @@ public class ShootOnTheMove extends Command {
       compensatedTarget = hubCenter.minus(drift);
       double distanceToCompensated = robotPos.getDistance(compensatedTarget);
 
-      // get time of flight and rpm to compenate
+      // get time of flight and rpm to compensate
       timeOfFlight = timeOfFlightMap.get(distanceToCompensated);
       shooterRPM = RPMMap.get(distanceToCompensated);
     }
