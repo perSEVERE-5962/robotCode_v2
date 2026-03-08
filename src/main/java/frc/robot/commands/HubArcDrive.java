@@ -53,7 +53,7 @@ public class HubArcDrive extends Command {
     indexer= Indexer.getInstance();
     agitator = Agitator.getInstance();
     
-    addRequirements(swerve, shooter);
+    addRequirements(swerve, shooter, indexer, agitator);
   }
 
   @Override
