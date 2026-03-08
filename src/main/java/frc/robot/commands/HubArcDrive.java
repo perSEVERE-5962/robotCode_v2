@@ -38,7 +38,7 @@ public class HubArcDrive extends Command {
   private  Shooter shooter;
   private final Rotation2d scoringSide;
   private Indexer indexer;
-  private static double headingError;
+  private Agitator agitator;
   //Command for drive mode where robot orbits around hub, maintaining distance and holding its rotation towards the center of hub,
   //added compensation for robot velocity, discussed in https://www.chiefdelphi.com/t/a-note-on-optimal-driving-for-shoot-on-the-move/512979/11
   public HubArcDrive(SwerveSubsystem swerve, DoubleSupplier strafeInput, 
@@ -51,6 +51,7 @@ public class HubArcDrive extends Command {
     this.shooter = Shooter.getInstance();
     this.scoringSide = scoringSide;
     indexer= Indexer.getInstance();
+    agitator = Agitator.getInstance();
     
     addRequirements(swerve, shooter);
   }
@@ -132,7 +133,7 @@ public class HubArcDrive extends Command {
     Rotation2d compensatedAim = toCompensatedTarget.getAngle();
     //compare desired heading vs wanted heading
     // Heading control with velocity compensation, to compensate for the velocity of ball due to robot speed
-    headingError = compensatedAim.minus(currentHeading).getRadians();
+    double headingError = compensatedAim.minus(currentHeading).getRadians();
     headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));
     double headingSpeed = headingError*4.5;//tune pid
     headingSpeed += tangentialSpeed / scoringDistance;
@@ -150,6 +151,10 @@ public class HubArcDrive extends Command {
     shooter.moveToVelocityWithPID(shooterSpeed);
     //System.out.println("shooter speed" + shooterSpeed);
     
+    if (Math.abs(headingError) < 0.1) {
+      indexer.moveToVelocityWithPID(Constants.MotorConstants.DESIRED_INDEXER_RPM);
+      agitator.move(Constants.MotorConstants.DESIRED_AGITATOR_SPEED);
+    }
     
     }
     
@@ -159,6 +164,8 @@ public class HubArcDrive extends Command {
   public void end(boolean interrupted) {
     swerve.drive(new ChassisSpeeds(0, 0, 0));
     shooter.move(0);
+    indexer.move(0);
+    agitator.move(0);
   }
 
   @Override
@@ -173,14 +180,5 @@ public class HubArcDrive extends Command {
       return true;
     }
     return false;
-  }
-
-  public static boolean checkHeadingError(){
-    if(headingError<.1&&headingError>-0.1){
-    return true;      
-    }
-    else{
-      return false;
-    }
   }
 }

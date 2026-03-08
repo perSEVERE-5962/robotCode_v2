@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AgitateAndIndex;
 import frc.robot.commands.AlignToTag;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.DriveToHub;
@@ -202,8 +201,6 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-    Command hubArcDrive = new HubArcDrive(drivebase, driverXbox::getLeftX, getHubCenter(), SCORING_DISTANCE, getScoringSide());
-
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveRobotOriented);
@@ -264,7 +261,7 @@ public class RobotContainer {
       
       driverXbox.a().onTrue(new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES));
       driverXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM).alongWith(new MoveAgitator(Constants.MotorConstants.DESIRED_AGITATOR_SPEED)));
-      driverXbox.x().toggleOnTrue(hubArcDrive);
+      driverXbox.x().toggleOnTrue(new HubArcDrive(drivebase, driverXbox::getLeftX, getHubCenter(), SCORING_DISTANCE, getScoringSide()));
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
@@ -273,7 +270,7 @@ public class RobotContainer {
        //   .onFalse(new RetractIntake());
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.2));
-      copilotXbox.b().whileTrue(new AgitateAndIndex(0.3, 5000, hubArcDrive::isScheduled));
+      copilotXbox.b().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM).alongWith(new MoveAgitator(Constants.MotorConstants.DESIRED_AGITATOR_SPEED)));
       copilotXbox.a().whileTrue(new RunIntake());
       copilotXbox.x().onTrue(new RetractIntake());
       copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
