@@ -154,6 +154,9 @@ public class HubArcDrive extends Command {
     if (Math.abs(headingError) < 0.1) {
       indexer.moveToVelocityWithPID(Constants.MotorConstants.DESIRED_INDEXER_RPM);
       agitator.move(Constants.MotorConstants.DESIRED_AGITATOR_SPEED);
+    } else {
+      indexer.move(0);
+      agitator.move(0);
     }
     
     }
