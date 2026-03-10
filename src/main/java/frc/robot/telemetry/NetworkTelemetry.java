@@ -5,19 +5,16 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 /** Network bandwidth monitoring for R704 compliance (VH-109: 7 Mbps). */
 public class NetworkTelemetry implements SubsystemTelemetry {
-  // R704 limits in Mbps (USA = VH-109)
   private static final double VH109_LIMIT_MBPS = 7.0;
   private static final double WARNING_THRESHOLD = 0.70;
   private static final double CRITICAL_THRESHOLD = 0.90;
 
-  // Bandwidth estimation
   private double bandwidthLimitMbps = VH109_LIMIT_MBPS;
   private double estimatedBandwidthMbps = 0.0;
   private double bandwidthPercent = 0.0;
   private boolean bandwidthWarning = false;
   private boolean bandwidthCritical = false;
 
-  // NT traffic tracking
   private final NetworkTableInstance ntInstance;
   // WPILib has no byte-counting API; this is estimated
   private double smoothedBandwidthMbps = 0.0;
@@ -40,7 +37,6 @@ public class NetworkTelemetry implements SubsystemTelemetry {
       smoothedBandwidthMbps = 0.9 * smoothedBandwidthMbps + 0.1 * estimatedBandwidthMbps;
     }
 
-    // L3: Guard against division by zero or invalid limit
     double limit = bandwidthLimitMbps;
     if (!Double.isFinite(limit) || limit <= 0) {
       limit = VH109_LIMIT_MBPS;
@@ -69,8 +65,7 @@ public class NetworkTelemetry implements SubsystemTelemetry {
     // Typical: 640x480 @ 15fps compressed = ~1.5 Mbps
     double cameraEstimateMbps = 1.5;
 
-    // TODO: If camera stream detection is available, adjust estimate
-    // For now, assume camera is streaming during enabled modes
+    // TODO(tamara): use CameraServer API to detect active streams when available
     double totalEstimate = baseTrafficMbps;
     if (DriverStation.isEnabled()) {
       totalEstimate += cameraEstimateMbps;
@@ -94,7 +89,6 @@ public class NetworkTelemetry implements SubsystemTelemetry {
     return "Network";
   }
 
-  // Accessors for AlertManager
   public double getBandwidthPercent() {
     return bandwidthPercent;
   }

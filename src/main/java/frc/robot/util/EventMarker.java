@@ -26,7 +26,6 @@ public class EventMarker {
   private static volatile String latestCategory = "";
   private static volatile double latestTimestamp = 0;
 
-  // Event categories
   public static final String SHOT = "SHOT";
   public static final String INTAKE = "INTAKE";
   public static final String AUTO = "AUTO";
@@ -36,12 +35,10 @@ public class EventMarker {
   public static final String MODE = "MODE";
   public static final String JAM = "JAM";
 
-  private EventMarker() {} // Static utility class
+  private EventMarker() {}
 
-  /** Mark an event. */
   public static synchronized void mark(String category, String description) {
     try {
-      // Check per-cycle cap first
       if (currentCycleEvents.size() >= MAX_CYCLE_EVENTS) {
         droppedEventsThisCycle++;
         return;
@@ -97,7 +94,6 @@ public class EventMarker {
     droppedEventsThisCycle = 0;
   }
 
-  // ===== Shot events =====
   public static void shotFired() {
     mark(SHOT, "Ball fired");
   }
@@ -106,7 +102,6 @@ public class EventMarker {
     mark(SHOT, "Shot #" + shotNumber);
   }
 
-  // ===== Intake events =====
   public static void ballIntaked() {
     mark(INTAKE, "Ball acquired");
   }
@@ -115,7 +110,6 @@ public class EventMarker {
     mark(INTAKE, "Ball ejected");
   }
 
-  // ===== Auto events =====
   public static void autoStart(String autoName) {
     mark(AUTO, "Started: " + autoName);
   }
@@ -128,7 +122,6 @@ public class EventMarker {
     mark(AUTO, "Completed");
   }
 
-  // ===== Climb events =====
   public static void climbStart() {
     mark(CLIMB, "Climb initiated");
   }
@@ -137,7 +130,6 @@ public class EventMarker {
     mark(CLIMB, "Climb complete");
   }
 
-  // ===== Vision events =====
   public static void visionLock() {
     mark(VISION, "Target locked");
   }
@@ -146,12 +138,10 @@ public class EventMarker {
     mark(VISION, "Target lost");
   }
 
-  // ===== Mode events =====
   public static void modeChange(String mode) {
     mark(MODE, mode);
   }
 
-  // ===== Jam events =====
   public static void jamDetected(String subsystem) {
     mark(JAM, subsystem + " jam detected");
   }

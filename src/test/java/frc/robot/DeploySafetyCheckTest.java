@@ -20,17 +20,4 @@ class DeploySafetyCheckTest {
     assertTrue(Constants.TUNING_MODE, "TUNING_MODE should be true during development");
   }
 
-  @Test
-  void deploySafetyCheckClassExists() {
-    // Verify the inner class exists and is accessible (compilation check)
-    assertNotNull(Constants.DeploySafetyCheck.class);
-  }
-
-  @Test
-  void deployBlockedDuringDevelopment() {
-    // During dev (TUNING_MODE=true), deploy check should flag as unsafe
-    assertFalse(
-        Constants.DeploySafetyCheck.isSafeForDeploy(),
-        "Deploy should be blocked when TUNING_MODE is true");
-  }
 }

@@ -61,6 +61,13 @@
                   },
                   {
                     "type": "stripes",
+                    "logKey": "/RealOutputs/SystemHealth/CAN/AllDevicesConnected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#80588e" }
+                  },
+                  {
+                    "type": "stripes",
                     "logKey": "/RealOutputs/Match/Enabled",
                     "logType": "Boolean",
                     "visible": true,
@@ -139,6 +146,34 @@
                     "logType": "Boolean",
                     "visible": true,
                     "options": { "color": "#e5b31b" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/FL/DriveConnected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#c0b487" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/FR/DriveConnected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#d993aa" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/BL/DriveConnected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#858584" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/BR/DriveConnected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#7d7461" }
                   }
                 ],
                 "leftLockedRange": null, "rightLockedRange": null,
@@ -190,10 +225,224 @@
               "controlsHeight": 200
             },
             {
+              "type": 1,
+              "title": "Swerve Health",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/Module/FL/DriveTemperature",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#af2437", "size": "normal" }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/Module/FR/DriveTemperature",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#3b875a", "size": "normal" }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/Module/BL/DriveTemperature",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#2b66a2", "size": "normal" }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/Module/BR/DriveTemperature",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#80588e", "size": "normal" }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/FL/DriveConnected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#af2437" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/FR/DriveConnected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#3b875a" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/BL/DriveConnected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#2b66a2" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/BR/DriveConnected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#80588e" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/FL/TurnConnected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#e48b32" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/FR/TurnConnected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#e5b31b" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/BL/TurnConnected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#c0b487" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/BR/TurnConnected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#d993aa" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/FL/EncoderIssue",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#858584" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/FR/EncoderIssue",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#7d7461" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/BL/EncoderIssue",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#5a5a87" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Drive/Module/BR/EncoderIssue",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#875a6e" }
+                  }
+                ],
+                "leftLockedRange": null, "rightLockedRange": null,
+                "leftUnitConversion": { "autoTarget": null, "preset": null },
+                "rightUnitConversion": { "autoTarget": null, "preset": null },
+                "leftFilter": 0, "rightFilter": 0
+              },
+              "controllerUUID": "pt000001-0000-0000-0000-000000000006",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
               "type": 3,
               "title": "Field Replay",
               "controller": null,
               "controllerUUID": "pt000001-0000-0000-0000-000000000005",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Ghost Commands",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Commands/GhostCount",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#af2437", "size": "normal" }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Commands/GhostAlert",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#af2437" }
+                  }
+                ],
+                "leftLockedRange": null, "rightLockedRange": null,
+                "leftUnitConversion": { "autoTarget": null, "preset": null },
+                "rightUnitConversion": { "autoTarget": null, "preset": null },
+                "leftFilter": 0, "rightFilter": 0
+              },
+              "controllerUUID": "pt000001-0000-0000-0000-000000000007",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Active Commands",
+              "controller": {
+                "leftSources": [],
+                "rightSources": [],
+                "discreteSources": [
+                  {
+                    "type": "text",
+                    "logKey": "/RealOutputs/Shooter/ActiveCommand",
+                    "logType": "String",
+                    "visible": true,
+                    "options": { "color": "#af2437" }
+                  },
+                  {
+                    "type": "text",
+                    "logKey": "/RealOutputs/Indexer/ActiveCommand",
+                    "logType": "String",
+                    "visible": true,
+                    "options": { "color": "#3b875a" }
+                  },
+                  {
+                    "type": "text",
+                    "logKey": "/RealOutputs/Intake/ActiveCommand",
+                    "logType": "String",
+                    "visible": true,
+                    "options": { "color": "#2b66a2" }
+                  },
+                  {
+                    "type": "text",
+                    "logKey": "/RealOutputs/IntakeActuator/ActiveCommand",
+                    "logType": "String",
+                    "visible": true,
+                    "options": { "color": "#e5b31b" }
+                  },
+                  {
+                    "type": "text",
+                    "logKey": "/RealOutputs/Hanger/ActiveCommand",
+                    "logType": "String",
+                    "visible": true,
+                    "options": { "color": "#80588e" }
+                  }
+                ],
+                "leftLockedRange": null, "rightLockedRange": null,
+                "leftUnitConversion": { "autoTarget": null, "preset": null },
+                "rightUnitConversion": { "autoTarget": null, "preset": null },
+                "leftFilter": 0, "rightFilter": 0
+              },
+              "controllerUUID": "pt000001-0000-0000-0000-000000000008",
               "renderer": null,
               "controlsHeight": 200
             }

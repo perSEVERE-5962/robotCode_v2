@@ -1,7 +1,10 @@
 package frc.robot.util;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.BatteryThresholds;
@@ -34,11 +37,14 @@ public class AlertManager {
 
   // Debounce timing (seconds)
   private static final double DEBOUNCE_TIME_S = 5.0;
-  private static final double BATTERY_DEBOUNCE_TIME_S = 30.0;
 
-  // Hysteresis: once battery warning triggers, don't clear until voltage rises above this
+  // Battery hysteresis: once warning triggers, don't clear until voltage rises above CLEAR
+  // threshold
   public static final double BATTERY_WARNING_CLEAR_V = 12.0;
   private boolean inBatteryWarning = false;
+
+  // Only warn about low battery when disabled (pre-match). Mid-match sag is normal.
+  private final Debouncer disabledDebouncer = new Debouncer(1.5, Debouncer.DebounceType.kRising);
 
   // WPILib Alerts for Driver Station
   private final Alert batteryLowAlert = new Alert("Battery voltage low", AlertType.kWarning);
@@ -104,8 +110,10 @@ public class AlertManager {
 
   private void checkBattery() {
     double voltage = RobotController.getBatteryVoltage();
+    boolean isDisabled = disabledDebouncer.calculate(DriverStation.isDisabled());
 
     if (voltage < BATTERY_CRITICAL_V) {
+      // CRITICAL: always on, brownout danger
       inBatteryWarning = true;
       batteryCriticalAlert.set(true);
       batteryLowAlert.set(false);
@@ -115,7 +123,10 @@ public class AlertManager {
           "Battery Critical",
           String.format("Battery at %.1fV - REPLACE NOW!", voltage),
           true);
-    } else if (voltage < BATTERY_WARNING_V || (inBatteryWarning && voltage < BATTERY_WARNING_CLEAR_V)) {
+    } else if (isDisabled
+        && (voltage < BATTERY_WARNING_V
+            || (inBatteryWarning && voltage < BATTERY_WARNING_CLEAR_V))) {
+      // WARNING: only when disabled (pre-match). Mid-match sag is normal.
       inBatteryWarning = true;
       batteryCriticalAlert.set(false);
       batteryLowAlert.set(true);
@@ -150,71 +161,31 @@ public class AlertManager {
   }
 
   private void checkMotorTemps() {
-    try {
-      Shooter shooter = Shooter.getInstance();
-      if (shooter != null) {
-        double shooterTemp = shooter.getTemperature();
-        if (shooterTemp > MOTOR_TEMP_WARNING_C) {
-          shooterTempAlert.set(true);
-          addAlert("ShooterOverheat");
-          if (shooterTemp > MOTOR_TEMP_CRITICAL_C) {
-            notifyElastic(
-                "ShooterOverheat",
-                "Shooter Overheating",
-                String.format("Shooter at %.0f°C - CRITICAL!", shooterTemp),
-                true);
-          }
-        } else {
-          shooterTempAlert.set(false);
-        }
-      }
-    } catch (Throwable t) {
-      shooterTempAlert.set(false);
-    }
+    checkOneMotorTemp("Shooter", shooterTempAlert, () -> Shooter.getInstance().getTemperature());
+    checkOneMotorTemp("Indexer", indexerTempAlert, () -> Indexer.getInstance().getTemperature());
+    checkOneMotorTemp("Intake", intakeTempAlert, () -> Intake.getInstance().getTemperature());
+    checkOneMotorTemp("IntakeActuator", intakeActuatorTempAlert,
+        () -> IntakeActuator.getInstance().getTemperature());
+  }
 
+  private void checkOneMotorTemp(String name, Alert alert, java.util.function.DoubleSupplier tempFn) {
     try {
-      Indexer indexer = Indexer.getInstance();
-      if (indexer != null) {
-        double indexerTemp = indexer.getTemperature();
-        if (indexerTemp > MOTOR_TEMP_WARNING_C) {
-          indexerTempAlert.set(true);
-          addAlert("IndexerOverheat");
-        } else {
-          indexerTempAlert.set(false);
+      double temp = tempFn.getAsDouble();
+      if (temp > MOTOR_TEMP_WARNING_C) {
+        alert.set(true);
+        addAlert(name + "Overheat");
+        if (temp > MOTOR_TEMP_CRITICAL_C) {
+          notifyElastic(
+              name + "Overheat",
+              name + " Overheating",
+              String.format("%s at %.0f°C - CRITICAL!", name, temp),
+              true);
         }
+      } else {
+        alert.set(false);
       }
     } catch (Throwable t) {
-      indexerTempAlert.set(false);
-    }
-
-    try {
-      Intake intake = Intake.getInstance();
-      if (intake != null) {
-        double intakeTemp = intake.getTemperature();
-        if (intakeTemp > MOTOR_TEMP_WARNING_C) {
-          intakeTempAlert.set(true);
-          addAlert("IntakeOverheat");
-        } else {
-          intakeTempAlert.set(false);
-        }
-      }
-    } catch (Throwable t) {
-      intakeTempAlert.set(false);
-    }
-
-    try {
-      IntakeActuator intakeActuator = IntakeActuator.getInstance();
-      if (intakeActuator != null) {
-        double intakeActuatorTemp = intakeActuator.getTemperature();
-        if (intakeActuatorTemp > MOTOR_TEMP_WARNING_C) {
-          intakeActuatorTempAlert.set(true);
-          addAlert("IntakeActuatorOverheat");
-        } else {
-          intakeActuatorTempAlert.set(false);
-        }
-      }
-    } catch (Throwable t) {
-      intakeActuatorTempAlert.set(false);
+      alert.set(false);
     }
   }
 
@@ -279,8 +250,17 @@ public class AlertManager {
     }
   }
 
-  /** Check loop time alerts. Called from Robot.java with actual timing data. */
+  /**
+   * Check loop time alerts. Called from Robot.java with actual timing data. Suppressed in
+   * simulation,loop timing is artificially slow due to MapleSim physics and AdvantageKit logging
+   * running in the same thread.
+   */
   public void checkLoopTime(double loopTimeMs) {
+    if (RobotBase.isSimulation()) {
+      loopTimeErrorAlert.set(false);
+      loopTimeWarningAlert.set(false);
+      return;
+    }
     if (loopTimeMs > LOOP_TIME_ERROR_MS) {
       loopTimeErrorAlert.set(true);
       loopTimeWarningAlert.set(false);
@@ -339,14 +319,12 @@ public class AlertManager {
     activeAlerts.add(alertName);
   }
 
-  /** Sends notification to Elastic with debouncing. Battery alerts use longer cooldown. */
+  /** Sends notification to Elastic with debouncing. */
   private void notifyElastic(String key, String title, String message, boolean isError) {
     double now = Timer.getFPGATimestamp();
     Double lastTime = lastElasticNotifyTimes.get(key);
-    boolean isBatteryKey = key.startsWith("Battery");
-    double debounce = isBatteryKey ? BATTERY_DEBOUNCE_TIME_S : DEBOUNCE_TIME_S;
 
-    if (lastTime == null || (now - lastTime) > debounce) {
+    if (lastTime == null || (now - lastTime) > DEBOUNCE_TIME_S) {
       if (isError) {
         ElasticUtil.sendError(title, message);
       } else {

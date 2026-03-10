@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Cameras;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
+import frc.robot.util.DriverFeedback;
 import java.util.List;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -92,6 +93,8 @@ public class AlignToTag extends Command {
     if (camera == null) {
       swerveSubsystem.drive(new ChassisSpeeds(0, 0, 0));
       hasTarget = false;
+      DriverFeedback df = DriverFeedback.getInstance();
+      if (df != null) df.clearProgressiveAim();
       SmartDashboard.putBoolean("AlignToReef/HasTarget", false);
       return;
     }
@@ -102,8 +105,8 @@ public class AlignToTag extends Command {
     for (int i = 0; i < results.size(); i++) {
       PhotonPipelineResult result = results.get(i);
       if (result.hasTargets()) {
-        for (int j = 0; i < result.getTargets().size(); j++) {
-          PhotonTrackedTarget trackedTarget = result.getTargets().get(i);
+        for (int j = 0; j < result.getTargets().size(); j++) {
+          PhotonTrackedTarget trackedTarget = result.getTargets().get(j);
           {
             if (trackedTarget.getFiducialId() == desiredTag) {
               target = trackedTarget;
@@ -121,6 +124,8 @@ public class AlignToTag extends Command {
       // Couldn't find the desired tag, stop the robot
       swerveSubsystem.drive(new ChassisSpeeds(0, 0, 0));
       hasTarget = false;
+      DriverFeedback df = DriverFeedback.getInstance();
+      if (df != null) df.clearProgressiveAim();
       SmartDashboard.putBoolean("AlignToReef/HasTarget", false);
       return;
     }
@@ -129,6 +134,8 @@ public class AlignToTag extends Command {
     if (cameraToTarget == null) {
       swerveSubsystem.drive(new ChassisSpeeds(0, 0, 0));
       hasTarget = false;
+      DriverFeedback df = DriverFeedback.getInstance();
+      if (df != null) df.clearProgressiveAim();
       return;
     }
 
@@ -162,12 +169,20 @@ public class AlignToTag extends Command {
             currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
 
     swerveSubsystem.driveFieldOriented(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed));
+
+    double rawDiff =
+        currentPose.getRotation().getRadians() - targetPose.getRotation().getRadians();
+    double wrappedRad = Math.PI - Math.abs(Math.abs(rawDiff) - Math.PI);
+    DriverFeedback dfAim = DriverFeedback.getInstance();
+    if (dfAim != null) dfAim.setProgressiveAim(Math.toDegrees(wrappedRad));
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     swerveSubsystem.drive(new ChassisSpeeds(0, 0, 0));
+    DriverFeedback df = DriverFeedback.getInstance();
+    if (df != null) df.clearProgressiveAim();
   }
 
   // Returns true when the command should end.

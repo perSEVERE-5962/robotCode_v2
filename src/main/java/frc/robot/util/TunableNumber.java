@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import java.util.function.DoubleSupplier;
@@ -21,9 +22,9 @@ public class TunableNumber implements DoubleSupplier {
     }
   }
 
-  /** Current value (from dashboard if tuning, else default). */
+  /** Current value (from dashboard if tuning and not on FMS, else default). */
   public double get() {
-    if (!Constants.TUNING_MODE) {
+    if (!Constants.TUNING_MODE || DriverStation.isFMSAttached()) {
       return defaultValue;
     }
 
@@ -42,7 +43,7 @@ public class TunableNumber implements DoubleSupplier {
 
   /** True if value changed since last check. */
   public boolean hasChanged() {
-    if (!Constants.TUNING_MODE) {
+    if (!Constants.TUNING_MODE || DriverStation.isFMSAttached()) {
       return false;
     }
 
@@ -70,7 +71,7 @@ public class TunableNumber implements DoubleSupplier {
   }
 
   public static boolean tuningEnabled() {
-    return Constants.TUNING_MODE;
+    return Constants.TUNING_MODE && !DriverStation.isFMSAttached();
   }
 
   /** Run action if any tunable changed. */

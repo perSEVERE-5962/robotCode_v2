@@ -12,6 +12,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
+import frc.robot.telemetry.AgitatorTelemetry;
 
 /*
  * Command to speed up shooter then run indexer.
@@ -21,45 +22,47 @@ public class SpeedUpThenIndex extends Command {
   private Shooter shooter;
   private Agitator agitator;
   private Indexer indexer;
-
+  private AgitatorTelemetry agitatorTelemetry;
   public SpeedUpThenIndex() {
     // Use addRequirements() here to declare subsystem dependencies.
     shooter = Shooter.getInstance();
     indexer = Indexer.getInstance();
     agitator = Agitator.getInstance();
+    agitatorTelemetry = new AgitatorTelemetry();
     addRequirements(shooter, indexer,agitator);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+        shooter.moveToVelocityWithPID(shooter.getTunableTargetRPM());
+        agitator.moveToVelocityWithPID(-500);
+}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //System.out.println("one");
-    shooter.moveToVelocityWithPID(shooter.getTunableTargetRPM());
-    //System.out.println(shooter.getTunableTargetRPM());
-        //System.out.println(shooter.getMotorVelocity());
-
     if (shooter.isAtSpeed()) {
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
-      agitator.move(.35);
-      System.out.println(indexer.getTunableTargetSpeed());
-      System.out.println(indexer.getMotorVelocity());
-    }
+      //System.out.println(indexer.getMotorVelocity());
+      agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM());
+  }
+  // if(AgitatorTelemetry.isStalled()){
+  //         agitator.moveToVelocityWithPID(-2000);
+
+  // }
+    //System.out.println("one");
+    //System.out.println(shooter.getTunableTargetRPM());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    CommandScheduler.getInstance().schedule(new MoveShooter(0));
-    agitator.move(0);
-    CommandScheduler.getInstance()
-        .schedule(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_RPM));
-    final Command waitTime = Commands.waitSeconds(0.25);
-    CommandScheduler.getInstance()
-        .schedule(new SequentialCommandGroup(waitTime, new MoveIndexer(0)));
+    shooter.moveToVelocityWithPID(0);
+      
+indexer.moveToVelocityWithPID(0);
+      //System.out.println();
+      agitator.moveToVelocityWithPID(0);
   }      
 
   // Returns true when the command should end.
