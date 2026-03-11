@@ -106,7 +106,7 @@ public final class Constants {
     public static final double DESIRED_INDEXER_RPM = 7833; // 8.4 * 3730/4
     public static final double OUT_INTAKE_POS = 38.24;
     public static final double IN_INTAKE_POS = 11.6;
-    public static final double DESIRED_INTAKE_RPM = 999;
+    public static final double DESIRED_INTAKE_RPM = 0;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
     public static final double DESIRED_AGITATOR_SPEED = .5;

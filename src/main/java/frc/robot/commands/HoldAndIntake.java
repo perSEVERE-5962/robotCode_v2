@@ -12,14 +12,14 @@ import frc.robot.subsystems.IntakePivot;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class HoldAndIntake extends Command {
   /** Creates a new HoldPivotWhileIntaking. */
-  private IntakeRoller intake;
+  private IntakeRoller intakeRoller;
   private IntakePivot intakePivot;
 
   public HoldAndIntake() {
-    intake = IntakeRoller.getInstance();
+    intakeRoller = IntakeRoller.getInstance();
     intakePivot = IntakePivot.getInstance();
 
-    addRequirements(intake,intakePivot);
+    addRequirements(intakeRoller,intakePivot);
   }
 
   @Override
@@ -29,13 +29,13 @@ public class HoldAndIntake extends Command {
 
   @Override
   public void execute() {
-    intake.move(intake.getTunableSpeed());
+    intakeRoller.moveToVelocityWithPID(intakeRoller.getTunableSpeed());
 
   }
 
   @Override
   public void end(boolean interrupted) {
-    intake.move(0);
+    intakeRoller.move(0);
     intakePivot.move(0);
 
   }
