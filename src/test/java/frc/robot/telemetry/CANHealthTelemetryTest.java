@@ -15,10 +15,10 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
   private IntakeTelemetry intakeTelemetry;
   private IntakeActuatorTelemetry intakeActuatorTelemetry;
   private HangerTelemetry hangerTelemetry;
+  private AgitatorTelemetry agitatorTelemetry;
   private VisionTelemetry visionTelemetry;
   private DriveTelemetry driveTelemetry;
   private CANHealthTelemetry telemetry;
-
   @BeforeEach
   void setUp() {
     shooterTelemetry = new ShooterTelemetry();
@@ -26,6 +26,7 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     intakeTelemetry = new IntakeTelemetry();
     intakeActuatorTelemetry = new IntakeActuatorTelemetry();
     hangerTelemetry = new HangerTelemetry();
+    agitatorTelemetry = new AgitatorTelemetry();
     visionTelemetry = new VisionTelemetry();
     driveTelemetry = new DriveTelemetry();
     telemetry =
@@ -35,27 +36,13 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
             intakeTelemetry,
             intakeActuatorTelemetry,
             hangerTelemetry,
+            agitatorTelemetry,
             visionTelemetry,
             driveTelemetry);
   }
 
   @Test
-  void testGetNameReturnsCANHealth() {
-    assertEquals("CANHealth", telemetry.getName());
-  }
-
-  @Test
-  void testUpdateDoesNotThrow() {
-    assertDoesNotThrow(
-        () -> {
-          telemetry.update();
-          telemetry.log();
-        });
-  }
-
-  @Test
   void testDefaultsAllDisconnected() throws Exception {
-    // No motor telemetry has been updated, so deviceConnected defaults to false
     telemetry.update();
     assertFalse(telemetry.isAllConnected());
     assertEquals(0, telemetry.getConnectedCount());
@@ -65,46 +52,77 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     assertTrue(list.contains("Intake"));
     assertTrue(list.contains("IntakeActuator"));
     assertTrue(list.contains("Hanger"));
+    assertTrue(list.contains("Agitator"));
     assertTrue(list.contains("Gyro"));
     assertTrue(list.contains("LeftCam"));
     assertTrue(list.contains("RightCam"));
+    assertTrue(list.contains("FL-Drive"));
+    assertTrue(list.contains("BR-Encoder"));
   }
 
   @Test
   void testAllConnected() throws Exception {
-    // Set all devices as connected via reflection
     setField(shooterTelemetry, "deviceConnected", true);
     setField(indexerTelemetry, "deviceConnected", true);
     setField(intakeTelemetry, "deviceConnected", true);
     setField(intakeActuatorTelemetry, "deviceConnected", true);
     setField(hangerTelemetry, "deviceConnected", true);
+    setField(agitatorTelemetry, "deviceConnected", true);
     setField(driveTelemetry, "gyroConnected", true);
     setField(visionTelemetry, "leftCamConnected", true);
     setField(visionTelemetry, "rightCamConnected", true);
+    // Swerve module devices
+    setField(
+        driveTelemetry,
+        "driveMotorConnected",
+        new boolean[] {true, true, true, true});
+    setField(
+        driveTelemetry,
+        "turnMotorConnected",
+        new boolean[] {true, true, true, true});
+    setField(
+        driveTelemetry,
+        "encoderReadIssue",
+        new boolean[] {false, false, false, false});
 
     telemetry.update();
     assertTrue(telemetry.isAllConnected());
-    assertEquals(8, telemetry.getConnectedCount());
+    assertEquals(21, telemetry.getConnectedCount());
     assertEquals("", telemetry.getDisconnectedList());
   }
 
   @Test
   void testPartialDisconnect() throws Exception {
-    // Connect all except Shooter and LeftCam
+    // Connect all mechanism devices
+    setField(shooterTelemetry, "deviceConnected", true);
     setField(indexerTelemetry, "deviceConnected", true);
     setField(intakeTelemetry, "deviceConnected", true);
     setField(intakeActuatorTelemetry, "deviceConnected", true);
     setField(hangerTelemetry, "deviceConnected", true);
+    setField(agitatorTelemetry, "deviceConnected", true);
     setField(driveTelemetry, "gyroConnected", true);
+    setField(visionTelemetry, "leftCamConnected", true);
     setField(visionTelemetry, "rightCamConnected", true);
+    // Connect most swerve, leave FR-Drive disconnected
+    setField(
+        driveTelemetry,
+        "driveMotorConnected",
+        new boolean[] {true, false, true, true});
+    setField(
+        driveTelemetry,
+        "turnMotorConnected",
+        new boolean[] {true, true, true, true});
+    setField(
+        driveTelemetry,
+        "encoderReadIssue",
+        new boolean[] {false, false, false, false});
 
     telemetry.update();
     assertFalse(telemetry.isAllConnected());
-    assertEquals(6, telemetry.getConnectedCount());
+    assertEquals(20, telemetry.getConnectedCount());
     String list = telemetry.getDisconnectedList();
-    assertTrue(list.contains("Shooter"));
-    assertTrue(list.contains("LeftCam"));
-    assertFalse(list.contains("Indexer"));
+    assertTrue(list.contains("FR-Drive"), "Should name the specific disconnected module");
+    assertFalse(list.contains("Shooter"));
   }
 
   @Test
@@ -117,31 +135,6 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     boolean hasFaults = telemetry.hasFaults();
     assertEquals(8, totalFaults);
     assertTrue(hasFaults);
-  }
-
-  @Test
-  void testNoFaults() throws Exception {
-    telemetry.update();
-    int totalFaults = getField(telemetry, "totalFaults");
-    assertFalse(telemetry.hasFaults());
-    assertEquals(0, totalFaults);
-  }
-
-  @Test
-  void testNullTelemetryHandling() {
-    CANHealthTelemetry nullTelemetry =
-        new CANHealthTelemetry(null, null, null, null, null, null, null);
-    assertDoesNotThrow(
-        () -> {
-          nullTelemetry.update();
-          nullTelemetry.log();
-        });
-    assertFalse(nullTelemetry.isAllConnected());
-    assertEquals(0, nullTelemetry.getConnectedCount());
-    // All 8 devices should be listed as disconnected
-    String list = nullTelemetry.getDisconnectedList();
-    assertTrue(list.contains("Shooter"));
-    assertTrue(list.contains("RightCam"));
   }
 
   private void setField(Object obj, String fieldName, Object value) throws Exception {

@@ -1,5 +1,6 @@
 package frc.robot.telemetry;
 
+import com.revrobotics.spark.SparkBase;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -20,7 +21,6 @@ public class DriveTelemetry implements SubsystemTelemetry {
   private SwerveDrive swerveDrive;
   private boolean subsystemAvailable = false;
 
-  // Current state
   private Pose2d pose = new Pose2d();
   private SwerveModuleState[] moduleStates = new SwerveModuleState[4];
   private SwerveModuleState[] moduleSetpoints = new SwerveModuleState[4];
@@ -35,16 +35,22 @@ public class DriveTelemetry implements SubsystemTelemetry {
   private double rollRad = 0;
   private boolean gyroConnected = false;
 
-  // Odometry timestamp for jitter analysis
   private double odometryTimestampSec = 0;
 
-  // Encoder health per module
   private boolean[] encoderAbsoluteOk = {true, true, true, true};
   private double[] encoderDisagreementRad = {0, 0, 0, 0};
 
+  private static final int SWERVE_HEALTH_DECIMATION = 25;
+  private int swerveHealthCounter = 0;
+  private boolean[] driveMotorConnected = {false, false, false, false};
+  private boolean[] turnMotorConnected = {false, false, false, false};
+  private boolean[] encoderReadIssue = {true, true, true, true};
+  private int[] driveFaultsRaw = {0, 0, 0, 0};
+  private int[] turnFaultsRaw = {0, 0, 0, 0};
+  private double[] driveTemperature = {0, 0, 0, 0};
+
   private double maxVelocityMPS = 0;
 
-  // Auto path tracking
   private Pose2d targetPose = new Pose2d();
   private double positionErrorMeters = 0;
   private double headingErrorDegrees = 0;
@@ -91,7 +97,6 @@ public class DriveTelemetry implements SubsystemTelemetry {
         moduleStates = newStates;
       }
 
-      // Get module setpoints (desired states) from YAGSL internal telemetry
       try {
         SwerveModuleState[] desiredStates = SwerveDriveTelemetry.desiredStatesObj;
         if (desiredStates != null && desiredStates.length >= 4) {
@@ -105,7 +110,6 @@ public class DriveTelemetry implements SubsystemTelemetry {
         // Fall back to measured states if YAGSL internal API unavailable
       }
 
-      // Get requested chassis speeds from YAGSL internal telemetry
       try {
         ChassisSpeeds desiredSpeeds = SwerveDriveTelemetry.desiredChassisSpeedsObj;
         if (desiredSpeeds != null) {
@@ -132,10 +136,9 @@ public class DriveTelemetry implements SubsystemTelemetry {
       rollRad = (roll != null) ? roll.getRadians() : 0;
       gyroConnected = (yaw != null);
 
-      // Encoder health per module
       updateEncoderHealth();
+      updateSwerveMotorHealth();
 
-      // Max chassis velocity from YAGSL
       try {
         maxVelocityMPS = swerveDrive.getMaximumChassisVelocity();
       } catch (Throwable t) {
@@ -164,11 +167,9 @@ public class DriveTelemetry implements SubsystemTelemetry {
         if (mod == null) continue;
 
         try {
-          // Check if absolute encoder is responding
           double absAngle = mod.getAbsolutePosition();
           encoderAbsoluteOk[i] = !Double.isNaN(absAngle);
 
-          // Compare absolute vs relative encoder angles
           double relAngle = mod.getRelativePosition();
           double disagreement = Math.abs(MathUtil.angleModulus(absAngle - relAngle));
           encoderDisagreementRad[i] = disagreement;
@@ -181,6 +182,57 @@ public class DriveTelemetry implements SubsystemTelemetry {
     }
   }
 
+  private void updateSwerveMotorHealth() {
+    swerveHealthCounter++;
+    if (swerveHealthCounter < SWERVE_HEALTH_DECIMATION) return;
+    swerveHealthCounter = 0;
+
+    try {
+      SwerveModule[] modules = swerveDrive.getModules();
+      if (modules == null) return;
+
+      for (int i = 0; i < Math.min(modules.length, 4); i++) {
+        SwerveModule mod = modules[i];
+        if (mod == null) continue;
+
+        try {
+          Object driveMotorObj = mod.getDriveMotor().getMotor();
+          if (driveMotorObj instanceof SparkBase) {
+            SparkBase spark = (SparkBase) driveMotorObj;
+            SparkBase.Faults faults = spark.getFaults();
+            driveMotorConnected[i] = !faults.can;
+            driveFaultsRaw[i] = faults.rawBits;
+            driveTemperature[i] = spark.getMotorTemperature();
+          }
+        } catch (Throwable t) {
+          driveMotorConnected[i] = false;
+          driveFaultsRaw[i] = -1;
+        }
+
+        try {
+          Object turnMotorObj = mod.getAngleMotor().getMotor();
+          if (turnMotorObj instanceof SparkBase) {
+            SparkBase spark = (SparkBase) turnMotorObj;
+            SparkBase.Faults faults = spark.getFaults();
+            turnMotorConnected[i] = !faults.can;
+            turnFaultsRaw[i] = faults.rawBits;
+          }
+        } catch (Throwable t) {
+          turnMotorConnected[i] = false;
+          turnFaultsRaw[i] = -1;
+        }
+
+        try {
+          encoderReadIssue[i] = mod.getAbsoluteEncoderReadIssue();
+        } catch (Throwable t) {
+          encoderReadIssue[i] = true;
+        }
+      }
+    } catch (Throwable t) {
+      // SwerveDrive not ready
+    }
+  }
+
   private void setDefaultValues() {
     pose = new Pose2d();
     vxMetersPerSec = 0;
@@ -189,6 +241,14 @@ public class DriveTelemetry implements SubsystemTelemetry {
     yawRad = 0;
     pitchRad = 0;
     rollRad = 0;
+    for (int i = 0; i < 4; i++) {
+      driveMotorConnected[i] = false;
+      turnMotorConnected[i] = false;
+      encoderReadIssue[i] = true;
+      driveFaultsRaw[i] = 0;
+      turnFaultsRaw[i] = 0;
+      driveTemperature[i] = 0;
+    }
   }
 
   @Override
@@ -209,10 +269,8 @@ public class DriveTelemetry implements SubsystemTelemetry {
 
     SafeLog.put("Drive/MaxVelocityMPS", maxVelocityMPS);
 
-    // Odometry timestamp for jitter analysis
     SafeLog.put("Drive/OdometryTimestampSec", odometryTimestampSec);
 
-    // Module setpoints (commanded vs measured)
     for (int i = 0; i < 4; i++) {
       String name = MODULE_NAMES[i];
       if (moduleSetpoints[i] != null) {
@@ -223,11 +281,9 @@ public class DriveTelemetry implements SubsystemTelemetry {
       }
     }
 
-    // Encoder health per module
     for (int i = 0; i < 4; i++) {
       String name = MODULE_NAMES[i];
       SafeLog.put("Drive/Encoder/" + name + "/AbsoluteOk", encoderAbsoluteOk[i]);
-      // Only log disagreement if above threshold (reduce noise)
       if (encoderDisagreementRad[i] > ENCODER_DISAGREEMENT_THRESHOLD_RAD) {
         SafeLog.put("Drive/Encoder/" + name + "/DisagreementRad", encoderDisagreementRad[i]);
       } else {
@@ -235,7 +291,16 @@ public class DriveTelemetry implements SubsystemTelemetry {
       }
     }
 
-    // Auto path tracking
+    for (int i = 0; i < 4; i++) {
+      String name = MODULE_NAMES[i];
+      SafeLog.put("Drive/Module/" + name + "/DriveConnected", driveMotorConnected[i]);
+      SafeLog.put("Drive/Module/" + name + "/TurnConnected", turnMotorConnected[i]);
+      SafeLog.put("Drive/Module/" + name + "/EncoderIssue", encoderReadIssue[i]);
+      SafeLog.put("Drive/Module/" + name + "/DriveFaultsRaw", driveFaultsRaw[i]);
+      SafeLog.put("Drive/Module/" + name + "/TurnFaultsRaw", turnFaultsRaw[i]);
+      SafeLog.put("Drive/Module/" + name + "/DriveTemperature", driveTemperature[i]);
+    }
+
     SafeLog.put("Drive/Auto/TargetPose", targetPose);
     SafeLog.put("Drive/Auto/PositionErrorM", positionErrorMeters);
     SafeLog.put("Drive/Auto/HeadingErrorDeg", headingErrorDegrees);
@@ -247,8 +312,6 @@ public class DriveTelemetry implements SubsystemTelemetry {
   public String getName() {
     return "Drive";
   }
-
-  // ===== Auto Path Tracking Methods =====
 
   public void setTargetPose(Pose2d target) {
     this.targetPose = (target != null) ? target : new Pose2d();
@@ -265,7 +328,6 @@ public class DriveTelemetry implements SubsystemTelemetry {
     this.headingErrorDegrees = 0;
   }
 
-  // Accessors
   public boolean isFollowingPath() {
     return isFollowingPath;
   }
@@ -280,5 +342,25 @@ public class DriveTelemetry implements SubsystemTelemetry {
 
   public boolean isGyroConnected() {
     return gyroConnected;
+  }
+
+  public boolean isDriveMotorConnected(int module) {
+    return (module >= 0 && module < 4) && driveMotorConnected[module];
+  }
+
+  public boolean isTurnMotorConnected(int module) {
+    return (module >= 0 && module < 4) && turnMotorConnected[module];
+  }
+
+  public boolean isEncoderOk(int module) {
+    return (module >= 0 && module < 4) && !encoderReadIssue[module];
+  }
+
+  public int getDriveFaultsRaw(int module) {
+    return (module >= 0 && module < 4) ? driveFaultsRaw[module] : 0;
+  }
+
+  public int getTurnFaultsRaw(int module) {
+    return (module >= 0 && module < 4) ? turnFaultsRaw[module] : 0;
   }
 }

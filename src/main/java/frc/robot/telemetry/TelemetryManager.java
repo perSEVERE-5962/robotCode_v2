@@ -1,26 +1,41 @@
 package frc.robot.telemetry;
 
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.util.EventMarker;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
-import org.littletonrobotics.junction.Logger;
 
-/**
- * Central orchestrator for all telemetry classes. Call updateAll() once per robotPeriodic() cycle.
- */
+/** Runs all telemetry updates each robotPeriodic() cycle. */
 public class TelemetryManager {
   private static TelemetryManager instance;
   private final List<SubsystemTelemetry> telemetryList = new ArrayList<>();
 
-  // Failure tracking for this cycle
   private int cycleFailures = 0;
   private String lastFailedName = "none";
 
-  // Individual references for external access
+  // Signal staleness detector: tracks boolean signals that should not stay true indefinitely.
+  // If a signal stays true longer than its threshold, log a warning.
+  private final Map<String, StalenessTracker> stalenessTrackers = new LinkedHashMap<>();
+
+  private static class StalenessTracker {
+    final Supplier<Boolean> supplier;
+    final double maxTrueSec;
+    double trueStartTime = -1;
+    boolean wasStale = false;
+
+    StalenessTracker(Supplier<Boolean> supplier, double maxTrueSec) {
+      this.supplier = supplier;
+      this.maxTrueSec = maxTrueSec;
+    }
+  }
+
   private ShooterTelemetry shooterTelemetry;
   private IndexerTelemetry indexerTelemetry;
   private IntakeTelemetry intakeTelemetry;
@@ -38,6 +53,9 @@ public class TelemetryManager {
   private ShotVisualizerTelemetry shotVisualizerTelemetry;
   private ShotPredictorTelemetry shotPredictorTelemetry;
   private CANHealthTelemetry canHealthTelemetry;
+  private DriverFeedbackTelemetry driverFeedbackTelemetry;
+  private LEDTelemetry ledTelemetry;
+  private AgitatorTelemetry agitatorTelemetry;
 
   public static TelemetryManager getInstance() {
     if (instance == null) {
@@ -47,7 +65,6 @@ public class TelemetryManager {
   }
 
   private TelemetryManager() {
-    // Initialize telemetry classes (order matters for ScoringTelemetry)
     shooterTelemetry = new ShooterTelemetry();
     indexerTelemetry = new IndexerTelemetry();
     intakeTelemetry = new IntakeTelemetry();
@@ -65,6 +82,7 @@ public class TelemetryManager {
         new MatchStatsTelemetry(shooterTelemetry, visionTelemetry, scoringTelemetry);
     shotVisualizerTelemetry = new ShotVisualizerTelemetry(shooterTelemetry);
     shotPredictorTelemetry = new ShotPredictorTelemetry();
+    agitatorTelemetry = new AgitatorTelemetry();
     canHealthTelemetry =
         new CANHealthTelemetry(
             shooterTelemetry,
@@ -72,10 +90,12 @@ public class TelemetryManager {
             intakeTelemetry,
             intakeActuatorTelemetry,
             hangerTelemetry,
+            agitatorTelemetry,
             visionTelemetry,
             driveTelemetry);
+    driverFeedbackTelemetry = new DriverFeedbackTelemetry();
+    ledTelemetry = new LEDTelemetry();
 
-    // SystemHealth first (measures loop time), then Commands (callback-based)
     telemetryList.add(systemHealthTelemetry);
     telemetryList.add(commandsTelemetry);
     telemetryList.add(driveTelemetry);
@@ -93,6 +113,21 @@ public class TelemetryManager {
     telemetryList.add(shotVisualizerTelemetry);
     telemetryList.add(shotPredictorTelemetry);
     telemetryList.add(canHealthTelemetry);
+    telemetryList.add(driverFeedbackTelemetry);
+    telemetryList.add(ledTelemetry);
+    telemetryList.add(agitatorTelemetry);
+
+    // Register signals that should not stay true for extended periods
+    stalenessTrackers.put(
+        "ShooterStalled", new StalenessTracker(() -> shooterTelemetry.isStalled(), 30.0));
+    stalenessTrackers.put(
+        "IndexerJam", new StalenessTracker(() -> indexerTelemetry.isJamDetected(), 60.0));
+    stalenessTrackers.put(
+        "IntakeJam", new StalenessTracker(() -> intakeTelemetry.isJamDetected(), 60.0));
+    stalenessTrackers.put(
+        "IndexerStalled", new StalenessTracker(() -> indexerTelemetry.isStalled(), 30.0));
+    stalenessTrackers.put(
+        "IntakeStalled", new StalenessTracker(() -> intakeTelemetry.isStalled(), 30.0));
   }
 
   /** Called from RobotContainer after vision init */
@@ -103,16 +138,13 @@ public class TelemetryManager {
   /** Called from RobotContainer after swerve init */
   public void setSwerveSubsystem(SwerveSubsystem swerveSubsystem) {
     driveTelemetry.setSwerveSubsystem(swerveSubsystem);
+    shotVisualizerTelemetry.setSwerveSubsystem(swerveSubsystem);
   }
 
   /** Called from RobotContainer after controller init */
   public void setControllers(XboxController driver, XboxController operator) {
     driverInputTelemetry.setControllers(driver, operator);
   }
-
-  // =========================================================================
-  // Safety Wrappers
-  // =========================================================================
 
   /**
    * @return true if action succeeded
@@ -137,7 +169,6 @@ public class TelemetryManager {
     }
   }
 
-  /** Safe getName() that won't throw */
   private String safeGetName(SubsystemTelemetry telemetry) {
     try {
       return telemetry != null ? telemetry.getName() : "unknown";
@@ -146,42 +177,60 @@ public class TelemetryManager {
     }
   }
 
-  // =========================================================================
-  // Main Update Loop
-  // =========================================================================
-
-  /** Call once per robotPeriodic() - updates and logs all telemetry */
+  /** Call once per robotPeriodic(). */
   public void updateAll() {
     cycleFailures = 0;
     lastFailedName = "none";
 
     for (SubsystemTelemetry telemetry : telemetryList) {
       String name = safeGetName(telemetry);
+      double segStart = Timer.getFPGATimestamp();
       runSafely(telemetry::update, name + "/update");
-      runSafely(telemetry::log, name + "/log"); // Always run, even if update failed
+      runSafely(telemetry::log, name + "/log");
+      SafeLog.put(
+          "LoggedTracer/Tel/" + name + "Ms", (Timer.getFPGATimestamp() - segStart) * 1000.0);
     }
 
-    // External utilities
-    runSafely(() -> CycleTracker.getInstance().log(), "CycleTracker/log");
     runSafely(EventMarker::flushCycleEvents, "EventMarker/flush");
+    runSafely(this::checkStaleness, "Health/Staleness");
 
-    // SafeLog's own health metrics
     SafeLog.logAndReset();
 
-    // TelemetryManager health metrics
     runSafely(this::logHealth, "Health/Telemetry");
   }
 
-  private void logHealth() {
-    Logger.recordOutput("Health/Telemetry/Failures", cycleFailures);
-    Logger.recordOutput("Health/Telemetry/LastFailed", lastFailedName);
+  private void checkStaleness() {
+    double now = Timer.getFPGATimestamp();
+    for (Map.Entry<String, StalenessTracker> entry : stalenessTrackers.entrySet()) {
+      StalenessTracker t = entry.getValue();
+      boolean currentValue;
+      try {
+        currentValue = t.supplier.get();
+      } catch (Throwable ex) {
+        continue;
+      }
+      if (currentValue) {
+        if (t.trueStartTime < 0) t.trueStartTime = now;
+        boolean isStale = (now - t.trueStartTime) > t.maxTrueSec;
+        if (isStale && !t.wasStale) {
+          SafeLog.put("Health/Staleness/" + entry.getKey(), true);
+          t.wasStale = true;
+        }
+      } else {
+        t.trueStartTime = -1;
+        if (t.wasStale) {
+          SafeLog.put("Health/Staleness/" + entry.getKey(), false);
+          t.wasStale = false;
+        }
+      }
+    }
   }
 
-  // =========================================================================
-  // Accessors (AlertManager / PostMatchSummary)
-  // =========================================================================
+  private void logHealth() {
+    SafeLog.put("Health/Telemetry/Failures", cycleFailures);
+    SafeLog.put("Health/Telemetry/LastFailed", lastFailedName);
+  }
 
-  // Shooter
   public double getShooterTemperature() {
     return getSafely(() -> shooterTelemetry.getTemperature(), 0.0);
   }
@@ -198,7 +247,6 @@ public class TelemetryManager {
     return getSafely(() -> shooterTelemetry.getVelocityRPM(), 0.0);
   }
 
-  // Indexer
   public double getIndexerTemperature() {
     return getSafely(() -> indexerTelemetry.getTemperature(), 0.0);
   }
@@ -211,15 +259,10 @@ public class TelemetryManager {
     return getSafely(() -> !indexerTelemetry.isJamDetected(), true);
   }
 
-  public void clearIndexerJam() {
-    runSafely(() -> indexerTelemetry.clearJam(), "Indexer/clearJam");
-  }
-
   public int getIndexerJamCount() {
     return getSafely(() -> indexerTelemetry.getTotalJamCount(), 0);
   }
 
-  // Intake
   public double getIntakeTemperature() {
     return getSafely(() -> intakeTelemetry.getTemperature(), 0.0);
   }
@@ -228,30 +271,45 @@ public class TelemetryManager {
     return getSafely(() -> intakeTelemetry.isJamDetected(), false);
   }
 
-  public void clearIntakeJam() {
-    runSafely(() -> intakeTelemetry.clearJam(), "Intake/clearJam");
-  }
-
   public int getIntakeJamCount() {
     return getSafely(() -> intakeTelemetry.getTotalJamCount(), 0);
   }
 
-  // IntakeActuator
   public double getIntakeActuatorTemperature() {
     return getSafely(() -> intakeActuatorTelemetry.getTemperature(), 0.0);
   }
 
-  // Scoring composite
+  public boolean isAnyJamIntervening() {
+    return getSafely(() -> intakeTelemetry.isJamProtectionIntervening(), false)
+        || getSafely(() -> indexerTelemetry.isJamProtectionIntervening(), false)
+        || getSafely(() -> agitatorTelemetry.isJamProtectionIntervening(), false);
+  }
+
+  /** Returns which subsystem is currently jamming, or "none" if no jam. */
+  public String getJamSource() {
+    boolean intake = getSafely(() -> intakeTelemetry.isJamProtectionIntervening(), false);
+    boolean indexer = getSafely(() -> indexerTelemetry.isJamProtectionIntervening(), false);
+    boolean agitator = getSafely(() -> agitatorTelemetry.isJamProtectionIntervening(), false);
+    if (!intake && !indexer && !agitator) return "none";
+    StringBuilder sb = new StringBuilder();
+    if (intake) sb.append("Intake");
+    if (indexer) { if (sb.length() > 0) sb.append("+"); sb.append("Indexer"); }
+    if (agitator) { if (sb.length() > 0) sb.append("+"); sb.append("Agitator"); }
+    return sb.toString();
+  }
+
   public boolean isReadyToShoot() {
     return getSafely(() -> scoringTelemetry.isReadyToShoot(), false);
   }
 
-  // Vision
   public boolean isLockedOnTarget() {
     return getSafely(() -> visionTelemetry.isLockedOnTarget(), false);
   }
 
-  // SystemHealth (for AlertManager)
+  public double getPoseConfidence() {
+    return getSafely(() -> visionTelemetry.getPoseConfidence(), 0.0);
+  }
+
   public double getLoopTimeMs() {
     return getSafely(() -> systemHealthTelemetry.getLoopTimeMs(), 0.0);
   }
@@ -280,7 +338,10 @@ public class TelemetryManager {
     return getSafely(() -> intakeTelemetry.isStalled(), false);
   }
 
-  // Network (for AlertManager - R704 compliance)
+  public boolean isAgitatorStalled() {
+    return getSafely(() -> agitatorTelemetry.isStalled(), false);
+  }
+
   public double getBandwidthPercent() {
     return getSafely(() -> networkTelemetry.getBandwidthPercent(), 0.0);
   }
@@ -293,7 +354,6 @@ public class TelemetryManager {
     return getSafely(() -> networkTelemetry.isCritical(), false);
   }
 
-  // SystemHealth - current draw (for PostMatchSummary)
   public double getTotalCurrentAmps() {
     return getSafely(() -> systemHealthTelemetry.getTotalCurrentAmps(), 0.0);
   }
@@ -302,8 +362,43 @@ public class TelemetryManager {
     return getSafely(() -> systemHealthTelemetry.getPeakCurrentAmps(), 0.0);
   }
 
-  // Drive (for path following commands)
   public DriveTelemetry getDriveTelemetry() {
     return getSafely(() -> driveTelemetry, null);
+  }
+
+  public boolean isAllCANConnected() {
+    return getSafely(() -> canHealthTelemetry.isAllConnected(), true);
+  }
+
+  public double getShooterAtSpeedPercent() {
+    return getSafely(() -> shooterTelemetry.getAtSpeedPercent(), 0.0);
+  }
+
+  public boolean isShooterSpinningUp() {
+    return getSafely(() -> shooterTelemetry.isSpinningUp(), false);
+  }
+
+  public double getFilteredSpinUpPercent() {
+    return getSafely(() -> shooterTelemetry.getFilteredSpinUpPercent(), 0.0);
+  }
+
+  public double getAgitatorTemperature() {
+    return getSafely(() -> agitatorTelemetry.getTemperature(), 0.0);
+  }
+
+  public double getBatteryVoltage() {
+    return getSafely(() -> (double) RobotController.getBatteryVoltage(), 12.0);
+  }
+
+  public boolean isHubActive() {
+    return getSafely(() -> scoringTelemetry.isHubActive(), true);
+  }
+
+  public double getTimeToNextShiftSec() {
+    return getSafely(() -> scoringTelemetry.getTimeToNextShiftSec(), 0.0);
+  }
+
+  public boolean isWonAuto() {
+    return getSafely(() -> scoringTelemetry.isWonAuto(), false);
   }
 }

@@ -2,17 +2,18 @@ package frc.robot.telemetry;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.StallDetectionConstants;
 import frc.robot.subsystems.Indexer;
 import frc.robot.util.EventMarker;
+import frc.robot.util.JamProtection;
 
 /** Indexer telemetry: jam detection, stall tracking, PID audit. */
 public class IndexerTelemetry implements SubsystemTelemetry {
-  private Indexer indexer; // Not final - can re-acquire if null
+  private Indexer indexer; // grabbed again in update() if not ready yet
   private boolean subsystemAvailable = false;
 
-  // Jam detection (manual time-based so JamSeconds tunable is read each cycle)
   private double jamConditionStartTime = 0;
   private boolean inJamCondition = false;
   private boolean jamDetected = false;
@@ -32,7 +33,6 @@ public class IndexerTelemetry implements SubsystemTelemetry {
   private boolean pidTuningEvent = false;
   private double prevKP = -1, prevKI = -1, prevKD = -1, prevFF = -1;
 
-  // Device health. Debounced to filter CAN bus transients
   private final Debouncer connectDebouncer =
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
   private boolean deviceConnected = false;
@@ -42,6 +42,20 @@ public class IndexerTelemetry implements SubsystemTelemetry {
   private double stallStartTime = 0;
   private double stallDurationMs = 0;
   private boolean inStallCondition = false;
+
+  private double targetSpeed = 0;
+  private String activeCommandName = "none";
+
+  private String jamProtectionState = "MONITORING";
+  private int jamProtectionAttempts = 0;
+  private boolean jamProtectionIntervening = false;
+
+  private double prevAppliedOutput = 0;
+  private int torqueReversalsThisSec = 0;
+  private int torqueReversalCount = 0;
+  private double torqueReversalWindowStart = 0;
+  private boolean torqueReversalAlert = false;
+  private static final int TORQUE_REVERSAL_ALERT_THRESHOLD = 5;
 
   public IndexerTelemetry() {
     this.indexer = Indexer.getInstance();
@@ -70,6 +84,7 @@ public class IndexerTelemetry implements SubsystemTelemetry {
       temperatureCelsius = indexer.getTemperature();
       velocityRPM = indexer.getVelocity();
 
+      targetSpeed = indexer.getTunableTargetSpeed();
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = indexer.getStickyFaultsRaw();
     } catch (Throwable t) {
@@ -97,7 +112,6 @@ public class IndexerTelemetry implements SubsystemTelemetry {
       stalled = false;
     }
 
-    // Direction
     if (appliedOutput > 0.05) {
       direction = "FORWARD";
     } else if (appliedOutput < -0.05) {
@@ -106,12 +120,6 @@ public class IndexerTelemetry implements SubsystemTelemetry {
       direction = "STOPPED";
     }
 
-    // Cycle tracking: indexer started feeding (for CycleTracker wiring)
-    if (running && !wasRunning && appliedOutput > 0.05) {
-      SafeLog.run(() -> CycleTracker.getInstance().intakeComplete());
-    }
-
-    // Jam detection: manual time-based (reads both JamAmps and JamSeconds tunables live)
     double jamThreshold = Indexer.getJamCurrentThreshold();
     double jamTimeSec = Indexer.getJamTimeThreshold();
     boolean highCurrent = running && (currentAmps > jamThreshold);
@@ -128,21 +136,48 @@ public class IndexerTelemetry implements SubsystemTelemetry {
       jamDetected = false;
     }
 
-    // Count on rising edge only
     if (jamDetected && !wasJammed) {
       totalJamCount++;
       SafeLog.run(() -> EventMarker.jamDetected("Indexer"));
     }
 
-    // Feeder active: running, outputting, not jammed
     feederActive = running && appliedOutput > 0.05 && !jamDetected;
 
-    // Jam frequency over match duration
     if (matchStartTime < 0) matchStartTime = now;
     double elapsed = now - matchStartTime;
     jamFrequencyPerMin = (elapsed > 0) ? (totalJamCount / elapsed) * 60.0 : 0;
 
-    // PID audit trail
+    try {
+      Command currentCmd = indexer.getCurrentCommand();
+      activeCommandName = (currentCmd != null) ? currentCmd.getName() : "none";
+    } catch (Throwable t) {
+      activeCommandName = "unknown";
+    }
+
+    try {
+      JamProtection jp = indexer.getJamProtection();
+      jamProtectionState = jp.getState().name();
+      jamProtectionAttempts = jp.getReverseAttempts();
+      jamProtectionIntervening = jp.isIntervening();
+    } catch (Throwable t) {
+      jamProtectionState = "UNKNOWN";
+    }
+
+    boolean signChanged =
+        (prevAppliedOutput > 0.01 && appliedOutput < -0.01)
+            || (prevAppliedOutput < -0.01 && appliedOutput > 0.01);
+    if (signChanged) {
+      torqueReversalsThisSec++;
+    }
+    prevAppliedOutput = appliedOutput;
+
+    if (now - torqueReversalWindowStart >= 1.0) {
+      torqueReversalCount = torqueReversalsThisSec;
+      torqueReversalsThisSec = 0;
+      torqueReversalWindowStart = now;
+    }
+    torqueReversalAlert = torqueReversalCount >= TORQUE_REVERSAL_ALERT_THRESHOLD;
+
     pidTuningEvent = false;
     try {
       double curKP = Indexer.getTunableKP();
@@ -172,6 +207,10 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     stalled = false;
     stallDurationMs = 0;
     inStallCondition = false;
+    jamDetected = false;
+    inJamCondition = false;
+    torqueReversalAlert = false;
+    targetSpeed = 0;
   }
 
   @Override
@@ -181,7 +220,7 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     SafeLog.put("Indexer/Direction", direction);
     SafeLog.put("Indexer/ReadyToFire", !jamDetected);
     SafeLog.put("Indexer/AppliedOutput", appliedOutput);
-    SafeLog.put("Indexer/TargetSpeed", indexer != null ? Indexer.getTunableTargetSpeed() : 0.0);
+    SafeLog.put("Indexer/TargetSpeed", targetSpeed);
     SafeLog.put("Indexer/CurrentAmps", currentAmps);
     SafeLog.put("Indexer/TemperatureCelsius", temperatureCelsius);
     SafeLog.put("Indexer/JamDetected", jamDetected);
@@ -197,13 +236,17 @@ public class IndexerTelemetry implements SubsystemTelemetry {
       SafeLog.put("Indexer/Config/FF", prevFF);
     }
 
-    // Device health
     SafeLog.put("Indexer/Device/Connected", deviceConnected);
     SafeLog.put("Indexer/Device/FaultsRaw", deviceFaultsRaw);
-
     SafeLog.put("Indexer/VelocityRPM", velocityRPM);
     SafeLog.put("Indexer/Stalled", stalled);
     SafeLog.put("Indexer/StallDurationMs", stallDurationMs);
+    SafeLog.put("Indexer/ActiveCommand", activeCommandName);
+    SafeLog.put("Indexer/TorqueReversalsPerSec", torqueReversalCount);
+    SafeLog.put("Indexer/TorqueReversalAlert", torqueReversalAlert);
+    SafeLog.put("Indexer/JamProtection/State", jamProtectionState);
+    SafeLog.put("Indexer/JamProtection/Attempts", jamProtectionAttempts);
+    SafeLog.put("Indexer/JamProtection/Intervening", jamProtectionIntervening);
   }
 
   @Override
@@ -211,7 +254,6 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     return "Indexer";
   }
 
-  // Accessors for TelemetryManager
   public double getTemperature() {
     return temperatureCelsius;
   }
@@ -228,9 +270,8 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     return stalled;
   }
 
-  public void clearJam() {
-    jamDetected = false;
-    inJamCondition = false;
+  public boolean isJamProtectionIntervening() {
+    return jamProtectionIntervening;
   }
 
   public boolean isDeviceConnected() {
@@ -239,5 +280,17 @@ public class IndexerTelemetry implements SubsystemTelemetry {
 
   public int getDeviceFaultsRaw() {
     return deviceFaultsRaw;
+  }
+
+  public String getActiveCommandName() {
+    return activeCommandName;
+  }
+
+  public int getTorqueReversalsPerSec() {
+    return torqueReversalCount;
+  }
+
+  public boolean isTorqueReversalAlert() {
+    return torqueReversalAlert;
   }
 }

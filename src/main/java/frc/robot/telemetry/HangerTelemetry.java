@@ -2,6 +2,7 @@ package frc.robot.telemetry;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.HangerConstants;
 import frc.robot.Constants.MotorConstants;
@@ -9,7 +10,7 @@ import frc.robot.subsystems.Hanger;
 
 /** Hanger telemetry: position, deploy/climb state, motor health. */
 public class HangerTelemetry implements SubsystemTelemetry {
-  private Hanger hanger; // Not final - can re-acquire if null
+  private Hanger hanger; // grabbed again in update() if not ready yet
   private boolean subsystemAvailable = false;
 
   private double position = 0;
@@ -22,17 +23,16 @@ public class HangerTelemetry implements SubsystemTelemetry {
   private boolean isDeployed = false;
   private boolean isClimbing = false;
 
-  // Device health. Debounced to filter CAN bus transients
   private final Debouncer connectDebouncer =
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
   private boolean deviceConnected = false;
   private int deviceFaultsRaw = 0;
 
   private double climbProgress = 0;
-
-  // Extra diagnostics
   private String controlMode = "UNKNOWN";
   private boolean softLimitActive = false;
+
+  private String activeCommandName = "none";
 
   public HangerTelemetry() {
     this.hanger = Hanger.getInstance();
@@ -65,20 +65,16 @@ public class HangerTelemetry implements SubsystemTelemetry {
           Math.abs(position - MotorConstants.UP_HANGER_POS) < HangerConstants.POSITION_TOLERANCE;
       isClimbing = targetPosition == MotorConstants.DOWN_HANGER_POS && !atPosition;
 
-      // Climb progress (0-1 normalized)
       double range = MotorConstants.UP_HANGER_POS - MotorConstants.DOWN_HANGER_POS;
       climbProgress =
           (range > 0)
               ? MathUtil.clamp((position - MotorConstants.DOWN_HANGER_POS) / range, 0, 1)
               : 0;
 
-      // Device health
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = hanger.getStickyFaultsRaw();
 
-      // Control mode and soft limits
       controlMode = (targetPosition != 0) ? "POSITION" : "OPEN_LOOP";
-      // Check if near position limits (use DOWN/UP constants as proxy)
       softLimitActive =
           (position <= MotorConstants.DOWN_HANGER_POS + 0.1)
               || (position >= MotorConstants.UP_HANGER_POS - 0.1);
@@ -86,6 +82,13 @@ public class HangerTelemetry implements SubsystemTelemetry {
       deviceConnected = connectDebouncer.calculate(false);
       deviceFaultsRaw = -1;
       setDefaultValues();
+    }
+
+    try {
+      Command currentCmd = hanger.getCurrentCommand();
+      activeCommandName = (currentCmd != null) ? currentCmd.getName() : "none";
+    } catch (Throwable t) {
+      activeCommandName = "unknown";
     }
   }
 
@@ -114,15 +117,12 @@ public class HangerTelemetry implements SubsystemTelemetry {
     SafeLog.put("Hanger/IsDeployed", isDeployed);
     SafeLog.put("Hanger/IsClimbing", isClimbing);
 
-    // Device health
     SafeLog.put("Hanger/Device/Connected", deviceConnected);
     SafeLog.put("Hanger/Device/FaultsRaw", deviceFaultsRaw);
-
     SafeLog.put("Hanger/ClimbProgress", climbProgress);
-
-    // Extra diagnostics
     SafeLog.put("Hanger/ControlMode", controlMode);
     SafeLog.put("Hanger/SoftLimitActive", softLimitActive);
+    SafeLog.put("Hanger/ActiveCommand", activeCommandName);
   }
 
   @Override
@@ -130,7 +130,6 @@ public class HangerTelemetry implements SubsystemTelemetry {
     return "Hanger";
   }
 
-  // Accessors for TelemetryManager
   public double getTemperature() {
     return temperatureCelsius;
   }

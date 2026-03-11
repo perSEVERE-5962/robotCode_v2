@@ -22,16 +22,13 @@ import org.littletonrobotics.junction.Logger;
 public class PreMatchDiagnostics {
   private static final PreMatchDiagnostics instance = new PreMatchDiagnostics();
 
-  // Dashboard keys
   private static final String TRIGGER_SAFE_KEY = "Diagnostics/TriggerSafe";
   private static final String TRIGGER_FULL_KEY = "Diagnostics/TriggerFull";
 
-  // Timing constants
   private static final double GYRO_SAMPLE_SECONDS = 2.0;
   private static final double VISION_SAMPLE_SECONDS = 3.0;
   private static final double DRIVE_TEST_SECONDS = 2.0;
 
-  // Thresholds
   private static final double BATTERY_FAIL_V = BatteryThresholds.PRE_MATCH_FAIL_V;
   private static final double BATTERY_WARN_V = BatteryThresholds.PRE_MATCH_WARN_V;
   private static final double MOTOR_TEMP_WARN_C = 50.0;
@@ -45,7 +42,6 @@ public class PreMatchDiagnostics {
   private static final double INDEXER_CURRENT_MIN_A = 2.0;
   private static final double DRIVE_RESPONSE_WARN_MS = 500.0;
 
-  // Results
   public enum CheckResult {
     PASS,
     WARN,
@@ -68,7 +64,6 @@ public class PreMatchDiagnostics {
   private int skippedCount = 0;
   private DiagnosticMode lastMode = DiagnosticMode.SAFE;
 
-  // Metrics captured during diagnostic run
   private double startTimestamp = 0;
   private String currentStep = "IDLE";
   private double minBatteryVoltage = 15.0;
@@ -77,7 +72,6 @@ public class PreMatchDiagnostics {
   private int canTxErrStart = 0;
   private int canRxErrStart = 0;
 
-  // Detailed metrics
   private double gyroMaxDrift = 0;
   private double visionDropoutPct = 0;
   private double shooterSpinupMs = 0;
@@ -218,8 +212,6 @@ public class PreMatchDiagnostics {
     return true;
   }
 
-  // ==================== INITIALIZATION ====================
-
   private void initializeRun() {
     lastResults.clear();
     passCount = 0;
@@ -260,8 +252,6 @@ public class PreMatchDiagnostics {
     if (v < minBatteryVoltage) minBatteryVoltage = v;
     if (RobotController.isBrownedOut()) brownoutOccurred = true;
   }
-
-  // ==================== SAFE CHECKS (sensor-only) ====================
 
   private void checkBattery() {
     double voltage = RobotController.getBatteryVoltage();
@@ -464,7 +454,8 @@ public class PreMatchDiagnostics {
   private void checkVisionSampled() {
     try {
       RobotContainer container = RobotContainer.getInstance();
-      if (container == null || container.getSwerveSubsystem().getVision() == null) {
+      if (container == null || container.getSwerveSubsystem() == null
+          || container.getSwerveSubsystem().getVision() == null) {
         addResult("Vision", CheckResult.WARN, "Vision not initialized");
         Logger.recordOutput("Diagnostics/VisionDropoutPct", 0.0);
         return;
@@ -552,8 +543,6 @@ public class PreMatchDiagnostics {
       addResult("DriveSensors", CheckResult.WARN, "Error: " + e.getMessage());
     }
   }
-
-  // ==================== ACTUATOR CHECKS (test mode only) ====================
 
   private void checkShooterSpinup() {
     try {
@@ -697,8 +686,6 @@ public class PreMatchDiagnostics {
     }
   }
 
-  // ==================== RESULTS ====================
-
   private void addResult(String name, CheckResult result, String message) {
     lastResults.add(new DiagnosticCheck(name, result, message));
 
@@ -771,8 +758,6 @@ public class PreMatchDiagnostics {
           3000);
     }
   }
-
-  // ==================== ACCESSORS ====================
 
   public boolean isAllPassed() {
     return allPassed;

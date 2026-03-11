@@ -3,7 +3,7 @@ package frc.robot.util;
 import frc.robot.util.Elastic.Notification;
 import frc.robot.util.Elastic.NotificationLevel;
 
-/** Defensive wrapper for Elastic Dashboard notifications. */
+/** Sends Elastic Dashboard notifications, catches errors so they don't propagate. */
 public final class ElasticUtil {
 
   private ElasticUtil() {}

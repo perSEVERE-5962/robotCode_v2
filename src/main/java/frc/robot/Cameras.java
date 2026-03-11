@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import frc.robot.subsystems.swervedrive.Vision;
@@ -41,18 +42,32 @@ public enum Cameras {
   /** Right Camera */
   RIGHT_CAM(
       "back-right",
-      new Rotation3d(0, Math.toRadians(-15), Math.toRadians(-135)),
-      new Translation3d(-0.293, -0.293, 0.229),
-      VecBuilder.fill(0.3, 0.3, 0.6),
-      VecBuilder.fill(0.1, 0.1, 0.2));
+    new Rotation3d(0, Math.toRadians(-15), Math.toRadians(-135)),
+    new Translation3d(-0.293, -0.293, 0.229),
+    VecBuilder.fill(0.3, 0.3, 0.6),
+    VecBuilder.fill(0.1, 0.1, 0.2)),
 
-  /** Center Camera */
-  // CENTER_CAM("center",
-  //     new Rotation3d(0, Units.degreesToRadians(18), 0),
-  //     new Translation3d(Units.inchesToMeters(-4.628),
-  //         Units.inchesToMeters(-10.687),
-  //         Units.inchesToMeters(16.129)),
-  //     VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+  /** Front-left camera, angled 45 deg outward */
+  FRONT_LEFT_CAM(
+      "front-left",
+    new Rotation3d(0, Math.toRadians(0), Math.toRadians(35)),
+    new Translation3d(
+        Units.inchesToMeters(-4.44),
+        Units.inchesToMeters(5.7),
+        Units.inchesToMeters(19)),
+    VecBuilder.fill(0.3, 0.3, 0.6),
+    VecBuilder.fill(0.1, 0.1, 0.2)),
+
+  /** Front-right camera, angled 45 deg outward (mirrored from front-left) */
+  FRONT_RIGHT_CAM(
+      "front-right",
+    new Rotation3d(0, Math.toRadians(0), Math.toRadians(-35)),
+    new Translation3d(
+        Units.inchesToMeters(-4.44),
+        Units.inchesToMeters(-5.7),
+        Units.inchesToMeters(19)),
+    VecBuilder.fill(0.3, 0.3, 0.6),
+    VecBuilder.fill(0.1, 0.1, 0.2));
 
   /** Latency alert to use when high latency is detected. */
   public final Alert latencyAlert;
@@ -147,6 +162,14 @@ public enum Cameras {
     }
   }
 
+  public Matrix<N3, N1> getSingleTagStdDevs() {
+    return singleTagStdDevs;
+  }
+
+  public Matrix<N3, N1> getMultiTagStdDevs() {
+    return multiTagStdDevs;
+  }
+
   /**
    * Get the result with the least ambiguity from the best tracked target within the Cache. This may
    * not be the most recent result!
@@ -232,6 +255,7 @@ public enum Cameras {
       updateEstimationStdDevs(visionEst, change.getTargets());
     }
     estimatedRobotPose = visionEst;
+    System.out.println("updated pose");
   }
 
   /**

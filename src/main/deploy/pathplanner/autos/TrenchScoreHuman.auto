@@ -19,7 +19,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 5.0
+            "waitTime": 3.0
           }
         },
         {
@@ -31,13 +31,7 @@
         {
           "type": "named",
           "data": {
-            "name": "TimedSpeedUpThenIndex"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TrenchToScore"
+            "name": "TimedShoot"
           }
         }
       ]

@@ -3,6 +3,7 @@ package frc.robot.telemetry;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Cameras;
 import frc.robot.subsystems.swervedrive.Vision;
+import frc.robot.subsystems.swervedrive.VisionFilter.RejectionReason;
 
 /** Vision telemetry: target lock, tag ID stability, pose confidence. */
 public class VisionTelemetry implements SubsystemTelemetry {
@@ -13,42 +14,53 @@ public class VisionTelemetry implements SubsystemTelemetry {
   private static final int LOCK_THRESHOLD_FRAMES = 5;
   private static final int STABLE_LOCK_THRESHOLD_FRAMES = 10;
 
-  // Current state
   private boolean hasTarget = false;
   private boolean lockedOnTarget = false;
   private int consecutiveFrames = 0;
   private double lastTargetTimestamp = 0;
   private double timeSinceLastTargetMs = 0;
 
-  // Tag ID stability tracking
   private int lastTagID = -1;
   private int sameTagFrameCount = 0;
   private int lockedTagID = -1;
   private boolean stableLock = false;
 
-  // For CycleTracker wiring
   private boolean wasLockedForCycle = false;
 
-  // Quality metrics
   private double distanceToTargetM = 0;
   private double poseConfidence = 0;
   private double lockDurationMs = 0;
   private double lockStartTime = 0;
   private boolean wasLocked = false;
 
-  // Pose measurement timing and trust
   private double poseTimestampSec = 0;
   private double[] measurementStdDevs = {0.5, 0.5, 0.5}; // x, y, theta defaults
 
-  // Target orientation and pipeline health
   private double targetYawDeg = 0;
   private double targetPitchDeg = 0;
   private double latencyMs = 0;
   private boolean leftCamConnected = false;
   private boolean rightCamConnected = false;
+  private boolean frontLeftCamConnected = false;
+  private boolean frontRightCamConnected = false;
 
   private String bestCameraName = "NONE";
   private int camerasWithTarget = 0;
+
+  private int filterAccepted = 0;
+  private int filterRejected = 0;
+  private double filterAcceptRatePct = 100;
+  private String lastRejectionReason = "NONE";
+  private boolean blendingActive = false;
+  private double blendWeight = 0;
+  private boolean manualOverride = false;
+
+  private int rejectAmbiguity = 0;
+  private int rejectZHeight = 0;
+  private int rejectRollPitch = 0;
+  private int rejectFieldBounds = 0;
+  private int rejectHeadingDivergence = 0;
+  private int rejectPoseJump = 0;
 
   public VisionTelemetry() {}
 
@@ -85,13 +97,8 @@ public class VisionTelemetry implements SubsystemTelemetry {
       lockedOnTarget = consecutiveFrames >= LOCK_THRESHOLD_FRAMES;
       timeSinceLastTargetMs = sanitize((now - lastTargetTimestamp) * 1000.0);
 
-      // CycleTracker wiring: notify when lock acquired
-      if (lockedOnTarget && !wasLockedForCycle) {
-        SafeLog.run(() -> CycleTracker.getInstance().aimComplete());
-      }
       wasLockedForCycle = lockedOnTarget;
 
-      // Tag ID stability tracking
       int currentTagID = vision.getBestTargetId();
 
       if (currentTagID == lastTagID && currentTagID != -1) {
@@ -101,15 +108,13 @@ public class VisionTelemetry implements SubsystemTelemetry {
       }
       lastTagID = currentTagID;
 
-      // L1: Only assign lockedTagID when actually locked
       if (lockedOnTarget && currentTagID != -1) {
         lockedTagID = currentTagID;
       } else if (!lockedOnTarget) {
-        lockedTagID = -1; // Clear when not locked
+        lockedTagID = -1;
       }
       stableLock = sameTagFrameCount >= STABLE_LOCK_THRESHOLD_FRAMES;
 
-      // Quality metrics with NaN protection
       if (currentTagID != -1) {
         distanceToTargetM = sanitize(vision.getDistanceFromAprilTag(currentTagID));
       } else {
@@ -118,7 +123,6 @@ public class VisionTelemetry implements SubsystemTelemetry {
 
       poseConfidence = computeConfidence(distanceToTargetM, sameTagFrameCount, stableLock);
 
-      // Track lock duration
       if (lockedOnTarget && !wasLocked) {
         lockStartTime = now;
       }
@@ -129,14 +133,9 @@ public class VisionTelemetry implements SubsystemTelemetry {
       }
       wasLocked = lockedOnTarget;
 
-      // Pose timestamp and std devs
-      // Use last target timestamp as proxy (actual pose timestamp requires API update)
       poseTimestampSec = hasTarget ? lastTargetTimestamp : now;
-
-      // Std devs based on distance (closer = more trust)
       updateMeasurementStdDevs(distanceToTargetM);
 
-      // Target yaw/pitch from best tracked target
       try {
         if (currentTagID != -1) {
           Cameras bestCam = vision.getbestCamera(currentTagID);
@@ -159,19 +158,18 @@ public class VisionTelemetry implements SubsystemTelemetry {
         bestCameraName = "NONE";
       }
 
-      // Camera agreement: how many cameras see the current target
       try {
         int count = 0;
         if (currentTagID != -1) {
-          if (vision.getTargetFromId(currentTagID, Cameras.LEFT_CAM) != null) count++;
-          if (vision.getTargetFromId(currentTagID, Cameras.RIGHT_CAM) != null) count++;
+          for (Cameras cam : Cameras.values()) {
+            if (vision.getTargetFromId(currentTagID, cam) != null) count++;
+          }
         }
         camerasWithTarget = count;
       } catch (Throwable t) {
         camerasWithTarget = 0;
       }
 
-      // Pipeline latency
       try {
         double lat = vision.getBestTargetLatencyMs();
         latencyMs = (lat >= 0) ? sanitize(lat) : 0;
@@ -179,19 +177,45 @@ public class VisionTelemetry implements SubsystemTelemetry {
         latencyMs = 0;
       }
 
-      // Per-camera connected status
       try {
         leftCamConnected = vision.isCameraConnected(Cameras.LEFT_CAM);
         rightCamConnected = vision.isCameraConnected(Cameras.RIGHT_CAM);
+        frontLeftCamConnected = vision.isCameraConnected(Cameras.FRONT_LEFT_CAM);
+        frontRightCamConnected = vision.isCameraConnected(Cameras.FRONT_RIGHT_CAM);
       } catch (Throwable t) {
         leftCamConnected = false;
         rightCamConnected = false;
+        frontLeftCamConnected = false;
+        frontRightCamConnected = false;
       }
 
       visionHealthy = true;
     } catch (Throwable t) {
       visionHealthy = false;
       setDefaultValues();
+    }
+
+    try {
+      if (vision != null) {
+        filterAccepted = vision.getAcceptedCount();
+        filterRejected = vision.getRejectedCount();
+        filterAcceptRatePct = vision.getAcceptRatePct();
+        RejectionReason lr = vision.getLastRejection();
+        lastRejectionReason = (lr != null) ? lr.name() : "NONE";
+        blendingActive = vision.isBlendingActive();
+        blendWeight = vision.getBlendWeight();
+        manualOverride = vision.isManualOverride();
+
+        int[] byGate = vision.getRejectionsByGate();
+        rejectAmbiguity = byGate[RejectionReason.AMBIGUITY.ordinal()];
+        rejectZHeight = byGate[RejectionReason.Z_HEIGHT.ordinal()];
+        rejectRollPitch = byGate[RejectionReason.ROLL_PITCH.ordinal()];
+        rejectFieldBounds = byGate[RejectionReason.FIELD_BOUNDS.ordinal()];
+        rejectHeadingDivergence = byGate[RejectionReason.HEADING_DIVERGENCE.ordinal()];
+        rejectPoseJump = byGate[RejectionReason.POSE_JUMP.ordinal()];
+      }
+    } catch (Throwable t) {
+      // filter stats are non-critical
     }
   }
 
@@ -212,6 +236,8 @@ public class VisionTelemetry implements SubsystemTelemetry {
     latencyMs = 0;
     leftCamConnected = false;
     rightCamConnected = false;
+    frontLeftCamConnected = false;
+    frontRightCamConnected = false;
     bestCameraName = "NONE";
     camerasWithTarget = 0;
   }
@@ -226,6 +252,9 @@ public class VisionTelemetry implements SubsystemTelemetry {
   }
 
   private double computeConfidence(double distance, int frameCount, boolean stable) {
+    // No target at all = zero confidence
+    if (frameCount == 0) return 0;
+
     double score = 100;
 
     // Penalize long distance (less accurate)
@@ -256,24 +285,35 @@ public class VisionTelemetry implements SubsystemTelemetry {
     SafeLog.put("Vision/SameTagFrames", sameTagFrameCount);
     SafeLog.put("Vision/StableLock", stableLock);
 
-    // Quality metrics
     SafeLog.put("Vision/Quality/DistanceM", distanceToTargetM);
     SafeLog.put("Vision/Quality/Confidence", poseConfidence);
     SafeLog.put("Vision/Quality/LockDurationMs", lockDurationMs);
-
-    // Pose timing and trust weights
     SafeLog.put("Vision/PoseTimestampSec", poseTimestampSec);
     SafeLog.put("Vision/MeasurementStdDevs", measurementStdDevs);
-
-    // Target orientation and pipeline health
     SafeLog.put("Vision/TargetYawDeg", targetYawDeg);
     SafeLog.put("Vision/TargetPitchDeg", targetPitchDeg);
     SafeLog.put("Vision/LatencyMs", latencyMs);
     SafeLog.put("Vision/Camera/LeftCam/Connected", leftCamConnected);
     SafeLog.put("Vision/Camera/RightCam/Connected", rightCamConnected);
+    SafeLog.put("Vision/Camera/FrontLeftCam/Connected", frontLeftCamConnected);
+    SafeLog.put("Vision/Camera/FrontRightCam/Connected", frontRightCamConnected);
 
     SafeLog.put("Vision/BestCamera", bestCameraName);
     SafeLog.put("Vision/CamerasWithTarget", camerasWithTarget);
+
+    SafeLog.put("Vision/Filter/AcceptedCount", filterAccepted);
+    SafeLog.put("Vision/Filter/RejectedCount", filterRejected);
+    SafeLog.put("Vision/Filter/AcceptRatePct", filterAcceptRatePct);
+    SafeLog.put("Vision/Filter/LastRejection", lastRejectionReason);
+    SafeLog.put("Vision/Filter/Reject/Ambiguity", rejectAmbiguity);
+    SafeLog.put("Vision/Filter/Reject/ZHeight", rejectZHeight);
+    SafeLog.put("Vision/Filter/Reject/RollPitch", rejectRollPitch);
+    SafeLog.put("Vision/Filter/Reject/FieldBounds", rejectFieldBounds);
+    SafeLog.put("Vision/Filter/Reject/HeadingDivergence", rejectHeadingDivergence);
+    SafeLog.put("Vision/Filter/Reject/PoseJump", rejectPoseJump);
+    SafeLog.put("Vision/Blending/Active", blendingActive);
+    SafeLog.put("Vision/Blending/Weight", blendWeight);
+    SafeLog.put("Vision/ManualOverride", manualOverride);
   }
 
   @Override
@@ -281,7 +321,6 @@ public class VisionTelemetry implements SubsystemTelemetry {
     return "Vision";
   }
 
-  // Accessors for TelemetryManager
   public boolean isLockedOnTarget() {
     return lockedOnTarget;
   }
@@ -296,5 +335,9 @@ public class VisionTelemetry implements SubsystemTelemetry {
 
   public boolean isRightCamConnected() {
     return rightCamConnected;
+  }
+
+  public double getPoseConfidence() {
+    return poseConfidence;
   }
 }

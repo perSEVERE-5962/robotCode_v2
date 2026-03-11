@@ -1,10 +1,16 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import frc.robot.Constants;
 
 public class IntakeActuator extends Actuator {
   private static IntakeActuator instance;
-
+  private SparkMax motor;
+  private SparkMaxConfig motorConfig;
   private double targetPosition = 0;
   private static final double POSITION_TOLERANCE_ROTATIONS = 0.05;
 
@@ -18,13 +24,17 @@ public class IntakeActuator extends Actuator {
         Constants.IntakeConstants.MaxOutput,
         Constants.IntakeConstants.FF,
         Constants.IntakeConstants.Iz,
-        0,
-        0,
-        40,
+        60f,
+        11.5F,
         false,
         false,
-        false,
-        false);
+        true);
+        motor = getMotor();
+    motorConfig = new SparkMaxConfig();
+
+    motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(40);
+
+    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
@@ -45,7 +55,9 @@ public class IntakeActuator extends Actuator {
   public double getTargetPosition() {
     return targetPosition;
   }
-
+  public void setMotorPositionToScoring(){
+    getMotor().getEncoder().setPosition(38.24);
+  }
   public double getAppliedOutput() {
     return getMotor().getAppliedOutput();
   }

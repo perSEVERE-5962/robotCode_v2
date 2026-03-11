@@ -2,13 +2,20 @@ package frc.robot.subsystems.swervedrive;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Cameras;
 import frc.robot.Robot;
+import frc.robot.subsystems.swervedrive.VisionFilter.RejectionReason;
 import java.awt.Desktop;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +37,7 @@ public class Vision {
 
   /** April Tag Field Layout of the year. */
   public static final AprilTagFieldLayout fieldLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
   /** Photon Vision Simulation */
   public VisionSystemSim visionSim;
@@ -46,6 +53,16 @@ public class Vision {
   private int consecutiveTargetFrames = 0;
   private double lastTargetTimestamp = 0;
   private boolean lastHasTarget = false;
+
+  // Vision filtering stats (read by VisionTelemetry)
+  private double autoStartTimestamp = 0;
+  private int acceptedCount = 0;
+  private int rejectedCount = 0;
+  private int[] rejectionsByGate = new int[RejectionReason.values().length];
+  private RejectionReason lastRejection = RejectionReason.ACCEPTED;
+  private boolean blendingActive = false;
+  private double blendWeight = 0;
+  private boolean manualOverride = false;
 
   /**
    * Constructor for the Vision class.
@@ -107,14 +124,124 @@ public class Vision {
        */
       visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
     }
+
+    // Track auto start for pose jump grace period
+    if (DriverStation.isAutonomousEnabled() && autoStartTimestamp == 0) {
+      autoStartTimestamp = Timer.getFPGATimestamp();
+    } else if (!DriverStation.isAutonomousEnabled()) {
+      autoStartTimestamp = 0;
+    }
+
+    // Skip POSE_JUMP gate until we've accepted at least one pose, otherwise
+    // the first vision correction after boot gets rejected and vision locks out forever
+    double autoElapsed =
+        (acceptedCount == 0) ? 0
+            : (autoStartTimestamp > 0) ? Timer.getFPGATimestamp() - autoStartTimestamp : 999;
+
+    if (manualOverride) {
+      return;
+    }
+
+    Pose2d currentFusedPose = swerveDrive.getPose();
+    Rotation2d gyroHeading = swerveDrive.getOdometryHeading();
+    ChassisSpeeds fieldVel = swerveDrive.getFieldVelocity();
+    double speedMps = Math.hypot(fieldVel.vxMetersPerSecond, fieldVel.vyMetersPerSecond);
+
+    blendingActive = false;
+    blendWeight = 0;
+
+    double now = Timer.getFPGATimestamp();
+
     for (Cameras camera : Cameras.values()) {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
-      if (poseEst.isPresent()) {
+            if (poseEst.isPresent()) {
         var pose = poseEst.get();
         swerveDrive.addVisionMeasurement(
             pose.estimatedPose.toPose2d(), pose.timestampSeconds, camera.curStdDevs);
+
+      if (poseEst.isEmpty()) {
+        continue;
+      }
+
+      EstimatedRobotPose est = poseEst.get();
+
+      // Reject stale (>1s old) or future timestamps
+      double age = now - est.timestampSeconds;
+      if (age < 0 || age > 1.0) {
+        continue;
+      }
+
+      int tagCount = est.targetsUsed.size();
+      double worstAmbiguity = getWorstAmbiguity(est);
+
+      RejectionReason reason =
+          VisionFilter.evaluate(
+              est.estimatedPose,
+              tagCount,
+              worstAmbiguity,
+              gyroHeading,
+              currentFusedPose,
+              autoElapsed);
+
+      if (reason != RejectionReason.ACCEPTED) {
+        rejectedCount++;
+        rejectionsByGate[reason.ordinal()]++;
+        lastRejection = reason;
+        continue;
+      }
+
+      acceptedCount++;
+
+      double avgDist = getAverageTagDistance(est, swerveDrive);
+      Matrix<N3, N1> stdDevs =
+          VisionFilter.computeStdDevs(
+              tagCount,
+              avgDist,
+              speedMps,
+              camera.getSingleTagStdDevs(),
+              camera.getMultiTagStdDevs());
+
+      // Pose blending for single-tag close estimates
+      Pose2d poseToUse = est.estimatedPose.toPose2d();
+      if (tagCount == 1 && avgDist < VisionFilter.BLEND_DISTANCE_THRESHOLD_M) {
+        double w = VisionFilter.computeBlendWeight(avgDist);
+        if (w > 0) {
+          poseToUse = VisionFilter.blendPose(currentFusedPose, poseToUse, w);
+          blendingActive = true;
+          blendWeight = Math.max(blendWeight, w);
+        }
+      }
+
+      swerveDrive.addVisionMeasurement(poseToUse, est.timestampSeconds, stdDevs);
+            }}
+  }
+
+  /** Get the worst (highest) ambiguity across all targets in an estimate. */
+  private double getWorstAmbiguity(EstimatedRobotPose est) {
+    double worst = 0;
+    for (var target : est.targetsUsed) {
+      worst = Math.max(worst, target.getPoseAmbiguity());
+    }
+    return worst;
+  }
+
+  /** Get average distance from estimated pose to all visible tags. */
+  private double getAverageTagDistance(EstimatedRobotPose est, SwerveDrive swerveDrive) {
+    double totalDist = 0;
+    int count = 0;
+    for (var target : est.targetsUsed) {
+      var tagPose = fieldLayout.getTagPose(target.getFiducialId());
+      if (tagPose.isPresent()) {
+        totalDist +=
+            tagPose
+                .get()
+                .toPose2d()
+                .getTranslation()
+                .getDistance(est.estimatedPose.toPose2d().getTranslation());
+        count++;
       }
     }
+    return (count > 0) ? totalDist / count : 5.0;
   }
 
   /**
@@ -286,10 +413,7 @@ public class Vision {
     return consecutiveTargetFrames >= LOCK_THRESHOLD_FRAMES;
   }
 
-  /**
-   * Update target lock tracking and log vision telemetry. Call this in periodic or after
-   * updatePoseEstimation.
-   */
+  /** Update target lock tracking. Call this in periodic or after updatePoseEstimation. */
   public void updateTargetLock() {
     double now = Timer.getFPGATimestamp();
     boolean currentHasTarget = hasTarget();
@@ -326,5 +450,44 @@ public class Vision {
    */
   public boolean isCameraConnected(Cameras cam) {
     return cam != null && cam.camera.isConnected();
+  }
+
+  // Filter stats for VisionTelemetry
+
+  public int getAcceptedCount() {
+    return acceptedCount;
+  }
+
+  public int getRejectedCount() {
+    return rejectedCount;
+  }
+
+  public int[] getRejectionsByGate() {
+    return rejectionsByGate;
+  }
+
+  public RejectionReason getLastRejection() {
+    return lastRejection;
+  }
+
+  public boolean isBlendingActive() {
+    return blendingActive;
+  }
+
+  public double getBlendWeight() {
+    return blendWeight;
+  }
+
+  public boolean isManualOverride() {
+    return manualOverride;
+  }
+
+  public void setManualOverride(boolean override) {
+    this.manualOverride = override;
+  }
+
+  public double getAcceptRatePct() {
+    int total = acceptedCount + rejectedCount;
+    return (total > 0) ? (acceptedCount * 100.0 / total) : 100.0;
   }
 }

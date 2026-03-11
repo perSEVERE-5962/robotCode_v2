@@ -24,12 +24,14 @@ public class HoldAndIntake extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    intakeActuator.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS); 
+  }
 
   @Override
   public void execute() {
     intake.move(Intake.getTunableSpeed());
-    intakeActuator.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS);
+
   }
 
   @Override
