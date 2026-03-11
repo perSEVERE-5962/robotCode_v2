@@ -293,8 +293,14 @@ public class TelemetryManager {
     if (!intake && !indexer && !agitator) return "none";
     StringBuilder sb = new StringBuilder();
     if (intake) sb.append("Intake");
-    if (indexer) { if (sb.length() > 0) sb.append("+"); sb.append("Indexer"); }
-    if (agitator) { if (sb.length() > 0) sb.append("+"); sb.append("Agitator"); }
+    if (indexer) {
+      if (sb.length() > 0) sb.append("+");
+      sb.append("Indexer");
+    }
+    if (agitator) {
+      if (sb.length() > 0) sb.append("+");
+      sb.append("Agitator");
+    }
     return sb.toString();
   }
 

@@ -171,8 +171,7 @@ public class AlignToTag extends Command {
 
     swerveSubsystem.driveFieldOriented(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed));
 
-    double rawDiff =
-        currentPose.getRotation().getRadians() - targetPose.getRotation().getRadians();
+    double rawDiff = currentPose.getRotation().getRadians() - targetPose.getRotation().getRadians();
     double wrappedRad = Math.PI - Math.abs(Math.abs(rawDiff) - Math.PI);
     DriverFeedback dfAim = DriverFeedback.getInstance();
     if (dfAim != null) dfAim.setProgressiveAim(Math.toDegrees(wrappedRad));

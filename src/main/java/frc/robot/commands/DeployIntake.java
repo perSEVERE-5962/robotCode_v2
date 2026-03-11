@@ -15,13 +15,11 @@ public class DeployIntake extends Command {
 
   @Override
   public void initialize() {
-        intakeActuator.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS);
-
+    intakeActuator.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS);
   }
 
   @Override
-  public void execute() {
-  }
+  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {}

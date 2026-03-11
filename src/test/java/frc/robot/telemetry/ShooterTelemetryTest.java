@@ -48,7 +48,7 @@ class ShooterTelemetryTest extends SparkSimTestBase {
   void testSpinUpNotResetByOscillation() throws Exception {
     shooter.moveToVelocityWithPID(ShooterConstants.TARGET_RPM);
     double target = shooter.getTargetRPM();
-    double tolerance = shooter.getToleranceRPM();
+    double tolerance = Shooter.getToleranceRPM();
 
     setMotorVelocity(shooterSim, 1000);
     DriverStationSim.notifyNewData();

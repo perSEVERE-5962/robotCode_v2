@@ -172,9 +172,7 @@ class JamProtectionTest {
 
       if (attempt < MAX_ATTEMPTS) {
         assertEquals(
-            JamProtection.State.REVERSING,
-            jp.getState(),
-            "Attempt " + attempt + " should reverse");
+            JamProtection.State.REVERSING, jp.getState(), "Attempt " + attempt + " should reverse");
         // Let it reverse and cooldown
         advanceTime(0.45);
         jp.update(5.0, 500.0, true); // COOLDOWN
@@ -271,5 +269,4 @@ class JamProtectionTest {
     jp.update(5.0, 10.0, true);
     assertEquals(JamProtection.State.MONITORING, jp.getState());
   }
-
 }

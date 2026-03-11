@@ -32,30 +32,25 @@ import frc.robot.commands.DeployIntake;
 import frc.robot.commands.DriveToHub;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
-import frc.robot.commands.MoveAgitator;
 import frc.robot.commands.MoveIndexer;
-import frc.robot.commands.MoveIntake;
 import frc.robot.commands.PivotIntake;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.sim.SimDriveOverride;
+import frc.robot.subsystems.Agitator;
+import frc.robot.subsystems.Hanger;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.DriverTuning;
 import java.io.File;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
-import frc.robot.commands.MoveIndexer;
-import frc.robot.commands.MoveIntake;
-import frc.robot.commands.MoveShooter;
-import frc.robot.commands.PivotIntake;
-import frc.robot.commands.SpeedUpThenIndex;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.swervedrive.Vision;
 import swervelib.SwerveInputStream;
 
 /**
@@ -92,21 +87,25 @@ public class RobotContainer {
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular
-   * velocity. In sim, SimDriveOverride values are combined with joystick so scenario playback
-   * and manual SimGUI control both work.
+   * velocity. In sim, SimDriveOverride values are combined with joystick so scenario playback and
+   * manual SimGUI control both work.
    */
   SwerveInputStream driveAngularVelocity =
       SwerveInputStream.of(
               drivebase.getSwerveDrive(),
-              () -> RobotBase.isSimulation()
-                  ? -(driverXbox.getLeftY() + SimDriveOverride.getY())
-                  : driverXbox.getLeftY() * -1,
-              () -> RobotBase.isSimulation()
-                  ? -(driverXbox.getLeftX() + SimDriveOverride.getX())
-                  : driverXbox.getLeftX() * -1)
-          .withControllerRotationAxis(() -> RobotBase.isSimulation()
-              ? -(driverXbox.getRightX() + SimDriveOverride.getOmega())
-              : driverXbox.getRightX() * -1)
+              () ->
+                  RobotBase.isSimulation()
+                      ? -(driverXbox.getLeftY() + SimDriveOverride.getY())
+                      : driverXbox.getLeftY() * -1,
+              () ->
+                  RobotBase.isSimulation()
+                      ? -(driverXbox.getLeftX() + SimDriveOverride.getX())
+                      : driverXbox.getLeftX() * -1)
+          .withControllerRotationAxis(
+              () ->
+                  RobotBase.isSimulation()
+                      ? -(driverXbox.getRightX() + SimDriveOverride.getOmega())
+                      : driverXbox.getRightX() * -1)
           .deadband(OperatorConstants.DEADBAND)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);
@@ -174,17 +173,31 @@ public class RobotContainer {
 
     // Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-        NamedCommands.registerCommand("DeployIntake", new DeployIntake());
+    NamedCommands.registerCommand("DeployIntake", new DeployIntake());
 
     NamedCommands.registerCommand("HoldAndRunIntake", new HoldAndIntake());
-        NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(3));
+    NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(3));
 
     NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
-        NamedCommands.registerCommand("TimedShoot", new SpeedUpThenIndex().withTimeout(8));
+    NamedCommands.registerCommand("TimedShoot", new SpeedUpThenIndex().withTimeout(8));
 
-          NamedCommands.registerCommand("ShakeIntake", (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly());
-          NamedCommands.registerCommand("ShakeIntake", (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly().withTimeout(8));
-             NamedCommands.registerCommand("ShakeIntakeAndScore", ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly()).alongWith(new SpeedUpThenIndex()));
+    NamedCommands.registerCommand(
+        "ShakeIntake",
+        (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+            .repeatedly());
+    NamedCommands.registerCommand(
+        "ShakeIntake",
+        (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+            .repeatedly()
+            .withTimeout(8));
+    NamedCommands.registerCommand(
+        "ShakeIntakeAndScore",
+        ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+                .repeatedly())
+            .alongWith(new SpeedUpThenIndex()));
+
+    // Have the autoChooser pull in all PathPlanner autos as options
+    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
 
     // Set the default auto (do nothing)
     autoChooser.addOption("Do Nothing", Commands.none());
@@ -203,7 +216,6 @@ public class RobotContainer {
     TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
     TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
     DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
-
   }
 
   /**
@@ -217,7 +229,17 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-    Command hubArcDrive = Commands.defer(() -> new HubArcDrive(drivebase, driverXbox::getLeftX, getHubCenter(), SCORING_DISTANCE, getScoringSide()), Set.of(drivebase));
+    Command hubArcDrive =
+        Commands.defer(
+            () ->
+                new HubArcDrive(
+                    drivebase,
+                    driverXbox::getLeftX,
+                    getHubCenter(),
+                    SCORING_DISTANCE,
+                    getScoringSide(),
+                    SCORING_ARC_WIDTH_DEGREES),
+            Set.of(drivebase));
 
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
@@ -273,96 +295,124 @@ public class RobotContainer {
       driverXbox.leftBumper().onTrue(Commands.none());
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
-      
-      driverXbox.a().onTrue(Commands.defer(()-> new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES), Set.of(drivebase)));
+
+      driverXbox
+          .a()
+          .onTrue(
+              Commands.defer(
+                  () ->
+                      new DriveToHub(
+                          drivebase,
+                          getHubCenter(),
+                          SCORING_DISTANCE,
+                          getScoringSide(),
+                          SCORING_ARC_WIDTH_DEGREES),
+                  Set.of(drivebase)));
       driverXbox.y().whileTrue(new RetractIntake());
       driverXbox.x().toggleOnTrue(hubArcDrive);
       driverXbox.b().onTrue(new DeployIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      //driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock,
+      // drivebase).repeatedly());
 
-      copilotXbox.y().whileTrue(new AgitateAndIndex(Constants.AgitatorConstants.TARGET_RPM, Constants.IndexerConstants.TARGET_SPEED, hubArcDrive::isScheduled));
+      copilotXbox
+          .y()
+          .whileTrue(
+              new AgitateAndIndex(
+                  Constants.AgitatorConstants.TARGET_RPM,
+                  Constants.IndexerConstants.TARGET_SPEED,
+                  hubArcDrive::isScheduled));
       copilotXbox.x().whileTrue(new SetIntakePosition());
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.4));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.4));
-      copilotXbox.b().whileTrue(new AgitateAndIndex(-Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
+      copilotXbox
+          .b()
+          .whileTrue(
+              new AgitateAndIndex(
+                  -Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
       copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
       copilotXbox
           .rightTrigger()
           .onFalse(
               new MoveIndexer(-Constants.MotorConstants.BACKWARDS_INDEXER_RPM).withTimeout(0.25));
-      copilotXbox.leftTrigger().whileTrue((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly());
+      copilotXbox
+          .leftTrigger()
+          .whileTrue(
+              (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+                  .repeatedly());
 
-//       Trigger crossingZone = new Trigger(()->{
-//     Pose2d pose = drivebase.getPose();
-//     if(pose.getTranslation().getX()<RED_HUB_CENTER.getX()+1&&pose.getTranslation().getX()>RED_HUB_CENTER.getX()-1||
-//     pose.getTranslation().getX()<BLUE_HUB_CENTER.getX()+1&&pose.getTranslation().getX()>BLUE_HUB_CENTER.getX()-1){
-//     return true;
-//     }
-//     else{
-//     return false;
-//     }
-// });
-// crossingZone.whileTrue(Commands.run(() -> {
-//   new DeployIntake();
-//     }
-// ));
+      //       Trigger crossingZone = new Trigger(()->{
+      //     Pose2d pose = drivebase.getPose();
+      //
+      // if(pose.getTranslation().getX()<RED_HUB_CENTER.getX()+1&&pose.getTranslation().getX()>RED_HUB_CENTER.getX()-1||
+      //
+      // pose.getTranslation().getX()<BLUE_HUB_CENTER.getX()+1&&pose.getTranslation().getX()>BLUE_HUB_CENTER.getX()-1){
+      //     return true;
+      //     }
+      //     else{
+      //     return false;
+      //     }
+      // });
+      // crossingZone.whileTrue(Commands.run(() -> {
+      //   new DeployIntake();
+      //     }
+      // ));
 
-//     }
-  }}
-  
-  // Rotation2d current = drivebase.getHeading();
-  // Rotation2d target;
+      //     }
 
-// if (Math.abs(current.getDegrees()) < 90 || Math.abs(current.getDegrees()) > 270) {
-//     target = Rotation2d.fromDegrees(0);   
-// } else {
-//     target = Rotation2d.fromDegrees(180);  
-// }
-//     ChassisSpeeds speeds = drivebase.getTargetSpeeds(
-//         driverXbox.getLeftY(),
-//         driverXbox.getLeftX(),
-//         target.getSin(),
-//         target.getCos()
-//     );
-//     drivebase.driveFieldOriented(speeds);
-// }, drivebase));
+      // Rotation2d current = drivebase.getHeading();
+      // Rotation2d target;
 
+      // if (Math.abs(current.getDegrees()) < 90 || Math.abs(current.getDegrees()) > 270) {
+      //     target = Rotation2d.fromDegrees(0);
+      // } else {
+      //     target = Rotation2d.fromDegrees(180);
+      // }
+      //     ChassisSpeeds speeds = drivebase.getTargetSpeeds(
+      //         driverXbox.getLeftY(),
+      //         driverXbox.getLeftX(),
+      //         target.getSin(),
+      //         target.getCos()
+      //     );
+      //     drivebase.driveFieldOriented(speeds);
+      // }, drivebase));
 
-/*     if (DriverStation.isTest()) {
-      drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity); // Overrides drive command above!
-
-      driverJoystick.button(12).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverJoystick.button(3).onTrue(Commands.runOnce(drivebase::zeroGyro));
-      driverJoystick.button(4).whileTrue(drivebase.centerModulesCommand());
-      driverJoystick.button(1).onTrue(Commands.none());
-      driverJoystick.button(6).onTrue(Commands.none());
-    } else {
-
-      // driverJoystick.button(999).onTrue(new DriveToHub(drivebase, getHubCenter(), Constants.HubScoringConstants.SCORING_DISTANCE, getScoringSide(), Constants.HubScoringConstants.SCORING_ARC_WIDTH_DEGREES));
-      // driverJoystick.button(12).toggleOnTrue(
-      //   new HubArcDrive(drivebase,
-      //     driverXbox::getLeftX,
-      //     getHubCenter(),
-      //     Constants.HubScoringConstants.SCORING_DISTANCE,
-      //     getScoringSide()
-      //   )
-      // );
-      //driverJoystick.button(12).onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driverJoystick.button(3).onTrue(Commands.runOnce(drivebase::zeroGyro));
-      driverJoystick.button(4).whi(leTrue(drivebase.centerModulesCommand());
-      driverJoystick.button(1).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverJoystick.button(6).onTrue(Commands.none());
-      //driverJoystick.button(999).whileTrue(new RunIntake())
-      //    .onFalse(new RetractIntake());
-      driverJoystick.button(11).whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM));
-      driverJoystick.button(999).whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
-      driverJoystick.button(12).whileTrue(new SpeedUpThenIndex());
-      driverJoystick.button(12).onFalse(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_RPM).andThen(Commands.waitSeconds(0.25)).andThen(new MoveIndexer(0)));
-    } */
+    }
   }
+
+  /*     if (DriverStation.isTest()) {
+    drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity); // Overrides drive command above!
+
+    driverJoystick.button(12).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+    driverJoystick.button(3).onTrue(Commands.runOnce(drivebase::zeroGyro));
+    driverJoystick.button(4).whileTrue(drivebase.centerModulesCommand());
+    driverJoystick.button(1).onTrue(Commands.none());
+    driverJoystick.button(6).onTrue(Commands.none());
+  } else {
+
+    // driverJoystick.button(999).onTrue(new DriveToHub(drivebase, getHubCenter(), Constants.HubScoringConstants.SCORING_DISTANCE, getScoringSide(), Constants.HubScoringConstants.SCORING_ARC_WIDTH_DEGREES));
+    // driverJoystick.button(12).toggleOnTrue(
+    //   new HubArcDrive(drivebase,
+    //     driverXbox::getLeftX,
+    //     getHubCenter(),
+    //     Constants.HubScoringConstants.SCORING_DISTANCE,
+    //     getScoringSide()
+    //   )
+    // );
+    //driverJoystick.button(12).onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+    driverJoystick.button(3).onTrue(Commands.runOnce(drivebase::zeroGyro));
+    driverJoystick.button(4).whi(leTrue(drivebase.centerModulesCommand());
+    driverJoystick.button(1).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+    driverJoystick.button(6).onTrue(Commands.none());
+    //driverJoystick.button(999).whileTrue(new RunIntake())
+    //    .onFalse(new RetractIntake());
+    driverJoystick.button(11).whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM));
+    driverJoystick.button(999).whileTrue(new MoveShooter(Constants.MotorConstants.DESIRED_SHOOTER_RPM));
+    driverJoystick.button(12).whileTrue(new SpeedUpThenIndex());
+    driverJoystick.button(12).onFalse(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_RPM).andThen(Commands.waitSeconds(0.25)).andThen(new MoveIndexer(0)));
+  } */
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

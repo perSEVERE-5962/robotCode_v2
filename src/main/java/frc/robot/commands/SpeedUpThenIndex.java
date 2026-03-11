@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
@@ -21,36 +20,33 @@ public class SpeedUpThenIndex extends Command {
   private Agitator agitator;
   private Indexer indexer;
   private AgitatorTelemetry agitatorTelemetry;
+
   public SpeedUpThenIndex() {
     // Use addRequirements() here to declare subsystem dependencies.
     shooter = Shooter.getInstance();
     indexer = Indexer.getInstance();
     agitator = Agitator.getInstance();
     agitatorTelemetry = new AgitatorTelemetry();
-    addRequirements(shooter, indexer,agitator);
+    addRequirements(shooter, indexer, agitator);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-        shooter.moveToVelocityWithPID(shooter.getTunableTargetRPM());
-        agitator.moveToVelocityWithPID(-500);
-}
+    shooter.moveToVelocityWithPID(Shooter.getTunableTargetRPM());
+    agitator.moveToVelocityWithPID(-500);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     if (shooter.isAtSpeed()) {
-      indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
-      //System.out.println(indexer.getMotorVelocity());
-      agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM());
-  }
-  // if(AgitatorTelemetry.isStalled()){
-  //         agitator.moveToVelocityWithPID(-2000);
-
-  // }
-    //System.out.println("one");
-    //System.out.println(shooter.getTunableTargetRPM());
+      indexer.moveToVelocityWithPID(Indexer.getTunableTargetSpeed());
+      agitator.moveToVelocityWithPID(Agitator.getTunableTargetRPM());
+    }
+    // if (AgitatorTelemetry.isStalled()) {
+    //   agitator.moveToVelocityWithPID(-2000);
+    // }
   }
 
   // Called once the command ends or is interrupted.

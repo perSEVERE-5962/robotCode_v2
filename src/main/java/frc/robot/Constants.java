@@ -304,7 +304,8 @@ public final class Constants {
     public static final double INTAKE_REVERSE_POWER = -0.4;
     public static final int INTAKE_MAX_ATTEMPTS = 3;
 
-    // Indexer jam protection (raised confirm + velocity to avoid false triggers during ball passage)
+    // Indexer jam protection (raised confirm + velocity to avoid false triggers during ball
+    // passage)
     public static final double INDEXER_JAM_CURRENT_AMPS = 25.0;
     public static final double INDEXER_JAM_VELOCITY_RPM = 200.0;
     public static final double INDEXER_STARTUP_IGNORE_SEC = 0.5;

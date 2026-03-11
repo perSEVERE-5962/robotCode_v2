@@ -124,7 +124,7 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
           peakCurrentAmps = totalCurrentAmps;
         }
 
-          pdhChannelCycleCounter++;
+        pdhChannelCycleCounter++;
         if (pdhChannelCycleCounter >= PDH_CHANNEL_DECIMATION) {
           pdhChannelCycleCounter = 0;
           double[] raw = pdh.getAllCurrents();

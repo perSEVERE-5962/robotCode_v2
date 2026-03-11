@@ -10,16 +10,16 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.sim.SimDeviceManager;
+import frc.robot.sim.SimScenarioRunner;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.AlertManager;
 import frc.robot.util.ChannelCoordinator;
 import frc.robot.util.DiagnosticContext;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.ElasticUtil;
-import frc.robot.util.LEDStatusDisplay;
-import frc.robot.sim.SimDeviceManager;
-import frc.robot.sim.SimScenarioRunner;
 import frc.robot.util.EventMarker;
+import frc.robot.util.LEDStatusDisplay;
 import frc.robot.util.LoggedTracer;
 import frc.robot.util.PostMatchSummary;
 import frc.robot.util.PreMatchDiagnostics;
@@ -218,31 +218,39 @@ public class Robot extends LoggedRobot {
     safeCall("NaNGuard", () -> checkNaNInfinity());
     safeCall("Tracer", () -> LoggedTracer.record("TelemetryMs"));
 
-    safeCall("ChannelCoordinator", () -> {
-      ChannelCoordinator.getInstance().update();
-      ChannelCoordinator.getInstance().log();
-    });
+    safeCall(
+        "ChannelCoordinator",
+        () -> {
+          ChannelCoordinator.getInstance().update();
+          ChannelCoordinator.getInstance().log();
+        });
 
     safeCall("DriverFeedback", () -> DriverFeedback.getInstance().update());
     safeCall("LEDStatus", () -> LEDStatusDisplay.getInstance().update());
 
-    safeCall("Alerts", () -> {
-      AlertManager.getInstance().checkAll();
-      AlertManager.getInstance().checkLoopTime(TelemetryManager.getInstance().getLoopTimeMs());
-      AlertManager.getInstance().logActiveAlerts();
-    });
+    safeCall(
+        "Alerts",
+        () -> {
+          AlertManager.getInstance().checkAll();
+          AlertManager.getInstance().checkLoopTime(TelemetryManager.getInstance().getLoopTimeMs());
+          AlertManager.getInstance().logActiveAlerts();
+        });
 
-    safeCall("Predictive", () -> {
-      PredictiveAlerts.getInstance().update();
-      PredictiveAlerts.getInstance().log();
-    });
+    safeCall(
+        "Predictive",
+        () -> {
+          PredictiveAlerts.getInstance().update();
+          PredictiveAlerts.getInstance().log();
+        });
 
-    safeCall("PostMatch", () -> {
-      if (DriverStation.isEnabled()) {
-        PostMatchSummary.getInstance()
-            .updateTracking(TelemetryManager.getInstance().getLoopTimeMs());
-      }
-    });
+    safeCall(
+        "PostMatch",
+        () -> {
+          if (DriverStation.isEnabled()) {
+            PostMatchSummary.getInstance()
+                .updateTracking(TelemetryManager.getInstance().getLoopTimeMs());
+          }
+        });
 
     safeCall("Tracer", () -> LoggedTracer.record("AlertsMs"));
   }

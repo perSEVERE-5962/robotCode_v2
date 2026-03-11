@@ -1,11 +1,8 @@
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Agitator;
+import java.util.function.BooleanSupplier;
 
 public class MoveAgitator extends Command {
   private Agitator agitator;
@@ -33,10 +30,9 @@ public class MoveAgitator extends Command {
   @Override
   public void execute() {
     if (arcDriveOn != null && arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
-      agitator.moveToVelocityWithPID(0);
+      agitator.move(0);
     } else {
       agitator.moveToVelocityWithPID(rpm);
-      System.out.println(agitator.getMotorVelocity());
     }
   }
 

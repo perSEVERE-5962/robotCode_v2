@@ -7,16 +7,21 @@ import frc.robot.util.TunableNumber;
 
 public class Agitator extends Actuator {
   private static Agitator instance;
-  private static final TunableNumber kP = new TunableNumber("Agitator/kP", Constants.AgitatorConstants.P);
-  private static final TunableNumber kI = new TunableNumber("Agitator/kI", Constants.AgitatorConstants.I);
-  private static final TunableNumber kD = new TunableNumber("Agitator/kD", Constants.AgitatorConstants.D);
-  private static final TunableNumber kF = new TunableNumber("Agitator/FF", Constants.AgitatorConstants.FF);
-private static final TunableNumber targetSpeed =
+  private static final TunableNumber kP =
+      new TunableNumber("Agitator/kP", Constants.AgitatorConstants.P);
+  private static final TunableNumber kI =
+      new TunableNumber("Agitator/kI", Constants.AgitatorConstants.I);
+  private static final TunableNumber kD =
+      new TunableNumber("Agitator/kD", Constants.AgitatorConstants.D);
+  private static final TunableNumber kF =
+      new TunableNumber("Agitator/FF", Constants.AgitatorConstants.FF);
+  private static final TunableNumber targetSpeed =
       new TunableNumber("Agitator/TargetSpeed", Constants.AgitatorConstants.TARGET_RPM);
   private static final TunableNumber jamCurrentThreshold =
       new TunableNumber("Agitator/JamAmps", Constants.AgitatorConstants.JAM_CURRENT_THRESHOLD_AMPS);
   private static final TunableNumber jamTimeThreshold =
-      new TunableNumber("Agitator/JamSeconds", Constants.AgitatorConstants.JAM_TIME_THRESHOLD_SECONDS);
+      new TunableNumber(
+          "Agitator/JamSeconds", Constants.AgitatorConstants.JAM_TIME_THRESHOLD_SECONDS);
   private final JamProtection jamProtection =
       new JamProtection(
           "Agitator",
@@ -42,6 +47,8 @@ private static final TunableNumber targetSpeed =
         Constants.AgitatorConstants.Iz,
         0,
         0,
+        40,
+        false,
         false,
         false,
         false);
@@ -50,9 +57,6 @@ private static final TunableNumber targetSpeed =
   public double getTemperature() {
     return getMotor().getMotorTemperature();
   }
-
-
-
 
   public double getAppliedOutput() {
     return getMotor().getAppliedOutput();
@@ -85,32 +89,32 @@ private static final TunableNumber targetSpeed =
     return jamProtection;
   }
 
-public double getTunableTargetRPM() {
+  public static double getTunableTargetRPM() {
     return targetSpeed.get();
   }
 
-  public double getJamCurrentThreshold() {
+  public static double getJamCurrentThreshold() {
     return jamCurrentThreshold.get();
   }
 
-  public double getJamTimeThreshold() {
+  public static double getJamTimeThreshold() {
     return jamTimeThreshold.get();
   }
 
   // PID gain getters
-  public double getTunableKP() {
+  public static double getTunableKP() {
     return kP.get();
   }
 
-  public double getTunableKI() {
+  public static double getTunableKI() {
     return kI.get();
   }
 
-  public double getTunableKD() {
+  public static double getTunableKD() {
     return kD.get();
   }
 
-  public double getTunableFF() {
+  public static double getTunableFF() {
     return kF.get();
   }
 
