@@ -11,35 +11,9 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "DeployIntake"
-                }
-              },
-              {
-                "type": "parallel",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "PickUpBalls"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "RunIntake"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "pathName": "PickUpBalls"
           }
         },
         {
@@ -51,7 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "SpeedUpThenIndex"
+            "name": "shoot"
           }
         }
       ]

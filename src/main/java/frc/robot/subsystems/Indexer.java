@@ -6,6 +6,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 import frc.robot.Constants.IndexerConstants;
+import frc.robot.Constants.JamProtectionConstants;
+import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
 public class Indexer extends Actuator {
@@ -18,6 +20,18 @@ public class Indexer extends Actuator {
   private static final TunableNumber kI = new TunableNumber("Indexer/kI", IndexerConstants.I);
   private static final TunableNumber kD = new TunableNumber("Indexer/kD", IndexerConstants.D);
   private static final TunableNumber kF = new TunableNumber("Indexer/FF", IndexerConstants.FF);
+
+  private final JamProtection jamProtection =
+      new JamProtection(
+          "Indexer",
+          JamProtectionConstants.INDEXER_JAM_CURRENT_AMPS,
+          JamProtectionConstants.INDEXER_JAM_VELOCITY_RPM,
+          JamProtectionConstants.INDEXER_STARTUP_IGNORE_SEC,
+          JamProtectionConstants.INDEXER_JAM_CONFIRM_SEC,
+          JamProtectionConstants.INDEXER_REVERSE_SEC,
+          JamProtectionConstants.INDEXER_COOLDOWN_SEC,
+          JamProtectionConstants.INDEXER_REVERSE_POWER,
+          JamProtectionConstants.INDEXER_MAX_ATTEMPTS);
 
   // Tunable operational values
   private static final TunableNumber targetSpeed =
@@ -58,6 +72,18 @@ public class Indexer extends Actuator {
   public void periodic() {
     TunableNumber.ifChanged(
         () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+
+    // JamProtection detects and reports only. It never overrides the motor.
+    // Telemetry reads the state; the driver decides what to do about it.
+    try {
+      jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
+    } catch (Throwable t) {
+      // CAN failure degrades jam detection, never kills drive control
+    }
+  }
+
+  public JamProtection getJamProtection() {
+    return jamProtection;
   }
 
   // Hardware accessors

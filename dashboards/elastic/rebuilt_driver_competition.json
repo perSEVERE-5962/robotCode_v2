@@ -11,8 +11,8 @@
             "title": "Match Time",
             "x": 0.0,
             "y": 0.0,
-            "width": 1920.0,
-            "height": 128.0,
+            "width": 1500.0,
+            "height": 113.6,
             "type": "Match Time",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Match/Time",
@@ -25,9 +25,9 @@
           {
             "title": "READY TO SHOOT",
             "x": 0.0,
-            "y": 128.0,
-            "width": 384.0,
-            "height": 384.0,
+            "y": 113.6,
+            "width": 512.1,
+            "height": 350.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Scoring/ReadyToShoot",
@@ -39,24 +39,11 @@
             }
           },
           {
-            "title": "Camera",
-            "x": 384.0,
-            "y": 128.0,
-            "width": 640.0,
-            "height": 384.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/USB Camera 0",
-              "period": 0.033,
-              "rotation_turns": 0
-            }
-          },
-          {
             "title": "Target Lock",
-            "x": 1024.0,
-            "y": 128.0,
-            "width": 256.0,
-            "height": 256.0,
+            "x": 512.1,
+            "y": 113.6,
+            "width": 209.7,
+            "height": 231.9,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Vision/LockedOnTarget",
@@ -69,10 +56,10 @@
           },
           {
             "title": "Battery",
-            "x": 1280.0,
-            "y": 128.0,
-            "width": 640.0,
-            "height": 128.0,
+            "x": 721.8,
+            "y": 113.6,
+            "width": 778.2,
+            "height": 113.7,
             "type": "Voltage View",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/BatteryVoltage",
@@ -86,10 +73,10 @@
           },
           {
             "title": "Shooter RPM",
-            "x": 1280.0,
-            "y": 256.0,
-            "width": 640.0,
-            "height": 128.0,
+            "x": 721.8,
+            "y": 227.3,
+            "width": 778.2,
+            "height": 118.2,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/VelocityRPM",
@@ -103,10 +90,10 @@
           },
           {
             "title": "Hub Active",
-            "x": 1024.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
+            "x": 512.1,
+            "y": 345.5,
+            "width": 209.7,
+            "height": 118.1,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Scoring/Conditions/HubActive",
@@ -118,11 +105,76 @@
             }
           },
           {
+            "title": "Hub Shift#",
+            "x": 721.8,
+            "y": 345.5,
+            "width": 387.1,
+            "height": 118.1,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Scoring/HubShiftNumber",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Shift Timer",
+            "x": 1108.9,
+            "y": 345.5,
+            "width": 391.1,
+            "height": 118.1,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Scoring/TimeToNextShiftSec",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Auto Selector",
+            "x": 0.0,
+            "y": 463.6,
+            "width": 512.1,
+            "height": 118.2,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Auto Chooser",
+              "period": 0.033,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "AMDA Mode",
+            "x": 512.1,
+            "y": 463.6,
+            "width": 197.6,
+            "height": 118.2,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/AMDA/Mode",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Confidence",
+            "x": 709.7,
+            "y": 463.6,
+            "width": 197.6,
+            "height": 118.2,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/AMDA/Confidence",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
             "title": "JAM!",
-            "x": 1280.0,
-            "y": 384.0,
-            "width": 640.0,
-            "height": 128.0,
+            "x": 907.3,
+            "y": 463.6,
+            "width": 197.5,
+            "height": 118.2,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/JamDetected",
@@ -134,24 +186,43 @@
             }
           },
           {
-            "title": "Auto Selector",
-            "x": 0.0,
-            "y": 512.0,
-            "width": 640.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
+            "title": "Intake Jam",
+            "x": 1104.8,
+            "y": 463.6,
+            "width": 197.6,
+            "height": 118.2,
+            "type": "Boolean Box",
             "properties": {
-              "topic": "/SmartDashboard/Auto Chooser",
+              "topic": "/AdvantageKit/RealOutputs/Intake/JamDetected",
               "period": 0.033,
-              "sort_options": false
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Agitator",
+            "x": 1302.4,
+            "y": 463.6,
+            "width": 197.6,
+            "height": 118.2,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Agitator/Running",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4281545523,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           },
           {
             "title": "Alerts",
-            "x": 640.0,
-            "y": 512.0,
-            "width": 1280.0,
-            "height": 128.0,
+            "x": 0.0,
+            "y": 581.8,
+            "width": 1500.0,
+            "height": 118.2,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Alerts/ActiveList",
@@ -171,8 +242,8 @@
             "title": "Match Time",
             "x": 0.0,
             "y": 0.0,
-            "width": 1024.0,
-            "height": 128.0,
+            "width": 827.3,
+            "height": 116.3,
             "type": "Match Time",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Match/Time",
@@ -184,10 +255,10 @@
           },
           {
             "title": "READY",
-            "x": 1024.0,
+            "x": 827.3,
             "y": 0.0,
-            "width": 384.0,
-            "height": 256.0,
+            "width": 310.1,
+            "height": 233.7,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Scoring/ReadyToShoot",
@@ -200,10 +271,10 @@
           },
           {
             "title": "Battery",
-            "x": 1408.0,
+            "x": 1137.4,
             "y": 0.0,
-            "width": 512.0,
-            "height": 128.0,
+            "width": 361.6,
+            "height": 116.3,
             "type": "Voltage View",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/BatteryVoltage",
@@ -218,9 +289,9 @@
           {
             "title": "Shots Scored",
             "x": 0.0,
-            "y": 128.0,
-            "width": 384.0,
-            "height": 256.0,
+            "y": 116.3,
+            "width": 310.1,
+            "height": 233.7,
             "type": "Large Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/MatchStats/TotalShots",
@@ -229,10 +300,10 @@
           },
           {
             "title": "Fire Rate",
-            "x": 384.0,
-            "y": 128.0,
-            "width": 256.0,
-            "height": 128.0,
+            "x": 310.1,
+            "y": 116.3,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/MatchStats/ShotsPerMinute",
@@ -242,10 +313,10 @@
           },
           {
             "title": "Hub Active",
-            "x": 640.0,
-            "y": 128.0,
-            "width": 256.0,
-            "height": 128.0,
+            "x": 517.2,
+            "y": 116.3,
+            "width": 207.0,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Scoring/Conditions/HubActive",
@@ -258,10 +329,10 @@
           },
           {
             "title": "Shooter RPM",
-            "x": 1408.0,
-            "y": 128.0,
-            "width": 512.0,
-            "height": 128.0,
+            "x": 1137.4,
+            "y": 116.3,
+            "width": 361.6,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Shooter/VelocityRPM",
@@ -274,11 +345,50 @@
             }
           },
           {
+            "title": "Hub Util",
+            "x": 310.1,
+            "y": 233.7,
+            "width": 207.1,
+            "height": 116.3,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/MatchStats/HubUtilization",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Active Shots",
+            "x": 517.2,
+            "y": 233.7,
+            "width": 207.0,
+            "height": 116.3,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/MatchStats/ActiveHubShots",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Shift Timer",
+            "x": 724.2,
+            "y": 233.7,
+            "width": 103.1,
+            "height": 116.3,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Scoring/TimeToNextShiftSec",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
             "title": "Total Current",
-            "x": 896.0,
-            "y": 256.0,
-            "width": 512.0,
-            "height": 128.0,
+            "x": 1137.4,
+            "y": 233.7,
+            "width": 361.6,
+            "height": 116.3,
             "type": "Number Bar",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/SystemHealth/TotalCurrentAmps",
@@ -291,24 +401,37 @@
             }
           },
           {
-            "title": "Hub Shift",
-            "x": 384.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
+            "title": "Cycles",
+            "x": 0.0,
+            "y": 350.0,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Scoring/HubShiftNumber",
+              "topic": "/AdvantageKit/RealOutputs/MatchStats/CompletedCycles",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Failed",
+            "x": 207.1,
+            "y": 350.0,
+            "width": 207.0,
+            "height": 116.3,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/MatchStats/FailedCycles",
               "period": 0.033,
               "show_submit_button": false
             }
           },
           {
             "title": "JAM!",
-            "x": 640.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
+            "x": 414.1,
+            "y": 350.0,
+            "width": 207.1,
+            "height": 116.3,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Indexer/JamDetected",
@@ -320,11 +443,69 @@
             }
           },
           {
+            "title": "Agitator",
+            "x": 620.2,
+            "y": 350.0,
+            "width": 207.1,
+            "height": 116.3,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Agitator/Running",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4281545523,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "AMDA",
+            "x": 827.3,
+            "y": 350.0,
+            "width": 207.0,
+            "height": 116.3,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/AMDA/Mode",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Brownout Risk",
+            "x": 1034.3,
+            "y": 350.0,
+            "width": 207.1,
+            "height": 116.3,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/BrownoutRiskLevel",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "BrownedOut",
+            "x": 1241.4,
+            "y": 350.0,
+            "width": 103.0,
+            "height": 116.3,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/BrownedOut",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
             "title": "Auto Selector",
             "x": 0.0,
-            "y": 384.0,
-            "width": 640.0,
-            "height": 128.0,
+            "y": 467.4,
+            "width": 517.2,
+            "height": 116.3,
             "type": "ComboBox Chooser",
             "properties": {
               "topic": "/SmartDashboard/Auto Chooser",
@@ -334,13 +515,91 @@
           },
           {
             "title": "Alerts",
-            "x": 640.0,
-            "y": 384.0,
-            "width": 1280.0,
-            "height": 128.0,
+            "x": 517.2,
+            "y": 467.4,
+            "width": 982.8,
+            "height": 116.3,
             "type": "Text Display",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Alerts/ActiveList",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Rate 10s",
+            "x": 0.0,
+            "y": 583.7,
+            "width": 310.1,
+            "height": 116.3,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/FireRate10s",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Rate 30s",
+            "x": 310.1,
+            "y": 583.7,
+            "width": 310.1,
+            "height": 116.3,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/FireRate30s",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Peak BPS",
+            "x": 620.2,
+            "y": 583.7,
+            "width": 207.1,
+            "height": 116.3,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/PeakBPS5s",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Streak",
+            "x": 827.3,
+            "y": 583.7,
+            "width": 207.0,
+            "height": 116.3,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/ScoringStreak",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Best Streak",
+            "x": 1034.3,
+            "y": 583.7,
+            "width": 207.1,
+            "height": 116.3,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/LongestStreak",
+              "period": 0.033,
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Vis Accept %",
+            "x": 1241.4,
+            "y": 583.7,
+            "width": 258.6,
+            "height": 116.3,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Vision/Filter/AcceptRatePct",
               "period": 0.033,
               "show_submit_button": false
             }

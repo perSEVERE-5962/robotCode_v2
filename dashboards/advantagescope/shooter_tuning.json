@@ -579,6 +579,106 @@
               "controllerUUID": "sp000001-0000-0000-0000-000000000002",
               "renderer": null,
               "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Command & Torque",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Shooter/TorqueReversalsPerSec",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#af2437", "size": "normal" }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Indexer/TorqueReversalsPerSec",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#e48b32", "size": "normal" }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Shooter/TorqueReversalAlert",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#af2437" }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Indexer/TorqueReversalAlert",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#e48b32" }
+                  },
+                  {
+                    "type": "text",
+                    "logKey": "/RealOutputs/Shooter/ActiveCommand",
+                    "logType": "String",
+                    "visible": true,
+                    "options": { "color": "#2b66a2" }
+                  },
+                  {
+                    "type": "text",
+                    "logKey": "/RealOutputs/Indexer/ActiveCommand",
+                    "logType": "String",
+                    "visible": true,
+                    "options": { "color": "#3b875a" }
+                  }
+                ],
+                "leftLockedRange": null, "rightLockedRange": null,
+                "leftUnitConversion": { "autoTarget": null, "preset": null },
+                "rightUnitConversion": { "autoTarget": null, "preset": null },
+                "leftFilter": 0, "rightFilter": 0
+              },
+              "controllerUUID": "st000001-0000-0000-0000-000000000001",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Torque Detail",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Shooter/AppliedOutput",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#2b66a2", "size": "normal" }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Shooter/TorqueReversalsPerSec",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": { "color": "#af2437", "size": "normal" }
+                  }
+                ],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Shooter/TorqueReversalAlert",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": { "color": "#af2437" }
+                  }
+                ],
+                "leftLockedRange": null, "rightLockedRange": null,
+                "leftUnitConversion": { "autoTarget": null, "preset": null },
+                "rightUnitConversion": { "autoTarget": null, "preset": null },
+                "leftFilter": 0, "rightFilter": 0
+              },
+              "controllerUUID": "st000001-0000-0000-0000-000000000002",
+              "renderer": null,
+              "controlsHeight": 200
             }
           ]
         }

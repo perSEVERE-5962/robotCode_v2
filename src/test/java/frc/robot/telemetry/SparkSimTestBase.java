@@ -60,7 +60,7 @@ public abstract class SparkSimTestBase {
     closeSubsystemMotor("frc.robot.subsystems.Indexer");
     closeSubsystemMotor("frc.robot.subsystems.Intake");
     resetSingleton("frc.robot.telemetry.TelemetryManager");
-    resetSingleton("frc.robot.telemetry.CycleTracker");
+
     resetSingleton("frc.robot.subsystems.Shooter");
     resetSingleton("frc.robot.subsystems.Indexer");
     resetSingleton("frc.robot.subsystems.Intake");
@@ -100,7 +100,7 @@ public abstract class SparkSimTestBase {
     sim.iterate(velocityRPM, busVoltage, 0.020);
   }
 
-  /** Set encoder velocity directly, bypasses firmware filtering for deterministic tests */
+  /** Set encoder velocity directly,bypasses firmware filtering for deterministic tests */
   protected static void setMotorVelocity(SparkSim sim, double velocityRPM) {
     sim.getRelativeEncoderSim().setVelocity(velocityRPM);
   }

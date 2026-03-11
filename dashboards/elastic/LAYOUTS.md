@@ -1,53 +1,45 @@
-# Elastic Dashboard Layouts
+# Elastic Dashboard Layout Reference
 
-3 Elastic layouts for real-time use on the driver station laptop. Import these into Elastic on your DS laptop; nothing here gets deployed to the robot.
+3 Elastic layouts for real-time use. Deployed with robot code.
 
-```mermaid
-flowchart LR
-    A[Competition] --> B[Match tab - driver]
-    A --> C[Coach tab - strategy]
-    D[Pit Diagnostic] --> E[Quick Check - 30sec go/no-go]
-    D --> F[Diagnostics - run tests]
-    D --> G[System Detail - deep dive]
-    H[Tuning] --> I[Shooter - RPM graph]
-    H --> J[Subsystems - current graph]
-```
+**JSON files (authoritative):** `robotcode2026-lab/src/main/deploy/elastic/`
+**Copies here:** For reference alongside design docs.
 
 ---
 
-## Competition layout
+## competition -- Driver Station (behind the glass)
 
-**File:** `rebuilt_driver_competition.json`
+**File:** `rebuilt_driver_competition.json` (v3.0)
+**Design doc:** `driver_competition_design.md`
+**Audience:** Driver + operator + coach
 
-This is what's on the driver station monitor during matches. Two tabs: one for the driver, one for the coach.
+### Tab "Match" (10 widgets, 5 rows, no scrolling)
 
-### Match tab (10 widgets)
-
-The driver reads this from 5+ feet away while driving, so everything is big. The biggest element on screen is the READY TO SHOOT boolean (3x3 green/red box).
+Optimized for the driver. Readable from 5 feet away, scannable in 6 seconds.
 
 | Widget | Type | Size | Signal |
 |--------|------|------|--------|
-| Match Time | Match Time | 15x1 | Match/Time. Color shifts: blue above 60s, green above 30s, yellow above 15s, red |
-| READY TO SHOOT | Boolean Box | 3x3 | Scoring/ReadyToShoot. Biggest thing on screen |
+| Match Time | Match Time | 15x1 | Match/Time (color-coded: blue>60s, green>30s, yellow>15s, red) |
+| READY TO SHOOT | Boolean Box | 3x3 | Scoring/ReadyToShoot (largest element, green/red) |
 | Camera | Camera Stream | 5x3 | USB Camera 0 |
-| Target Lock | Boolean Box | 2x2 | Vision/LockedOnTarget |
-| Battery | Voltage View | 5x1 | SystemHealth/BatteryVoltage (8-13V range) |
+| Target Lock | Boolean Box | 2x2 | Vision/LockedOnTarget (green/orange) |
+| Battery | Voltage View | 5x1 | SystemHealth/BatteryVoltage (purpose-built 8-13V) |
 | Shooter RPM | Number Bar | 5x1 | Shooter/VelocityRPM (0-5700) |
 | Hub Active | Boolean Box | 2x1 | Scoring/Conditions/HubActive |
-| JAM! | Boolean Box | 5x1 | Indexer/JamDetected. Red when jammed |
+| JAM! | Boolean Box | 5x1 | Indexer/JamDetected (RED when jammed) |
 | Auto Selector | ComboBox Chooser | 5x1 | Auto Chooser |
 | Alerts | Text Display | 10x1 | Alerts/ActiveList |
 
-### Coach tab (12 widgets)
+### Tab "Coach" (12 widgets, 4 rows, no scrolling)
 
-Strategy info for the drive coach: shot counts, fire rate, hub timing. The Shots Scored widget is a large text display readable from 5+ feet.
+Strategy info for the drive coach: shot counts, fire rate, hub timing.
 
 | Widget | Type | Size | Signal |
 |--------|------|------|--------|
 | Match Time | Match Time | 8x1 | Match/Time |
 | READY | Boolean Box | 3x2 | Scoring/ReadyToShoot |
 | Battery | Voltage View | 4x1 | SystemHealth/BatteryVoltage |
-| Shots Scored | Large Text Display | 3x2 | MatchStats/TotalShots |
+| Shots Scored | Large Text Display | 3x2 | MatchStats/TotalShots (readable 5+ feet) |
 | Fire Rate | Text Display | 2x1 | MatchStats/ShotsPerMinute |
 | Hub Active | Boolean Box | 2x1 | Scoring/Conditions/HubActive |
 | Shooter RPM | Number Bar | 4x1 | Shooter/VelocityRPM |
@@ -57,19 +49,19 @@ Strategy info for the drive coach: shot counts, fire rate, hub timing. The Shots
 | Auto Selector | ComboBox Chooser | 5x1 | Auto Chooser |
 | Alerts | Text Display | 10x1 | Alerts/ActiveList |
 
-v3 split the old single-tab layout into Match + Coach. Battery got upgraded to Voltage View, match time is now color-coded. Removed alliance display (useless) and RP progress (was misleading). Shot count and fire rate moved to the Coach tab.
+**v3.0 changes:** Split into 2 tabs (Match + Coach). Match Time upgraded to color-coded Match Time widget. Battery upgraded to Voltage View widget. Added JAM! indicator. Removed Alliance (useless), RP Progress (misleading). Moved Shots/FireRate to Coach tab.
 
 ---
 
-## Pit Diagnostic layout
+## pit -- Pre-Match Diagnostics
 
-**File:** `rebuilt_pit_diagnostic.json`
+**File:** `rebuilt_pit_diagnostic.json` (v3.0)
+**Design doc:** `pit_diagnostic_design.md`
+**Audience:** Pit crew, viewed close-up between matches
 
-Between matches in the pit, viewed close-up on the driver station laptop. Three tabs going from quick go/no-go to deep system detail.
+### Tab "Quick Check" (20 widgets, 5 rows, no scrolling)
 
-### Quick Check tab (20 widgets)
-
-30-second go/no-go before queueing. Top row is overall health, middle row is motor temps, bottom is sensors and jams.
+Go/no-go verdict in 30 seconds. Top = health, middle = motor temps, bottom = sensors + jams.
 
 | Widget | Type | Size | Signal |
 |--------|------|------|--------|
@@ -94,28 +86,28 @@ Between matches in the pit, viewed close-up on the driver station laptop. Three 
 | CAN Util | Number Bar | 3x1 | SystemHealth/CANUtilization |
 | Alerts | Text Display | 15x1 | Alerts/ActiveList |
 
-### Diagnostics tab (15 widgets)
+### Tab "Diagnostics" (15 widgets, 4 rows, no scrolling)
 
-Pre-match diagnostic tests. Hit the trigger buttons and watch pass/fail results.
+Pre-match diagnostic test results. Trigger checks and see pass/fail.
 
 | Widget | Type | Size | Signal |
 |--------|------|------|--------|
 | Safe Check | Toggle Button | 3x1 | Diagnostics/TriggerSafe |
 | Full Check | Toggle Button | 3x1 | Diagnostics/TriggerFull |
-| Running | Boolean Box | 2x1 | Diagnostics/Running. Blue while active |
+| Running | Boolean Box | 2x1 | Diagnostics/Running (blue when active) |
 | Mode | Text Display | 2x1 | Diagnostics/Mode |
 | Step | Text Display | 5x1 | Diagnostics/Step |
-| ALL PASSED | Boolean Box | 5x2 | Diagnostics/AllPassed. Big green or red |
-| Pass/Warn/Fail/Skip counts | 4x Text Display | 2x1 each | Diagnostics/PassCount, WarnCount, FailCount, SkippedCount |
+| ALL PASSED | Boolean Box | 5x2 | Diagnostics/AllPassed (big green/red) |
+| Pass/Warn/Fail/Skip | 4x Text Display | 2x1 each | Diagnostics/PassCount, WarnCount, FailCount, SkippedCount |
 | Gyro Drift | Text Display | 3x1 | Diagnostics/GyroMaxDrift |
 | Gyro OK | Boolean Box | 2x1 | Diagnostics/GyroHealthy |
 | Vision Drop % | Text Display | 3x1 | Diagnostics/VisionDropoutPct |
 | Drive Response | Text Display | 3x1 | Diagnostics/DriveResponseMs |
 | Shooter Spinup | Text Display | 3x1 | Diagnostics/ShooterSpinupMs |
 
-### System Detail tab (19 widgets)
+### Tab "System Detail" (19 widgets, 4 rows, no scrolling)
 
-Deep dive into bus health, motor currents, and shooter state. Only need this when something looks weird on Quick Check.
+Deep dive into bus health, motor currents, and shooter state.
 
 | Widget | Type | Size | Signal |
 |--------|------|------|--------|
@@ -124,7 +116,7 @@ Deep dive into bus health, motor currents, and shooter state. Only need this whe
 | Loop Time | Number Bar | 4x1 | SystemHealth/LoopTimeMs |
 | Bandwidth | Number Bar | 3x1 | Network/BandwidthPercent |
 | CAN TX/RX | 2x Text Display | 2x1 each | SystemHealth/CANTxErrors, CANRxErrors |
-| CAN Off | Boolean Box | 2x1 | SystemHealth/CANBusOff |
+| CAN Off | Boolean Box | 2x1 | SystemHealth/CANBusOff (red/green) |
 | Overruns | Text Display | 2x1 | SystemHealth/LoopOverruns |
 | CPU Temp | Number Bar | 3x1 | SystemHealth/RioCPUTemp |
 | RSL | Boolean Box | 2x1 | SystemHealth/RSLState |
@@ -135,64 +127,60 @@ Deep dive into bus health, motor currents, and shooter state. Only need this whe
 | Shots | Text Display | 2x1 | Shooter/TotalShots |
 | Shooter/Indexer/Intake Current | 3x Number Bar | 5x1 each | CurrentAmps for each |
 
-v3 split the old 48-widget mega-tab into these 3 tabs. Everything fits on screen now without scrolling.
+**v3.0 changes:** Split 48-widget single-tab layout into 3 tabs. Added Health Score, Top Issues, Voltage View battery. All tabs fit on screen without scrolling.
 
 ---
 
-## Tuning layout
+## tuning -- Practice PID Tuning
 
-**File:** `rebuilt_tuning_session.json`
+**File:** `rebuilt_tuning_session.json` (v3.0)
+**No design doc** (generic tuning layout)
+**Audience:** Programmer during practice sessions
 
-For practice sessions when you're tuning PID gains. Both tabs have a live Graph widget as the centerpiece.
+### Tab "Shooter" (26 widgets, 7 rows)
 
-### Shooter tab (30 widgets)
-
-The RPM Graph (8x3, 5-second window) is the main thing here. PID gain inputs are right next to it so you can tweak and watch the response immediately. Also has ShotPredictor status (active indicator, distance, heading error, predicted RPM) at the bottom for checking shoot-on-the-move behavior.
+Shooter PID tuning with **Graph widget centerpiece** (8x3 RPM time-series).
 
 | Widget | Type | Size | Signal |
 |--------|------|------|--------|
-| RPM Graph | Graph | 8x3 | Shooter/VelocityRPM (5s window, light blue) |
-| kP/kI/kD/FF | 4x Text Display (editable) | 2x1 each | SmartDashboard Shooter gains |
-| TargetRPM/Tolerance/ShotDrop | 3x Text Display (editable) | 2-3x1 | SmartDashboard Shooter params |
-| TUNING MODE | Boolean Box | 4x2 | TuningMode. Green when active, orange when off |
+| RPM Graph | **Graph** | 8x3 | Shooter/VelocityRPM (5s window, light blue) |
+| kP/kI/kD/FF | 4x Text Display (submit) | 2x1 each | SmartDashboard Shooter gains |
+| TargetRPM/Tolerance/ShotDrop | 3x Text Display (submit) | 2-3x1 | SmartDashboard Shooter params |
+| TUNING MODE | Boolean Box | 4x2 | TuningMode (green=active, orange=off) |
 | AT SPEED | Boolean Box | 4x1 | Shooter/AtSpeed |
 | Spin Up / Vel Error | Text Display | 2x1 each | SpinUpTimeMs, VelocityError |
 | At Speed % | Number Bar | 3x1 | Shooter/AtSpeedPercent (0-120%) |
-| Fire rate and recovery widgets | 8x Text/Boolean | 2x1 each | actual/target fire rate, recovery time, velocity drop |
+| Fire rates + Recovery | 8x Text/Boolean | 2x1 each | Actual/Target fire rate, recovery, vel drop, spinning up, recovery spin up |
 | SHOT! | Boolean Box | 1x1 | Shooter/ShotDetected |
-| Motor Temp/Current/Output | 3x Number Bar | 5x1 each | motor health |
+| Motor Temp/Current/Output | 3x Number Bar | 5x1 each | Temp, CurrentAmps, AppliedOutput |
 | Total Shots | Text Display | 2x1 | Shooter/TotalShots |
 | Ready To Shoot | Boolean Box | 4x1 | Scoring/ReadyToShoot |
-| PREDICTOR | Boolean Box | 2x1 | Scoring/ShotPredictor/Active. Green when prediction is running |
-| Distance | Text Display | 2x1 | Scoring/ShotPredictor/DistanceToHubM |
-| Heading Err | Text Display | 2x1 | Scoring/ShotPredictor/HeadingErrorRad |
-| Pred RPM | Text Display | 2x1 | Scoring/ShotPredictor/ComputedRPM |
 
-### Subsystems tab (19 widgets)
+### Tab "Subsystems" (19 widgets, 5 rows)
 
-Indexer tuning (has its own current graph), plus Hanger, Intake, and Driver tuning params.
+Indexer (with current graph), Hanger, Intake, and Driver tuning parameters.
 
 | Widget | Type | Size | Signal |
 |--------|------|------|--------|
-| Indexer Current Graph | Graph | 8x3 | Indexer/CurrentAmps (5s window, orange) |
-| Idx kP/kI/kD/FF | 4x Text Display (editable) | 2x1 each | SmartDashboard Indexer gains |
-| Idx TgtSpd/JamAmps/JamSec | 3x Text Display (editable) | 2-3x1 | SmartDashboard Indexer params |
+| Indexer Current Graph | **Graph** | 8x3 | Indexer/CurrentAmps (5s window, orange) |
+| Idx kP/kI/kD/FF | 4x Text Display (submit) | 2x1 each | SmartDashboard Indexer gains |
+| Idx TgtSpd/JamAmps/JamSec | 3x Text Display (submit) | 2-3x1 | SmartDashboard Indexer params |
 | Indexer Jam | Boolean Box | 4x1 | Indexer/JamDetected |
 | Idx Actual/Target/Jam Count | 3x Text Display | 3/3/2x1 | Indexer telemetry |
-| Hanger kP/kD | 2x Text Display (editable) | 2x1 | SmartDashboard Hanger gains |
-| Intake Speed | Text Display (editable) | 2x1 | SmartDashboard Intake speed |
+| Hanger kP/kD | 2x Text Display (submit) | 2x1 | SmartDashboard Hanger gains |
+| Intake Speed | Text Display (submit) | 2x1 | SmartDashboard Intake speed |
 | Vision Yaw/Pitch | 2x Text Display | 3x1 | Vision target angles |
-| Deadband / Turn Constant | 2x Text Display (editable) | 3x1 | SmartDashboard Driver params |
+| Deadband / Turn Constant | 2x Text Display (submit) | 3x1 | SmartDashboard Driver params |
 
-v3 split this into two tabs and added the Graph widgets. Can't really tune PID without seeing the time-series response.
+**v3.0 changes:** Split into 2 tabs. Added Graph widgets for RPM and indexer current (can't tune PID without time-series). Reorganized tunable parameters next to their graphs.
 
 ---
 
-## Tips
+## Elastic Tips
 
-**Making your own layout:** Open Elastic, connect to the robot or sim, drag widgets from the widget list onto the canvas. Right-click a widget to configure it. Save with File > Save Layout.
+**Creating/editing layouts:** Open Elastic, connect to robot or sim, drag widgets from the widget list to the canvas. Right-click widgets to configure. File > Save Layout.
 
-**Sending alerts from code:**
+**ElasticLib notifications:** The robot code can push alerts to the dashboard:
 ```java
 Elastic.sendNotification(new Notification(
     NotificationLevel.WARNING,
@@ -200,11 +188,11 @@ Elastic.sendNotification(new Notification(
     "Battery below 11.5V"
 ));
 ```
-This pops up in the driver's face, which is way more effective than hoping they notice a widget changing color.
+This is more effective than adding widgets -- the alert pops up in the driver's face.
 
-**Switching tabs from code:**
+**Tab switching from robot code:**
 ```java
-Elastic.selectTab("Autonomous");
+Elastic.selectTab("Autonomous"); // switch dashboard tab remotely
 ```
 
-**Competition bandwidth:** Elastic reads from NetworkTables over the field network (4 Mbps limit). Don't publish too much data to NT. Log the rest to USB for AdvantageScope instead.
+**Competition bandwidth:** Elastic reads from NetworkTables over the field network (4 Mbps limit). Keep published data minimal. Log to USB for AdvantageScope instead.

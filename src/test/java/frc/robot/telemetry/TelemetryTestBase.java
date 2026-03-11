@@ -20,8 +20,9 @@ public abstract class TelemetryTestBase {
     closeSubsystemMotor("frc.robot.subsystems.Shooter");
     closeSubsystemMotor("frc.robot.subsystems.Indexer");
     closeSubsystemMotor("frc.robot.subsystems.Intake");
+    resetSingleton("frc.robot.util.LEDStatusDisplay");
     resetSingleton("frc.robot.telemetry.TelemetryManager");
-    resetSingleton("frc.robot.telemetry.CycleTracker");
+
     resetSingleton("frc.robot.subsystems.Shooter");
     resetSingleton("frc.robot.subsystems.Indexer");
     resetSingleton("frc.robot.subsystems.Intake");

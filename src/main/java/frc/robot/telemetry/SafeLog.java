@@ -7,19 +7,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import org.littletonrobotics.junction.Logger;
 
-/**
- * Per-signal crash isolation for Logger.recordOutput() calls. One failure never affects other
- * signals or crashes the robot.
- */
+/** Wraps Logger.recordOutput() so one bad signal can't crash the whole robot. */
 public final class SafeLog {
   private static final AtomicInteger cycleFailures = new AtomicInteger(0);
   private static final AtomicReference<String> lastFailedKey = new AtomicReference<>("");
 
   private SafeLog() {}
-
-  // =========================================================================
-  // Primitive type logging
-  // =========================================================================
 
   public static void put(String key, double value) {
     try {
@@ -61,10 +54,6 @@ public final class SafeLog {
     }
   }
 
-  // =========================================================================
-  // Array type logging
-  // =========================================================================
-
   public static void put(String key, double[] value) {
     try {
       Logger.recordOutput(key, value);
@@ -88,10 +77,6 @@ public final class SafeLog {
       recordFailure(key);
     }
   }
-
-  // =========================================================================
-  // WPILib geometry types
-  // =========================================================================
 
   public static void put(String key, Pose2d value) {
     try {
@@ -125,11 +110,7 @@ public final class SafeLog {
     }
   }
 
-  // =========================================================================
-  // Action execution (for external calls like EventMarker, CycleTracker)
-  // =========================================================================
-
-  /** Run an action; swallow any exception. */
+  /** Run an action, swallowing any exception. */
   public static void run(Runnable action) {
     try {
       action.run();
@@ -137,10 +118,6 @@ public final class SafeLog {
       // swallow
     }
   }
-
-  // =========================================================================
-  // Failure tracking
-  // =========================================================================
 
   private static void recordFailure(String key) {
     cycleFailures.incrementAndGet();

@@ -3,6 +3,7 @@ package frc.robot.util;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -16,12 +17,10 @@ import org.littletonrobotics.junction.Logger;
 public class PostMatchSummary {
   private static final PostMatchSummary instance = new PostMatchSummary();
 
-  // Tracking state
   private boolean isTracking = false;
   private double trackingStartTime = 0;
   private double matchDurationSeconds = 0;
 
-  // Tracked values
   private double minBatteryVoltage = Double.MAX_VALUE;
   private double maxMotorTempCelsius = 0;
   private int loopOverrunCount = 0;
@@ -42,7 +41,6 @@ public class PostMatchSummary {
   private int lastStallCount = 0;
   private double peakCurrentAmps = 0;
 
-  // Health score weights
   private static final int BASE_SCORE = 100;
   private static final int BROWNOUT_PENALTY = 20;
   private static final int LOW_BATTERY_PENALTY = 10; // < 11V at any point
@@ -80,7 +78,6 @@ public class PostMatchSummary {
     isTracking = true;
     trackingStartTime = Timer.getFPGATimestamp();
 
-    // Reset tracked values
     minBatteryVoltage = RobotController.getBatteryVoltage();
     maxMotorTempCelsius = 0;
     loopOverrunCount = 0;
@@ -90,7 +87,6 @@ public class PostMatchSummary {
     wasBrownedOut = false;
     peakCurrentAmps = 0;
 
-    // Reset issue tracking
     issues.clear();
     issuedBrownout = false;
     issuedLowBattery = false;
@@ -108,17 +104,19 @@ public class PostMatchSummary {
       minBatteryVoltage = voltage;
     }
 
-    // Max motor temp
     try {
-      double shooterTemp = 0, indexerTemp = 0, intakeTemp = 0;
+      double shooterTemp = 0, indexerTemp = 0, intakeTemp = 0, agitatorTemp = 0;
       Shooter shooter = Shooter.getInstance();
       if (shooter != null) shooterTemp = shooter.getTemperature();
       Indexer indexer = Indexer.getInstance();
       if (indexer != null) indexerTemp = indexer.getTemperature();
       Intake intake = Intake.getInstance();
       if (intake != null) intakeTemp = intake.getTemperature();
+      Agitator agitator = Agitator.getInstance();
+      if (agitator != null) agitatorTemp = agitator.getTemperature();
 
-      double currentMaxTemp = Math.max(shooterTemp, Math.max(indexerTemp, intakeTemp));
+      double currentMaxTemp =
+          Math.max(shooterTemp, Math.max(indexerTemp, Math.max(intakeTemp, agitatorTemp)));
       if (currentMaxTemp > maxMotorTempCelsius) {
         maxMotorTempCelsius = currentMaxTemp;
       }
@@ -165,6 +163,7 @@ public class PostMatchSummary {
       if (tm.isShooterStalled()) stalls++;
       if (tm.isIndexerStalled()) stalls++;
       if (tm.isIntakeStalled()) stalls++;
+      if (tm.isAgitatorStalled()) stalls++;
       if (stalls > lastStallCount) {
         addIssue(70, "Motor stall detected (" + stalls + " motors)");
         lastStallCount = stalls;
@@ -206,7 +205,6 @@ public class PostMatchSummary {
   private int calculateHealthScore() {
     int score = BASE_SCORE;
 
-    // Deduct for brownouts (severe)
     score -= brownoutCount * BROWNOUT_PENALTY;
 
     if (minBatteryVoltage < 11.0) {
@@ -220,7 +218,6 @@ public class PostMatchSummary {
     // Deduct for loop overruns (1 point per 10 overruns)
     score -= (loopOverrunCount / 10) * OVERRUN_PENALTY;
 
-    // Clamp to 0-100
     return Math.max(0, Math.min(100, score));
   }
 

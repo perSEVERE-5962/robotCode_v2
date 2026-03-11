@@ -1,35 +1,27 @@
 package frc.robot.commands;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Agitator;
-import frc.robot.subsystems.Indexer;
-import frc.robot.telemetry.IndexerTelemetry;
-import frc.robot.Constants;
 
 public class MoveAgitator extends Command {
   private Agitator agitator;
-  private double speed;
-  //private IndexerTelemetry indextelem = new IndexerTelemetry();
+  private double rpm;
 
-  public MoveAgitator(double speed) {
+  public MoveAgitator(double rpm) {
     agitator = Agitator.getInstance();
-    this.speed=speed;
+    this.rpm = rpm;
     addRequirements(agitator);
   }
 
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
-    // if (indextelem.isJamDetected()) {
-    //     agitator.move(-Constants.MotorConstants.DESIRED_AGITATOR_SPEED);
-    // } else {
-    //     agitator.move(speed); 
-    // }
-    agitator.move(speed);
+      agitator.moveToVelocityWithPID(rpm);
+      System.out.println(agitator.getMotorVelocity());
   }
 
   @Override
@@ -41,5 +33,4 @@ public class MoveAgitator extends Command {
   public boolean isFinished() {
     return false;
   }
-
 }

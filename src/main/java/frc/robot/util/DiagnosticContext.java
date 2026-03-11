@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import org.littletonrobotics.junction.Logger;
 
-/** Crash-safe exception capture with stack traces and failure context. */
+/** Captures exceptions with stack traces so we can log what went wrong. */
 public final class DiagnosticContext {
   private static volatile String currentAction = "Idle";
   private static volatile String currentCommand = "None";

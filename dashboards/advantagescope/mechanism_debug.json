@@ -170,7 +170,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/Indexer/ActualSpeed",
+                    "logKey": "/RealOutputs/Indexer/AppliedOutput",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -452,11 +452,51 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/SystemHealth/TotalCurrentAmps",
+                    "logKey": "/RealOutputs/Drive/Module/FL/DriveTemperature",
                     "logType": "Number",
                     "visible": true,
                     "options": {
                       "color": "#858584",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/Module/FR/DriveTemperature",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#c0b487",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/Module/BL/DriveTemperature",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#d993aa",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Drive/Module/BR/DriveTemperature",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#7d7461",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/SystemHealth/TotalCurrentAmps",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32",
                       "size": "normal"
                     }
                   }

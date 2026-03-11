@@ -165,7 +165,7 @@ public class CycleTracker {
       desiredScoringZone = ScoringZone.NONE;
       phaseStartTime = Timer.getFPGATimestamp();
 
-      // M3: Reset all phase timestamps to prevent stale timing in next cycle
+      // Reset all phase timestamps so the next cycle starts clean
       cycleStartTime = 0;
       intakeStartTime = 0;
       indexStartTime = 0;
