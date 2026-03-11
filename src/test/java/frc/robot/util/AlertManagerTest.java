@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.simulation.SimHooks;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.IntakeRoller;
+import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.telemetry.SafeLog;
 import frc.robot.telemetry.TelemetryManager;
@@ -52,8 +52,8 @@ class AlertManagerTest {
     // Subsystems must exist for checkMotorTemps() / checkMotorStalls()
     Shooter.getInstance();
     Indexer.getInstance();
-    Intake.getInstance();
-    IntakeActuator.getInstance();
+    IntakeRoller.getInstance();
+    IntakePivot.getInstance();
 
     tm = TelemetryManager.getInstance();
   }

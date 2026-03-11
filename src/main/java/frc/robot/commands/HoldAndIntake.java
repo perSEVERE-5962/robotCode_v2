@@ -6,25 +6,25 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.IntakeRoller;
+import frc.robot.subsystems.IntakePivot;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class HoldAndIntake extends Command {
   /** Creates a new HoldPivotWhileIntaking. */
-  private Intake intake;
-  private IntakeActuator intakeActuator;
+  private IntakeRoller intake;
+  private IntakePivot intakePivot;
 
   public HoldAndIntake() {
-    intake = Intake.getInstance();
-    intakeActuator = IntakeActuator.getInstance();
+    intake = IntakeRoller.getInstance();
+    intakePivot = IntakePivot.getInstance();
 
-    addRequirements(intake,intakeActuator);
+    addRequirements(intake,intakePivot);
   }
 
   @Override
   public void initialize() {
-    intakeActuator.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS); 
+    intakePivot.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS); 
   }
 
   @Override
@@ -36,7 +36,7 @@ public class HoldAndIntake extends Command {
   @Override
   public void end(boolean interrupted) {
     intake.move(0);
-    intakeActuator.move(0);
+    intakePivot.move(0);
 
   }
 

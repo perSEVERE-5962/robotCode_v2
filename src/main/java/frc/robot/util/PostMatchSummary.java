@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
 import frc.robot.telemetry.TelemetryManager;
 import java.util.ArrayList;
@@ -110,7 +110,7 @@ public class PostMatchSummary {
       if (shooter != null) shooterTemp = shooter.getTemperature();
       Indexer indexer = Indexer.getInstance();
       if (indexer != null) indexerTemp = indexer.getTemperature();
-      Intake intake = Intake.getInstance();
+      IntakeRoller intake = IntakeRoller.getInstance();
       if (intake != null) intakeTemp = intake.getTemperature();
       Agitator agitator = Agitator.getInstance();
       if (agitator != null) agitatorTemp = agitator.getTemperature();

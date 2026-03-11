@@ -95,8 +95,8 @@ public final class Constants {
   public static final class CANDeviceIDs {
     public static final int kIndexerID = 50;
     public static final int kShooterID = 52;
-    public static final int kIntakeActuatorID = 56;
-    public static final int kIntakeID = 55;
+    public static final int kIntakePivotID = 56;
+    public static final int kIntakeRollerID = 55;
     public static final int kHangerID = 60;
     public static final int kAgitatorID = 54;
   }
@@ -106,18 +106,28 @@ public final class Constants {
     public static final double DESIRED_INDEXER_RPM = 7833; // 8.4 * 3730/4
     public static final double OUT_INTAKE_POS = 38.24;
     public static final double IN_INTAKE_POS = 11.6;
-    public static final double DESIRED_INTAKE_SPEED = -.99;
+    public static final double DESIRED_INTAKE_RPM = 999;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
     public static final double DESIRED_AGITATOR_SPEED = .5;
   }
 
-  public static final class IntakeConstants {
+  public static final class IntakeRollerConstants {
+    public static final double P = 1.0;
+    public static final double I = 0.0;
+    public static final double D = 0.0;
+    public static final double MinOutput = -1.0;
+    public static final double MaxOutput = 1.0;
+    public static final double FF = 0.0;
+    public static final double Iz = 0.0;
+  }
+
+  public static final class IntakePivotConstants {
     public static final double P = 1.0;
     public static final double I = 0.0;
     public static final double D = 0.2;
     public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1;
+    public static final double MaxOutput = 1.0;
     public static final double FF = 0.0;
     public static final double Iz = 0.0;
   }

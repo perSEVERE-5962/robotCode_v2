@@ -9,8 +9,8 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.IntakeRoller;
+import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.telemetry.SafeLog;
 
@@ -67,9 +67,9 @@ public class SimDeviceManager {
     try {
       Shooter shooter = Shooter.getInstance();
       Indexer indexer = Indexer.getInstance();
-      Intake intake = Intake.getInstance();
+      IntakeRoller intake = IntakeRoller.getInstance();
       Agitator agitator = Agitator.getInstance();
-      IntakeActuator intakeActuator = IntakeActuator.getInstance();
+      IntakePivot intakeActuator = IntakePivot.getInstance();
       Hanger hanger = Hanger.getInstance();
       if (shooter == null || indexer == null || intake == null
           || agitator == null || intakeActuator == null || hanger == null) {
@@ -145,7 +145,7 @@ public class SimDeviceManager {
       // Refresh hold whenever we see a nonzero target >= current sticky.
       // This keeps hold alive during 50/0 oscillation (refreshed every other cycle).
       // Hold only expires after 10 consecutive zero-target cycles (real release).
-      IntakeActuator actuatorInst = IntakeActuator.getInstance();
+      IntakePivot actuatorInst = IntakePivot.getInstance();
       if (actuatorInst == null) return;
       double rawActuatorTarget = actuatorInst.getTargetPosition();
       if (rawActuatorTarget != 0 && Math.abs(rawActuatorTarget) >= Math.abs(lastActuatorTarget)) {

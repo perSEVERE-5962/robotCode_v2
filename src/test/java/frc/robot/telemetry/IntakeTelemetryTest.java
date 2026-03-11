@@ -3,7 +3,7 @@ package frc.robot.telemetry;
 import static org.junit.jupiter.api.Assertions.*;
 
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeRoller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -13,12 +13,12 @@ import org.junit.jupiter.api.TestMethodOrder;
 class IntakeTelemetryTest extends SparkSimTestBase {
 
   private IntakeTelemetry telemetry;
-  private Intake intake;
+  private IntakeRoller intake;
 
   @BeforeEach
   void setUp() {
     telemetry = new IntakeTelemetry();
-    intake = Intake.getInstance();
+    intake = IntakeRoller.getInstance();
     intake.move(0);
     setMotorVelocity(intakeSim, 0);
   }

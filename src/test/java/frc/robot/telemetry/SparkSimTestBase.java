@@ -6,7 +6,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,7 +36,7 @@ public abstract class SparkSimTestBase {
     // Create singletons (each creates a SparkMax on the CAN bus)
     Shooter shooter = Shooter.getInstance();
     Indexer indexer = Indexer.getInstance();
-    Intake intake = Intake.getInstance();
+    IntakeRoller intake = IntakeRoller.getInstance();
 
     // Wrap with SparkSim for physics feedback
     shooterSim = new SparkSim(shooter.getMotor(), DCMotor.getNEO(1));
