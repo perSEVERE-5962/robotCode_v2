@@ -56,6 +56,7 @@ import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.MoveIntake;
 import frc.robot.commands.MoveShooter;
 import frc.robot.commands.PivotIntake;
+import frc.robot.commands.RunIntake;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
@@ -174,8 +175,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
         NamedCommands.registerCommand("DeployIntake", new DeployIntake());
 
-    NamedCommands.registerCommand("HoldAndRunIntake", new HoldAndIntake());
-        NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(3));
+    NamedCommands.registerCommand("HoldAndRunIntake", new RunIntake());
+        NamedCommands.registerCommand("HoldAndRunIntakeTimed", new RunIntake().withTimeout(3));
 
     NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
         NamedCommands.registerCommand("TimedShoot", new SpeedUpThenIndex().withTimeout(8));
@@ -283,11 +284,11 @@ public class RobotContainer {
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       //driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
-      copilotXbox.b().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM).alongWith(new MoveAgitator(Constants.MotorConstants.DESIRED_AGITATOR_SPEED)));
+      copilotXbox.y().whileTrue(new MoveIndexer(Constants.MotorConstants.DESIRED_INDEXER_RPM).alongWith(new MoveAgitator(Constants.MotorConstants.DESIRED_AGITATOR_SPEED)));
       copilotXbox.x().whileTrue(new SetIntakePosition());
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.4));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.4));
-      copilotXbox.b().whileTrue(new AgitateAndIndex(-Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
+      copilotXbox.b().whileTrue(new MoveIndexer(-Constants.AgitatorConstants.TARGET_RPM).alongWith(new MoveAgitator(-2000)));
       copilotXbox.a().whileTrue(new RunIntake());
       copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
       copilotXbox.leftTrigger().whileTrue((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly());
