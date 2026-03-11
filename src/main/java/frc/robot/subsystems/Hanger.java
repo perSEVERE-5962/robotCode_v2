@@ -44,7 +44,7 @@ public class Hanger extends Actuator {
   }
 
   public boolean isAtPosition() {
-    return Math.abs(targetPosition - getPosition()) < HangerConstants.POSITION_TOLERANCE;
+    return Math.abs(targetPosition - getPosition()) < Constants.MotorConstants.HANGER_POS_TOLERANCE;
   }
 
   // Hardware accessors

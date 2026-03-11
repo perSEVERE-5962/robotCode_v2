@@ -320,8 +320,8 @@ public class RobotContainer {
           .y()
           .whileTrue(
               new AgitateAndIndex(
-                  Constants.AgitatorConstants.TARGET_RPM,
-                  Constants.IndexerConstants.TARGET_SPEED,
+                  Constants.MotorConstants.DESIRED_AGITATOR_RPM,
+                  Constants.MotorConstants.DESIRED_INDEXER_RPM,
                   hubArcDrive::isScheduled));
       copilotXbox.x().whileTrue(new SetIntakePosition());
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.4));
@@ -330,7 +330,7 @@ public class RobotContainer {
           .b()
           .whileTrue(
               new AgitateAndIndex(
-                  -Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
+                  -Constants.MotorConstants.DESIRED_AGITATOR_RPM, -2000, hubArcDrive::isScheduled));
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
       copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
       copilotXbox

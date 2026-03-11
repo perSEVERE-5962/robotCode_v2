@@ -36,7 +36,7 @@ public class AgitateAndIndex extends Command {
       agitator.move(0);
     } else {
       indexer.moveToVelocityWithPID(Indexer.getTunableTargetSpeed());
-      agitator.moveToVelocityWithPID(agitateRPM);
+      agitator.moveToVelocityWithPID(Agitator.getTunableTargetRPM());
     }
   }
 

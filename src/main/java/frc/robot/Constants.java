@@ -113,7 +113,8 @@ public final class Constants {
     public static final double INTAKE_POS_TOLERANCE = .2;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
-    public static final double DESIRED_AGITATOR_SPEED = .5;
+    public static final double DESIRED_AGITATOR_RPM = 999;
+    public static final double HANGER_POS_TOLERANCE = 0.1;
   }
 
   public static final class IntakeConstants {
@@ -121,13 +122,12 @@ public final class Constants {
     public static final double I = 0.0;
     public static final double D = 0.2;
     public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1;
+    public static final double MaxOutput = 1.0;
     public static final double FF = 0.0;
     public static final double Iz = 0.0;
   }
 
   public static final class ShooterConstants {
-    // Velocity PID tuning (from Kfir2026)
     public static final double P = 0.00011;
     public static final double I = 0.0;
     public static final double D = 0.0;
@@ -136,7 +136,7 @@ public final class Constants {
     public static final double MaxOutput = 1.0;
     public static final double Iz = 0.0;
 
-    // Tuning targets
+    // Default tuning targets
     public static final double TARGET_RPM = 3730;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
     public static final double TARGET_RECOVERY_MS = 150.0;
@@ -150,7 +150,6 @@ public final class Constants {
   }
 
   public static final class IndexerConstants {
-    // Velocity PID (from Alden)
     public static final double P = 0.000;
     public static final double I = 0.0;
     public static final double D = 0.00;
@@ -174,6 +173,7 @@ public final class Constants {
     public static final double FF = 0.0002;
     public static final double Iz = 0.0;
 
+    // Default tuning targets
     public static final double TARGET_RPM = 2000;
     public static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
     public static final double JAM_TIME_THRESHOLD_SECONDS = 0.3;
@@ -192,7 +192,6 @@ public final class Constants {
     public static final double MaxOutput = 1.0;
     public static final double FF = 0.0;
     public static final double Iz = 0.0;
-    public static final double POSITION_TOLERANCE = 0.1;
   }
 
   public static final class BatteryThresholds {
