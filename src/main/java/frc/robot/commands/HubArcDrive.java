@@ -174,7 +174,7 @@ public class HubArcDrive extends Command {
   }
 
   public static boolean checkHeadingError() {
-    if (headingError < .1 && headingError > -0.1) {
+    if (Math.abs(headingError) < 0.1) {
       return true;
     } else {
       return false;
