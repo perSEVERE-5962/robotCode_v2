@@ -5,22 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "DepotTrenchToBalls"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "HoldAndRunIntakeTimed"
-                }
-              }
-            ]
+            "pathName": "DepotTrenchToBalls"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DeployIntake"
           }
         },
         {
@@ -45,7 +38,38 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DepotSideBallsToScore"
+            "pathName": "DepotCenterToFarShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScore"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "DepotFarShootToDepot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoldAndRunIntakeTimed"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DepotToFarShoot"
           }
         },
         {

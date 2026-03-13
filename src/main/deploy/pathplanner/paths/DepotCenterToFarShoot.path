@@ -4,43 +4,56 @@
     {
       "anchor": {
         "x": 7.77,
-        "y": 7.2
+        "y": 4.901235955056179
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.77,
-        "y": 6.9078208195157185
+        "x": 9.572358974358973,
+        "y": 6.279243589743589
       },
       "isLocked": false,
-      "linkedName": "BallPickupStart"
+      "linkedName": "Depotshortpickupend"
     },
     {
       "anchor": {
-        "x": 7.77,
-        "y": 1.1
+        "x": 2.5605512820512812,
+        "y": 6.267615384615385
       },
       "prevControl": {
-        "x": 7.77,
-        "y": 1.35
+        "x": 3.2815,
+        "y": 9.197923076923075
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "DepotSideFarShoot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 0.7062937062937182,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 0.9112676056338023,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "HoldAndRunIntake",
-      "waypointRelativePos": 0.0,
+      "name": "",
+      "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.5,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -49,13 +62,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 122.66091272167384
   },
   "reversed": false,
-  "folder": null,
+  "folder": "ToFarShoot",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -90.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

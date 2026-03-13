@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ScoreToTrench"
+            "pathName": "TrenchToCenterScore"
           }
         },
         {
@@ -25,7 +25,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "HumanToScore"
+            "pathName": "HPToCenterScore"
           }
         },
         {

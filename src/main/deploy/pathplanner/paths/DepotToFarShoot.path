@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.0,
-        "y": 0.603
+        "x": 0.5914204545454544,
+        "y": 5.962375
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.0,
-        "y": 0.6029999999999998
+        "x": 1.5914204545454544,
+        "y": 5.962375
       },
       "isLocked": false,
-      "linkedName": "HumanPlayTrench"
+      "linkedName": "DepotPick"
     },
     {
       "anchor": {
-        "x": 7.801213483146068,
-        "y": 0.603
+        "x": 2.5605512820512812,
+        "y": 6.267615384615385
       },
       "prevControl": {
-        "x": 6.801213483146068,
-        "y": 0.6030000000000001
+        "x": 1.5605512820512812,
+        "y": 6.267615384615385
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "HPSidePickup"
+      "linkedName": "DepotSideFarShoot"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 122.66091272167384
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Depot",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 178.7811247648687
   },
   "useDefaultConstraints": true
 }

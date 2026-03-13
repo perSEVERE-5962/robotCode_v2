@@ -3,42 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.0,
-        "y": 0.51
+        "x": 3.9908205128205143,
+        "y": 0.603
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.793223965763195,
-        "y": 0.9750071326676175
+        "x": 4.990820512820515,
+        "y": 0.603
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.5714978601997143,
-        "y": 0.6256633380884444
+        "x": 7.801213483146068,
+        "y": 0.603
       },
       "prevControl": {
-        "x": 0.32252715604287563,
-        "y": 0.6030008476770193
+        "x": 6.801213483146068,
+        "y": 0.603
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "HumanPickUp"
+      "linkedName": "HPSidePickup"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -52,10 +45,10 @@
     "rotation": 90.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "GoingToCenterPickingUpBalls",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

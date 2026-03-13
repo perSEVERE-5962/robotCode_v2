@@ -3,37 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.002719141323792,
-        "y": 7.434221824686941
+        "x": 7.77,
+        "y": 1.1
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.962088152688407,
-        "y": 7.521613385780681
+        "x": 6.533881932021467,
+        "y": 0.5546511627906967
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.77,
-        "y": 7.2
+        "x": 4.0,
+        "y": 0.603
       },
       "prevControl": {
-        "x": 6.9182919591208245,
-        "y": 7.1776972400416925
+        "x": 3.594115052919811,
+        "y": 0.603
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BallPickupStart"
+      "linkedName": "HumanPlayTrench"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5363779527559032,
-      "rotationDegrees": 180.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -47,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 90.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -90.0
   },
   "useDefaultConstraints": true
 }

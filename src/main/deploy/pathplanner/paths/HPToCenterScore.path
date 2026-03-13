@@ -3,42 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.801213483146068,
-        "y": 0.603
+        "x": 0.5714978601997143,
+        "y": 0.6256633380884444
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.804641440063328,
-        "y": 0.12176594489220571
+        "x": 1.2587589682351377,
+        "y": 1.2907484869521881
       },
       "isLocked": false,
-      "linkedName": "HPSidePickup"
+      "linkedName": "HumanPickUp"
     },
     {
       "anchor": {
-        "x": 7.491180679785331,
-        "y": 2.469248658318426
+        "x": 2.62,
+        "y": 4.0
       },
       "prevControl": {
-        "x": 7.481729169057411,
-        "y": 1.9330513712322577
+        "x": 2.1554107161393588,
+        "y": 3.677498760584005
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "ScorePosition"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "HoldAndRunIntake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -49,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "ToCenterScore",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 90.0

@@ -52,7 +52,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "ToCenterScore",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.0,
-        "y": 0.603
+        "x": 2.6,
+        "y": 4.116
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.882013665331587,
-        "y": 0.6030000000000001
-      },
-      "isLocked": false,
-      "linkedName": "HumanTrench"
-    },
-    {
-      "anchor": {
-        "x": 2.62,
-        "y": 2.258318425760286
-      },
-      "prevControl": {
-        "x": 2.730217387576094,
-        "y": 1.56644303667234
-      },
-      "nextControl": {
-        "x": 2.5168418602303775,
-        "y": 2.905880300164367
+        "x": 2.862884615384617,
+        "y": 3.3838205128205128
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.62,
-        "y": 4.0
+        "x": 4.037333333333334,
+        "y": 0.6511923076923085
       },
       "prevControl": {
-        "x": 2.6236283600585386,
-        "y": 2.55556055306303
+        "x": 1.3977307692307703,
+        "y": 0.47676923076923083
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScorePosition"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -61,10 +45,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "ToCenterScore",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 179.96479020003696
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

@@ -3,35 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.063155397390274,
-        "y": 7.3757295373665475
+        "x": 4.0,
+        "y": 0.51
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.037307692307693,
-        "y": 8.058358974358974
+        "x": 3.793223965763195,
+        "y": 0.9750071326676175
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.62,
-        "y": 4.0
+        "x": 0.5714978601997143,
+        "y": 0.6256633380884444
       },
       "prevControl": {
-        "x": 1.232064056939502,
-        "y": 4.97908659549229
+        "x": 0.32252715604287563,
+        "y": 0.6030008476770193
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScorePosition"
+      "linkedName": "HumanPickUp"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "ToHPStation",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

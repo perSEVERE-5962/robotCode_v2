@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "HPSideCenterFuel"
+            "pathName": "HPTrenchToBalls"
           }
         },
         {
@@ -32,7 +32,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BallsToScore"
+            "pathName": "DepotSideBallsToCenterScore"
           }
         },
         {

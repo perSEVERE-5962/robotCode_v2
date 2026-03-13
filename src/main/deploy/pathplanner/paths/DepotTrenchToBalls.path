@@ -3,38 +3,34 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.778330955777461,
-        "y": 3.0063766048502147
+        "x": 4.002719141323792,
+        "y": 7.434221824686941
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.291662921348315,
-        "y": -0.2044606741573025
+        "x": 4.962088152688407,
+        "y": 7.521613385780681
       },
       "isLocked": false,
-      "linkedName": "EndShortBallPickUp"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.62,
-        "y": 4.0
+        "x": 7.77,
+        "y": 7.2
       },
       "prevControl": {
-        "x": 1.4827865168539325,
-        "y": -0.9280224719101122
+        "x": 6.9182919591208245,
+        "y": 7.1776972400416925
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScorePosition"
+      "linkedName": "BallPickupStart"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.23149606299212366,
-      "rotationDegrees": 180.0
-    },
-    {
-      "waypointRelativePos": 0.5828877005347594,
+      "waypointRelativePos": 0.5363779527559032,
       "rotationDegrees": 180.0
     }
   ],
@@ -51,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -90.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "GoingToCenterPickingUpBalls",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

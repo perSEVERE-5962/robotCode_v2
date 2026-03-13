@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TrenchToBalls"
+            "pathName": "DepotTrenchToBalls"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PickUpBalls"
+            "pathName": "PickUpBallsDepotToHP"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "BallsToScore"
+            "pathName": "DepotSideBallsToCenterScore"
           }
         },
         {
