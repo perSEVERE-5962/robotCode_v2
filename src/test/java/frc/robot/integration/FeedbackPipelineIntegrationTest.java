@@ -78,14 +78,14 @@ class FeedbackPipelineIntegrationTest {
     feedback.stopAll();
     closeSubsystemMotor("frc.robot.subsystems.Shooter");
     closeSubsystemMotor("frc.robot.subsystems.Indexer");
-    closeSubsystemMotor("frc.robot.subsystems.Intake");
+    closeSubsystemMotor("frc.robot.subsystems.IntakeRoller");
     resetSingleton("frc.robot.telemetry.TelemetryManager");
     resetSingleton("frc.robot.util.DriverFeedback");
     resetSingleton("frc.robot.util.LEDStatusDisplay");
     resetSingleton("frc.robot.util.ChannelCoordinator");
     resetSingleton("frc.robot.subsystems.Shooter");
     resetSingleton("frc.robot.subsystems.Indexer");
-    resetSingleton("frc.robot.subsystems.Intake");
+    resetSingleton("frc.robot.subsystems.IntakeRoller");
     SafeLog.logAndReset();
   }
 
