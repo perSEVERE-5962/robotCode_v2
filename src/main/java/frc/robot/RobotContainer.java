@@ -442,7 +442,7 @@ public class RobotContainer {
       driverXbox.povLeft().whileTrue(SysId.indexerSysIdCommand());
       driverXbox.povUp().whileTrue(SysId.shooterSysIdCommand());
       driverXbox.povRight().whileTrue(SysId.intakePivotSysIdCommand());
-      driverXbox.rightBumper().whileTrue(SysId.intakeRollerSysIdCommand());
+      //driverXbox.rightBumper().whileTrue(SysId.intakeRollerSysIdCommand());
       driverXbox.leftBumper().whileTrue(SysId.hangerSysIdCommand());
       driverXbox.rightTrigger().whileTrue(drivebase.sysIdAngleMotorCommand());
       driverXbox.leftTrigger().whileTrue(drivebase.sysIdDriveMotorCommand());
