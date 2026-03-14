@@ -42,10 +42,6 @@ public class IntakeRoller extends Actuator {
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  public void move(double speed) {
-    motor.set(speed);
-  }
-
   @Override
   public void periodic() {
     // JamProtection detects and reports only. It never overrides the motor.
@@ -80,10 +76,6 @@ public class IntakeRoller extends Actuator {
 
   public boolean isRunning() {
     return Math.abs(motor.getAppliedOutput()) > 0.05;
-  }
-
-  public SparkMax getMotor() {
-    return motor;
   }
 
   // Tunable value accessor
