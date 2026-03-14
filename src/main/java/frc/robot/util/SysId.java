@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import static edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.State;
+import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.Logger;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
@@ -20,8 +22,8 @@ public class SysId {
   public static Command agitatorSysIdCommand() {
     Agitator inst = Agitator.getInstance();
     SysIdRoutine routine = new SysIdRoutine(
-      new Config(null, null, null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-      new Mechanism((voltage) -> inst.getMotor().setVoltage(voltage), null, inst));
+      new Config(null, null, null, (State state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+      new Mechanism((Voltage voltage) -> inst.getMotor().setVoltage(voltage), null, inst));
     return routine.quasistatic(Direction.kForward).andThen(Commands.waitSeconds(delay))
         .andThen(routine.quasistatic(Direction.kReverse)).andThen(Commands.waitSeconds(delay))
         .andThen(routine.dynamic(Direction.kForward)).andThen(Commands.waitSeconds(delay))
@@ -31,8 +33,8 @@ public class SysId {
   public static Command hangerSysIdCommand() {
     Hanger inst = Hanger.getInstance();
     SysIdRoutine routine = new SysIdRoutine(
-      new Config(null, null, null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-      new Mechanism((voltage) -> inst.getMotor().setVoltage(voltage), null, inst));
+      new Config(null, null, null, (State state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+      new Mechanism((Voltage voltage) -> inst.getMotor().setVoltage(voltage), null, inst));
     return routine.quasistatic(Direction.kForward).andThen(Commands.waitSeconds(delay))
         .andThen(routine.quasistatic(Direction.kReverse)).andThen(Commands.waitSeconds(delay))
         .andThen(routine.dynamic(Direction.kForward)).andThen(Commands.waitSeconds(delay))
@@ -42,8 +44,8 @@ public class SysId {
   public static Command indexerSysIdCommand() {
     Indexer inst = Indexer.getInstance();
     SysIdRoutine routine = new SysIdRoutine(
-      new Config(null, null, null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-      new Mechanism((voltage) -> inst.getMotor().setVoltage(voltage), null, inst));
+      new Config(null, null, null, (State state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+      new Mechanism((Voltage voltage) -> inst.getMotor().setVoltage(voltage), null, inst));
     return routine.quasistatic(Direction.kForward).andThen(Commands.waitSeconds(delay))
         .andThen(routine.quasistatic(Direction.kReverse)).andThen(Commands.waitSeconds(delay))
         .andThen(routine.dynamic(Direction.kForward)).andThen(Commands.waitSeconds(delay))
@@ -53,8 +55,8 @@ public class SysId {
   public static Command intakeRollerSysIdCommand() {
     Intake inst = Intake.getInstance();
     SysIdRoutine routine = new SysIdRoutine(
-      new Config(null, null, null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-      new Mechanism((voltage) -> inst.getMotor().setVoltage(voltage), null, inst));
+      new Config(null, null, null, (State state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+      new Mechanism((Voltage voltage) -> inst.getMotor().setVoltage(voltage), null, inst));
     return routine.quasistatic(Direction.kForward).andThen(Commands.waitSeconds(delay))
         .andThen(routine.quasistatic(Direction.kReverse)).andThen(Commands.waitSeconds(delay))
         .andThen(routine.dynamic(Direction.kForward)).andThen(Commands.waitSeconds(delay))
@@ -64,8 +66,8 @@ public class SysId {
   public static Command intakePivotSysIdCommand() {
     IntakeActuator inst = IntakeActuator.getInstance();
     SysIdRoutine routine = new SysIdRoutine(
-      new Config(null, null, null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-      new Mechanism((voltage) -> inst.getMotor().setVoltage(voltage), null, inst));
+      new Config(null, null, null, (State state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+      new Mechanism((Voltage voltage) -> inst.getMotor().setVoltage(voltage), null, inst));
     return routine.quasistatic(Direction.kForward).andThen(Commands.waitSeconds(delay))
         .andThen(routine.quasistatic(Direction.kReverse)).andThen(Commands.waitSeconds(delay))
         .andThen(routine.dynamic(Direction.kForward)).andThen(Commands.waitSeconds(delay))
@@ -75,8 +77,8 @@ public class SysId {
   public static Command shooterSysIdCommand() {
     Shooter inst = Shooter.getInstance();
     SysIdRoutine routine = new SysIdRoutine(
-      new Config(null, null, null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-      new Mechanism((voltage) -> inst.getMotor().setVoltage(voltage), null, inst));
+      new Config(null, null, null, (State state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+      new Mechanism((Voltage voltage) -> inst.getMotor().setVoltage(voltage), null, inst));
     return routine.quasistatic(Direction.kForward).andThen(Commands.waitSeconds(delay))
         .andThen(routine.quasistatic(Direction.kReverse)).andThen(Commands.waitSeconds(delay))
         .andThen(routine.dynamic(Direction.kForward)).andThen(Commands.waitSeconds(delay))
