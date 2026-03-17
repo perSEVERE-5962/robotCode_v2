@@ -142,7 +142,7 @@ public final class Constants {
     public static final double TARGET_RECOVERY_MS = 150.0;
 
     // Telemetry constants
-    public static final double SPEED_TOLERANCE_RPM = 50.0;
+    public static final double SPEED_TOLERANCE_RPM = 120.0;
     public static final double VELOCITY_CONVERSION = 1.0;
     public static final double SHOT_DETECTION_DROP_RPM = 200.0;
     public static final double SHOT_DETECTION_MIN_RPM = 1000.0;

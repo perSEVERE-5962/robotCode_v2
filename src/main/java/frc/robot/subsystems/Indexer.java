@@ -49,7 +49,7 @@ public class Indexer extends Actuator {
         Constants.IndexerConstants.Iz,
         0,
         0,
-        40,
+        60,
         true,
         true,
         false,
