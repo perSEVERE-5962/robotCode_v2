@@ -67,13 +67,14 @@ public class Shooter extends Actuator {
 
     motorConfig = new SparkMaxConfig();
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    motorConfig.smartCurrentLimit(80);
+    motorConfig.smartCurrentLimit(60);
     motorEncoder = motor.getEncoder();
-    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     motorConfig.encoder
       .uvwMeasurementPeriod(8)
-      .quadratureAverageDepth(2)
-      .quadratureMeasurementPeriod(8);
+      .uvwAverageDepth(2);
+      //.quadratureMeasurementPeriod(8);
+    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    
 
 
 
@@ -82,25 +83,27 @@ public class Shooter extends Actuator {
     followerMotor = new SparkMax(Constants.CANDeviceIDs.kShooterFollower, MotorType.kBrushless);
     followerConfig.follow(Constants.CANDeviceIDs.kShooterID, false);
     followerConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    followerConfig.smartCurrentLimit(80);
+    followerConfig.smartCurrentLimit(60);
     followerEncoder = followerMotor.getEncoder();
-    followerMotor.configure(followerConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     followerConfig.encoder
       .uvwMeasurementPeriod(8)
-      .quadratureAverageDepth(2)
-      .quadratureMeasurementPeriod(8);
+      .uvwAverageDepth(2);
+      //.quadratureMeasurementPeriod(8);
+    followerMotor.configure(followerConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    
 
     followerConfig1 = new SparkMaxConfig();
     followerMotor1 = new SparkMax(Constants.CANDeviceIDs.kShooterFollower1, MotorType.kBrushless);
     followerConfig1.follow(Constants.CANDeviceIDs.kShooterID, true);
     followerConfig1.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    followerConfig1.smartCurrentLimit(80);
+    followerConfig1.smartCurrentLimit(60);
     followerEncoder1 = followerMotor1.getEncoder();
-    followerMotor1.configure(followerConfig1, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     followerConfig1.encoder
       .uvwMeasurementPeriod(8)
-      .quadratureAverageDepth(2)
-      .quadratureMeasurementPeriod(8);
+      .uvwAverageDepth(2);
+      //.quadratureMeasurementPeriod(8);
+    followerMotor1.configure(followerConfig1, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    
 
     followerConfig2 = new SparkMaxConfig();
     followerMotor2 = new SparkMax(Constants.CANDeviceIDs.kShooterFollower2, MotorType.kBrushless);
@@ -108,11 +111,12 @@ public class Shooter extends Actuator {
     followerConfig2.idleMode(SparkBaseConfig.IdleMode.kCoast);
     followerConfig2.smartCurrentLimit(80);
     followerEncoder2 = followerMotor2.getEncoder();
-    followerMotor2.configure(followerConfig2, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     followerConfig2.encoder
       .uvwMeasurementPeriod(8)
-      .quadratureAverageDepth(2)
-      .quadratureMeasurementPeriod(8);
+      .uvwAverageDepth(2);
+      //.quadratureMeasurementPeriod(8);
+    followerMotor2.configure(followerConfig2, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    
 
       limiter = new SlewRateLimiter(ShooterConstants.RPM_SLEW_RATE);
   }

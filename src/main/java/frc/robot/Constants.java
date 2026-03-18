@@ -97,11 +97,11 @@ public final class Constants {
     public static final int kShooterID = 52;
     public static final int kShooterFollower = 53;
     public static final int kShooterFollower1 = 54;
-    public static final int kShooterFollower2= 57;
+    public static final int kShooterFollower2= 55;
     public static final int kIntakeActuatorID = 56;
-    public static final int kIntakeID = 55;
+    public static final int kIntakeID = 57;
     public static final int kHangerID = 60;
-    public static final int kAgitatorID = 54;
+    public static final int kAgitatorID = 51;
   }
 
   public static final class MotorConstants {
