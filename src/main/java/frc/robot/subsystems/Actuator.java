@@ -59,6 +59,11 @@ public class Actuator extends SubsystemBase {
         .outputRange(kMinOutput, kMaxOutput)
         .iZone(kIz);
     motorConfig.closedLoop.feedForward.kV(12.0 * kF);
+    motorConfig
+        .encoder
+        .quadratureAverageDepth(2)
+        .quadratureMeasurementPeriod(10)
+        .uvwMeasurementPeriod(8);
     if (useThroughBoreEncoder) {
       absoluteEncoder = motor.getAbsoluteEncoder();
     } else {
