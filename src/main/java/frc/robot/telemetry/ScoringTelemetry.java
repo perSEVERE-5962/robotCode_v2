@@ -1,282 +1,146 @@
 package frc.robot.telemetry;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.DeviceHealthConstants;
+import frc.robot.util.ScoringReadiness;
+import frc.robot.util.SpatialLaunchValidator;
 
-/** Scoring readiness: composite ReadyToShoot from shooter + indexer + vision. */
+/**
+ * Scoring readiness telemetry: feeds raw inputs into ScoringReadiness, triggers the composite
+ * computation, then logs all values. The update-then-log sequence makes sure logged ReadyToShoot
+ * reflects the current cycle's inputs, not the previous cycle's.
+ */
 public class ScoringTelemetry implements SubsystemTelemetry {
-  private final ShooterTelemetry shooterTelemetry;
-  private final IndexerTelemetry indexerTelemetry;
-  private final VisionTelemetry visionTelemetry;
+    private final ShooterTelemetry shooterTelemetry;
+    private final IndexerTelemetry indexerTelemetry;
+    private final VisionTelemetry visionTelemetry;
 
-  // Hub shift boundaries (teleop matchTime counts down from ~135)
-  // Game Manual Section 6.4: 5s transition, 4x25s shifts, 30s endgame
-  private static final double SHIFT_1_START = 130.0;
-  private static final double SHIFT_2_START = 105.0;
-  private static final double SHIFT_3_START = 80.0;
-  private static final double SHIFT_4_START = 55.0;
-  private static final double ENDGAME_START = 30.0;
+    private boolean scoringAvailable = false;
 
-  // ReadyToShoot stays true through brief velocity dips during sustained fire.
-  // Manual time-based debounce (not WPILib Debouncer,that has wrong initial baseline).
-  private double readyFalseSince = 0;
+    public ScoringTelemetry(
+            ShooterTelemetry shooterTelemetry,
+            IndexerTelemetry indexerTelemetry,
+            VisionTelemetry visionTelemetry) {
+        this.shooterTelemetry = shooterTelemetry;
+        this.indexerTelemetry = indexerTelemetry;
+        this.visionTelemetry = visionTelemetry;
+    }
 
-  private boolean scoringAvailable = false;
-  private boolean shooterReady = false;
-  private boolean indexerClear = false;
-  private boolean visionLocked = false;
-  private boolean hasBall = true; // Stub: assume ball present until hopper sensor
-  private boolean hubActive = true;
-  private boolean readyToShoot = false;
+    @Override
+    public void update() {
+        try {
+            if (shooterTelemetry == null || indexerTelemetry == null || visionTelemetry == null) {
+                scoringAvailable = false;
+                ScoringReadiness.getInstance().reset();
+                return;
+            }
+            scoringAvailable = true;
 
-  private boolean wonAuto = false;
-  private boolean wonAutoFromFMS = false;
-  private int hubShiftNumber = 0;
-  private double timeToNextShiftSec = 0;
+            ScoringReadiness sr = ScoringReadiness.getInstance();
 
-  private boolean previousShooterReady = false;
-  private boolean previousIndexerClear = true;
-  private boolean previousVisionLocked = false;
-  private boolean previousHubActive = true;
-  private boolean previousReadyToShoot = false;
-  private boolean readyStateChanged = false;
-  private String readyLostReason = "";
+            // pass-through until ShotCalculator is wired on the SOTM branch
+            double confidence = 100;
 
-  private double readySinceTimestamp = 0;
-  private double timeSinceReadyMs = 0;
-  private boolean wasReady = false;
+            sr.setInputs(
+                    shooterTelemetry.isAtSpeed(),
+                    !indexerTelemetry.isJamDetected(),
+                    visionTelemetry.isLockedOnTarget(),
+                    true, // stub: assume ball present until hopper sensor is wired
+                    confidence);
 
-  public ScoringTelemetry(
-      ShooterTelemetry shooterTelemetry,
-      IndexerTelemetry indexerTelemetry,
-      VisionTelemetry visionTelemetry) {
-    this.shooterTelemetry = shooterTelemetry;
-    this.indexerTelemetry = indexerTelemetry;
-    this.visionTelemetry = visionTelemetry;
-  }
+            // Stub: heading error = 0 (pass-through) until ShotCalculator provides aim direction
+            double headingError = 0;
+            boolean inExclusionZone = false;
+            try {
+                var pose = frc.robot.RobotContainer.getInstance().getSwerveSubsystem().getPose();
+                inExclusionZone =
+                        SpatialLaunchValidator.isInExclusionZone(pose.getX(), pose.getY());
+            } catch (Throwable t) {
+                // pose not available yet, fail-open
+            }
+            sr.setHeadingAndZone(headingError, inExclusionZone);
 
-  @Override
-  public void update() {
-    try {
-      double now = Timer.getFPGATimestamp();
-
-      if (shooterTelemetry == null || indexerTelemetry == null || visionTelemetry == null) {
-        scoringAvailable = false;
-        setDefaultValues();
-        return;
-      }
-
-      scoringAvailable = true;
-
-      previousShooterReady = shooterReady;
-      previousIndexerClear = indexerClear;
-      previousVisionLocked = visionLocked;
-      previousHubActive = hubActive;
-      previousReadyToShoot = readyToShoot;
-
-      shooterReady = shooterTelemetry.isAtSpeed();
-      indexerClear = !indexerTelemetry.isJamDetected();
-      visionLocked = visionTelemetry.isLockedOnTarget();
-
-      hasBall = true; // Stub: read from hopper sensor when available. Reset in setDefaultValues().
-
-      // Hub active/inactive from match timer (REBUILT Section 6.4)
-      // FMS sends 'R' (Red won) or 'B' (Blue won) via game-specific message
-      wonAuto = parseWonAuto();
-      if (DriverStation.isTeleop()) {
-        double matchTime = DriverStation.getMatchTime();
-        if (matchTime < 0) {
-          hubActive = true; // no FMS in practice, just assume hub is active
-        } else {
-          hubShiftNumber = computeShiftNumber(matchTime);
-          hubActive = computeHubActive(matchTime, wonAuto);
-          timeToNextShiftSec = computeTimeToNextShift(matchTime);
+            sr.update();
+        } catch (Throwable t) {
+            scoringAvailable = false;
+            ScoringReadiness.getInstance().reset();
         }
-      } else {
-        hubActive = true; // auto, disabled, test: all hubs active. Cleared in setDefaultValues().
-        hubShiftNumber = 0;
-        timeToNextShiftSec = 0;
-      }
-
-      boolean rawReady = shooterReady && indexerClear && visionLocked && hasBall && hubActive;
-      if (rawReady) {
-        readyToShoot = true;
-        readyFalseSince = 0;
-      } else if (!readyToShoot) {
-        readyFalseSince = 0;
-      } else {
-        // Was true, conditions now false,hold true during debounce window
-        if (readyFalseSince == 0) readyFalseSince = now;
-        if ((now - readyFalseSince) >= DeviceHealthConstants.READY_TO_SHOOT_DEBOUNCE_SEC) {
-          readyToShoot = false;
-        }
-      }
-
-      readyStateChanged = (readyToShoot != previousReadyToShoot);
-      if (readyStateChanged && !readyToShoot) {
-        // Ready just dropped: capture which conditions are currently failing
-        readyLostReason = buildNotReadyReason();
-      } else if (readyStateChanged && readyToShoot) {
-        // Ready just gained: clear the reason
-        readyLostReason = "";
-      }
-      // else: no change, preserve existing readyLostReason
-
-      if (readyToShoot && !wasReady) {
-        readySinceTimestamp = now;
-      }
-      if (readyToShoot) {
-        timeSinceReadyMs = (now - readySinceTimestamp) * 1000.0;
-      } else {
-        timeSinceReadyMs = 0;
-      }
-
-      wasReady = readyToShoot;
-    } catch (Throwable t) {
-      scoringAvailable = false;
-      setDefaultValues();
     }
-  }
 
-  private void setDefaultValues() {
-    shooterReady = false;
-    indexerClear = true; // Safe default: assume clear
-    visionLocked = false;
-    hasBall = false;
-    hubActive = false;
-    readyToShoot = false;
-    timeSinceReadyMs = 0;
-    hubShiftNumber = 0;
-    timeToNextShiftSec = 0;
-    readyStateChanged = false;
-  }
+    @Override
+    public void log() {
+        ScoringReadiness sr = ScoringReadiness.getInstance();
 
-  /** Build a string naming which subconditions are currently failing. */
-  private String buildNotReadyReason() {
-    StringBuilder sb = new StringBuilder();
-    if (!shooterReady) {
-      sb.append("Shooter");
+        SafeLog.put("Scoring/Available", scoringAvailable);
+        SafeLog.put("Scoring/ReadyToShoot", sr.isReadyToShoot());
+        SafeLog.put("Scoring/Conditions/ShooterReady", sr.isShooterReady());
+        SafeLog.put("Scoring/Conditions/IndexerClear", sr.isIndexerClear());
+        SafeLog.put("Scoring/Conditions/VisionLocked", sr.isVisionLocked());
+        SafeLog.put("Scoring/Conditions/HasBall", sr.isHasBall());
+        SafeLog.put("Scoring/Conditions/HubActive", sr.isHubActive());
+        SafeLog.put("Scoring/Conditions/FireAuthorized", sr.isFireAuthorized());
+        SafeLog.put("Scoring/Conditions/ShotConfident", sr.isShotConfident());
+        SafeLog.put("Scoring/HeadingOnTarget", sr.isHeadingOnTarget());
+        SafeLog.put("Scoring/HeadingErrorDeg", sr.getHeadingErrorDeg());
+        SafeLog.put("Scoring/InExclusionZone", sr.isInExclusionZone());
+
+        // debounced values show what the composite actually uses after per-component smoothing
+        SafeLog.put("Scoring/Debounced/ShooterReady", sr.isDebouncedShooterReady());
+        SafeLog.put("Scoring/Debounced/IndexerClear", sr.isDebouncedIndexerClear());
+        SafeLog.put("Scoring/Debounced/VisionLocked", sr.isDebouncedVisionLocked());
+        SafeLog.put("Scoring/Debounced/ShotConfident", sr.isDebouncedShotConfident());
+
+        SafeLog.put("Scoring/BallisticWindowRemainingSec", sr.getBallisticWindowRemainingSec());
+        SafeLog.put("Scoring/TimeSinceReadyMs", sr.getTimeSinceReadyMs());
+        SafeLog.put("Scoring/HubShiftNumber", sr.getHubShiftNumber());
+        SafeLog.put("Scoring/TimeToNextShiftSec", sr.getTimeToNextShiftSec());
+        SafeLog.put("Scoring/Conditions/WonAuto", sr.isWonAuto());
+        SafeLog.put("Scoring/Conditions/WonAutoFromFMS", sr.isWonAutoFromFMS());
+
+        SafeLog.put("Scoring/ReadyStateChanged", sr.isReadyStateChanged());
+        SafeLog.put("Scoring/ReadyLostReason", sr.getReadyLostReason());
     }
-    if (!indexerClear) {
-      if (sb.length() > 0) sb.append("+");
-      sb.append("Indexer");
+
+    @Override
+    public String getName() {
+        return "Scoring";
     }
-    if (!visionLocked) {
-      if (sb.length() > 0) sb.append("+");
-      sb.append("Vision");
+
+    public boolean isReadyToShoot() {
+        return ScoringReadiness.getInstance().isReadyToShoot();
     }
-    if (!hubActive) {
-      if (sb.length() > 0) sb.append("+");
-      sb.append("Hub");
+
+    public int getHubShiftNumber() {
+        return ScoringReadiness.getInstance().getHubShiftNumber();
     }
-    return sb.length() > 0 ? sb.toString() : "Unknown";
-  }
 
-  /** Odd shifts (1,3): winner INACTIVE. Even shifts (2,4): winner ACTIVE. */
-  private boolean computeHubActive(double matchTime, boolean wonAuto) {
-    if (matchTime > SHIFT_1_START || matchTime <= ENDGAME_START) {
-      return true; // transition or endgame: both alliances active
+    public boolean isHubActive() {
+        return ScoringReadiness.getInstance().isHubActive();
     }
-    int shift = computeShiftNumber(matchTime);
-    boolean oddShift = (shift % 2 == 1);
-    return wonAuto ? !oddShift : oddShift;
-  }
 
-  private int computeShiftNumber(double matchTime) {
-    if (matchTime > SHIFT_1_START) return 0;
-    if (matchTime > SHIFT_2_START) return 1;
-    if (matchTime > SHIFT_3_START) return 2;
-    if (matchTime > SHIFT_4_START) return 3;
-    if (matchTime > ENDGAME_START) return 4;
-    return 0; // endgame
-  }
-
-  private double computeTimeToNextShift(double matchTime) {
-    if (matchTime > SHIFT_1_START) return matchTime - SHIFT_1_START;
-    if (matchTime > SHIFT_2_START) return matchTime - SHIFT_2_START;
-    if (matchTime > SHIFT_3_START) return matchTime - SHIFT_3_START;
-    if (matchTime > SHIFT_4_START) return matchTime - SHIFT_4_START;
-    if (matchTime > ENDGAME_START) return matchTime - ENDGAME_START;
-    return matchTime; // time remaining in match
-  }
-
-  /**
-   * Parse FMS game-specific message for auto winner. FMS sends 'R' or 'B'. Compare against our
-   * alliance to determine if we won. Falls back to dashboard toggle for practice (no FMS).
-   */
-  private boolean parseWonAuto() {
-    String message = DriverStation.getGameSpecificMessage();
-    if (message != null && !message.isEmpty()) {
-      char winner = message.charAt(0);
-      var ourAlliance = DriverStation.getAlliance();
-      if (ourAlliance.isPresent()) {
-        wonAutoFromFMS = true;
-        boolean redWon = (winner == 'R');
-        boolean weAreRed = (ourAlliance.get() == DriverStation.Alliance.Red);
-        return redWon == weAreRed;
-      }
+    public boolean isFireAuthorized() {
+        return ScoringReadiness.getInstance().isFireAuthorized();
     }
-    // No FMS or no alliance data: fall back to dashboard for practice
-    wonAutoFromFMS = false;
-    return SmartDashboard.getBoolean("WonAuto", false);
-  }
 
-  @Override
-  public void log() {
-    SafeLog.put("Scoring/Available", scoringAvailable);
-    SafeLog.put("Scoring/ReadyToShoot", readyToShoot);
-    SafeLog.put("Scoring/Conditions/ShooterReady", shooterReady);
-    SafeLog.put("Scoring/Conditions/IndexerClear", indexerClear);
-    SafeLog.put("Scoring/Conditions/VisionLocked", visionLocked);
-    SafeLog.put("Scoring/Conditions/HasBall", hasBall);
-    SafeLog.put("Scoring/Conditions/HubActive", hubActive);
-    SafeLog.put("Scoring/TimeSinceReadyMs", timeSinceReadyMs);
-    SafeLog.put("Scoring/HubShiftNumber", hubShiftNumber);
-    SafeLog.put("Scoring/TimeToNextShiftSec", timeToNextShiftSec);
-    SafeLog.put("Scoring/Conditions/WonAuto", wonAuto);
-    SafeLog.put("Scoring/Conditions/WonAutoFromFMS", wonAutoFromFMS);
+    public double getTimeToNextShiftSec() {
+        return ScoringReadiness.getInstance().getTimeToNextShiftSec();
+    }
 
-    SafeLog.put("Scoring/Previous/ShooterReady", previousShooterReady);
-    SafeLog.put("Scoring/Previous/IndexerClear", previousIndexerClear);
-    SafeLog.put("Scoring/Previous/VisionLocked", previousVisionLocked);
-    SafeLog.put("Scoring/Previous/HubActive", previousHubActive);
-    SafeLog.put("Scoring/Previous/ReadyToShoot", previousReadyToShoot);
-    SafeLog.put("Scoring/ReadyStateChanged", readyStateChanged);
-    SafeLog.put("Scoring/ReadyLostReason", readyLostReason);
-  }
+    public double getBallisticWindowRemainingSec() {
+        return ScoringReadiness.getInstance().getBallisticWindowRemainingSec();
+    }
 
-  @Override
-  public String getName() {
-    return "Scoring";
-  }
+    public boolean isReadyStateChanged() {
+        return ScoringReadiness.getInstance().isReadyStateChanged();
+    }
 
-  public boolean isReadyToShoot() {
-    return readyToShoot;
-  }
+    public String getReadyLostReason() {
+        return ScoringReadiness.getInstance().getReadyLostReason();
+    }
 
-  public int getHubShiftNumber() {
-    return hubShiftNumber;
-  }
+    public String getFireAuthLevel() {
+        return ScoringReadiness.getInstance().getFireAuthLevel();
+    }
 
-  public boolean isHubActive() {
-    return hubActive;
-  }
-
-  public double getTimeToNextShiftSec() {
-    return timeToNextShiftSec;
-  }
-
-  public boolean isReadyStateChanged() {
-    return readyStateChanged;
-  }
-
-  public String getReadyLostReason() {
-    return readyLostReason;
-  }
-
-  public boolean isWonAuto() {
-    return wonAuto;
-  }
+    public boolean isWonAuto() {
+        return ScoringReadiness.getInstance().isWonAuto();
+    }
 }

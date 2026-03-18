@@ -2,97 +2,161 @@ package frc.robot.telemetry;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import edu.wpi.first.hal.HAL;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import java.lang.reflect.Method;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
+import edu.wpi.first.wpilibj.simulation.SimHooks;
+
+import frc.robot.util.FireAuthorization;
+import frc.robot.util.HubShiftEngine;
+import frc.robot.util.ScoringReadiness;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class ScoringHubTimingTest extends TelemetryTestBase {
+/**
+ * Tests that ScoringReadiness correctly reads hub shift state from HubShiftEngine. The detailed
+ * phase/boundary logic is covered in HubShiftEngineTest; these tests verify the delegation works.
+ */
+class ScoringHubTimingTest {
 
-  private ScoringTelemetry scoring;
+    @BeforeEach
+    void setUp() throws Exception {
+        HAL.initialize(500, 0);
+        NetworkTableInstance.getDefault().startLocal();
+        // resetInstance() is package-private, use reflection from this package
+        java.lang.reflect.Field hubField = HubShiftEngine.class.getDeclaredField("instance");
+        hubField.setAccessible(true);
+        hubField.set(null, null);
+        java.lang.reflect.Field faField = FireAuthorization.class.getDeclaredField("instance");
+        faField.setAccessible(true);
+        faField.set(null, null);
+        ScoringReadiness.getInstance().reset();
+        SimHooks.pauseTiming();
+    }
 
-  private Method computeShiftNumber;
-  private Method computeHubActive;
-  private Method computeTimeToNextShift;
+    @AfterEach
+    void tearDown() {
+        SimHooks.resumeTiming();
+    }
 
-  @BeforeEach
-  void setUp() throws Exception {
-    NetworkTableInstance.getDefault().startLocal();
-    scoring = new ScoringTelemetry(null, null, null);
+    private void enterTeleop() {
+        DriverStationSim.setAutonomous(false);
+        DriverStationSim.setEnabled(true);
+        DriverStationSim.notifyNewData();
+    }
 
-    computeShiftNumber =
-        ScoringTelemetry.class.getDeclaredMethod("computeShiftNumber", double.class);
-    computeShiftNumber.setAccessible(true);
+    private void advanceAndUpdate(double seconds) {
+        HubShiftEngine engine = HubShiftEngine.getInstance();
+        SimHooks.stepTiming(seconds);
+        engine.update(0);
+        ScoringReadiness.getInstance().update();
+    }
 
-    computeHubActive =
-        ScoringTelemetry.class.getDeclaredMethod("computeHubActive", double.class, boolean.class);
-    computeHubActive.setAccessible(true);
+    @Test
+    void testShiftNumber1() {
+        HubShiftEngine.getInstance().setWonAutoOverride(false);
+        enterTeleop();
+        HubShiftEngine.getInstance().initializeTeleop();
 
-    computeTimeToNextShift =
-        ScoringTelemetry.class.getDeclaredMethod("computeTimeToNextShift", double.class);
-    computeTimeToNextShift.setAccessible(true);
-  }
+        advanceAndUpdate(15.0); // SHIFT1: 10-35s
 
-  @Test
-  void testShiftNumber1() throws Exception {
-    assertEquals(1, computeShiftNumber.invoke(scoring, 130.0), "matchTime=130 = shift 1");
-    assertEquals(1, computeShiftNumber.invoke(scoring, 106.0), "matchTime=106 = shift 1");
-  }
+        assertEquals(1, ScoringReadiness.getInstance().getHubShiftNumber());
+    }
 
-  @Test
-  void testShiftNumber4() throws Exception {
-    assertEquals(4, computeShiftNumber.invoke(scoring, 55.0), "matchTime=55 = shift 4");
-    assertEquals(4, computeShiftNumber.invoke(scoring, 31.0), "matchTime=31 = shift 4");
-  }
+    @Test
+    void testShiftNumber4() {
+        HubShiftEngine.getInstance().setWonAutoOverride(false);
+        enterTeleop();
+        HubShiftEngine.getInstance().initializeTeleop();
 
-  @Test
-  void testShiftNumberEndgame() throws Exception {
-    assertEquals(0, computeShiftNumber.invoke(scoring, 30.0), "matchTime=30 = endgame");
-    assertEquals(0, computeShiftNumber.invoke(scoring, 0.0), "matchTime=0 = endgame");
-  }
+        advanceAndUpdate(97.0); // SHIFT4: 85-110s
 
-  @Test
-  void testTransitionAlwaysActive() throws Exception {
-    assertTrue((boolean) computeHubActive.invoke(scoring, 133.0, true));
-    assertTrue((boolean) computeHubActive.invoke(scoring, 133.0, false));
-  }
+        assertEquals(4, ScoringReadiness.getInstance().getHubShiftNumber());
+    }
 
-  @Test
-  void testEndgameAlwaysActive() throws Exception {
-    assertTrue((boolean) computeHubActive.invoke(scoring, 30.0, true));
-    assertTrue((boolean) computeHubActive.invoke(scoring, 0.0, false));
-  }
+    @Test
+    void testShiftNumberEndgame() {
+        HubShiftEngine.getInstance().setWonAutoOverride(false);
+        enterTeleop();
+        HubShiftEngine.getInstance().initializeTeleop();
 
-  @Test
-  void testShift1WonAuto() throws Exception {
-    assertFalse(
-        (boolean) computeHubActive.invoke(scoring, 120.0, true),
-        "Winner should be INACTIVE during odd shift 1");
-  }
+        advanceAndUpdate(120.0); // ENDGAME: 110-140s
 
-  @Test
-  void testShift1LostAuto() throws Exception {
-    assertTrue(
-        (boolean) computeHubActive.invoke(scoring, 120.0, false),
-        "Loser should be ACTIVE during odd shift 1");
-  }
+        assertEquals(0, ScoringReadiness.getInstance().getHubShiftNumber());
+    }
 
-  @Test
-  void testShift2WonAuto() throws Exception {
-    assertTrue(
-        (boolean) computeHubActive.invoke(scoring, 100.0, true),
-        "Winner should be ACTIVE during even shift 2");
-  }
+    @Test
+    void testTransitionAlwaysActive() {
+        HubShiftEngine.getInstance().setWonAutoOverride(true);
+        enterTeleop();
+        HubShiftEngine.getInstance().initializeTeleop();
 
-  @Test
-  void testTimeToNextShift() throws Exception {
-    double timeToShift = (double) computeTimeToNextShift.invoke(scoring, 133.0);
-    assertEquals(3.0, timeToShift, 0.01);
+        advanceAndUpdate(5.0); // TRANSITION: 0-10s
 
-    timeToShift = (double) computeTimeToNextShift.invoke(scoring, 115.0);
-    assertEquals(10.0, timeToShift, 0.01);
+        assertTrue(ScoringReadiness.getInstance().isHubActive());
+    }
 
-    timeToShift = (double) computeTimeToNextShift.invoke(scoring, 20.0);
-    assertEquals(20.0, timeToShift, 0.01);
-  }
+    @Test
+    void testEndgameAlwaysActive() {
+        HubShiftEngine.getInstance().setWonAutoOverride(true);
+        enterTeleop();
+        HubShiftEngine.getInstance().initializeTeleop();
+
+        advanceAndUpdate(125.0);
+
+        assertTrue(ScoringReadiness.getInstance().isHubActive());
+    }
+
+    @Test
+    void testShift1WonAuto() {
+        HubShiftEngine.getInstance().setWonAutoOverride(true);
+        enterTeleop();
+        HubShiftEngine.getInstance().initializeTeleop();
+
+        advanceAndUpdate(15.0);
+
+        assertFalse(
+                ScoringReadiness.getInstance().isHubActive(),
+                "Winner should be INACTIVE during odd shift 1");
+    }
+
+    @Test
+    void testShift1LostAuto() {
+        HubShiftEngine.getInstance().setWonAutoOverride(false);
+        enterTeleop();
+        HubShiftEngine.getInstance().initializeTeleop();
+
+        advanceAndUpdate(15.0);
+
+        assertTrue(
+                ScoringReadiness.getInstance().isHubActive(),
+                "Loser should be ACTIVE during odd shift 1");
+    }
+
+    @Test
+    void testShift2WonAuto() {
+        HubShiftEngine.getInstance().setWonAutoOverride(true);
+        enterTeleop();
+        HubShiftEngine.getInstance().initializeTeleop();
+
+        advanceAndUpdate(40.0);
+
+        assertTrue(
+                ScoringReadiness.getInstance().isHubActive(),
+                "Winner should be ACTIVE during even shift 2");
+    }
+
+    @Test
+    void testTimeToNextShift() {
+        HubShiftEngine.getInstance().setWonAutoOverride(true);
+        enterTeleop();
+        HubShiftEngine.getInstance().initializeTeleop();
+
+        advanceAndUpdate(5.0); // TRANSITION at 5s, 5s remaining
+
+        double time = ScoringReadiness.getInstance().getTimeToNextShiftSec();
+        assertTrue(time > 0, "Should have positive time remaining");
+    }
 }
