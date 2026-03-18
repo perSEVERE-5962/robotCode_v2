@@ -44,6 +44,7 @@ public class Actuator extends SubsystemBase {
     motorConfig.inverted(inverted);
     motorConfig.idleMode(coast ? SparkMaxConfig.IdleMode.kCoast : SparkMaxConfig.IdleMode.kBrake);
     motorConfig.smartCurrentLimit(kStallLimit);
+    motorConfig.voltageCompensation(12.0);
 
     FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
     if (useThroughBoreEncoder) {
