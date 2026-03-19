@@ -125,15 +125,14 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
 
   @Override
   public void update() {
-    try {
-      double currentTimestamp = Timer.getFPGATimestamp();
-      if (lastLoopTimestamp > 0) {
-        loopTimeMs = (currentTimestamp - lastLoopTimestamp) * 1000.0;
-        if (loopTimeMs > LOOP_OVERRUN_THRESHOLD_MS) {
-          loopOverrunCount++;
-        }
+    double currentTimestamp = Timer.getFPGATimestamp();
+    if (lastLoopTimestamp > 0) {
+      loopTimeMs = (currentTimestamp - lastLoopTimestamp) * 1000.0;
+      if (loopTimeMs > LOOP_OVERRUN_THRESHOLD_MS) {
+        loopOverrunCount++;
       }
-      lastLoopTimestamp = currentTimestamp;
+    }
+    lastLoopTimestamp = currentTimestamp;
 
       batteryVoltage = RobotController.getBatteryVoltage();
       sharedBatteryVoltage = batteryVoltage;
@@ -147,23 +146,24 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
           voltageSlope =
               VOLTAGE_SLOPE_EMA_ALPHA * rawSlope + (1.0 - VOLTAGE_SLOPE_EMA_ALPHA) * voltageSlope;
         }
-        lastVoltage = batteryVoltage;
-        lastVoltageTimestamp = now;
+      }
+      lastVoltage = batteryVoltage;
+      lastVoltageTimestamp = now;
 
-        // Level 0: voltage > 10V OR slope > -1 V/s
-        // Level 1: voltage < 10V AND slope < -1 V/s
-        // Level 2: voltage < 9V AND slope < -1.5 V/s
-        // Level 3: voltage < 8V AND slope < -2 V/s
-        if (batteryVoltage < 8.0 && voltageSlope < -2.0) {
-          brownoutRiskLevel = 3;
-        } else if (batteryVoltage < 9.0 && voltageSlope < -1.5) {
-          brownoutRiskLevel = 2;
-        } else if (batteryVoltage < 10.0 && voltageSlope < -1.0) {
-          brownoutRiskLevel = 1;
-        } else {
-          brownoutRiskLevel = 0;
-        }
-        brownoutRisk = (brownoutRiskLevel >= 2);
+      // Level 0: voltage > 10V OR slope > -1 V/s
+      // Level 1: voltage < 10V AND slope < -1 V/s
+      // Level 2: voltage < 9V AND slope < -1.5 V/s
+      // Level 3: voltage < 8V AND slope < -2 V/s
+      if (batteryVoltage < 8.0 && voltageSlope < -2.0) {
+        brownoutRiskLevel = 3;
+      } else if (batteryVoltage < 9.0 && voltageSlope < -1.5) {
+        brownoutRiskLevel = 2;
+      } else if (batteryVoltage < 10.0 && voltageSlope < -1.0) {
+        brownoutRiskLevel = 1;
+      } else {
+        brownoutRiskLevel = 0;
+      }
+      brownoutRisk = (brownoutRiskLevel >= 2);
 
       cycleCounter++;
       if (cycleCounter >= CAN_STATUS_DECIMATION) {
@@ -178,21 +178,21 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
         sharedCanTxFull = canStatus.txFullCount;
       }
 
-        rioCPUTemp = RobotController.getCPUTemp();
-        rio3V3Rail = RobotController.getVoltage3V3();
-        rio5VRail = RobotController.getVoltage5V();
-        rio6VRail = RobotController.getVoltage6V();
-        brownedOut = RobotController.isBrownedOut();
-        rslState = RobotController.getRSLState();
+      rioCPUTemp = RobotController.getCPUTemp();
+      rio3V3Rail = RobotController.getVoltage3V3();
+      rio5VRail = RobotController.getVoltage5V();
+      rio6VRail = RobotController.getVoltage6V();
+      brownedOut = RobotController.isBrownedOut();
+      rslState = RobotController.getRSLState();
 
-        brownoutVoltage = RobotController.getBrownoutVoltage();
-        inputVoltage = RobotController.getInputVoltage();
+      brownoutVoltage = RobotController.getBrownoutVoltage();
+      inputVoltage = RobotController.getInputVoltage();
 
-        if (pdh != null) {
-          totalCurrentAmps = pdh.getTotalCurrent();
-          if (totalCurrentAmps > peakCurrentAmps) {
-            peakCurrentAmps = totalCurrentAmps;
-          }
+      if (pdh != null) {
+        totalCurrentAmps = pdh.getTotalCurrent();
+        if (totalCurrentAmps > peakCurrentAmps) {
+          peakCurrentAmps = totalCurrentAmps;
+        }
 
         pdhChannelCycleCounter++;
         if (pdhChannelCycleCounter >= PDH_CHANNEL_DECIMATION) {
@@ -202,42 +202,39 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
           double maxCurrent = 0;
           int maxChannel = -1;
 
-            for (int i = 0; i < count; i++) {
-              channelCurrents[i] = raw[i];
-              if (raw[i] > channelPeakCurrents[i]) {
-                channelPeakCurrents[i] = raw[i];
-              }
-              if (raw[i] > maxCurrent) {
-                maxCurrent = raw[i];
-                maxChannel = i;
-              }
+          for (int i = 0; i < count; i++) {
+            channelCurrents[i] = raw[i];
+            if (raw[i] > channelPeakCurrents[i]) {
+              channelPeakCurrents[i] = raw[i];
             }
-
-            if (maxCurrent >= PDHChannelMap.CHANNEL_OVERCURRENT_AMPS && maxChannel >= 0) {
-              overcurrentAlert = true;
-              overcurrentChannel = PDHChannelMap.getLabel(maxChannel);
-              overcurrentAmps = maxCurrent;
-            } else {
-              overcurrentAlert = false;
-              overcurrentChannel = "none";
-              overcurrentAmps = 0;
+            if (raw[i] > maxCurrent) {
+              maxCurrent = raw[i];
+              maxChannel = i;
             }
           }
+
+          if (maxCurrent >= PDHChannelMap.CHANNEL_OVERCURRENT_AMPS && maxChannel >= 0) {
+            overcurrentAlert = true;
+            overcurrentChannel = PDHChannelMap.getLabel(maxChannel);
+            overcurrentAmps = maxCurrent;
+          } else {
+            overcurrentAlert = false;
+            overcurrentChannel = "none";
+            overcurrentAmps = 0;
+          }
         }
-      } catch (Throwable t) {
-        batteryVoltage = 0;
-        canUtilization = 0;
-        rioCPUTemp = 0;
-        brownedOut = false;
-        brownoutVoltage = 0;
-        inputVoltage = 0;
-        voltageSlope = 0;
-        brownoutRiskLevel = 0;
-        brownoutRisk = false;
-        totalCurrentAmps = 0;
       }
-    } catch (Exception e) {
-      System.out.println(e);
+    } catch (Throwable t) {
+      batteryVoltage = 0;
+      canUtilization = 0;
+      rioCPUTemp = 0;
+      brownedOut = false;
+      brownoutVoltage = 0;
+      inputVoltage = 0;
+      voltageSlope = 0;
+      brownoutRiskLevel = 0;
+      brownoutRisk = false;
+      totalCurrentAmps = 0;
     }
   }
 
