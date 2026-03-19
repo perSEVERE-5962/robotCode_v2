@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Centralized alert management for robot health monitoring. Monitors battery, motor temps, CAN bus,
- * and loop timing. Elastic notifications are debounced to prevent spam.
+ * Monitors battery, motor temps, CAN bus, and loop timing. Elastic notifications are debounced to
+ * prevent spam.
  */
 public class AlertManager {
     private static final AlertManager instance = new AlertManager();
