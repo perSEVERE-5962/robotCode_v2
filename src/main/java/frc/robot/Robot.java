@@ -94,7 +94,7 @@ public class Robot extends LoggedRobot {
             Logger.recordMetadata("GitDirty", BuildConstants.DIRTY == 1 ? "true" : "false");
 
             if (isReal()) {
-                // USB logging - optional, fail gracefully if USB not mounted
+                // USB logging, skip if USB not mounted
                 try {
                     Logger.addDataReceiver(new WPILOGWriter());
                 } catch (Throwable t) {

@@ -115,7 +115,7 @@ public class SimFuelManager {
                 });
     }
 
-    /** Call each simulationPeriodic(). Handles shot detection, physics step, and logging. */
+    /** Call each simulationPeriodic(). Runs shot detection, physics step, and logging. */
     public void update(boolean shotSignal, Pose2d robotPose, double robotYaw, double shooterRPM) {
         try {
             boolean isEnabled = enabled.get() >= 0.5;

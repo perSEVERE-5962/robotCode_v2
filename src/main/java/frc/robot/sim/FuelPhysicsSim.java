@@ -37,7 +37,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 /**
- * Full-field ball physics simulation for FRC 2026 REBUILT. Handles drag, Magnus lift, friction,
+ * Full-field ball physics simulation for FRC 2026 REBUILT: drag, Magnus lift, friction,
  * ball-ball collisions, wall bounces, hub scoring, sleeping, CCD, and robot interaction. Single
  * file, only depends on WPILib (wpimath + ntcore). Drop it into your sim and watch balls fly.
  *
