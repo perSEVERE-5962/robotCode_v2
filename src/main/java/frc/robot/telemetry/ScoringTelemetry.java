@@ -46,7 +46,7 @@ public class ScoringTelemetry implements SubsystemTelemetry {
                     true, // stub: assume ball present until hopper sensor is wired
                     confidence);
 
-            // Stub: heading error = 0 (pass-through) until ShotCalculator provides aim direction
+            // Stub: heading error = 0 until ShotCalculator has aim direction wired in
             double headingError = 0;
             boolean inExclusionZone = false;
             try {
