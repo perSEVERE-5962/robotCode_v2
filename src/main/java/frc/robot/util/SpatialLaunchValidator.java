@@ -9,9 +9,9 @@ import frc.robot.Constants.SpatialLaunchConstants;
 import frc.robot.telemetry.SafeLog;
 
 /**
- * Checks whether the robot is in a valid field position to launch a ball. Three gate categories:
- * path obstruction (pillars), minimum distance, and trench ceiling exclusion zones. Also provides
- * velocity-predictive trench avoidance that expands exclusion zones proportional to closing speed.
+ * Field position validation for launching. Three gate categories: path obstruction (pillars),
+ * minimum distance, and trench ceiling exclusion zones. Velocity-predictive trench avoidance
+ * expands exclusion zones proportional to closing speed.
  *
  * <p>Pure geometry, no mechanism dependency. Works for any launcher angle.
  */
