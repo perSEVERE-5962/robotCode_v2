@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.sim.SimDeviceManager;
 import frc.robot.sim.SimFuelManager;
 import frc.robot.sim.SimScenarioRunner;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.AlertManager;
@@ -428,7 +428,7 @@ public class Robot extends LoggedRobot {
                     0.66, 0.66, 0.25, swerve::getPose, swerve::getFieldVelocity);
             // wire intake zone so balls get picked up when intake is running
             try {
-                Intake intake = Intake.getInstance();
+                IntakeRoller intake = IntakeRoller.getInstance();
                 simFuelManager.addIntakeZone(0.10, 0.45, -0.20, 0.20, intake::isRunning);
             } catch (Throwable t) {
                 // intake not available, shots fire freely without ball tracking
