@@ -86,7 +86,6 @@ public class Robot extends LoggedRobot {
     /** Configure AdvantageKit logging. Failures are swallowed so the robot keeps running. */
     private void configureLogging() {
         try {
-            // Record build metadata for traceability in logs
             Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
             Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
             Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
@@ -170,17 +169,11 @@ public class Robot extends LoggedRobot {
         }
     }
 
-    /**
-     * This function is run when the robot is first started up and should be used for any
-     * initialization code.
-     */
     @Override
     public void robotInit() {
         installExceptionHandler();
         configureLogging();
 
-        // Instantiate our RobotContainer. This will perform all our button bindings,
-        // and put our autonomous chooser on the dashboard.
         m_robotContainer = RobotContainer.getInstance();
 
         // Create a timer to disable motor brake a few seconds after disable. This will
@@ -199,13 +192,6 @@ public class Robot extends LoggedRobot {
         }
     }
 
-    /**
-     * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
-     * that you want ran during disabled, autonomous, teleoperated and test.
-     *
-     * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-     * SmartDashboard integrated updating.
-     */
     @Override
     public void robotPeriodic() {
         safeCall("Tracer", () -> LoggedTracer.reset());
@@ -255,7 +241,6 @@ public class Robot extends LoggedRobot {
         safeCall("Tracer", () -> LoggedTracer.record("AlertsMs"));
     }
 
-    /** This function is called once each time the robot enters Disabled mode. */
     @Override
     public void disabledInit() {
         try {
@@ -285,7 +270,6 @@ public class Robot extends LoggedRobot {
             safeLog("Health/CrashBarrier/PostMatchSummary", true);
         }
 
-        // Reset diagnostics flag so they run once in disabledPeriodic
         hasRunDiagnostics = false;
     }
 
@@ -334,9 +318,6 @@ public class Robot extends LoggedRobot {
         }
     }
 
-    /**
-     * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
-     */
     @Override
     public void autonomousInit() {
         // Mode init is called by IterativeRobotBase.loopFunc() with NO try-catch.
@@ -363,7 +344,6 @@ public class Robot extends LoggedRobot {
         }
     }
 
-    /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {}
 
@@ -380,7 +360,6 @@ public class Robot extends LoggedRobot {
         }
     }
 
-    /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {}
 
@@ -394,7 +373,6 @@ public class Robot extends LoggedRobot {
         }
     }
 
-    /** This function is called periodically during test mode. */
     @Override
     public void testPeriodic() {
         // Full diagnostic trigger (actuator tests) - only works in test mode
