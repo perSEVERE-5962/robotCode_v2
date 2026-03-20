@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 8.21846590909091,
-        "y": 3.375363636363636
+        "y": 3.4062840909090912
       },
       "prevControl": null,
       "nextControl": {
         "x": 7.466068181818181,
-        "y": 3.437204545454546
+        "y": 3.468125000000001
       },
       "isLocked": false,
       "linkedName": "endintaking"
@@ -31,7 +31,14 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "DeployAndIntakeEvent",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 1.67,
