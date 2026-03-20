@@ -9,11 +9,8 @@ import frc.robot.Constants.SpatialLaunchConstants;
 import frc.robot.telemetry.SafeLog;
 
 /**
- * Field position validation for launching. Three gate categories: path obstruction (pillars),
- * minimum distance, and trench ceiling exclusion zones. Velocity-predictive trench avoidance
- * expands exclusion zones proportional to closing speed.
- *
- * <p>Pure geometry, no mechanism dependency. Works for any launcher angle.
+ * Checks if the robot's field position is safe to shoot from: pillar obstruction,
+ * minimum distance, and trench ceiling exclusion zones (velocity-expanded).
  */
 public final class SpatialLaunchValidator {
 
@@ -63,7 +60,7 @@ public final class SpatialLaunchValidator {
                 pathClear, distanceValid, outsideExclusion, dist, nearestTrench);
     }
 
-    /** True if the robot is inside any trench ceiling zone. Shooting from here hits the ceiling. */
+    /** Shooting from here hits the ceiling. */
     public static boolean isInExclusionZone(double robotX, double robotY) {
         for (double[] zone : SpatialLaunchConstants.TRENCH_EXCLUSION_ZONES) {
             if (robotX >= zone[0] && robotX <= zone[2] && robotY >= zone[1] && robotY <= zone[3]) {
@@ -73,7 +70,7 @@ public final class SpatialLaunchValidator {
         return false;
     }
 
-    /** Distance to the nearest trench zone edge. Returns 0 if inside a zone. */
+    /** Returns 0 if inside a zone. */
     public static double getNearestTrenchDistM(double robotX, double robotY) {
         double minDist = Double.MAX_VALUE;
         for (double[] zone : SpatialLaunchConstants.TRENCH_EXCLUSION_ZONES) {
@@ -96,7 +93,7 @@ public final class SpatialLaunchValidator {
         return closingSpeedMps * retractionTimeSec.get();
     }
 
-    /** True if robot is in the velocity-expanded exclusion zone (should warn driver). */
+    /** Includes velocity-based buffer so the driver gets warned before entering. */
     public static boolean isInExpandedExclusionZone(
             double robotX, double robotY, double velocityX, double velocityY) {
         if (isInExclusionZone(robotX, robotY)) {
@@ -129,7 +126,7 @@ public final class SpatialLaunchValidator {
         SafeLog.put("Scoring/ExclusionZoneWarning", exclusionWarning);
     }
 
-    /** 2D ray-cast from robot to hub. Returns true if no trench pillar blocks the path. */
+    /** 2D ray-cast via slab method, checks trench pillars between robot and hub. */
     static boolean isPathClear(Translation2d robot, Translation2d hub) {
         double margin = SpatialLaunchConstants.BALL_RADIUS_M;
 

@@ -2,6 +2,7 @@ package frc.robot.telemetry;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import edu.wpi.first.wpilibj.simulation.SimHooks;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 
 import frc.robot.util.ScoringReadiness;
@@ -136,11 +137,7 @@ class ScoringTelemetryTest extends TelemetryTestBase {
 
         // run enough cycles to expire the debounce window
         for (int i = 0; i < 50; i++) {
-            try {
-                Thread.sleep(20);
-            } catch (InterruptedException e) {
-                /* ok */
-            }
+            SimHooks.stepTiming(0.02);
             telemetry.update();
         }
 
@@ -163,14 +160,12 @@ class ScoringTelemetryTest extends TelemetryTestBase {
         setDependencyField(shooterTelemetry, "atSpeed", false);
         setDependencyField(visionTelemetry, "lockedOnTarget", false);
 
-        for (int i = 0; i < 50; i++) {
-            try {
-                Thread.sleep(20);
-            } catch (InterruptedException e) {
-                /* ok */
-            }
-            telemetry.update();
-        }
+        // first update records falseSince timestamp in both debouncers
+        telemetry.update();
+        // step past both debounce windows (shooter 0.08s, vision 0.10s)
+        SimHooks.stepTiming(0.15);
+        // this update sees both expired, captures both in the reason
+        telemetry.update();
 
         assertFalse(telemetry.isReadyToShoot());
         String reason = telemetry.getReadyLostReason();
@@ -191,11 +186,7 @@ class ScoringTelemetryTest extends TelemetryTestBase {
 
         setDependencyField(visionTelemetry, "lockedOnTarget", false);
         for (int i = 0; i < 50; i++) {
-            try {
-                Thread.sleep(20);
-            } catch (InterruptedException e) {
-                /* ok */
-            }
+            SimHooks.stepTiming(0.02);
             telemetry.update();
         }
         assertFalse(telemetry.isReadyToShoot());

@@ -4,9 +4,8 @@ import frc.robot.util.ScoringReadiness;
 import frc.robot.util.SpatialLaunchValidator;
 
 /**
- * Scoring readiness telemetry: feeds raw inputs into ScoringReadiness, triggers the composite
- * computation, then logs all values. The update-then-log sequence makes sure logged ReadyToShoot
- * reflects the current cycle's inputs, not the previous cycle's.
+ * Wires subsystem telemetry into ScoringReadiness and logs the composite.
+ * update() must run before log() so logged values reflect the current cycle.
  */
 public class ScoringTelemetry implements SubsystemTelemetry {
     private final ShooterTelemetry shooterTelemetry;

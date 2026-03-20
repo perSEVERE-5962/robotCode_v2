@@ -8,10 +8,8 @@ import frc.robot.Constants.HubTimingConstants;
 import frc.robot.telemetry.SafeLog;
 
 /**
- * Hub shift state engine with dynamic TOF-compensated boundaries. Tracks match timing, auto-winner
- * detection with confidence levels, and provides both official and shifted shift info.
- *
- * <p>Call initializeTeleop() at teleop start. Call update() every robotPeriodic().
+ * Hub shift timing with TOF-compensated boundaries. Tracks which alliance owns the hub
+ * across 4 shifts + endgame, with auto-winner detection and copilot override.
  */
 public class HubShiftEngine {
     private static HubShiftEngine instance;
@@ -114,7 +112,7 @@ public class HubShiftEngine {
         return instance;
     }
 
-    /** Call at teleop start (from Robot.teleopInit()). */
+    /** Call from Robot.teleopInit(). */
     public void initializeTeleop() {
         teleopTimer.restart();
         teleopStarted = true;

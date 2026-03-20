@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 import frc.robot.util.FireAuthorization;
 
-/** Match-level stats: shots by phase, time allocation, efficiency. */
+/** Tracks shots per phase, time allocation, and hub-shift scoring efficiency. */
 public class MatchStatsTelemetry implements SubsystemTelemetry {
     private final ShooterTelemetry shooterTelemetry;
     private final VisionTelemetry visionTelemetry;
@@ -40,7 +40,6 @@ public class MatchStatsTelemetry implements SubsystemTelemetry {
     private double activeHubTimeMs = 0;
     private double firingDuringActiveMs = 0;
 
-    // fire authorization analytics
     private int shotsWasted = 0;
     private int marginalShots = 0;
     private int preSpinEvents = 0;

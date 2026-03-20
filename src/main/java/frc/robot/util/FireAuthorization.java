@@ -6,9 +6,8 @@ import frc.robot.util.HubShiftEngine.ScheduleConfidence;
 import frc.robot.util.HubShiftEngine.ShiftInfo;
 
 /**
- * Real-time fire authorization engine. Every cycle it checks whether a shot fired now would land
- * while the hub is still counting, and produces a 5-level decision based on margin between the
- * projectile's predicted landing time and the hub's scoring window.
+ * 5-level fire authorization based on whether a shot would land while the hub is counting.
+ * Compares projectile landing time against the hub's scoring window each cycle.
  */
 public class FireAuthorization {
     private static FireAuthorization instance;
@@ -47,14 +46,7 @@ public class FireAuthorization {
         return instance;
     }
 
-    /**
-     * Compute fire authorization. Call every robotPeriodic() after HubShiftEngine.update().
-     *
-     * @param shiftedInfo the TOF-compensated shift info from HubShiftEngine
-     * @param currentTOF current time-of-flight from ShotCalculator (seconds), 0 if unavailable
-     * @param confidence schedule confidence from HubShiftEngine
-     * @param hubTrackingEnabled whether hub tracking is active
-     */
+    /** Call every robotPeriodic() after HubShiftEngine.update(). */
     public void update(
             ShiftInfo shiftedInfo,
             double currentTOF,

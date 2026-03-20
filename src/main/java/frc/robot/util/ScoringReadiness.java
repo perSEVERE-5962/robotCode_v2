@@ -6,17 +6,11 @@ import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.SpatialLaunchConstants;
 
 /**
- * Scoring readiness composite with per-component debounce and heading hysteresis. Gates
- * ReadyToShoot on: shooterReady, indexerClear, visionLocked, hasBall, fireAuthorized,
- * shotConfident, headingOnTarget, !inExclusionZone. Currently shotConfident, hasBall, and
- * headingOnTarget pass through as stubs until their data sources (ShotCalculator, hopper sensor)
- * are wired.
+ * 8-condition ReadyToShoot composite with per-component debounce and heading hysteresis.
  *
- * <p>Hub state delegates to HubShiftEngine (single source of truth for override, FMS, confidence).
- *
- * <p>Each flickery condition (shooter, indexer, vision, confidence) gets its own falling-edge
- * debounce so a brief dip on one doesn't reset the hold window for another. hasBall and
- * fireAuthorized respond instantly because you never want to fire without a ball or authorization.
+ * <p>Each flickery condition gets its own falling-edge debounce so a brief dip on one doesn't
+ * reset the hold window for another. hasBall and fireAuthorized respond instantly because you
+ * never want to fire without a ball or authorization.
  */
 public class ScoringReadiness {
     private static ScoringReadiness instance;
@@ -30,7 +24,6 @@ public class ScoringReadiness {
     // heading oscillates near the tolerance edge.
     private static final double HEADING_HYSTERESIS_FACTOR = 4.0;
 
-    // inputs (set each cycle via setInputs())
     private boolean shooterReady = false;
     private boolean indexerClear = true;
     private boolean visionLocked = false;
@@ -41,7 +34,6 @@ public class ScoringReadiness {
     private boolean stickyHeadingOnTarget = false;
     private boolean inExclusionZone = false;
 
-    // per-component falling-edge debouncers
     private final FallingDebounce shooterDebounce =
             new FallingDebounce(DeviceHealthConstants.SHOOTER_READY_DEBOUNCE_SEC);
     private final FallingDebounce indexerDebounce =
@@ -80,10 +72,7 @@ public class ScoringReadiness {
 
     private ScoringReadiness() {}
 
-    /**
-     * Feed the raw input signals each cycle. Called from ScoringTelemetry.update(), immediately
-     * followed by update() in the same method so the composite is fresh for logging.
-     */
+    /** Set raw inputs. Call from ScoringTelemetry.update() before update(). */
     public void setInputs(
             boolean shooterReady,
             boolean indexerClear,
@@ -97,12 +86,7 @@ public class ScoringReadiness {
         this.shotConfidence = shotConfidence;
     }
 
-    /**
-     * Feed heading error for the heading-on-target gate. Call after setInputs().
-     *
-     * @param headingErrorDeg absolute heading error in degrees
-     * @param inExclusionZone true if robot is in a trench exclusion zone
-     */
+    /** Set heading error and exclusion zone. Call after setInputs(). */
     public void setHeadingAndZone(double headingErrorDeg, boolean inExclusionZone) {
         this.headingErrorDeg = headingErrorDeg;
         this.inExclusionZone = inExclusionZone;
@@ -126,14 +110,12 @@ public class ScoringReadiness {
         }
     }
 
-    /** Run the ReadyToShoot computation. Call once per robotPeriodic(). */
+    /** Call once per robotPeriodic(). */
     public void update() {
         double now = Timer.getFPGATimestamp();
 
         previousReadyToShoot = readyToShoot;
 
-        // Hub state comes from HubShiftEngine (single source of truth for override, FMS,
-        // confidence)
         try {
             HubShiftEngine engine = HubShiftEngine.getInstance();
             HubShiftEngine.ShiftInfo info = engine.getOfficialInfo();
@@ -170,9 +152,7 @@ public class ScoringReadiness {
         debouncedVisionLocked = visionDebounce.calculate(visionLocked);
         debouncedShotConfident = confidenceDebounce.calculate(shotConfidence >= 50);
 
-        // 8-condition composite. fireAuthorized covers hubActive with TOF-compensated timing.
-        // headingOnTarget prevents firing while still rotating to the target.
-        // !inExclusionZone prevents firing from under trench ceilings.
+        // fireAuthorized covers hubActive with TOF-compensated timing
         readyToShoot =
                 debouncedShooterReady
                         && debouncedIndexerClear
@@ -267,7 +247,7 @@ public class ScoringReadiness {
         return wonAutoFromFMS;
     }
 
-    /** Reset all state. Use for testing and match transitions (teleopInit). */
+    /** Reset for testing and teleopInit. */
     public void reset() {
         shooterReady = false;
         indexerClear = true;
@@ -352,7 +332,7 @@ public class ScoringReadiness {
         return debouncedShotConfident;
     }
 
-    /** Delegates to FireAuthorization. Fail-open: permits firing if FireAuthorization throws. */
+    /** Fail-open: permits firing if FireAuthorization throws. */
     public boolean isFireAuthorized() {
         try {
             return FireAuthorization.getInstance().isAuthorized();
