@@ -5,13 +5,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.StallDetectionConstants;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.util.EventMarker;
 import frc.robot.util.JamProtection;
 
 /** Intake telemetry: jam detection, stall tracking. */
 public class IntakeTelemetry implements SubsystemTelemetry {
-  private Intake intake; // grabbed again in update() if not ready yet
+  private IntakeRoller intake; // grabbed again in update() if not ready yet
   private boolean subsystemAvailable = false;
 
   private static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
@@ -49,13 +49,13 @@ public class IntakeTelemetry implements SubsystemTelemetry {
   private boolean jamProtectionIntervening = false;
 
   public IntakeTelemetry() {
-    this.intake = Intake.getInstance();
+    this.intake = IntakeRoller.getInstance();
   }
 
   @Override
   public void update() {
     if (intake == null) {
-      intake = Intake.getInstance();
+      intake = IntakeRoller.getInstance();
     }
 
     if (intake == null) {

@@ -3,11 +3,11 @@ package frc.robot.telemetry;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DeviceHealthConstants;
-import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.IntakePivot;
 
 /** IntakeActuator telemetry: position and motor health. */
 public class IntakeActuatorTelemetry implements SubsystemTelemetry {
-  private IntakeActuator intakeActuator; // grabbed again in update() if not ready yet
+  private IntakePivot intakeActuator; // grabbed again in update() if not ready yet
   private boolean subsystemAvailable = false;
 
   private static final double POSITION_TOLERANCE = 0.05;
@@ -27,13 +27,13 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
   private String activeCommandName = "none";
 
   public IntakeActuatorTelemetry() {
-    this.intakeActuator = IntakeActuator.getInstance();
+    this.intakeActuator = IntakePivot.getInstance();
   }
 
   @Override
   public void update() {
     if (intakeActuator == null) {
-      intakeActuator = IntakeActuator.getInstance();
+      intakeActuator = IntakePivot.getInstance();
     }
 
     if (intakeActuator == null) {

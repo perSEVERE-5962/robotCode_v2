@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.BatteryThresholds;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.IntakeRoller;
+import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.telemetry.TelemetryManager;
 import java.util.ArrayList;
@@ -163,9 +163,9 @@ public class AlertManager {
   private void checkMotorTemps() {
     checkOneMotorTemp("Shooter", shooterTempAlert, () -> Shooter.getInstance().getTemperature());
     checkOneMotorTemp("Indexer", indexerTempAlert, () -> Indexer.getInstance().getTemperature());
-    checkOneMotorTemp("Intake", intakeTempAlert, () -> Intake.getInstance().getTemperature());
+    checkOneMotorTemp("Intake", intakeTempAlert, () -> IntakeRoller.getInstance().getTemperature());
     checkOneMotorTemp("IntakeActuator", intakeActuatorTempAlert,
-        () -> IntakeActuator.getInstance().getTemperature());
+        () -> IntakePivot.getInstance().getTemperature());
   }
 
   private void checkOneMotorTemp(String name, Alert alert, java.util.function.DoubleSupplier tempFn) {
