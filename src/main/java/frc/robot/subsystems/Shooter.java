@@ -19,7 +19,7 @@ public class Shooter extends Actuator {
 
   private SparkMax motor;
   private RelativeEncoder motorEncoder;
-  // private SparkMaxConfig motorConfig;
+  private SparkMaxConfig motorConfig;
 
   // private SparkMax followerMotor;
   // private RelativeEncoder followerEncoder;
@@ -72,18 +72,19 @@ public class Shooter extends Actuator {
           configureFollower(Constants.CANDeviceIDs.kShooterFollower1, true), // inverted
           configureFollower(Constants.CANDeviceIDs.kShooterFollower2, true), // inverted
         };
-    //     motor = getMotor();
+        motor = getMotor();
 
-    //     motorConfig = new SparkMaxConfig();
-    //     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    //     motorConfig.smartCurrentLimit(60);
-    //     motorEncoder = motor.getEncoder();
-    //     motorConfig.encoder
-    //       .uvwMeasurementPeriod(8)
-    //       .uvwAverageDepth(2);
-    //       //.quadratureMeasurementPeriod(8);
-    //     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters,
-    // PersistMode.kPersistParameters);
+        motorConfig = new SparkMaxConfig();
+        motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
+        motorConfig.smartCurrentLimit(60);
+        motorEncoder = motor.getEncoder();
+        motorConfig.voltageCompensation(12.0);
+        motorConfig.encoder
+          .uvwMeasurementPeriod(8)
+          .uvwAverageDepth(2);
+          //.quadratureMeasurementPeriod(8);
+        motor.configure(motorConfig, ResetMode.kNoResetSafeParameters,
+    PersistMode.kPersistParameters);
 
     //     followers = new SparkMax[] {
     //     configureFollower(Constants.CANDeviceIDs.kShooterFollower, false),   // same direction
