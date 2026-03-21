@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Shooter;
 
 public class SysId {
@@ -97,7 +97,7 @@ public class SysId {
   }
 
   /*public static Command intakeRollerSysIdCommand() {
-    Intake inst = Intake.getInstance();
+    IntakeRoller inst = IntakeRoller.getInstance();
     SysIdRoutine routine = new SysIdRoutine(
       new Config(),
       new Mechanism((Voltage voltage) -> inst.getMotor().setVoltage(voltage), (SysIdRoutineLog log) -> {
@@ -110,7 +110,7 @@ public class SysId {
   }*/
 
   public static Command intakePivotSysIdCommand() {
-    IntakeActuator inst = IntakeActuator.getInstance();
+    IntakePivot inst = IntakePivot.getInstance();
     SysIdRoutine routine =
         new SysIdRoutine(
             new Config(),
