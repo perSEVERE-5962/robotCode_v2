@@ -95,10 +95,13 @@ public final class Constants {
   public static final class CANDeviceIDs {
     public static final int kIndexerID = 50;
     public static final int kShooterID = 52;
+    public static final int kShooterFollower = 53;
+    public static final int kShooterFollower1 = 54;
+    public static final int kShooterFollower2 = 55;
     public static final int kIntakePivotID = 56;
-    public static final int kIntakeRollerID = 55;
+    public static final int kIntakeRollerID = 57;
     public static final int kHangerID = 60;
-    public static final int kAgitatorID = 54;
+    public static final int kAgitatorID = 51;
   }
 
   public static final class MotorConstants {
@@ -146,6 +149,7 @@ public final class Constants {
     public static final double TARGET_RPM = 3730;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
     public static final double TARGET_RECOVERY_MS = 150.0;
+    public static final double RPM_SLEW_RATE = 1000.0; // max change in RPM per second
 
     // Telemetry constants
     public static final double SPEED_TOLERANCE_RPM = 50.0;
