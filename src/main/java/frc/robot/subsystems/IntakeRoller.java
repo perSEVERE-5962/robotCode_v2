@@ -32,7 +32,20 @@ public class IntakeRoller extends Actuator {
           JamProtectionConstants.INTAKE_MAX_ATTEMPTS);
 
   private IntakeRoller() {
-    super(Constants.CANDeviceIDs.kIntakeRollerID, Constants.IntakeRollerConstants.P, Constants.IntakeRollerConstants.I, Constants.IntakeRollerConstants.D, Constants.IntakeRollerConstants.MinOutput, Constants.IntakeRollerConstants.MaxOutput, Constants.IntakeRollerConstants.FF, Constants.IntakeRollerConstants.Iz, 0, 0, true, false, false);
+    super(
+        Constants.CANDeviceIDs.kIntakeRollerID,
+        Constants.IntakeRollerConstants.P,
+        Constants.IntakeRollerConstants.I,
+        Constants.IntakeRollerConstants.D,
+        Constants.IntakeRollerConstants.MinOutput,
+        Constants.IntakeRollerConstants.MaxOutput,
+        Constants.IntakeRollerConstants.FF,
+        Constants.IntakeRollerConstants.Iz,
+        0,
+        0,
+        true,
+        false,
+        false);
     motor = getMotor();
 
     motorConfig = new SparkMaxConfig();

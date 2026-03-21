@@ -15,27 +15,23 @@ public class DeployIntake extends Command {
 
   @Override
   public void initialize() {
-        intakePivot.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS);
-
+    intakePivot.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS);
   }
 
   @Override
-  public void execute() {
-  }
+  public void execute() {}
 
   @Override
-  public void end(boolean interrupted) {
-
-  }
+  public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {
     double currentPos = intakePivot.getPosition();
-    if (currentPos>=(Constants.MotorConstants.OUT_INTAKE_POS-.08)&&currentPos<=(Constants.MotorConstants.OUT_INTAKE_POS+.08)){
+    if (currentPos >= (Constants.MotorConstants.OUT_INTAKE_POS - .08)
+        && currentPos <= (Constants.MotorConstants.OUT_INTAKE_POS + .08)) {
       return true;
-     }
-    else{
-  return false;
+    } else {
+      return false;
+    }
   }
-}
 }

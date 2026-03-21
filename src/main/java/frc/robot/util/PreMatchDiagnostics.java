@@ -8,8 +8,8 @@ import frc.robot.Constants.BatteryThresholds;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
 import java.util.ArrayList;
 import java.util.List;
@@ -454,7 +454,8 @@ public class PreMatchDiagnostics {
   private void checkVisionSampled() {
     try {
       RobotContainer container = RobotContainer.getInstance();
-      if (container == null || container.getSwerveSubsystem() == null
+      if (container == null
+          || container.getSwerveSubsystem() == null
           || container.getSwerveSubsystem().getVision() == null) {
         addResult("Vision", CheckResult.WARN, "Vision not initialized");
         Logger.recordOutput("Diagnostics/VisionDropoutPct", 0.0);

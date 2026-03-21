@@ -103,13 +103,14 @@ public class ShootOnTheMove extends Command {
   private final DoubleSupplier forwardInput;
   private final DoubleSupplier strafeInput;
   private final Translation2d hubCenter;
-private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoubleTreeMap();
+  private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoubleTreeMap();
   private final InterpolatingDoubleTreeMap RPMMap = new InterpolatingDoubleTreeMap();
 
-  public ShootOnTheMove(SwerveSubsystem swerve,
-                        DoubleSupplier forwardInput,
-                        DoubleSupplier strafeInput,
-                        Translation2d hubCenter) {
+  public ShootOnTheMove(
+      SwerveSubsystem swerve,
+      DoubleSupplier forwardInput,
+      DoubleSupplier strafeInput,
+      Translation2d hubCenter) {
     this.swerve = swerve;
     this.shooter = Shooter.getInstance();
     this.forwardInput = forwardInput;
@@ -117,13 +118,12 @@ private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoub
     this.hubCenter = hubCenter;
 
     addRequirements(swerve);
-    //distance and time
+    // distance and time
     timeOfFlightMap.put(1.2, 2.0);
-    //distance and rpm, more effeicent and consistent than physics for testing and tuning
+    // distance and rpm, more effeicent and consistent than physics for testing and tuning
     timeOfFlightMap.put(2.0, 3.0);
     RPMMap.put(1.2, 3720.0);
     RPMMap.put(2.0, 4000.0);
-
   }
 
   @Override
@@ -143,33 +143,35 @@ private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoub
     double distanceToHub = robotPos.getDistance(hubCenter);
     System.out.println(distanceToHub);
 
-     double timeOfFlight = timeOfFlightMap.get(distanceToHub);
+    double timeOfFlight = timeOfFlightMap.get(distanceToHub);
     double shooterRPM = 0;
-    Translation2d compensatedTarget = hubCenter;  // will be refined each iteration
-      for (int i = 0; i <= 3; i++) {
+    Translation2d compensatedTarget = hubCenter; // will be refined each iteration
+    for (int i = 0; i <= 3; i++) {
 
-      // how far the piece drifts during flight due to robot motion 
+      // how far the piece drifts during flight due to robot motion
       Translation2d drift = robotVel.times(timeOfFlight);
-       lastDrift = drift;
+      lastDrift = drift;
       compensatedTarget = hubCenter.minus(drift);
       double distanceToCompensated = robotPos.getDistance(compensatedTarget);
 
-      //get time of flight and rpm to compenate
+      // get time of flight and rpm to compenate
       timeOfFlight = timeOfFlightMap.get(distanceToCompensated);
       shooterRPM = RPMMap.get(distanceToCompensated);
-
     }
 
     Rotation2d targetAngle = compensatedTarget.minus(robotPos).getAngle();
     double headingError = MathUtil.angleModulus(targetAngle.minus(currentHeading).getRadians());
     double headingSpeed = MathUtil.clamp(headingError * 2, -4, 4);
-    double maxV  = swerve.getSwerveDrive().getMaximumChassisVelocity();
-  
-    ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        forwardInput.getAsDouble() * maxV * 0.6, strafeInput.getAsDouble()  * maxV * 0.6, headingSpeed, currentHeading
-    );
+    double maxV = swerve.getSwerveDrive().getMaximumChassisVelocity();
+
+    ChassisSpeeds speeds =
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            forwardInput.getAsDouble() * maxV * 0.6,
+            strafeInput.getAsDouble() * maxV * 0.6,
+            headingSpeed,
+            currentHeading);
     swerve.drive(speeds);
-   
+
     System.out.println(shooterRPM);
     shooter.moveToVelocityWithPID(shooterRPM);
 
