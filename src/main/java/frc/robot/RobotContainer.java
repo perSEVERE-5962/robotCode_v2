@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.HubArcDrive;
+import frc.robot.commands.MoveAgitator;
 import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.PivotIntake;
 import frc.robot.commands.RetractIntake;
