@@ -454,7 +454,8 @@ public class PreMatchDiagnostics {
   private void checkVisionSampled() {
     try {
       RobotContainer container = RobotContainer.getInstance();
-      if (container == null || container.getSwerveSubsystem() == null
+      if (container == null
+          || container.getSwerveSubsystem() == null
           || container.getSwerveSubsystem().getVision() == null) {
         addResult("Vision", CheckResult.WARN, "Vision not initialized");
         Logger.recordOutput("Diagnostics/VisionDropoutPct", 0.0);

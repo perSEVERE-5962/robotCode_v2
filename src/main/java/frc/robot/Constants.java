@@ -97,7 +97,7 @@ public final class Constants {
     public static final int kShooterID = 52;
     public static final int kShooterFollower = 53;
     public static final int kShooterFollower1 = 54;
-    public static final int kShooterFollower2= 55;
+    public static final int kShooterFollower2 = 55;
     public static final int kIntakeActuatorID = 56;
     public static final int kIntakeID = 57;
     public static final int kHangerID = 60;
@@ -134,7 +134,7 @@ public final class Constants {
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double Iz = 0.0;
-    
+
     // Tuning targets
     public static final double TARGET_RPM = 3730;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
@@ -225,7 +225,8 @@ public final class Constants {
     public static boolean isSafeForDeploy() {
       return !TUNING_MODE;
     }
-//back left left 11.54, 11.54, 45 degrees 15 desgrees
+
+    // back left left 11.54, 11.54, 45 degrees 15 desgrees
     /** Gradle entry point: exits 1 if deploy is unsafe. */
     public static void main(String... args) {
       if (!isSafeForDeploy()) {
@@ -303,7 +304,8 @@ public final class Constants {
     public static final double INTAKE_REVERSE_POWER = -0.4;
     public static final int INTAKE_MAX_ATTEMPTS = 3;
 
-    // Indexer jam protection (raised confirm + velocity to avoid false triggers during ball passage)
+    // Indexer jam protection (raised confirm + velocity to avoid false triggers during ball
+    // passage)
     public static final double INDEXER_JAM_CURRENT_AMPS = 25.0;
     public static final double INDEXER_JAM_VELOCITY_RPM = 200.0;
     public static final double INDEXER_STARTUP_IGNORE_SEC = 0.5;

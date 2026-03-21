@@ -65,8 +65,8 @@ class DriverFeedbackTest {
   @Test
   void testPlayPatternSetsMotorValues() {
     HapticPattern pattern =
-        new HapticPattern("TEST", new Step[] {new Step(0.5, 0.7, 1.0)}, Priority.HIGH,
-            HapticTarget.BOTH);
+        new HapticPattern(
+            "TEST", new Step[] {new Step(0.5, 0.7, 1.0)}, Priority.HIGH, HapticTarget.BOTH);
     feedback.playPattern(pattern);
 
     assertEquals("TEST", feedback.getActivePatternName());
@@ -78,11 +78,11 @@ class DriverFeedbackTest {
   @Test
   void testHigherPriorityInterruptsLower() {
     HapticPattern low =
-        new HapticPattern("LOW_PAT", new Step[] {new Step(0.1, 0.1, 5.0)}, Priority.HIGH,
-            HapticTarget.BOTH);
+        new HapticPattern(
+            "LOW_PAT", new Step[] {new Step(0.1, 0.1, 5.0)}, Priority.HIGH, HapticTarget.BOTH);
     HapticPattern high =
-        new HapticPattern("HIGH_PAT", new Step[] {new Step(0.9, 0.9, 5.0)}, Priority.CRITICAL,
-            HapticTarget.BOTH);
+        new HapticPattern(
+            "HIGH_PAT", new Step[] {new Step(0.9, 0.9, 5.0)}, Priority.CRITICAL, HapticTarget.BOTH);
 
     feedback.playPattern(low);
     assertEquals("LOW_PAT", feedback.getActivePatternName());
@@ -95,11 +95,11 @@ class DriverFeedbackTest {
   @Test
   void testLowerPriorityDoesNotInterrupt() {
     HapticPattern high =
-        new HapticPattern("HIGH_PAT", new Step[] {new Step(0.9, 0.9, 5.0)}, Priority.CRITICAL,
-            HapticTarget.BOTH);
+        new HapticPattern(
+            "HIGH_PAT", new Step[] {new Step(0.9, 0.9, 5.0)}, Priority.CRITICAL, HapticTarget.BOTH);
     HapticPattern low =
-        new HapticPattern("LOW_PAT", new Step[] {new Step(0.1, 0.1, 5.0)}, Priority.HIGH,
-            HapticTarget.BOTH);
+        new HapticPattern(
+            "LOW_PAT", new Step[] {new Step(0.1, 0.1, 5.0)}, Priority.HIGH, HapticTarget.BOTH);
 
     feedback.playPattern(high);
     feedback.playPattern(low);
@@ -109,11 +109,11 @@ class DriverFeedbackTest {
   @Test
   void testSamePriorityReplaces() {
     HapticPattern first =
-        new HapticPattern("FIRST", new Step[] {new Step(0.3, 0.3, 5.0)}, Priority.HIGH,
-            HapticTarget.BOTH);
+        new HapticPattern(
+            "FIRST", new Step[] {new Step(0.3, 0.3, 5.0)}, Priority.HIGH, HapticTarget.BOTH);
     HapticPattern second =
-        new HapticPattern("SECOND", new Step[] {new Step(0.6, 0.6, 5.0)}, Priority.HIGH,
-            HapticTarget.BOTH);
+        new HapticPattern(
+            "SECOND", new Step[] {new Step(0.6, 0.6, 5.0)}, Priority.HIGH, HapticTarget.BOTH);
 
     feedback.playPattern(first);
     feedback.playPattern(second);
@@ -369,8 +369,13 @@ class DriverFeedbackTest {
     feedback.playPattern(DriverFeedback.HUB_COUNTDOWN_1);
     double strongLeft = feedback.getLeftMotor();
 
-    assertTrue(strongLeft > gentleLeft,
-        "HUB_COUNTDOWN_1 (" + strongLeft + ") should be stronger than HUB_COUNTDOWN_5 (" + gentleLeft + ")");
+    assertTrue(
+        strongLeft > gentleLeft,
+        "HUB_COUNTDOWN_1 ("
+            + strongLeft
+            + ") should be stronger than HUB_COUNTDOWN_5 ("
+            + gentleLeft
+            + ")");
   }
 
   @Test
@@ -419,11 +424,15 @@ class DriverFeedbackTest {
 
     // Play every pattern and verify each one expires to zero rumble
     HapticPattern[] allPatterns = {
-      DriverFeedback.AUTO_WON, DriverFeedback.AUTO_LOST,
+      DriverFeedback.AUTO_WON,
+      DriverFeedback.AUTO_LOST,
       DriverFeedback.ENDGAME_WARNING,
-      DriverFeedback.READY_TO_SHOOT, DriverFeedback.HUB_ACTIVATED,
-      DriverFeedback.HUB_DEACTIVATED, DriverFeedback.HUB_COUNTDOWN_3,
-      DriverFeedback.JAM_DETECTED, DriverFeedback.GAME_DATA_MISSING
+      DriverFeedback.READY_TO_SHOOT,
+      DriverFeedback.HUB_ACTIVATED,
+      DriverFeedback.HUB_DEACTIVATED,
+      DriverFeedback.HUB_COUNTDOWN_3,
+      DriverFeedback.JAM_DETECTED,
+      DriverFeedback.GAME_DATA_MISSING
     };
 
     for (HapticPattern pattern : allPatterns) {
@@ -434,15 +443,27 @@ class DriverFeedbackTest {
         feedback.update();
       }
 
-      assertEquals("none", feedback.getActivePatternName(),
-          pattern.name() + " should have expired");
-      assertEquals(0, driverSim.getRumble(GenericHID.RumbleType.kLeftRumble), 0.02,
+      assertEquals(
+          "none", feedback.getActivePatternName(), pattern.name() + " should have expired");
+      assertEquals(
+          0,
+          driverSim.getRumble(GenericHID.RumbleType.kLeftRumble),
+          0.02,
           pattern.name() + " driver left should be zero after expiry");
-      assertEquals(0, driverSim.getRumble(GenericHID.RumbleType.kRightRumble), 0.02,
+      assertEquals(
+          0,
+          driverSim.getRumble(GenericHID.RumbleType.kRightRumble),
+          0.02,
           pattern.name() + " driver right should be zero after expiry");
-      assertEquals(0, copilotSim.getRumble(GenericHID.RumbleType.kLeftRumble), 0.02,
+      assertEquals(
+          0,
+          copilotSim.getRumble(GenericHID.RumbleType.kLeftRumble),
+          0.02,
           pattern.name() + " copilot left should be zero after expiry");
-      assertEquals(0, copilotSim.getRumble(GenericHID.RumbleType.kRightRumble), 0.02,
+      assertEquals(
+          0,
+          copilotSim.getRumble(GenericHID.RumbleType.kRightRumble),
+          0.02,
           pattern.name() + " copilot right should be zero after expiry");
     }
   }

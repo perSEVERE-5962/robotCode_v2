@@ -12,9 +12,9 @@ import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
  * brownout detection and PredictiveAlerts BatteryAtRisk prediction, then recovers.
  *
  * <p>Two-stage voltage decline: Stage 1 (slow, 12.5V to 11.0V over 8s) triggers PredictiveAlerts
- * BatteryAtRisk prediction (needs 150 samples at 50Hz = 3s to fill regression window, then
- * dropRate > 0.001 V/s with predictedTimeToWarning < 30s). Stage 2 (fast, 11.0V to 7.0V over 3s)
- * triggers SystemHealth brownout detection and CRITICAL_ALERT LED state.
+ * BatteryAtRisk prediction (needs 150 samples at 50Hz = 3s to fill regression window, then dropRate
+ * > 0.001 V/s with predictedTimeToWarning < 30s). Stage 2 (fast, 11.0V to 7.0V over 3s) triggers
+ * SystemHealth brownout detection and CRITICAL_ALERT LED state.
  *
  * <p>25s total, 7 phases.
  *
