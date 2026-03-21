@@ -21,6 +21,18 @@
           "data": {
             "name": "ShakeIntakeAndScoreWithTimeout"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HS"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HS shoot"
+          }
         }
       ]
     }

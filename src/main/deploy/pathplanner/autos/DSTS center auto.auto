@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FS aim+drive"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FS shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScoreWithTimeout"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SS aim"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SS drive"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SS turn"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SS shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScoreWithTimeout"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "New plans test",
+  "choreoAuto": false
+}
