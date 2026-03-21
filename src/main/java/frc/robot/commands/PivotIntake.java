@@ -5,19 +5,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.IntakePivot;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class PivotIntake extends Command {
   /** Creates a new PivotIntake. */
-  private IntakeActuator intakeActuator;
+  private IntakePivot intakePivot;
 
-  private double speed;
+  private double rpm;
 
-  public PivotIntake(double speed) {
-    intakeActuator = IntakeActuator.getInstance();
-    this.speed = speed;
-    addRequirements(intakeActuator);
+  public PivotIntake(double rpm) {
+    intakePivot = IntakePivot.getInstance();
+    this.rpm = rpm;
+    addRequirements(intakePivot);
   }
 
   @Override
@@ -25,13 +25,13 @@ public class PivotIntake extends Command {
 
   @Override
   public void execute() {
-    intakeActuator.move(speed);
-    // System.out.println(intakeActuator.getPosition());
+    intakePivot.moveToVelocityWithPID(rpm);
+    // System.out.println(intakePivot.getPosition());
   }
 
   @Override
   public void end(boolean interrupted) {
-    intakeActuator.move(0);
+    intakePivot.move(0);
   }
 
   @Override

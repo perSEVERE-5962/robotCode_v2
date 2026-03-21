@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants.BatteryThresholds;
@@ -10,10 +11,9 @@ import org.littletonrobotics.junction.Logger;
 public class PredictiveAlerts {
   private static volatile PredictiveAlerts instance;
 
-  // 50 samples = 1s at 50Hz on real hardware. In sim, loop runs slower (~22ms)
-  // so this is ~1.1s of data,short enough that motor startup transients
-  // cause false positives. Use 150 samples (~3s) in sim for better filtering.
-  private static final int SAMPLE_SIZE = RobotBase.isSimulation() ? 150 : 50;
+  // 75 samples (~1.5s at 50Hz). 50 was too short, mechanism spin-up caused
+  // false BatteryAtRisk. Sim uses 150 (~3s) because loop runs ~22ms there.
+  private static final int SAMPLE_SIZE = RobotBase.isSimulation() ? 150 : 75;
 
   private final double[] voltageSamples = new double[SAMPLE_SIZE];
   private int sampleIndex = 0;
@@ -119,9 +119,11 @@ public class PredictiveAlerts {
   }
 
   private void checkPredictiveAlerts() {
-    // Battery prediction
+    // don't spam Elastic during FMS matches, drivers can't see dashboard anyway
+    boolean suppressBatteryNotify = DriverStation.isFMSAttached() && DriverStation.isEnabled();
+
     if (predictedTimeToWarning > 0 && predictedTimeToWarning < PREDICTION_WARN_SECONDS) {
-      if (!batteryAlertSent) {
+      if (!batteryAlertSent && !suppressBatteryNotify) {
         ElasticUtil.sendWarning(
             "Battery Prediction",
             String.format(

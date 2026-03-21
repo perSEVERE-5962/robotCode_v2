@@ -42,6 +42,7 @@ import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.DriverTuning;
+import frc.robot.util.HubScoringUtil;
 import java.io.File;
 import java.util.Set;
 import swervelib.SwerveInputStream;
@@ -284,7 +285,18 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
 
-      driverXbox.a().onTrue(hubArcDrive);
+      driverXbox
+          .a()
+          .onTrue(
+              Commands.defer(
+                  () ->
+                      HubScoringUtil.driveToHubCommand(
+                          drivebase,
+                          getHubCenter(),
+                          SCORING_DISTANCE,
+                          getScoringSide(),
+                          SCORING_ARC_WIDTH_DEGREES),
+                  Set.of(drivebase)));
       driverXbox.y().whileTrue(new RetractIntake());
       driverXbox.x().toggleOnTrue(hubArcDrive);
       driverXbox.b().onTrue(new DeployIntake());

@@ -2,17 +2,17 @@ package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import frc.robot.Constants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
-public class Indexer extends Actuator {
-  private SparkMax motor;
-  private SparkMaxConfig motorConfig;
+public class Indexer extends FlexActuator {
+  private SparkFlex motor;
+  private SparkFlexConfig motorConfig;
   private static Indexer instance;
 
   // Tunable PID values
@@ -57,9 +57,9 @@ public class Indexer extends Actuator {
         false,
         false);
     motor = getMotor();
-    motorConfig = new SparkMaxConfig();
+    motorConfig = new SparkFlexConfig();
 
-    motorConfig.idleMode(SparkMaxConfig.IdleMode.kCoast).smartCurrentLimit(20);
+    motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(20);
 
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }

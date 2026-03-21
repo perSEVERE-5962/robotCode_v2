@@ -1,15 +1,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeRoller;
 
 public class MoveIntake extends Command {
-  private Intake intake;
+  private IntakeRoller intakeRoller;
 
   public MoveIntake() {
-    intake = Intake.getInstance();
+    intakeRoller = IntakeRoller.getInstance();
 
-    addRequirements(intake);
+    addRequirements(intakeRoller);
   }
 
   @Override
@@ -17,12 +17,12 @@ public class MoveIntake extends Command {
 
   @Override
   public void execute() {
-    intake.move(intake.getTunableSpeed());
+    intakeRoller.moveToVelocityWithPID(intakeRoller.getTunableSpeed());
   }
 
   @Override
   public void end(boolean interrupted) {
-    intake.move(0);
+    intakeRoller.move(0);
   }
 
   @Override

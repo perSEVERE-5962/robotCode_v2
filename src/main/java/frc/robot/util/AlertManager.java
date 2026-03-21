@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.BatteryThresholds;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
 import frc.robot.telemetry.TelemetryManager;
 import java.util.ArrayList;
@@ -20,8 +20,8 @@ import java.util.Map;
 import org.littletonrobotics.junction.Logger;
 
 /**
- * Centralized alert management for robot health monitoring. Monitors battery, motor temps, CAN bus,
- * and loop timing. Elastic notifications are debounced to prevent spam.
+ * Monitors battery, motor temps, CAN bus, and loop timing. Elastic notifications are debounced to
+ * prevent spam.
  */
 public class AlertManager {
   private static final AlertManager instance = new AlertManager();
@@ -37,6 +37,8 @@ public class AlertManager {
 
   // Debounce timing (seconds)
   private static final double DEBOUNCE_TIME_S = 5.0;
+  // 5s was way too aggressive for battery alerts, weak batteries at lab = nonstop popups
+  private static final double BATTERY_DEBOUNCE_TIME_S = 30.0;
 
   // Battery hysteresis: once warning triggers, don't clear until voltage rises above CLEAR
   // threshold
@@ -118,7 +120,7 @@ public class AlertManager {
       batteryCriticalAlert.set(true);
       batteryLowAlert.set(false);
       addAlert("BatteryCritical");
-      notifyElastic(
+      notifyElasticBattery(
           "BatteryCritical",
           "Battery Critical",
           String.format("Battery at %.1fV - REPLACE NOW!", voltage),
@@ -127,11 +129,16 @@ public class AlertManager {
         && (voltage < BATTERY_WARNING_V
             || (inBatteryWarning && voltage < BATTERY_WARNING_CLEAR_V))) {
       // WARNING: only when disabled (pre-match). Mid-match sag is normal.
+      // Skip the Elastic notification on FMS since drivers can't see the
+      // dashboard between matches either (queue marshals rush them out).
       inBatteryWarning = true;
       batteryCriticalAlert.set(false);
       batteryLowAlert.set(true);
       addAlert("BatteryLow");
-      notifyElastic("BatteryLow", "Battery Low", String.format("Battery at %.1fV", voltage), false);
+      if (!DriverStation.isFMSAttached()) {
+        notifyElasticBattery(
+            "BatteryLow", "Battery Low", String.format("Battery at %.1fV", voltage), false);
+      }
     } else {
       inBatteryWarning = false;
       batteryCriticalAlert.set(false);
@@ -145,7 +152,7 @@ public class AlertManager {
       if (tm.isBrownoutRisk()) {
         brownoutRiskAlert.set(true);
         addAlert("BrownoutRisk");
-        notifyElastic(
+        notifyElasticBattery(
             "BrownoutRisk",
             "BROWNOUT IMMINENT",
             String.format(
@@ -163,11 +170,11 @@ public class AlertManager {
   private void checkMotorTemps() {
     checkOneMotorTemp("Shooter", shooterTempAlert, () -> Shooter.getInstance().getTemperature());
     checkOneMotorTemp("Indexer", indexerTempAlert, () -> Indexer.getInstance().getTemperature());
-    checkOneMotorTemp("Intake", intakeTempAlert, () -> Intake.getInstance().getTemperature());
+    checkOneMotorTemp("Intake", intakeTempAlert, () -> IntakeRoller.getInstance().getTemperature());
     checkOneMotorTemp(
         "IntakeActuator",
         intakeActuatorTempAlert,
-        () -> IntakeActuator.getInstance().getTemperature());
+        () -> IntakePivot.getInstance().getTemperature());
   }
 
   private void checkOneMotorTemp(
@@ -324,10 +331,20 @@ public class AlertManager {
 
   /** Sends notification to Elastic with debouncing. */
   private void notifyElastic(String key, String title, String message, boolean isError) {
+    notifyElasticWithDebounce(key, title, message, isError, DEBOUNCE_TIME_S);
+  }
+
+  /** Battery alerts use a longer debounce to avoid spam with weak batteries. */
+  private void notifyElasticBattery(String key, String title, String message, boolean isError) {
+    notifyElasticWithDebounce(key, title, message, isError, BATTERY_DEBOUNCE_TIME_S);
+  }
+
+  private void notifyElasticWithDebounce(
+      String key, String title, String message, boolean isError, double debounceSec) {
     double now = Timer.getFPGATimestamp();
     Double lastTime = lastElasticNotifyTimes.get(key);
 
-    if (lastTime == null || (now - lastTime) > DEBOUNCE_TIME_S) {
+    if (lastTime == null || (now - lastTime) > debounceSec) {
       if (isError) {
         ElasticUtil.sendError(title, message);
       } else {

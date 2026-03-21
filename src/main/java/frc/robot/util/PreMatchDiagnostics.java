@@ -8,8 +8,8 @@ import frc.robot.Constants.BatteryThresholds;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
 import java.util.ArrayList;
 import java.util.List;
@@ -313,13 +313,13 @@ public class PreMatchDiagnostics {
     }
 
     try {
-      if (Intake.getInstance() == null) missing.append("Intake,");
+      if (IntakeRoller.getInstance() == null) missing.append("Intake,");
     } catch (Exception e) {
       missing.append("Intake,");
     }
 
     try {
-      if (IntakeActuator.getInstance() == null) missing.append("IntakeActuator,");
+      if (IntakePivot.getInstance() == null) missing.append("IntakeActuator,");
     } catch (Exception e) {
       missing.append("IntakeActuator,");
     }
@@ -345,7 +345,7 @@ public class PreMatchDiagnostics {
     try {
       double shooterTemp = Shooter.getInstance().getTemperature();
       double indexerTemp = Indexer.getInstance().getTemperature();
-      double intakeTemp = Intake.getInstance().getTemperature();
+      double intakeTemp = IntakeRoller.getInstance().getTemperature();
 
       double maxTemp = Math.max(shooterTemp, Math.max(indexerTemp, intakeTemp));
 
@@ -366,7 +366,7 @@ public class PreMatchDiagnostics {
 
       int shooterFaults = Shooter.getInstance().getStickyFaultsRaw();
       int indexerFaults = Indexer.getInstance().getStickyFaultsRaw();
-      int intakeFaults = Intake.getInstance().getStickyFaultsRaw();
+      int intakeFaults = IntakeRoller.getInstance().getStickyFaultsRaw();
 
       if (shooterFaults != 0)
         faults.append("Shooter(0x").append(Integer.toHexString(shooterFaults)).append("),");

@@ -2,20 +2,20 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.IntakePivot;
 
 public class DeployIntake extends Command {
-  private IntakeActuator intakeActuator;
+  private IntakePivot intakePivot;
 
   public DeployIntake() {
-    intakeActuator = IntakeActuator.getInstance();
+    intakePivot = IntakePivot.getInstance();
 
-    addRequirements(intakeActuator);
+    addRequirements(intakePivot);
   }
 
   @Override
   public void initialize() {
-    intakeActuator.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS);
+    intakePivot.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS);
   }
 
   @Override
@@ -26,7 +26,7 @@ public class DeployIntake extends Command {
 
   @Override
   public boolean isFinished() {
-    double currentPos = intakeActuator.getPosition();
+    double currentPos = intakePivot.getPosition();
     if (currentPos >= (Constants.MotorConstants.OUT_INTAKE_POS - .08)
         && currentPos <= (Constants.MotorConstants.OUT_INTAKE_POS + .08)) {
       return true;

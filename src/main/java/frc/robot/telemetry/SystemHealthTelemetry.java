@@ -30,9 +30,12 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
 
   private double lastVoltage = 0;
   private double lastVoltageTimestamp = 0;
-  private double voltageSlope = 0; // V/s, negative = dropping
+  private double voltageSlope = 0; // V/s, negative = dropping (EMA-smoothed)
   private int brownoutRiskLevel = 0; // 0=none, 1=watch, 2=warning, 3=imminent
   private boolean brownoutRisk = false;
+
+  // smooths out noisy voltage slope so brownout risk level doesn't flicker
+  private static final double VOLTAGE_SLOPE_EMA_ALPHA = 0.3;
 
   private PowerDistribution pdh = null;
   private double totalCurrentAmps = 0;
@@ -61,23 +64,26 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
 
   @Override
   public void update() {
-    double currentTimestamp = Timer.getFPGATimestamp();
-    if (lastLoopTimestamp > 0) {
-      loopTimeMs = (currentTimestamp - lastLoopTimestamp) * 1000.0;
-      if (loopTimeMs > LOOP_OVERRUN_THRESHOLD_MS) {
-        loopOverrunCount++;
-      }
-    }
-    lastLoopTimestamp = currentTimestamp;
-
     try {
+      double currentTimestamp = Timer.getFPGATimestamp();
+      if (lastLoopTimestamp > 0) {
+        loopTimeMs = (currentTimestamp - lastLoopTimestamp) * 1000.0;
+        if (loopTimeMs > LOOP_OVERRUN_THRESHOLD_MS) {
+          loopOverrunCount++;
+        }
+      }
+      lastLoopTimestamp = currentTimestamp;
+
       batteryVoltage = RobotController.getBatteryVoltage();
 
       double now = Timer.getFPGATimestamp();
       if (lastVoltageTimestamp > 0 && lastVoltage > 0) {
         double deltaTime = now - lastVoltageTimestamp;
-        if (deltaTime > 0.001) { // Avoid divide-by-zero
-          voltageSlope = (batteryVoltage - lastVoltage) / deltaTime;
+        if (deltaTime > 0.001) {
+          double rawSlope = (batteryVoltage - lastVoltage) / deltaTime;
+          // EMA smoothing so brownout risk level doesn't flicker on noisy samples
+          voltageSlope =
+              VOLTAGE_SLOPE_EMA_ALPHA * rawSlope + (1.0 - VOLTAGE_SLOPE_EMA_ALPHA) * voltageSlope;
         }
       }
       lastVoltage = batteryVoltage;

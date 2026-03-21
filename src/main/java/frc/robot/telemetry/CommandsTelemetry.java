@@ -3,6 +3,7 @@ package frc.robot.telemetry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -129,6 +130,8 @@ public class CommandsTelemetry implements SubsystemTelemetry {
       Map.Entry<Command, Double> entry = it.next();
       double runSec = now - entry.getValue();
       if (runSec >= GHOST_THRESHOLD_SEC) {
+        // default commands run forever on purpose, skip them
+        if (isDefaultCommand(entry.getKey())) continue;
         String name = commandNames.getOrDefault(entry.getKey(), "unknown");
         ghosts.add(name + " (" + String.format("%.0f", runSec) + "s)");
       }
@@ -177,5 +180,14 @@ public class CommandsTelemetry implements SubsystemTelemetry {
 
   public String getGhostCommandList() {
     return ghostCommandList;
+  }
+
+  private boolean isDefaultCommand(Command command) {
+    for (Subsystem sub : command.getRequirements()) {
+      if (CommandScheduler.getInstance().getDefaultCommand(sub) == command) {
+        return true;
+      }
+    }
+    return false;
   }
 }
