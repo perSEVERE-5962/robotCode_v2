@@ -11,10 +11,12 @@ import frc.robot.subsystems.IntakePivot;
 public class PivotIntake extends Command {
   /** Creates a new PivotIntake. */
   private IntakePivot intakePivot;
+
   private double rpm;
+
   public PivotIntake(double rpm) {
-   intakePivot = IntakePivot.getInstance();
-    this.rpm=rpm;
+    intakePivot = IntakePivot.getInstance();
+    this.rpm = rpm;
     addRequirements(intakePivot);
   }
 
@@ -24,19 +26,17 @@ public class PivotIntake extends Command {
   @Override
   public void execute() {
     intakePivot.moveToVelocityWithPID(rpm);
-    //System.out.println(intakePivot.getPosition());
+    // System.out.println(intakePivot.getPosition());
   }
 
   @Override
   public void end(boolean interrupted) {
     intakePivot.move(0);
-
   }
 
   @Override
   public boolean isFinished() {
-    
-  return false;
+
+    return false;
   }
 }
-

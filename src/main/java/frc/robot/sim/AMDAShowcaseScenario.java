@@ -14,8 +14,8 @@ import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
  * pattern and state.
  *
  * <p>Naturally triggered haptic patterns (5/7): TELEOP_START (auto->teleop transition),
- * ENDGAME_WARNING (matchTime<=30), HUB_ACTIVATED (hub becomes active), HUB_DEACTIVATED (hub
- * becomes inactive), HUB_COUNTDOWN (graduated 5s-1s countdown pulses before shift).
+ * ENDGAME_WARNING (matchTime<=30), HUB_ACTIVATED (hub becomes active), HUB_DEACTIVATED (hub becomes
+ * inactive), HUB_COUNTDOWN (graduated 5s-1s countdown pulses before shift).
  *
  * <p>Naturally triggered LED states (7/10): DISABLED, IDLE, AUTO_RUNNING, SHOOTER_SPINUP, WARNING
  * (low voltage), CRITICAL_ALERT (very low voltage), MATCH_OVER (matchTime crosses 0).

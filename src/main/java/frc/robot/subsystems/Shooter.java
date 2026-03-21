@@ -54,7 +54,7 @@ public class Shooter extends Actuator {
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
     motorConfig.smartCurrentLimit(40);
     motorEncoder = motor.getEncoder();
-    
+
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
@@ -75,7 +75,7 @@ public class Shooter extends Actuator {
 
   public void move(double speed) {
     motor.set(speed);
-    //targetRPM = speed * 5700;
+    // targetRPM = speed * 5700;
   }
 
   @Override

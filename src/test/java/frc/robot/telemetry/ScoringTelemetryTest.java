@@ -231,5 +231,4 @@ class ScoringTelemetryTest extends TelemetryTestBase {
     assertTrue(telemetry.isReadyToShoot());
     assertEquals("", telemetry.getReadyLostReason(), "Reason should clear when ready regained");
   }
-
 }
