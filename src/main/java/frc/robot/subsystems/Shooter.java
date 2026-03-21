@@ -109,7 +109,7 @@ public class Shooter extends Actuator {
     followerMotor2 = new SparkMax(Constants.CANDeviceIDs.kShooterFollower2, MotorType.kBrushless);
     followerConfig2.follow(Constants.CANDeviceIDs.kShooterID, true);
     followerConfig2.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    followerConfig2.smartCurrentLimit(80);
+    followerConfig2.smartCurrentLimit(60);
     followerEncoder2 = followerMotor2.getEncoder();
     followerConfig2.encoder
       .uvwMeasurementPeriod(8)
