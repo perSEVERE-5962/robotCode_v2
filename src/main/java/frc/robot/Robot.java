@@ -11,7 +11,10 @@ import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.sim.SimDeviceManager;
+import frc.robot.sim.SimFuelManager;
 import frc.robot.sim.SimScenarioRunner;
+import frc.robot.subsystems.IntakeRoller;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.AlertManager;
 import frc.robot.util.ChannelCoordinator;
@@ -45,6 +48,7 @@ public class Robot extends LoggedRobot {
   private Timer disabledTimer;
   private SimScenarioRunner simScenarioRunner;
   private SimDeviceManager simDeviceManager;
+  private SimFuelManager simFuelManager;
 
   // Diagnostics
   private boolean hasRunDiagnostics = false;
@@ -78,12 +82,11 @@ public class Robot extends LoggedRobot {
         });
   }
 
-  // ==================== LOGGING CONFIGURATION ====================
+  // Logging configuration
 
   /** Configure AdvantageKit logging. Failures are swallowed so the robot keeps running. */
   private void configureLogging() {
     try {
-      // Record build metadata for traceability in logs
       Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
       Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
       Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
@@ -91,7 +94,7 @@ public class Robot extends LoggedRobot {
       Logger.recordMetadata("GitDirty", BuildConstants.DIRTY == 1 ? "true" : "false");
 
       if (isReal()) {
-        // USB logging - optional, fail gracefully if USB not mounted
+        // USB logging, skip if USB not mounted
         try {
           Logger.addDataReceiver(new WPILOGWriter());
         } catch (Throwable t) {
@@ -165,10 +168,6 @@ public class Robot extends LoggedRobot {
     }
   }
 
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
   @Override
   public void robotInit() {
     installExceptionHandler();
@@ -200,13 +199,6 @@ public class Robot extends LoggedRobot {
     ElasticUtil.sendInfo("Robot", "Code initialized successfully");
   }
 
-  /**
-   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
-   * that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
-   */
   @Override
   public void robotPeriodic() {
     safeCall("Tracer", () -> LoggedTracer.reset());
@@ -255,7 +247,6 @@ public class Robot extends LoggedRobot {
     safeCall("Tracer", () -> LoggedTracer.record("AlertsMs"));
   }
 
-  /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
     try {
@@ -285,7 +276,6 @@ public class Robot extends LoggedRobot {
       safeLog("Health/CrashBarrier/PostMatchSummary", true);
     }
 
-    // Reset diagnostics flag so they run once in disabledPeriodic
     hasRunDiagnostics = false;
   }
 
@@ -333,7 +323,6 @@ public class Robot extends LoggedRobot {
     }
   }
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
     // Mode init is called by IterativeRobotBase.loopFunc() with NO try-catch.
@@ -364,7 +353,6 @@ public class Robot extends LoggedRobot {
     }
   }
 
-  /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {}
 
@@ -385,7 +373,6 @@ public class Robot extends LoggedRobot {
     }
   }
 
-  /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {}
 
@@ -399,7 +386,6 @@ public class Robot extends LoggedRobot {
     }
   }
 
-  /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
     // Full diagnostic trigger (actuator tests) - only works in test mode
@@ -423,12 +409,40 @@ public class Robot extends LoggedRobot {
     simDeviceManager = new SimDeviceManager();
     simDeviceManager.init();
     simScenarioRunner = new SimScenarioRunner();
+
+    try {
+      simFuelManager = new SimFuelManager("Sim/FuelPositions");
+      simFuelManager.enable();
+      simFuelManager.placeFieldBalls();
+      SwerveSubsystem swerve = RobotContainer.getInstance().getSwerveSubsystem();
+      simFuelManager.configureRobot(0.66, 0.66, 0.25, swerve::getPose, swerve::getFieldVelocity);
+      // wire intake zone so balls get picked up when intake is running
+      try {
+        IntakeRoller intake = IntakeRoller.getInstance();
+        simFuelManager.addIntakeZone(0.10, 0.45, -0.20, 0.20, intake::isRunning);
+      } catch (Throwable t) {
+        // intake not available, shots fire freely without ball tracking
+      }
+    } catch (Throwable t) {
+      DriverStation.reportWarning("SimFuelManager init failed: " + t.getMessage(), false);
+    }
   }
 
   @Override
   public void simulationPeriodic() {
     if (simDeviceManager != null) {
       simDeviceManager.update();
+    }
+    if (simFuelManager != null) {
+      try {
+        boolean shotFired = simDeviceManager != null && simDeviceManager.wasShotFiredThisCycle();
+        double shooterRPM = simDeviceManager != null ? simDeviceManager.getShooterRPM() : 0;
+        SwerveSubsystem swerve = RobotContainer.getInstance().getSwerveSubsystem();
+        simFuelManager.update(
+            shotFired, swerve.getPose(), swerve.getHeading().getRadians(), shooterRPM);
+      } catch (Throwable t) {
+        // never let fuel sim crash the main sim loop
+      }
     }
     if (simScenarioRunner != null) {
       simScenarioRunner.update();

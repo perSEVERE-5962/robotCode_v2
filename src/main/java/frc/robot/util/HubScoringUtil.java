@@ -8,6 +8,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class HubScoringUtil {
 
@@ -57,5 +59,17 @@ public class HubScoringUtil {
     Rotation2d targetRotation = Rotation2d.fromRadians(targetAngle + Math.PI);
 
     return new Pose2d(targetPosition, targetRotation);
+  }
+
+  public static Command driveToHubCommand(SwerveSubsystem swerve, Translation2d hubCenter, double scoringDistance, Rotation2d scoringSide, double arcWidthDegrees) {
+    // get closest point on the arc
+    Translation2d robotPosition = swerve.getPose().getTranslation();
+    Pose2d targetPose =
+        getClosestScoringPose(
+            robotPosition, hubCenter, scoringDistance, scoringSide, arcWidthDegrees);
+
+    // make command using pathplanner to drive to pose
+    Command driveCommand = swerve.driveToPose(targetPose);
+    return driveCommand;
   }
 }

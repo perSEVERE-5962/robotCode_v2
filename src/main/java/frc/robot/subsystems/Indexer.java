@@ -1,13 +1,14 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import frc.robot.Constants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
-public class Indexer extends Actuator {
+public class Indexer extends FlexActuator {
+  private SparkFlex motor;
   private static Indexer instance;
   private SparkMax motor;
 

@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.simulation.SimHooks;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.IntakeRoller;
+import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.telemetry.SafeLog;
 import frc.robot.telemetry.TelemetryManager;
@@ -48,8 +48,8 @@ class AlertManagerTest {
     // Subsystems must exist for checkMotorTemps() / checkMotorStalls()
     Shooter.getInstance();
     Indexer.getInstance();
-    Intake.getInstance();
-    IntakeActuator.getInstance();
+    IntakeRoller.getInstance();
+    IntakePivot.getInstance();
 
     tm = TelemetryManager.getInstance();
   }
@@ -110,12 +110,12 @@ class AlertManagerTest {
   static void tearDownAll() {
     closeSubsystemMotor("frc.robot.subsystems.Shooter");
     closeSubsystemMotor("frc.robot.subsystems.Indexer");
-    closeSubsystemMotor("frc.robot.subsystems.Intake");
-    closeSubsystemMotor("frc.robot.subsystems.IntakeActuator");
+    closeSubsystemMotor("frc.robot.subsystems.IntakeRoller");
+    closeSubsystemMotor("frc.robot.subsystems.IntakePivot");
     resetSingleton("frc.robot.subsystems.Shooter");
     resetSingleton("frc.robot.subsystems.Indexer");
-    resetSingleton("frc.robot.subsystems.Intake");
-    resetSingleton("frc.robot.subsystems.IntakeActuator");
+    resetSingleton("frc.robot.subsystems.IntakeRoller");
+    resetSingleton("frc.robot.subsystems.IntakePivot");
     resetSingleton("frc.robot.telemetry.TelemetryManager");
   }
 

@@ -97,8 +97,8 @@ public final class Constants {
   public static final class CANDeviceIDs {
     public static final int kIndexerID = 50;
     public static final int kShooterID = 52;
-    public static final int kIntakeActuatorID = 56;
-    public static final int kIntakeID = 55;
+    public static final int kIntakePivotID = 56;
+    public static final int kIntakeRollerID = 55;
     public static final int kHangerID = 60;
     public static final int kAgitatorID = 54;
   }
@@ -109,7 +109,7 @@ public final class Constants {
     public static final double BACKWARDS_INDEXER_RPM = 999;
     public static final double OUT_INTAKE_POS = 38.24;
     public static final double IN_INTAKE_POS = 11.6;
-    public static final double DESIRED_INTAKE_SPEED = -.99;
+    public static final double DESIRED_INTAKE_RPM = 0;
     public static final double INTAKE_POS_TOLERANCE = .2;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
@@ -117,7 +117,17 @@ public final class Constants {
     public static final double HANGER_POS_TOLERANCE = 0.1;
   }
 
-  public static final class IntakeConstants {
+  public static final class IntakeRollerConstants {
+    public static final double P = 1.0;
+    public static final double I = 0.0;
+    public static final double D = 0.0;
+    public static final double MinOutput = -1.0;
+    public static final double MaxOutput = 1.0;
+    public static final double FF = 0.0;
+    public static final double Iz = 0.0;
+  }
+
+  public static final class IntakePivotConstants {
     public static final double P = 1.0;
     public static final double I = 0.0;
     public static final double D = 0.2;
@@ -341,5 +351,21 @@ public final class Constants {
     public static final double INTAKE_STALL_CURRENT_AMPS = 20.0;
     public static final double INTAKE_STALL_VELOCITY_RPM = 100.0;
     public static final double INTAKE_STALL_DEBOUNCE_MS = 200.0;
+  }
+
+  /** Projectile physics constants (measured from CAD) */
+  public static final class ProjectileSimConstants {
+    public static final double EXIT_HEIGHT_M = 0.4313; // 16.98in from floor
+    public static final double WHEEL_DIAMETER_M = 0.1016; // 4" flywheel
+    public static final double TARGET_HEIGHT_M = 1.83; // 72in hub entry
+    public static final double DT = 0.001; // integration step (s)
+    public static final double DRAG_COEFFICIENT = 0.47; // smooth sphere
+    public static final double BALL_MASS_KG = 0.27; // ~9.5oz fuel ball
+    public static final double BALL_RADIUS_M = 0.0889; // 3.5" radius
+  }
+
+  /** Shot calculator constants (launcher geometry) */
+  public static final class ShotCalculatorConstants {
+    public static final double FIXED_LAUNCH_ANGLE_DEG = 68.0; // measured from OnShape CAD
   }
 }

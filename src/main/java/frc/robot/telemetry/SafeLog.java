@@ -94,6 +94,14 @@ public final class SafeLog {
     }
   }
 
+  public static void put(String key, Pose2d[] value) {
+    try {
+      Logger.recordOutput(key, value);
+    } catch (Throwable t) {
+      recordFailure(key);
+    }
+  }
+
   public static void put(String key, Pose3d[] value) {
     try {
       Logger.recordOutput(key, value);

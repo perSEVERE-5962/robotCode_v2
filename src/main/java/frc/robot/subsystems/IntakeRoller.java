@@ -2,24 +2,22 @@ package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
-public class Intake extends SubsystemBase {
+public class IntakeRoller extends Actuator {
   private SparkMax motor;
   private SparkMaxConfig motorConfig;
-  private static Intake instance;
+  private static IntakeRoller instance;
 
   // Tunable operational value
   private static final TunableNumber intakeSpeed =
-      new TunableNumber("Intake/Speed", MotorConstants.DESIRED_INTAKE_SPEED);
+      new TunableNumber("Intake/Speed", MotorConstants.DESIRED_INTAKE_RPM);
 
   private final JamProtection jamProtection =
       new JamProtection(
@@ -33,17 +31,15 @@ public class Intake extends SubsystemBase {
           JamProtectionConstants.INTAKE_REVERSE_POWER,
           JamProtectionConstants.INTAKE_MAX_ATTEMPTS);
 
-  private Intake() {
-    motor = new SparkMax(Constants.CANDeviceIDs.kIntakeID, SparkLowLevel.MotorType.kBrushless);
+  private IntakeRoller() {
+    super(Constants.CANDeviceIDs.kIntakeRollerID, Constants.IntakeRollerConstants.P, Constants.IntakeRollerConstants.I, Constants.IntakeRollerConstants.D, Constants.IntakeRollerConstants.MinOutput, Constants.IntakeRollerConstants.MaxOutput, Constants.IntakeRollerConstants.FF, Constants.IntakeRollerConstants.Iz, 0, 0, true, false, false);
+    motor = getMotor();
+
     motorConfig = new SparkMaxConfig();
 
     motorConfig.inverted(true).idleMode(SparkMaxConfig.IdleMode.kCoast).smartCurrentLimit(40);
 
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-  }
-
-  public void move(double speed) {
-    motor.set(speed);
   }
 
   @Override
@@ -82,10 +78,6 @@ public class Intake extends SubsystemBase {
     return Math.abs(motor.getAppliedOutput()) > 0.05;
   }
 
-  public SparkMax getMotor() {
-    return motor;
-  }
-
   // Tunable value accessor
   public static double getTunableSpeed() {
     return intakeSpeed.get();
@@ -100,9 +92,9 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  public static Intake getInstance() {
+  public static IntakeRoller getInstance() {
     if (instance == null) {
-      instance = new Intake();
+      instance = new IntakeRoller();
     }
     return instance;
   }

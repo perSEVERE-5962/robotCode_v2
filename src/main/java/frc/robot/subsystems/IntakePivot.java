@@ -2,22 +2,22 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 
-public class IntakeActuator extends Actuator {
-  private static IntakeActuator instance;
+public class IntakePivot extends Actuator {
+  private static IntakePivot instance;
 
   private double targetPosition = 0;
   private static final double POSITION_TOLERANCE_ROTATIONS = 0.05;
 
-  private IntakeActuator() {
+  private IntakePivot() {
     super(
-        Constants.CANDeviceIDs.kIntakeActuatorID,
-        Constants.IntakeConstants.P,
-        Constants.IntakeConstants.I,
-        Constants.IntakeConstants.D,
-        Constants.IntakeConstants.MinOutput,
-        Constants.IntakeConstants.MaxOutput,
-        Constants.IntakeConstants.FF,
-        Constants.IntakeConstants.Iz,
+        Constants.CANDeviceIDs.kIntakePivotID,
+        Constants.IntakePivotConstants.P,
+        Constants.IntakePivotConstants.I,
+        Constants.IntakePivotConstants.D,
+        Constants.IntakePivotConstants.MinOutput,
+        Constants.IntakePivotConstants.MaxOutput,
+        Constants.IntakePivotConstants.FF,
+        Constants.IntakePivotConstants.Iz,
         60f,
         11.5F,
         40,
@@ -58,9 +58,9 @@ public class IntakeActuator extends Actuator {
     return getMotor().getOutputCurrent();
   }
 
-  public static IntakeActuator getInstance() {
+  public static IntakePivot getInstance() {
     if (instance == null) {
-      instance = new IntakeActuator();
+      instance = new IntakePivot();
     }
     return instance;
   }
