@@ -9,19 +9,14 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
 import frc.robot.telemetry.SafeLog;
 
 /**
- * SparkSim wiring for motor subsystems. Call update() each simulationPeriodic().
- *
- * <p>Velocity motors: reads target from subsystem (Shooter.getTargetRPM()) or uses duty-cycle
- * model. First-order dynamics (100ms spin-up, 300ms coast-down) model motor response realistically
- * without depending on the PID gains which are tuned for real hardware, not the sim physics model.
- *
- * <p>Position motors: output-proportional position integration.
+ * SparkSim wiring for motor subsystems. Call update() each simulationPeriodic(). First-order
+ * dynamics bypass real PID gains (tuned for hardware, not sim).
  */
 public class SimDeviceManager {
   private static final double NEO_FREE_SPEED_RPM = 5676.0;
@@ -62,6 +57,7 @@ public class SimDeviceManager {
   private static final double SHOT_RPM_DROP = 350.0;
   private static final double SHOT_SIM_INTERVAL = 0.500; // one shot per 500ms
   private double lastShotSimTime = 0;
+  private boolean shotFiredThisCycle = false;
 
   public void init() {
     try {
@@ -71,8 +67,12 @@ public class SimDeviceManager {
       Agitator agitator = Agitator.getInstance();
       IntakePivot intakeActuator = IntakePivot.getInstance();
       Hanger hanger = Hanger.getInstance();
-      if (shooter == null || indexer == null || intake == null
-          || agitator == null || intakeActuator == null || hanger == null) {
+      if (shooter == null
+          || indexer == null
+          || intake == null
+          || agitator == null
+          || intakeActuator == null
+          || hanger == null) {
         SafeLog.put("Sim/DeviceManager/InitError", "NullSubsystem");
         initialized = false;
         return;
@@ -109,19 +109,16 @@ public class SimDeviceManager {
       double shooterTarget = lastShooterTarget;
       shooterRPM = updateMotorToTarget(shooterSim, shooterRPM, shooterTarget);
 
-      // Indexer: target from subsystem when PID is active (output > threshold)
       double indexerTarget =
           (Math.abs(indexerSim.getAppliedOutput()) > 0.01)
               ? Constants.MotorConstants.DESIRED_INDEXER_RPM
               : 0;
       indexerRPM = updateMotorToTarget(indexerSim, indexerRPM, indexerTarget);
 
-      // Intake: duty cycle motor,target = output * free speed
       double intakeOutput = intakeSim.getAppliedOutput();
       double intakeTarget = intakeOutput * NEO_FREE_SPEED_RPM;
       intakeRPM = updateMotorToTarget(intakeSim, intakeRPM, intakeTarget);
 
-      // Agitator: duty cycle motor, same model as intake
       double agitatorOutput = agitatorSim.getAppliedOutput();
       double agitatorTarget = agitatorOutput * NEO_FREE_SPEED_RPM;
       agitatorRPM = updateMotorToTarget(agitatorSim, agitatorRPM, agitatorTarget);
@@ -137,8 +134,10 @@ public class SimDeviceManager {
         shooterRPM -= SHOT_RPM_DROP;
         shooterSim.getRelativeEncoderSim().setVelocity(shooterRPM);
         lastShotSimTime = now;
+        shotFiredThisCycle = true;
         SafeLog.put("Sim/Debug/ShotSimulated", true);
       } else {
+        shotFiredThisCycle = false;
         SafeLog.put("Sim/Debug/ShotSimulated", false);
       }
 
@@ -190,10 +189,6 @@ public class SimDeviceManager {
     }
   }
 
-  /**
-   * Model motor approaching targetRPM with first-order dynamics. Spin-up is fast (100ms tau),
-   * coast-down is slower (300ms tau).
-   */
   private double updateMotorToTarget(SparkSim sim, double currentRPM, double targetRPM) {
     double vbus = Math.max(1.0, RoboRioSim.getVInVoltage());
 
@@ -201,7 +196,6 @@ public class SimDeviceManager {
     double alpha = 1.0 - Math.exp(-DT / tau);
     currentRPM += (targetRPM - currentRPM) * alpha;
 
-    // Small values snap to zero
     if (Math.abs(currentRPM) < 0.5) currentRPM = 0;
 
     // iterate() first (updates PID state), then setVelocity() to override
@@ -212,7 +206,6 @@ public class SimDeviceManager {
     return currentRPM;
   }
 
-  /** Position motors: read target from subsystem, first-order approach. */
   private double updatePositionToTarget(SparkSim sim, double currentPos, double targetPos) {
     double alpha = 1.0 - Math.exp(-DT / POSITION_TAU);
     currentPos += (targetPos - currentPos) * alpha;
@@ -246,5 +239,15 @@ public class SimDeviceManager {
 
   public boolean isInitialized() {
     return initialized;
+  }
+
+  /** True if a shot was simulated this cycle (rising-edge for FuelPhysicsSim). */
+  public boolean wasShotFiredThisCycle() {
+    return shotFiredThisCycle;
+  }
+
+  /** Current simulated shooter RPM (for FuelPhysicsSim exit velocity). */
+  public double getShooterRPM() {
+    return shooterRPM;
   }
 }
