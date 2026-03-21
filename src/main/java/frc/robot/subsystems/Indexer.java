@@ -10,7 +10,6 @@ import frc.robot.util.TunableNumber;
 public class Indexer extends FlexActuator {
   private SparkFlex motor;
   private static Indexer instance;
-  private SparkMax motor;
 
   // Tunable PID values
   private static final TunableNumber kP = new TunableNumber("Indexer/kP", IndexerConstants.P);

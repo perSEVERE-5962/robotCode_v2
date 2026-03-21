@@ -40,8 +40,8 @@ import frc.robot.sim.SimDriveOverride;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakeActuator;
+import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
@@ -49,9 +49,6 @@ import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.DriverTuning;
 import frc.robot.util.HubScoringUtil;
-import swervelib.SwerveInputStream;
-import frc.robot.Constants;
-import frc.robot.Constants.HubScoringConstants;
 import java.io.File;
 import java.util.Set;
 import swervelib.SwerveInputStream;
@@ -67,8 +64,8 @@ public class RobotContainer {
     Agitator.getInstance();
     Hanger.getInstance();
     Indexer.getInstance();
-    Intake.getInstance();
-    IntakeActuator.getInstance();
+    IntakeRoller.getInstance();
+    IntakePivot.getInstance();
     Shooter.getInstance();
   }
 
@@ -298,8 +295,19 @@ public class RobotContainer {
       driverXbox.leftBumper().onTrue(Commands.none());
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
-      
-      driverXbox.a().onTrue(Commands.defer(() -> HubScoringUtil.driveToHubCommand(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES), Set.of(drivebase)));
+
+      driverXbox
+          .a()
+          .onTrue(
+              Commands.defer(
+                  () ->
+                      HubScoringUtil.driveToHubCommand(
+                          drivebase,
+                          getHubCenter(),
+                          SCORING_DISTANCE,
+                          getScoringSide(),
+                          SCORING_ARC_WIDTH_DEGREES),
+                  Set.of(drivebase)));
       driverXbox.y().whileTrue(new RetractIntake());
       driverXbox.x().toggleOnTrue(hubArcDrive);
       driverXbox.b().onTrue(new DeployIntake());

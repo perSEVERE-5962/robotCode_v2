@@ -15,8 +15,7 @@ public class DeployIntake extends Command {
 
   @Override
   public void initialize() {
-        intakePivot.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS);
-
+    intakePivot.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS);
   }
 
   @Override
@@ -27,7 +26,7 @@ public class DeployIntake extends Command {
 
   @Override
   public boolean isFinished() {
-    if (Math.abs(Constants.MotorConstants.OUT_INTAKE_POS - intakeActuator.getPosition())
+    if (Math.abs(Constants.MotorConstants.OUT_INTAKE_POS - intakePivot.getPosition())
         < Constants.MotorConstants.INTAKE_POS_TOLERANCE) {
       return true;
     }

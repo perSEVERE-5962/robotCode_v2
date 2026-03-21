@@ -9,8 +9,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,38 +21,57 @@ public class FlexActuator extends SubsystemBase {
   private SparkAbsoluteEncoder absoluteEncoder;
   private boolean useThroughBoreEncoder;
 
-    public FlexActuator(int kID, double kP, double kI, double kD, double kMinOutput, double kMaxOutput, double kF, double kIz,
-            float kUpperSoftLimit, float kLowerSoftLimit, boolean inverted, boolean useThroughBoreEncoder,
-            boolean useSoftLimits) {
+  public FlexActuator(
+      int kID,
+      double kP,
+      double kI,
+      double kD,
+      double kMinOutput,
+      double kMaxOutput,
+      double kF,
+      double kIz,
+      float kUpperSoftLimit,
+      float kLowerSoftLimit,
+      int kStallLimit,
+      boolean inverted,
+      boolean coast,
+      boolean useThroughBoreEncoder,
+      boolean useSoftLimits) {
 
-        motor = new SparkFlex(kID, SparkLowLevel.MotorType.kBrushless);
-        SparkFlexConfig motorConfig = new SparkFlexConfig();
+    motor = new SparkFlex(kID, SparkLowLevel.MotorType.kBrushless);
+    SparkFlexConfig motorConfig = new SparkFlexConfig();
 
     motorConfig.inverted(inverted);
-    motorConfig.idleMode(SparkFlexConfig.IdleMode.kBrake);
-    motorConfig.smartCurrentLimit(40);
+    motorConfig.idleMode(coast ? SparkFlexConfig.IdleMode.kCoast : SparkFlexConfig.IdleMode.kBrake);
+    motorConfig.smartCurrentLimit(kStallLimit);
+    motorConfig.voltageCompensation(12.0);
 
-        FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
-        if (useThroughBoreEncoder == true) {
-            feedBackSensor = FeedbackSensor.kAbsoluteEncoder;
-        }
-        motorConfig.closedLoop
-                .feedbackSensor(feedBackSensor)
-                .p(kP)
-                .i(kI)
-                .d(kD)
-                .outputRange(kMinOutput, kMaxOutput)
-                .iZone(kIz);
-        motorConfig.closedLoop.feedForward
-                .kV(12.0 * kF);
-        if (useThroughBoreEncoder == true) {
-            absoluteEncoder = motor.getAbsoluteEncoder();
-        } else {
-            encoder = motor.getEncoder();
-            encoder.setPosition(0);
-        }
+    FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
+    if (useThroughBoreEncoder) {
+      feedBackSensor = FeedbackSensor.kAbsoluteEncoder;
+    }
+    motorConfig
+        .closedLoop
+        .feedbackSensor(feedBackSensor)
+        .p(kP)
+        .i(kI)
+        .d(kD)
+        .outputRange(kMinOutput, kMaxOutput)
+        .iZone(kIz);
+    motorConfig.closedLoop.feedForward.kV(12.0 * kF);
+    motorConfig
+        .encoder
+        .quadratureAverageDepth(2)
+        .quadratureMeasurementPeriod(10)
+        .uvwMeasurementPeriod(8);
+    if (useThroughBoreEncoder) {
+      absoluteEncoder = motor.getAbsoluteEncoder();
+    } else {
+      encoder = motor.getEncoder();
+      encoder.setPosition(0);
+    }
 
-    if (useSoftLimits == true) {
+    if (useSoftLimits) {
 
       SoftLimitConfig softLimitConfig = new SoftLimitConfig();
       softLimitConfig.forwardSoftLimitEnabled(true);
@@ -67,7 +86,7 @@ public class FlexActuator extends SubsystemBase {
   }
 
   public double getPosition() {
-    if (useThroughBoreEncoder == true) {
+    if (useThroughBoreEncoder) {
       if (absoluteEncoder == null) {
         return 0;
       }
@@ -80,8 +99,7 @@ public class FlexActuator extends SubsystemBase {
     }
   }
 
-  /** Returns motor velocity in RPM */
-  public double getMotorVelocity() {
+  public double getVelocity() {
     if (useThroughBoreEncoder) {
       if (absoluteEncoder == null) {
         return 0;

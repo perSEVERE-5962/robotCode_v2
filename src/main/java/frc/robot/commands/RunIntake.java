@@ -5,6 +5,6 @@ import frc.robot.Constants;
 
 public class RunIntake extends SequentialCommandGroup {
   public RunIntake() {
-    super(new DeployIntake(), new MoveIntake(Constants.MotorConstants.DESIRED_INTAKE_SPEED));
+    super(new DeployIntake(), new MoveIntake(Constants.MotorConstants.DESIRED_INTAKE_RPM));
   }
 }

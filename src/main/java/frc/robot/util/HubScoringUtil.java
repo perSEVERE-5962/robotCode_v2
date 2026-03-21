@@ -61,7 +61,12 @@ public class HubScoringUtil {
     return new Pose2d(targetPosition, targetRotation);
   }
 
-  public static Command driveToHubCommand(SwerveSubsystem swerve, Translation2d hubCenter, double scoringDistance, Rotation2d scoringSide, double arcWidthDegrees) {
+  public static Command driveToHubCommand(
+      SwerveSubsystem swerve,
+      Translation2d hubCenter,
+      double scoringDistance,
+      Rotation2d scoringSide,
+      double arcWidthDegrees) {
     // get closest point on the arc
     Translation2d robotPosition = swerve.getPose().getTranslation();
     Pose2d targetPose =

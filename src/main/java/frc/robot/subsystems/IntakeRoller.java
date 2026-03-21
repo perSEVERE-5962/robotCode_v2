@@ -1,9 +1,6 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.Constants.MotorConstants;
@@ -12,7 +9,6 @@ import frc.robot.util.TunableNumber;
 
 public class IntakeRoller extends Actuator {
   private SparkMax motor;
-  private SparkMaxConfig motorConfig;
   private static IntakeRoller instance;
 
   // Tunable operational value
@@ -32,14 +28,23 @@ public class IntakeRoller extends Actuator {
           JamProtectionConstants.INTAKE_MAX_ATTEMPTS);
 
   private IntakeRoller() {
-    super(Constants.CANDeviceIDs.kIntakeRollerID, Constants.IntakeRollerConstants.P, Constants.IntakeRollerConstants.I, Constants.IntakeRollerConstants.D, Constants.IntakeRollerConstants.MinOutput, Constants.IntakeRollerConstants.MaxOutput, Constants.IntakeRollerConstants.FF, Constants.IntakeRollerConstants.Iz, 0, 0, true, false, false);
+    super(
+        Constants.CANDeviceIDs.kIntakeRollerID,
+        Constants.IntakeRollerConstants.P,
+        Constants.IntakeRollerConstants.I,
+        Constants.IntakeRollerConstants.D,
+        Constants.IntakeRollerConstants.MinOutput,
+        Constants.IntakeRollerConstants.MaxOutput,
+        Constants.IntakeRollerConstants.FF,
+        Constants.IntakeRollerConstants.Iz,
+        0,
+        0,
+        40,
+        true,
+        true,
+        false,
+        false);
     motor = getMotor();
-
-    motorConfig = new SparkMaxConfig();
-
-    motorConfig.inverted(true).idleMode(SparkMaxConfig.IdleMode.kCoast).smartCurrentLimit(40);
-
-    motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
