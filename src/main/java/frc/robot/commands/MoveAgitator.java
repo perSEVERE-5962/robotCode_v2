@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Agitator;
 
@@ -20,8 +18,8 @@ public class MoveAgitator extends Command {
 
   @Override
   public void execute() {
-      agitator.moveToVelocityWithPID(rpm);
-      System.out.println(agitator.getMotorVelocity());
+    agitator.moveToVelocityWithPID(rpm);
+    System.out.println(agitator.getMotorVelocity());
   }
 
   @Override

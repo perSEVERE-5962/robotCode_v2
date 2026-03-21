@@ -7,12 +7,27 @@ package frc.robot.telemetry;
 public class CANHealthTelemetry implements SubsystemTelemetry {
   private static final int TOTAL_DEVICES = 21; // 6 motors + gyro + 2 cameras + 12 swerve
   private static final String[] DEVICE_NAMES = {
-    "Shooter", "Indexer", "Intake", "IntakeActuator", "Hanger", "Agitator",
-    "Gyro", "LeftCam", "RightCam",
-    "FL-Drive", "FL-Turn", "FL-Encoder",
-    "FR-Drive", "FR-Turn", "FR-Encoder",
-    "BL-Drive", "BL-Turn", "BL-Encoder",
-    "BR-Drive", "BR-Turn", "BR-Encoder"
+    "Shooter",
+    "Indexer",
+    "Intake",
+    "IntakeActuator",
+    "Hanger",
+    "Agitator",
+    "Gyro",
+    "LeftCam",
+    "RightCam",
+    "FL-Drive",
+    "FL-Turn",
+    "FL-Encoder",
+    "FR-Drive",
+    "FR-Turn",
+    "FR-Encoder",
+    "BL-Drive",
+    "BL-Turn",
+    "BL-Encoder",
+    "BR-Drive",
+    "BR-Turn",
+    "BR-Encoder"
   };
 
   private final ShooterTelemetry shooterTelemetry;

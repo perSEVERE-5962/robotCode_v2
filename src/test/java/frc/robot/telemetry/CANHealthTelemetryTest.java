@@ -19,6 +19,7 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
   private VisionTelemetry visionTelemetry;
   private DriveTelemetry driveTelemetry;
   private CANHealthTelemetry telemetry;
+
   @BeforeEach
   void setUp() {
     shooterTelemetry = new ShooterTelemetry();
@@ -72,18 +73,9 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     setField(visionTelemetry, "leftCamConnected", true);
     setField(visionTelemetry, "rightCamConnected", true);
     // Swerve module devices
-    setField(
-        driveTelemetry,
-        "driveMotorConnected",
-        new boolean[] {true, true, true, true});
-    setField(
-        driveTelemetry,
-        "turnMotorConnected",
-        new boolean[] {true, true, true, true});
-    setField(
-        driveTelemetry,
-        "encoderReadIssue",
-        new boolean[] {false, false, false, false});
+    setField(driveTelemetry, "driveMotorConnected", new boolean[] {true, true, true, true});
+    setField(driveTelemetry, "turnMotorConnected", new boolean[] {true, true, true, true});
+    setField(driveTelemetry, "encoderReadIssue", new boolean[] {false, false, false, false});
 
     telemetry.update();
     assertTrue(telemetry.isAllConnected());
@@ -104,18 +96,9 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     setField(visionTelemetry, "leftCamConnected", true);
     setField(visionTelemetry, "rightCamConnected", true);
     // Connect most swerve, leave FR-Drive disconnected
-    setField(
-        driveTelemetry,
-        "driveMotorConnected",
-        new boolean[] {true, false, true, true});
-    setField(
-        driveTelemetry,
-        "turnMotorConnected",
-        new boolean[] {true, true, true, true});
-    setField(
-        driveTelemetry,
-        "encoderReadIssue",
-        new boolean[] {false, false, false, false});
+    setField(driveTelemetry, "driveMotorConnected", new boolean[] {true, false, true, true});
+    setField(driveTelemetry, "turnMotorConnected", new boolean[] {true, true, true, true});
+    setField(driveTelemetry, "encoderReadIssue", new boolean[] {false, false, false, false});
 
     telemetry.update();
     assertFalse(telemetry.isAllConnected());

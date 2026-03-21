@@ -28,7 +28,7 @@ public class IntakePivot extends Actuator {
         false,
         false,
         true);
-        motor = getMotor();
+    motor = getMotor();
     motorConfig = new SparkMaxConfig();
 
     motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(40);
@@ -54,9 +54,11 @@ public class IntakePivot extends Actuator {
   public double getTargetPosition() {
     return targetPosition;
   }
-  public void setMotorPositionToScoring(){
+
+  public void setMotorPositionToScoring() {
     getMotor().getEncoder().setPosition(38.24);
   }
+
   public double getAppliedOutput() {
     return getMotor().getAppliedOutput();
   }

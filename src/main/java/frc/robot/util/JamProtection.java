@@ -140,9 +140,7 @@ public class JamProtection {
 
       case JAM_CONFIRMING:
         // If jam criteria no longer met, go back to monitoring
-        if (!running
-            || currentAmps <= jamCurrentAmps
-            || Math.abs(velocityRPM) >= jamVelocityRPM) {
+        if (!running || currentAmps <= jamCurrentAmps || Math.abs(velocityRPM) >= jamVelocityRPM) {
           state = State.MONITORING;
           break;
         }

@@ -26,7 +26,6 @@ class LEDStatusDisplayTest {
     resetSingleton("frc.robot.util.ChannelCoordinator");
     resetSingleton("frc.robot.telemetry.TelemetryManager");
 
-
     display = LEDStatusDisplay.getInstance();
   }
 

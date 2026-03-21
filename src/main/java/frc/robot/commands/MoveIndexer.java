@@ -7,7 +7,7 @@ public class MoveIndexer extends Command {
   private Indexer indexer;
   private double rpm;
 
-  public MoveIndexer(double rpm){
+  public MoveIndexer(double rpm) {
     this.rpm = rpm;
     indexer = Indexer.getInstance();
     addRequirements(indexer);
