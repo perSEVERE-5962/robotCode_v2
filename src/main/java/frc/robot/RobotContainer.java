@@ -32,7 +32,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AlignToTag;
 import frc.robot.commands.DeployIntake;
-import frc.robot.commands.DriveToHub;
 import frc.robot.commands.HubArcDrive;
 import frc.robot.commands.MoveAgitator;
 //import frc.robot.commands.AlignWithAprilTag;
@@ -45,6 +44,7 @@ import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.DriverTuning;
+import frc.robot.util.HubScoringUtil;
 import swervelib.SwerveInputStream;
 import frc.robot.Constants;
 import frc.robot.Constants.HubScoringConstants;
@@ -276,7 +276,7 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
       
-      driverXbox.a().onTrue(Commands.defer(()-> new DriveToHub(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES), Set.of(drivebase)));
+      driverXbox.a().onTrue(Commands.defer(() -> HubScoringUtil.driveToHubCommand(drivebase, getHubCenter(), SCORING_DISTANCE, getScoringSide(), SCORING_ARC_WIDTH_DEGREES), Set.of(drivebase)));
       driverXbox.y().whileTrue(new RetractIntake());
       driverXbox.x().toggleOnTrue(new HubArcDrive(drivebase, driverXbox::getLeftX, getHubCenter(), SCORING_DISTANCE, getScoringSide()));
       driverXbox.b().onTrue(new DeployIntake());

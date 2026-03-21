@@ -19,13 +19,13 @@ public abstract class TelemetryTestBase {
     // Close SparkMax devices to free CAN IDs before nulling singletons
     closeSubsystemMotor("frc.robot.subsystems.Shooter");
     closeSubsystemMotor("frc.robot.subsystems.Indexer");
-    closeSubsystemMotor("frc.robot.subsystems.Intake");
+    closeSubsystemMotor("frc.robot.subsystems.IntakeRoller");
     resetSingleton("frc.robot.util.LEDStatusDisplay");
     resetSingleton("frc.robot.telemetry.TelemetryManager");
 
     resetSingleton("frc.robot.subsystems.Shooter");
     resetSingleton("frc.robot.subsystems.Indexer");
-    resetSingleton("frc.robot.subsystems.Intake");
+    resetSingleton("frc.robot.subsystems.IntakeRoller");
     SafeLog.logAndReset();
   }
 
