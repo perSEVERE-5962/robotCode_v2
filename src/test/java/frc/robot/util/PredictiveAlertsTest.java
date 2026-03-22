@@ -230,6 +230,19 @@ class PredictiveAlertsTest {
         if (motor instanceof AutoCloseable) {
           ((AutoCloseable) motor).close();
         }
+        try {
+          Field followersField = clazz.getDeclaredField("followers");
+          followersField.setAccessible(true);
+          Object[] followers = (Object[]) followersField.get(instance);
+          if (followers != null) {
+            for (Object follower : followers) {
+              if (follower instanceof AutoCloseable) {
+                ((AutoCloseable) follower).close();
+              }
+            }
+          }
+        } catch (NoSuchFieldException e2) {
+        }
       }
     } catch (Exception e) {
     }
