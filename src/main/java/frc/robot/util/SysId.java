@@ -16,6 +16,7 @@ import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
 
 public class SysId {
@@ -96,18 +97,30 @@ public class SysId {
         .andThen(Commands.waitSeconds(delay));
   }
 
-  /*public static Command intakeRollerSysIdCommand() {
+  public static Command intakeRollerSysIdCommand() {
     IntakeRoller inst = IntakeRoller.getInstance();
-    SysIdRoutine routine = new SysIdRoutine(
-      new Config(),
-      new Mechanism((Voltage voltage) -> inst.getMotor().setVoltage(voltage), (SysIdRoutineLog log) -> {
-        log.motor("intakeRoller").voltage(Volts.of(inst.getMotor().getBusVoltage())).linearPosition(Meters.of(inst.getPosition())).linearVelocity(MetersPerSecond.of(inst.getMotorVelocity()));
-      }, inst));
-    return routine.quasistatic(Direction.kForward).andThen(Commands.waitSeconds(delay))
-        .andThen(routine.quasistatic(Direction.kReverse)).andThen(Commands.waitSeconds(delay))
-        .andThen(routine.dynamic(Direction.kForward)).andThen(Commands.waitSeconds(delay))
-        .andThen(routine.dynamic(Direction.kReverse)).andThen(Commands.waitSeconds(delay));
-  }*/
+    SysIdRoutine routine =
+        new SysIdRoutine(
+            new Config(),
+            new Mechanism(
+                (Voltage voltage) -> inst.getMotor().setVoltage(voltage),
+                (SysIdRoutineLog log) -> {
+                  log.motor("intakeRoller")
+                      .voltage(Volts.of(inst.getMotor().getBusVoltage()))
+                      .linearPosition(Meters.of(inst.getPosition()))
+                      .linearVelocity(MetersPerSecond.of(inst.getMotorVelocity()));
+                },
+                inst));
+    return routine
+        .quasistatic(Direction.kForward)
+        .andThen(Commands.waitSeconds(delay))
+        .andThen(routine.quasistatic(Direction.kReverse))
+        .andThen(Commands.waitSeconds(delay))
+        .andThen(routine.dynamic(Direction.kForward))
+        .andThen(Commands.waitSeconds(delay))
+        .andThen(routine.dynamic(Direction.kReverse))
+        .andThen(Commands.waitSeconds(delay));
+  }
 
   public static Command intakePivotSysIdCommand() {
     IntakePivot inst = IntakePivot.getInstance();
