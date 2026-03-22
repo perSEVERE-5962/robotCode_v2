@@ -41,7 +41,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  */
 public class Robot extends LoggedRobot {
 
-  private static Robot instance;
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
 
@@ -55,14 +54,6 @@ public class Robot extends LoggedRobot {
 
   // Logging status
   private boolean loggingAvailable = false;
-
-  public Robot() {
-    instance = this;
-  }
-
-  public static Robot getInstance() {
-    return instance;
-  }
 
   private void installExceptionHandler() {
     Thread.setDefaultUncaughtExceptionHandler(
