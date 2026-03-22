@@ -28,7 +28,6 @@ public class AgitatorTelemetry implements SubsystemTelemetry {
   private int deviceFaultsRaw = 0;
 
   private boolean stalled = false;
-  private boolean wasStalled = false;
   private double stallStartTime = 0;
   private double stallDurationMs = 0;
   private boolean inStallCondition = false;
@@ -107,8 +106,6 @@ public class AgitatorTelemetry implements SubsystemTelemetry {
       stallDurationMs = 0;
       stalled = false;
     }
-
-    wasStalled = stalled;
   }
 
   private void setDefaultValues() {

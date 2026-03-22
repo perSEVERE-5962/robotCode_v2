@@ -479,7 +479,7 @@
             "height": 350.0,
             "type": "Graph",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/PositionRotations",
+              "topic": "/AdvantageKit/RealOutputs/IntakePivot/PositionRotations",
               "period": 0.033,
               "time_displayed": 5.0,
               "color": 4278238420,
@@ -494,7 +494,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/IntakeActuator/kP",
+              "topic": "/SmartDashboard/IntakePivot/kP",
               "period": 0.033,
               "show_submit_button": true
             }
@@ -507,7 +507,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/IntakeActuator/kI",
+              "topic": "/SmartDashboard/IntakePivot/kI",
               "period": 0.033,
               "show_submit_button": true
             }
@@ -520,7 +520,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/IntakeActuator/kD",
+              "topic": "/SmartDashboard/IntakePivot/kD",
               "period": 0.033,
               "show_submit_button": true
             }
@@ -533,7 +533,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/IntakeActuator/FF",
+              "topic": "/SmartDashboard/IntakePivot/FF",
               "period": 0.033,
               "show_submit_button": true
             }
@@ -546,7 +546,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/IntakeActuator/DeployPos",
+              "topic": "/SmartDashboard/IntakePivot/DeployPos",
               "period": 0.033,
               "show_submit_button": true
             }
@@ -559,7 +559,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/IntakeActuator/RetractPos",
+              "topic": "/SmartDashboard/IntakePivot/RetractPos",
               "period": 0.033,
               "show_submit_button": true
             }
@@ -572,7 +572,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/IntakeActuator/Tolerance",
+              "topic": "/SmartDashboard/IntakePivot/Tolerance",
               "period": 0.033,
               "show_submit_button": true
             }
@@ -585,7 +585,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/Intake/Speed",
+              "topic": "/SmartDashboard/IntakeRoller/Speed",
               "period": 0.033,
               "show_submit_button": true
             }
@@ -598,7 +598,7 @@
             "height": 116.3,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/AtTarget",
+              "topic": "/AdvantageKit/RealOutputs/IntakePivot/AtTarget",
               "period": 0.033,
               "true_color": 4278255360,
               "false_color": 4294927872,
@@ -614,7 +614,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/PositionRotations",
+              "topic": "/AdvantageKit/RealOutputs/IntakePivot/PositionRotations",
               "period": 0.033,
               "show_submit_button": false
             }
@@ -627,7 +627,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/TargetPosition",
+              "topic": "/AdvantageKit/RealOutputs/IntakePivot/TargetPosition",
               "period": 0.033,
               "show_submit_button": false
             }
@@ -640,7 +640,7 @@
             "height": 116.3,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Intake/Running",
+              "topic": "/AdvantageKit/RealOutputs/IntakeRoller/Running",
               "period": 0.033,
               "true_color": 4278255360,
               "false_color": 4281545523,
@@ -656,7 +656,7 @@
             "height": 116.3,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Intake/JamDetected",
+              "topic": "/AdvantageKit/RealOutputs/IntakeRoller/JamDetected",
               "period": 0.033,
               "true_color": 4294901760,
               "false_color": 4278233600,
@@ -672,7 +672,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Intake/VelocityRPM",
+              "topic": "/AdvantageKit/RealOutputs/IntakeRoller/VelocityRPM",
               "period": 0.033,
               "show_submit_button": false
             }
@@ -685,7 +685,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Intake/AppliedOutput",
+              "topic": "/AdvantageKit/RealOutputs/IntakeRoller/AppliedOutput",
               "period": 0.033,
               "show_submit_button": false
             }
@@ -698,7 +698,7 @@
             "height": 116.3,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Intake/Stalled",
+              "topic": "/AdvantageKit/RealOutputs/IntakeRoller/Stalled",
               "period": 0.033,
               "true_color": 4294901760,
               "false_color": 4278233600,
@@ -714,7 +714,7 @@
             "height": 116.3,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Intake/Device/Connected",
+              "topic": "/AdvantageKit/RealOutputs/IntakeRoller/Device/Connected",
               "period": 0.033,
               "true_color": 4278233600,
               "false_color": 4294901760,
@@ -730,7 +730,7 @@
             "height": 116.3,
             "type": "Number Bar",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/TemperatureCelsius",
+              "topic": "/AdvantageKit/RealOutputs/IntakePivot/TemperatureCelsius",
               "period": 0.033,
               "min_value": 0.0,
               "max_value": 100.0,
@@ -747,7 +747,7 @@
             "height": 116.3,
             "type": "Number Bar",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/CurrentAmps",
+              "topic": "/AdvantageKit/RealOutputs/IntakePivot/CurrentAmps",
               "period": 0.033,
               "min_value": 0.0,
               "max_value": 60.0,
@@ -764,7 +764,7 @@
             "height": 116.3,
             "type": "Number Bar",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/AppliedOutput",
+              "topic": "/AdvantageKit/RealOutputs/IntakePivot/AppliedOutput",
               "period": 0.033,
               "min_value": -1.0,
               "max_value": 1.0,
@@ -781,7 +781,7 @@
             "height": 116.3,
             "type": "Number Bar",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Intake/TemperatureCelsius",
+              "topic": "/AdvantageKit/RealOutputs/IntakeRoller/TemperatureCelsius",
               "period": 0.033,
               "min_value": 0.0,
               "max_value": 100.0,
@@ -798,7 +798,7 @@
             "height": 116.3,
             "type": "Number Bar",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Intake/CurrentAmps",
+              "topic": "/AdvantageKit/RealOutputs/IntakeRoller/CurrentAmps",
               "period": 0.033,
               "min_value": 0.0,
               "max_value": 60.0,
@@ -815,7 +815,7 @@
             "height": 116.3,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/Device/Connected",
+              "topic": "/AdvantageKit/RealOutputs/IntakePivot/Device/Connected",
               "period": 0.033,
               "true_color": 4278233600,
               "false_color": 4294901760,

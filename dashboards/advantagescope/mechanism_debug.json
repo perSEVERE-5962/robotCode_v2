@@ -221,12 +221,12 @@
             },
             {
               "type": 1,
-              "title": "Intake",
+              "title": "IntakeRoller",
               "controller": {
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/Intake/VelocityRPM",
+                    "logKey": "/RealOutputs/IntakeRoller/VelocityRPM",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -238,7 +238,7 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/Intake/CurrentAmps",
+                    "logKey": "/RealOutputs/IntakeRoller/CurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -250,7 +250,7 @@
                 "discreteSources": [
                   {
                     "type": "stripes",
-                    "logKey": "/RealOutputs/Intake/Running",
+                    "logKey": "/RealOutputs/IntakeRoller/Running",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -259,7 +259,7 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "/RealOutputs/Intake/Stalled",
+                    "logKey": "/RealOutputs/IntakeRoller/Stalled",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -280,12 +280,12 @@
             },
             {
               "type": 1,
-              "title": "Intake Actuator",
+              "title": "Intake Pivot",
               "controller": {
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/IntakeActuator/PositionRotations",
+                    "logKey": "/RealOutputs/IntakePivot/PositionRotations",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -297,7 +297,7 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/IntakeActuator/CurrentAmps",
+                    "logKey": "/RealOutputs/IntakePivot/CurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -309,7 +309,7 @@
                 "discreteSources": [
                   {
                     "type": "stripes",
-                    "logKey": "/RealOutputs/IntakeActuator/AtTarget",
+                    "logKey": "/RealOutputs/IntakePivot/AtTarget",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -318,7 +318,7 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "/RealOutputs/IntakeActuator/IsDeployed",
+                    "logKey": "/RealOutputs/IntakePivot/IsDeployed",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -430,7 +430,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/Intake/TemperatureCelsius",
+                    "logKey": "/RealOutputs/IntakeRoller/TemperatureCelsius",
                     "logType": "Number",
                     "visible": true,
                     "options": {

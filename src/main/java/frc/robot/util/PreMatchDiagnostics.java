@@ -313,15 +313,15 @@ public class PreMatchDiagnostics {
     }
 
     try {
-      if (IntakeRoller.getInstance() == null) missing.append("Intake,");
+      if (IntakeRoller.getInstance() == null) missing.append("IntakeRoller,");
     } catch (Exception e) {
-      missing.append("Intake,");
+      missing.append("IntakeRoller,");
     }
 
     try {
-      if (IntakePivot.getInstance() == null) missing.append("IntakeActuator,");
+      if (IntakePivot.getInstance() == null) missing.append("IntakePivot,");
     } catch (Exception e) {
-      missing.append("IntakeActuator,");
+      missing.append("IntakePivot,");
     }
 
     try {
@@ -366,14 +366,14 @@ public class PreMatchDiagnostics {
 
       int shooterFaults = Shooter.getInstance().getStickyFaultsRaw();
       int indexerFaults = Indexer.getInstance().getStickyFaultsRaw();
-      int intakeFaults = IntakeRoller.getInstance().getStickyFaultsRaw();
+      int intakeRollerFaults = IntakeRoller.getInstance().getStickyFaultsRaw();
 
       if (shooterFaults != 0)
         faults.append("Shooter(0x").append(Integer.toHexString(shooterFaults)).append("),");
       if (indexerFaults != 0)
         faults.append("Indexer(0x").append(Integer.toHexString(indexerFaults)).append("),");
-      if (intakeFaults != 0)
-        faults.append("Intake(0x").append(Integer.toHexString(intakeFaults)).append("),");
+      if (intakeRollerFaults != 0)
+        faults.append("Intake(0x").append(Integer.toHexString(intakeRollerFaults)).append("),");
 
       Logger.recordOutput("Diagnostics/MotorFaults", faults.toString());
 

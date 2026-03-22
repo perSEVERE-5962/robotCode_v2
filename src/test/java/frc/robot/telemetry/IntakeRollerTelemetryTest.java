@@ -10,17 +10,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
-class IntakeTelemetryTest extends SparkSimTestBase {
+class IntakeRollerTelemetryTest extends SparkSimTestBase {
 
-  private IntakeTelemetry telemetry;
+  private IntakeRollerTelemetry telemetry;
   private IntakeRoller intake;
 
   @BeforeEach
   void setUp() {
-    telemetry = new IntakeTelemetry();
+    telemetry = new IntakeRollerTelemetry();
     intake = IntakeRoller.getInstance();
     intake.move(0);
-    setMotorVelocity(intakeSim, 0);
+    setMotorVelocity(intakeRollerSim, 0);
   }
 
   @Test
@@ -36,7 +36,7 @@ class IntakeTelemetryTest extends SparkSimTestBase {
 
   @Test
   void testVelocityReading() throws Exception {
-    setMotorVelocity(intakeSim, 3000);
+    setMotorVelocity(intakeRollerSim, 3000);
     DriverStationSim.notifyNewData();
     telemetry.update();
 
@@ -47,7 +47,7 @@ class IntakeTelemetryTest extends SparkSimTestBase {
   @Test
   void testJamNotTriggeredAtNormalVelocity() {
     intake.move(1.0);
-    setMotorVelocity(intakeSim, 500);
+    setMotorVelocity(intakeRollerSim, 500);
     DriverStationSim.notifyNewData();
     telemetry.update();
 
@@ -57,7 +57,7 @@ class IntakeTelemetryTest extends SparkSimTestBase {
   @Test
   void testJamRequiresRunning() throws Exception {
     // High current but not running (motor not commanded)
-    setMotorVelocity(intakeSim, 0);
+    setMotorVelocity(intakeRollerSim, 0);
     DriverStationSim.notifyNewData();
     telemetry.update();
 
@@ -80,7 +80,7 @@ class IntakeTelemetryTest extends SparkSimTestBase {
     setField(telemetry, "stallStartTime", edu.wpi.first.wpilibj.Timer.getFPGATimestamp());
 
     intake.move(1.0);
-    setMotorVelocity(intakeSim, 500);
+    setMotorVelocity(intakeRollerSim, 500);
     DriverStationSim.notifyNewData();
     telemetry.update();
 
@@ -90,7 +90,7 @@ class IntakeTelemetryTest extends SparkSimTestBase {
   @Test
   void testStallNotTriggeredDuringStartup() throws Exception {
     intake.move(1.0);
-    setMotorVelocity(intakeSim, 0);
+    setMotorVelocity(intakeRollerSim, 0);
     DriverStationSim.notifyNewData();
 
     telemetry.update();
@@ -109,7 +109,7 @@ class IntakeTelemetryTest extends SparkSimTestBase {
   @Test
   void testCurrentPerSpeedRatioPositiveWhenRunning() throws Exception {
     intake.move(1.0);
-    setMotorVelocity(intakeSim, 500);
+    setMotorVelocity(intakeRollerSim, 500);
     DriverStationSim.notifyNewData();
     telemetry.update();
 
@@ -119,7 +119,7 @@ class IntakeTelemetryTest extends SparkSimTestBase {
 
   @Test
   void testCurrentPerSpeedRatioZeroWhenStopped() throws Exception {
-    setMotorVelocity(intakeSim, 0);
+    setMotorVelocity(intakeRollerSim, 0);
     DriverStationSim.notifyNewData();
     telemetry.update();
 

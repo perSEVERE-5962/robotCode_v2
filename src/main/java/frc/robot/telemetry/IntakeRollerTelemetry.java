@@ -9,8 +9,8 @@ import frc.robot.subsystems.IntakeRoller;
 import frc.robot.util.EventMarker;
 import frc.robot.util.JamProtection;
 
-/** Intake telemetry: jam detection, stall tracking. */
-public class IntakeTelemetry implements SubsystemTelemetry {
+/** Intake roller telemetry: jam detection, stall tracking. */
+public class IntakeRollerTelemetry implements SubsystemTelemetry {
   private IntakeRoller intake; // grabbed again in update() if not ready yet
   private boolean subsystemAvailable = false;
 
@@ -48,7 +48,7 @@ public class IntakeTelemetry implements SubsystemTelemetry {
   private int jamProtectionAttempts = 0;
   private boolean jamProtectionIntervening = false;
 
-  public IntakeTelemetry() {
+  public IntakeRollerTelemetry() {
     this.intake = IntakeRoller.getInstance();
   }
 

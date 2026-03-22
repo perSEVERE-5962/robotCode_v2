@@ -54,9 +54,10 @@ public class AlertManager {
       new Alert("BATTERY CRITICAL - Replace now!", AlertType.kError);
   private final Alert shooterTempAlert = new Alert("Shooter motor overheating", AlertType.kWarning);
   private final Alert indexerTempAlert = new Alert("Indexer motor overheating", AlertType.kWarning);
-  private final Alert intakeTempAlert = new Alert("Intake motor overheating", AlertType.kWarning);
-  private final Alert intakeActuatorTempAlert =
-      new Alert("IntakeActuator motor overheating", AlertType.kWarning);
+  private final Alert intakeRollerTempAlert =
+      new Alert("IntakeRoller motor overheating", AlertType.kWarning);
+  private final Alert intakePivotTempAlert =
+      new Alert("IntakePivot motor overheating", AlertType.kWarning);
   private final Alert canUtilizationAlert =
       new Alert("CAN bus utilization high", AlertType.kWarning);
   private final Alert canBusOffAlert = new Alert("CAN bus error detected", AlertType.kError);
@@ -170,11 +171,10 @@ public class AlertManager {
   private void checkMotorTemps() {
     checkOneMotorTemp("Shooter", shooterTempAlert, () -> Shooter.getInstance().getTemperature());
     checkOneMotorTemp("Indexer", indexerTempAlert, () -> Indexer.getInstance().getTemperature());
-    checkOneMotorTemp("Intake", intakeTempAlert, () -> IntakeRoller.getInstance().getTemperature());
     checkOneMotorTemp(
-        "IntakeActuator",
-        intakeActuatorTempAlert,
-        () -> IntakePivot.getInstance().getTemperature());
+        "IntakeRoller", intakeRollerTempAlert, () -> IntakeRoller.getInstance().getTemperature());
+    checkOneMotorTemp(
+        "IntakePivot", intakePivotTempAlert, () -> IntakePivot.getInstance().getTemperature());
   }
 
   private void checkOneMotorTemp(

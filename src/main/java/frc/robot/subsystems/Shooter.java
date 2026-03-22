@@ -74,12 +74,6 @@ public class Shooter extends Actuator {
         };
     motor = getMotor();
 
-    //     followers = new SparkMax[] {
-    //     configureFollower(CANDeviceIDs.kShooterFollower1, true),   // inverted
-    //     configureFollower(Constants.CANDeviceIDs.kShooterFollower, false),   // same direction
-    //     configureFollower(CANDeviceIDs.kShooterFollower2, true),   // inverted
-    // };
-
     // followerConfig = new SparkMaxConfig();
     // followerMotor = new SparkMax(Constants.CANDeviceIDs.kShooterFollower, MotorType.kBrushless);
     // followerConfig.follow(Constants.CANDeviceIDs.kShooterID, false);
@@ -121,7 +115,7 @@ public class Shooter extends Actuator {
     // followerMotor2.configure(followerConfig2, ResetMode.kNoResetSafeParameters,
     // PersistMode.kPersistParameters);
 
-    limiter = new SlewRateLimiter(ShooterConstants.RPM_SLEW_RATE);
+    limiter = new SlewRateLimiter(Constants.MotorConstants.SHOOTER_RPM_SLEW_RATE);
   }
 
   public boolean isAtSpeed() {

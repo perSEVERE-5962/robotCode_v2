@@ -418,8 +418,8 @@ public class Robot extends LoggedRobot {
       simFuelManager.configureRobot(0.66, 0.66, 0.25, swerve::getPose, swerve::getFieldVelocity);
       // wire intake zone so balls get picked up when intake is running
       try {
-        IntakeRoller intake = IntakeRoller.getInstance();
-        simFuelManager.addIntakeZone(0.10, 0.45, -0.20, 0.20, intake::isRunning);
+        IntakeRoller intakeRoller = IntakeRoller.getInstance();
+        simFuelManager.addIntakeZone(0.10, 0.45, -0.20, 0.20, intakeRoller::isRunning);
       } catch (Throwable t) {
         // intake not available, shots fire freely without ball tracking
       }

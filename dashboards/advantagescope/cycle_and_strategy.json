@@ -136,7 +136,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/IntakeActuator/PositionRotations",
+                    "logKey": "/RealOutputs/IntakePivot/PositionRotations",
                     "logType": "Number",
                     "visible": true,
                     "options": { "color": "#2b66a2", "size": "normal" }
@@ -161,14 +161,14 @@
                 "discreteSources": [
                   {
                     "type": "stripes",
-                    "logKey": "/RealOutputs/IntakeActuator/IsDeployed",
+                    "logKey": "/RealOutputs/IntakePivot/IsDeployed",
                     "logType": "Boolean",
                     "visible": true,
                     "options": { "color": "#2b66a2" }
                   },
                   {
                     "type": "stripes",
-                    "logKey": "/RealOutputs/Intake/Running",
+                    "logKey": "/RealOutputs/IntakeRoller/Running",
                     "logType": "Boolean",
                     "visible": true,
                     "options": { "color": "#3b875a" }

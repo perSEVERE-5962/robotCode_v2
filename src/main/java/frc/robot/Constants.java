@@ -108,6 +108,7 @@ public final class Constants {
 
   public static final class MotorConstants {
     public static final double DESIRED_SHOOTER_RPM = 3730;
+    public static final double SHOOTER_RPM_SLEW_RATE = 1000.0; // max change in RPM per second
     public static final double DESIRED_INDEXER_RPM = 7833; // 8.4 * 3730/4
     public static final double BACKWARDS_INDEXER_RPM = 999;
     public static final double OUT_INTAKE_POS = 38.24;
@@ -128,6 +129,7 @@ public final class Constants {
     public static final double MaxOutput = 1.0;
     public static final double FF = 0.0;
     public static final double Iz = 0.0;
+    public static final double TARGET_SPEED = -1;
   }
 
   public static final class IntakePivotConstants {
@@ -153,7 +155,6 @@ public final class Constants {
     public static final double TARGET_RPM = 3730;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
     public static final double TARGET_RECOVERY_MS = 150.0;
-    public static final double RPM_SLEW_RATE = 1000.0; // max change in RPM per second
 
     // Telemetry constants
     public static final double SPEED_TOLERANCE_RPM = 120.0;
@@ -279,8 +280,8 @@ public final class Constants {
       "Shooter", // 8
       "Indexer", // 9
       "Agitator", // 10
-      "Intake", // 11
-      "IntakeActuator", // 12
+      "IntakeRoller", // 11
+      "IntakePivot", // 12
       "Hanger", // 13
       "Ch14", // 14 - unused/unknown
       "Ch15", // 15 - unused/unknown

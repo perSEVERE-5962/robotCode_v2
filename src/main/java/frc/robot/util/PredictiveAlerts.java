@@ -63,7 +63,7 @@ public class PredictiveAlerts {
                 tm.getIndexerTemperature(),
                 Math.max(
                     tm.getIntakeTemperature(),
-                    Math.max(tm.getIntakeActuatorTemperature(), tm.getAgitatorTemperature()))));
+                    Math.max(tm.getIntakeTemperature(), tm.getAgitatorTemperature()))));
     tempSamples[sampleIndex] = maxTemp;
 
     sampleIndex = (sampleIndex + 1) % SAMPLE_SIZE;

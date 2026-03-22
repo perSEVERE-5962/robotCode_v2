@@ -6,7 +6,6 @@ public class IntakePivot extends Actuator {
   private static IntakePivot instance;
 
   private double targetPosition = 0;
-  private static final double POSITION_TOLERANCE_ROTATIONS = 0.05;
 
   private IntakePivot() {
     super(
@@ -34,7 +33,7 @@ public class IntakePivot extends Actuator {
   }
 
   public boolean isAtTarget() {
-    return Math.abs(getPosition() - targetPosition) < POSITION_TOLERANCE_ROTATIONS;
+    return Math.abs(getPosition() - targetPosition) < Constants.MotorConstants.INTAKE_POS_TOLERANCE;
   }
 
   public double getTemperature() {
@@ -47,7 +46,7 @@ public class IntakePivot extends Actuator {
   }
 
   public void setMotorPositionToScoring() {
-    getMotor().getEncoder().setPosition(38.24);
+    getMotor().getEncoder().setPosition(Constants.MotorConstants.OUT_INTAKE_POS);
   }
 
   public double getAppliedOutput() {

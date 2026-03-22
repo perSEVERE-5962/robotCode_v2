@@ -38,8 +38,8 @@ public class TelemetryManager {
 
   private ShooterTelemetry shooterTelemetry;
   private IndexerTelemetry indexerTelemetry;
-  private IntakeTelemetry intakeTelemetry;
-  private IntakeActuatorTelemetry intakeActuatorTelemetry;
+  private IntakeRollerTelemetry intakeRollerTelemetry;
+  private IntakePivotTelemetry intakePivotTelemetry;
   private HangerTelemetry hangerTelemetry;
   private VisionTelemetry visionTelemetry;
   private ScoringTelemetry scoringTelemetry;
@@ -67,8 +67,8 @@ public class TelemetryManager {
   private TelemetryManager() {
     shooterTelemetry = new ShooterTelemetry();
     indexerTelemetry = new IndexerTelemetry();
-    intakeTelemetry = new IntakeTelemetry();
-    intakeActuatorTelemetry = new IntakeActuatorTelemetry();
+    intakeRollerTelemetry = new IntakeRollerTelemetry();
+    intakePivotTelemetry = new IntakePivotTelemetry();
     hangerTelemetry = new HangerTelemetry();
     visionTelemetry = new VisionTelemetry();
     scoringTelemetry = new ScoringTelemetry(shooterTelemetry, indexerTelemetry, visionTelemetry);
@@ -87,8 +87,8 @@ public class TelemetryManager {
         new CANHealthTelemetry(
             shooterTelemetry,
             indexerTelemetry,
-            intakeTelemetry,
-            intakeActuatorTelemetry,
+            intakeRollerTelemetry,
+            intakePivotTelemetry,
             hangerTelemetry,
             agitatorTelemetry,
             visionTelemetry,
@@ -101,8 +101,8 @@ public class TelemetryManager {
     telemetryList.add(driveTelemetry);
     telemetryList.add(shooterTelemetry);
     telemetryList.add(indexerTelemetry);
-    telemetryList.add(intakeTelemetry);
-    telemetryList.add(intakeActuatorTelemetry);
+    telemetryList.add(intakeRollerTelemetry);
+    telemetryList.add(intakePivotTelemetry);
     telemetryList.add(hangerTelemetry);
     telemetryList.add(visionTelemetry);
     telemetryList.add(scoringTelemetry);
@@ -123,11 +123,11 @@ public class TelemetryManager {
     stalenessTrackers.put(
         "IndexerJam", new StalenessTracker(() -> indexerTelemetry.isJamDetected(), 60.0));
     stalenessTrackers.put(
-        "IntakeJam", new StalenessTracker(() -> intakeTelemetry.isJamDetected(), 60.0));
+        "IntakeJam", new StalenessTracker(() -> intakeRollerTelemetry.isJamDetected(), 60.0));
     stalenessTrackers.put(
         "IndexerStalled", new StalenessTracker(() -> indexerTelemetry.isStalled(), 30.0));
     stalenessTrackers.put(
-        "IntakeStalled", new StalenessTracker(() -> intakeTelemetry.isStalled(), 30.0));
+        "IntakerStalled", new StalenessTracker(() -> intakeRollerTelemetry.isStalled(), 30.0));
   }
 
   /** Called from RobotContainer after vision init */
@@ -264,35 +264,36 @@ public class TelemetryManager {
   }
 
   public double getIntakeTemperature() {
-    return getSafely(() -> intakeTelemetry.getTemperature(), 0.0);
+    return getSafely(() -> intakeRollerTelemetry.getTemperature(), 0.0);
   }
 
   public boolean isIntakeJamDetected() {
-    return getSafely(() -> intakeTelemetry.isJamDetected(), false);
+    return getSafely(() -> intakeRollerTelemetry.isJamDetected(), false);
   }
 
   public int getIntakeJamCount() {
-    return getSafely(() -> intakeTelemetry.getTotalJamCount(), 0);
+    return getSafely(() -> intakeRollerTelemetry.getTotalJamCount(), 0);
   }
 
-  public double getIntakeActuatorTemperature() {
-    return getSafely(() -> intakeActuatorTelemetry.getTemperature(), 0.0);
+  public double getIntakePivotTemperature() {
+    return getSafely(() -> intakePivotTelemetry.getTemperature(), 0.0);
   }
 
   public boolean isAnyJamIntervening() {
-    return getSafely(() -> intakeTelemetry.isJamProtectionIntervening(), false)
+    return getSafely(() -> intakeRollerTelemetry.isJamProtectionIntervening(), false)
         || getSafely(() -> indexerTelemetry.isJamProtectionIntervening(), false)
         || getSafely(() -> agitatorTelemetry.isJamProtectionIntervening(), false);
   }
 
   /** Returns which subsystem is currently jamming, or "none" if no jam. */
   public String getJamSource() {
-    boolean intake = getSafely(() -> intakeTelemetry.isJamProtectionIntervening(), false);
+    boolean intakeRoller =
+        getSafely(() -> intakeRollerTelemetry.isJamProtectionIntervening(), false);
     boolean indexer = getSafely(() -> indexerTelemetry.isJamProtectionIntervening(), false);
     boolean agitator = getSafely(() -> agitatorTelemetry.isJamProtectionIntervening(), false);
-    if (!intake && !indexer && !agitator) return "none";
+    if (!intakeRoller && !indexer && !agitator) return "none";
     StringBuilder sb = new StringBuilder();
-    if (intake) sb.append("Intake");
+    if (intakeRoller) sb.append("IntakeRoller");
     if (indexer) {
       if (sb.length() > 0) sb.append("+");
       sb.append("Indexer");
@@ -341,7 +342,7 @@ public class TelemetryManager {
   }
 
   public boolean isIntakeStalled() {
-    return getSafely(() -> intakeTelemetry.isStalled(), false);
+    return getSafely(() -> intakeRollerTelemetry.isStalled(), false);
   }
 
   public boolean isAgitatorStalled() {

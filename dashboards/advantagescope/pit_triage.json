@@ -121,7 +121,7 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "/RealOutputs/Intake/Stalled",
+                    "logKey": "/RealOutputs/IntakeRoller/Stalled",
                     "logType": "Boolean",
                     "visible": true,
                     "options": { "color": "#e48b32" }
@@ -417,14 +417,14 @@
                   },
                   {
                     "type": "text",
-                    "logKey": "/RealOutputs/Intake/ActiveCommand",
+                    "logKey": "/RealOutputs/IntakeRoller/ActiveCommand",
                     "logType": "String",
                     "visible": true,
                     "options": { "color": "#2b66a2" }
                   },
                   {
                     "type": "text",
-                    "logKey": "/RealOutputs/IntakeActuator/ActiveCommand",
+                    "logKey": "/RealOutputs/IntakePivot/ActiveCommand",
                     "logType": "String",
                     "visible": true,
                     "options": { "color": "#e5b31b" }

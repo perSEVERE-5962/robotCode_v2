@@ -115,7 +115,7 @@
             "height": 99.7,
             "type": "Number Bar",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Intake/TemperatureCelsius",
+              "topic": "/AdvantageKit/RealOutputs/IntakeRoller/TemperatureCelsius",
               "period": 0.033,
               "min_value": 0.0,
               "max_value": 100.0,
@@ -230,7 +230,7 @@
             "height": 99.7,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Intake/JamDetected",
+              "topic": "/AdvantageKit/RealOutputs/IntakeRoller/JamDetected",
               "period": 0.033,
               "true_color": 4294901760,
               "false_color": 4278233600,
@@ -1015,7 +1015,7 @@
             "height": 116.3,
             "type": "Number Bar",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Intake/CurrentAmps",
+              "topic": "/AdvantageKit/RealOutputs/IntakeRoller/CurrentAmps",
               "period": 0.033,
               "min_value": 0.0,
               "max_value": 30.0,

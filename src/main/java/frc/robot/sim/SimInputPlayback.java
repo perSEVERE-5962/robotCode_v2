@@ -76,7 +76,7 @@ public class SimInputPlayback {
     notifyDS();
   }
 
-  /** Hold B for RunIntake (deploy intake actuator + run intake motor) */
+  /** Hold B for RunIntake (deploy intake pivot + run intake motor) */
   public void holdB(boolean pressed) {
     xbox.setBButton(pressed);
     notifyDS();

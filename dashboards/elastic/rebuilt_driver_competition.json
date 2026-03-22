@@ -193,7 +193,7 @@
             "height": 118.2,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Intake/JamDetected",
+              "topic": "/AdvantageKit/RealOutputs/IntakeRoller/JamDetected",
               "period": 0.033,
               "true_color": 4294901760,
               "false_color": 4278233600,

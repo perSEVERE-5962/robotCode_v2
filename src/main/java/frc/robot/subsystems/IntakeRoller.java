@@ -2,8 +2,8 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
 import frc.robot.Constants;
+import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.JamProtectionConstants;
-import frc.robot.Constants.MotorConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
@@ -12,12 +12,12 @@ public class IntakeRoller extends Actuator {
   private static IntakeRoller instance;
 
   // Tunable operational value
-  private static final TunableNumber intakeSpeed =
-      new TunableNumber("Intake/Speed", MotorConstants.DESIRED_INTAKE_RPM);
+  private static final TunableNumber intakeRollerSpeed =
+      new TunableNumber("IntakeRoller/Speed", IntakeRollerConstants.TARGET_SPEED);
 
   private final JamProtection jamProtection =
       new JamProtection(
-          "Intake",
+          "IntakeRoller",
           JamProtectionConstants.INTAKE_JAM_CURRENT_AMPS,
           JamProtectionConstants.INTAKE_JAM_VELOCITY_RPM,
           JamProtectionConstants.INTAKE_STARTUP_IGNORE_SEC,
@@ -85,7 +85,7 @@ public class IntakeRoller extends Actuator {
 
   // Tunable value accessor
   public static double getTunableSpeed() {
-    return intakeSpeed.get();
+    return intakeRollerSpeed.get();
   }
 
   /** Sticky faults as raw bits for diagnostics */
