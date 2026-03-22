@@ -105,7 +105,7 @@ public final class Constants {
   }
 
   public static final class MotorConstants {
-    public static final double DESIRED_SHOOTER_RPM = 3730;
+    public static final double DESIRED_SHOOTER_RPM = 1000;
     public static final double DESIRED_INDEXER_RPM = 7833; // 8.4 * 3730/4
     public static final double OUT_INTAKE_POS = 38.24;
     public static final double IN_INTAKE_POS = 11.6;
@@ -116,7 +116,7 @@ public final class Constants {
   }
 
   public static final class IntakeRollerConstants {
-    public static final double P = 1.0;
+    public static final double P = 0.0;
     public static final double I = 0.0;
     public static final double D = 0.0;
     public static final double MinOutput = -1.0;
@@ -126,9 +126,9 @@ public final class Constants {
   }
 
   public static final class IntakePivotConstants {
-    public static final double P = 1.0;
+    public static final double P = 1.0;//1.0
     public static final double I = 0.0;
-    public static final double D = 0.2;
+    public static final double D = 0.2;//.2
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double FF = 0.0;
@@ -137,10 +137,10 @@ public final class Constants {
 
   public static final class ShooterConstants {
     // Velocity PID tuning (from Kfir2026)
-    public static final double P = 0.00011;
+    public static final double P = 0.000187;
     public static final double I = 0.0;
     public static final double D = 0.0;
-    public static final double FF = 0.000172;
+    public static final double FF = 0.0001;//.000172
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double Iz = 0.0;
@@ -161,12 +161,12 @@ public final class Constants {
 
   public static final class IndexerConstants {
     // Velocity PID (from Alden)
-    public static final double P = 0.000;
+    public static final double P = 0.0001;
     public static final double I = 0.0;
     public static final double D = 0.00;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0004;
+    public static final double FF = 0.000154;//.0004
     public static final double Iz = 0.0;
 
     // Telemetry constants

@@ -15,11 +15,16 @@ public class MoveShooter extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    shooter.moveToVelocityWithPID(rpm);
+  }
 
   @Override
   public void execute() {
-    shooter.moveToVelocityWithPID(rpm);
+        System.out.println(shooter.getMotorVelocity());
+            shooter.moveToVelocityWithPID(rpm);
+
+
   }
 
   @Override

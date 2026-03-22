@@ -32,6 +32,9 @@ import frc.robot.commands.AgitateAndIndex;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
+import frc.robot.commands.MoveAgitator;
+import frc.robot.commands.MoveIndexer;
+import frc.robot.commands.MoveShooter;
 import frc.robot.commands.PivotIntake;
 import frc.robot.commands.RetractIntake;
 import frc.robot.commands.SetIntakePosition;
@@ -297,9 +300,16 @@ public class RobotContainer {
                           getScoringSide(),
                           SCORING_ARC_WIDTH_DEGREES),
                   Set.of(drivebase)));
-      driverXbox.y().whileTrue(new RetractIntake());
-      driverXbox.x().toggleOnTrue(hubArcDrive);
-      driverXbox.b().onTrue(new DeployIntake());
+
+      driverXbox.rightBumper().whileTrue(new PivotIntake(-0.4));
+      driverXbox.leftBumper().whileTrue(new PivotIntake(0.4));
+      driverXbox.y().whileTrue(new MoveShooter(1000));
+      driverXbox.b().whileTrue(new MoveAgitator(4000));
+      driverXbox.x().whileTrue(new MoveIndexer(5000));
+      // driverXbox.y().whileTrue(new RetractIntake(..));
+      // driverXbox.y().whileTrue(new RetractIntake());
+      //driverXbox.x().toggleOnTrue(hubArcDrive);
+      //driverXbox.b().onTrue(new DeployIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock,
@@ -313,8 +323,7 @@ public class RobotContainer {
                   Constants.IndexerConstants.TARGET_SPEED,
                   hubArcDrive::isScheduled));
       copilotXbox.x().whileTrue(new SetIntakePosition());
-      copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.4));
-      copilotXbox.leftBumper().whileTrue(new PivotIntake(0.4));
+      
       copilotXbox
           .b()
           .whileTrue(

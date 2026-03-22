@@ -17,7 +17,8 @@ public class MoveIntake extends Command {
 
   @Override
   public void execute() {
-    intakeRoller.moveToVelocityWithPID(intakeRoller.getTunableSpeed());
+    intakeRoller.move(intakeRoller.getTunableSpeed());
+    //intakeRoller.moveToVelocityWithPID(intakeRoller.getTunableSpeed());
   }
 
   @Override

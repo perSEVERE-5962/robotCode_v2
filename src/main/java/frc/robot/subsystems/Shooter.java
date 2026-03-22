@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
@@ -61,27 +62,40 @@ public class Shooter extends Actuator {
         ShooterConstants.Iz,
         0,
         0,
-        false,
+        true,
         false,
         false);
 
     // and the constructor becomes:
+    
+    motor = getMotor();
+    // followers =
+    //     new SparkMax[] {
+    //       configureFollower(Constants.CANDeviceIDs.kShooterFollower, false), // same direction
+    //       configureFollower(Constants.CANDeviceIDs.kShooterFollower1, true), // inverted
+    //       configureFollower(Constants.CANDeviceIDs.kShooterFollower2, true), // inverted
+    //     };
+    motorConfig = new SparkMaxConfig();
+    motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
+    motorConfig.smartCurrentLimit(40);
+    motorEncoder = motor.getEncoder();
+    motorConfig.voltageCompensation(12.0);
+    motorConfig.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
+    // .quadratureMeasurementPeriod(8);
+    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
     followers =
         new SparkMax[] {
           configureFollower(Constants.CANDeviceIDs.kShooterFollower, false), // same direction
           configureFollower(Constants.CANDeviceIDs.kShooterFollower1, true), // inverted
           configureFollower(Constants.CANDeviceIDs.kShooterFollower2, true), // inverted
         };
-    motor = getMotor();
-
-    motorConfig = new SparkMaxConfig();
-    motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    motorConfig.smartCurrentLimit(60);
-    motorEncoder = motor.getEncoder();
-    motorConfig.voltageCompensation(12.0);
-    motorConfig.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
-    // .quadratureMeasurementPeriod(8);
-    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    // followers =
+    //     new SparkMax[] {
+    //       configureFollower(Constants.CANDeviceIDs.kShooterFollower, false, motor), // same direction
+    //       configureFollower(Constants.CANDeviceIDs.kShooterFollower1, true, motor), // inverted
+    //       configureFollower(Constants.CANDeviceIDs.kShooterFollower2, true, motor), // inverted
+    //     };
 
     //     followers = new SparkMax[] {
     //     configureFollower(Constants.CANDeviceIDs.kShooterFollower, false),   // same direction
@@ -130,7 +144,7 @@ public class Shooter extends Actuator {
     // followerMotor2.configure(followerConfig2, ResetMode.kNoResetSafeParameters,
     // PersistMode.kPersistParameters);
 
-    limiter = new SlewRateLimiter(ShooterConstants.RPM_SLEW_RATE);
+    //limiter = new SlewRateLimiter(ShooterConstants.RPM_SLEW_RATE);
   }
 
   public double getVelocityRPM() {
@@ -155,9 +169,7 @@ public class Shooter extends Actuator {
 
   @Override
   public void moveToVelocityWithPID(double rpm) {
-    rpm = limiter.calculate(rpm);
-    this.targetRPM = rpm;
-    super.moveToVelocityWithPID(rpm);
+    motor.getClosedLoopController().setSetpoint(rpm, SparkMax.ControlType.kVelocity);
   }
 
   private SparkMax configureFollower(int canId, boolean inverted) {
@@ -165,7 +177,9 @@ public class Shooter extends Actuator {
     SparkMaxConfig config = new SparkMaxConfig();
     config.follow(Constants.CANDeviceIDs.kShooterID, inverted);
     config.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    config.smartCurrentLimit(60);
+    config.smartCurrentLimit(40);
+    config.voltageCompensation(12.0);
+    config.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
     follower.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     return follower;
   }
