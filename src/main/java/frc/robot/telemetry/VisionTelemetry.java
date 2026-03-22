@@ -3,7 +3,7 @@ package frc.robot.telemetry;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Cameras;
 import frc.robot.subsystems.swervedrive.Vision;
-import frc.robot.subsystems.swervedrive.VisionFilter.RejectionReason;
+import frc.robot.util.VisionFilter.RejectionReason;
 
 /** Vision telemetry: target lock, tag ID stability, pose confidence. */
 public class VisionTelemetry implements SubsystemTelemetry {

@@ -10,9 +10,10 @@ import frc.robot.subsystems.IntakePivot;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SetIntakePosition extends Command {
   /** Creates a new SetIntakePosition. */
-  IntakePivot intakePivot = IntakePivot.getInstance();
+  IntakePivot intakePivot;
 
   public SetIntakePosition() {
+    intakePivot = IntakePivot.getInstance();
 
     addRequirements(intakePivot);
     // Use addRequirements() here to declare subsystem dependencies.
