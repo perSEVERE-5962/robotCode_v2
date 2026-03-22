@@ -40,7 +40,7 @@ public abstract class TelemetryTestBase {
     }
   }
 
-  /** Close SparkMax motor to free CAN device ID before singleton reset */
+  /** Close SparkMax motor (and any followers) to free CAN device IDs before singleton reset */
   protected static void closeSubsystemMotor(String className) {
     try {
       Class<?> clazz = Class.forName(className);
@@ -52,6 +52,21 @@ public abstract class TelemetryTestBase {
         Object motor = getMotor.invoke(instance);
         if (motor instanceof AutoCloseable) {
           ((AutoCloseable) motor).close();
+        }
+        // Close follower motors if present (e.g. Shooter has 3 followers)
+        try {
+          Field followersField = clazz.getDeclaredField("followers");
+          followersField.setAccessible(true);
+          Object[] followers = (Object[]) followersField.get(instance);
+          if (followers != null) {
+            for (Object follower : followers) {
+              if (follower instanceof AutoCloseable) {
+                ((AutoCloseable) follower).close();
+              }
+            }
+          }
+        } catch (NoSuchFieldException e2) {
+          // No followers field, that's fine
         }
       }
     } catch (Exception e) {

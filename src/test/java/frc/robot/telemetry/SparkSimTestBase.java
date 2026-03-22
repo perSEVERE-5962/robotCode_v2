@@ -78,6 +78,21 @@ public abstract class SparkSimTestBase {
         if (motor instanceof AutoCloseable) {
           ((AutoCloseable) motor).close();
         }
+        // Close follower motors if present (e.g. Shooter has 3 followers)
+        try {
+          java.lang.reflect.Field followersField = clazz.getDeclaredField("followers");
+          followersField.setAccessible(true);
+          Object[] followers = (Object[]) followersField.get(instance);
+          if (followers != null) {
+            for (Object follower : followers) {
+              if (follower instanceof AutoCloseable) {
+                ((AutoCloseable) follower).close();
+              }
+            }
+          }
+        } catch (NoSuchFieldException e2) {
+          // No followers field, that's fine
+        }
       }
     } catch (Exception e) {
       // Class may not have been loaded or doesn't have getMotor
