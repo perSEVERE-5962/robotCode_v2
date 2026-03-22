@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AgitateAndIndex;
+import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
@@ -37,6 +38,9 @@ import frc.robot.commands.RetractIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.sim.SimDriveOverride;
+import frc.robot.subsystems.Agitator;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.telemetry.TelemetryManager;
@@ -186,6 +190,16 @@ public class RobotContainer {
             .alongWith(new SpeedUpThenIndex()));
 
     NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
+    NamedCommands.registerCommand(
+        "AimAndShoot",
+        new AimAndShootCommand(
+            drivebase,
+            Shooter.getInstance(),
+            Indexer.getInstance(),
+            Agitator.getInstance(),
+            () -> 0,
+            () -> 0,
+            true));
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
@@ -203,6 +217,30 @@ public class RobotContainer {
     TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
     TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
     DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
+
+    // Fire control init
+    frc.robot.util.ShotCalculator.getInstance().setSwerve(drivebase);
+
+    // Pre-spin: auto-spin shooter 5s before hub goes active so RPM is ready at window open.
+    // Requires Shooter so it yields to AimAndShootCommand when operator presses RT.
+    // runEnd stops the motor when the trigger goes false.
+    new Trigger(
+            () -> {
+              var info = frc.robot.util.HubShiftEngine.getInstance().getOfficialInfo();
+              return !info.hubActive()
+                  && info.timeToNextActive() > 0
+                  && info.timeToNextActive() < 5.0;
+            })
+        .whileTrue(
+            Commands.runEnd(
+                () ->
+                    Shooter.getInstance()
+                        .moveToVelocityWithPID(Shooter.getInstance().getTunableTargetRPM()),
+                () -> Shooter.getInstance().move(0),
+                Shooter.getInstance()));
+
+    // Hub deactivation warning is handled inside DriverFeedback.update() so it
+    // doesn't compete with other haptic patterns for HID rumble output.
   }
 
   /**
@@ -321,12 +359,59 @@ public class RobotContainer {
               new AgitateAndIndex(
                   -Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
-      copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
+      copilotXbox
+          .rightTrigger()
+          .whileTrue(
+              new AimAndShootCommand(
+                  drivebase,
+                  Shooter.getInstance(),
+                  Indexer.getInstance(),
+                  Agitator.getInstance(),
+                  () -> -driverXbox.getLeftY(),
+                  () -> -driverXbox.getLeftX(),
+                  false));
       copilotXbox
           .leftTrigger()
           .whileTrue(
               (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
                   .repeatedly());
+
+      // second controller Start toggles wonAuto override (fixes bad FMS data mid-match)
+      // second controller Back clears override and returns to FMS-derived schedule
+      copilotXbox
+          .start()
+          .onTrue(
+              Commands.runOnce(
+                  () -> {
+                    var engine = frc.robot.util.HubShiftEngine.getInstance();
+                    engine.setWonAutoOverride(!engine.isWonAuto());
+                  }));
+      copilotXbox
+          .back()
+          .onTrue(
+              Commands.runOnce(
+                  () -> frc.robot.util.HubShiftEngine.getInstance().clearWonAutoOverride()));
+
+      // emergency dump: flat RPM, immediate feed, bypasses everything
+      copilotXbox
+          .povDown()
+          .whileTrue(
+              Commands.runEnd(
+                  () -> {
+                    Shooter.getInstance()
+                        .moveToVelocityWithPID(Constants.ShooterConstants.EMERGENCY_DUMP_RPM);
+                    Indexer.getInstance()
+                        .moveToVelocityWithPID(Indexer.getInstance().getTunableTargetSpeed());
+                    Agitator.getInstance().move(0.5);
+                  },
+                  () -> {
+                    Shooter.getInstance().move(0);
+                    Indexer.getInstance().move(0);
+                    Agitator.getInstance().move(0);
+                  },
+                  Shooter.getInstance(),
+                  Indexer.getInstance(),
+                  Agitator.getInstance()));
 
       //       Trigger crossingZone = new Trigger(()->{
       //     Pose2d pose = drivebase.getPose();

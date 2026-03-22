@@ -721,6 +721,11 @@ public class SwerveSubsystem extends SubsystemBase {
     return swerveDrive;
   }
 
+  /** Drive with a custom center of rotation for COR-blended shooting. */
+  public void drive(ChassisSpeeds velocity, Translation2d centerOfRotation) {
+    swerveDrive.drive(velocity, centerOfRotation);
+  }
+
   public Vision getVision() {
     return vision;
   }

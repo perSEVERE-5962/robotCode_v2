@@ -145,8 +145,12 @@ public class Shooter extends Actuator {
 
   @Override
   public void periodic() {
-    TunableNumber.ifChanged(
-        () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+    try {
+      TunableNumber.ifChanged(
+          () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+    } catch (Throwable t) {
+      // CAN fault during PID update must not kill scheduler
+    }
   }
 
   public void move(double speed) {

@@ -32,7 +32,11 @@ public class Hanger extends Actuator {
 
   @Override
   public void periodic() {
-    TunableNumber.ifChanged(() -> updatePID(kP.get(), 0, kD.get(), 0), kP, kD);
+    try {
+      TunableNumber.ifChanged(() -> updatePID(kP.get(), 0, kD.get(), 0), kP, kD);
+    } catch (Throwable t) {
+      // CAN fault during PID update must not kill scheduler
+    }
   }
 
   @Override
