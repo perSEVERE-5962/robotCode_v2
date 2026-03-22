@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -60,7 +59,7 @@ public class Shooter extends Actuator {
         Constants.ShooterConstants.Iz,
         0,
         0,
-        40,
+        60,
         false,
         true,
         false,
@@ -75,9 +74,6 @@ public class Shooter extends Actuator {
         };
     motor = getMotor();
 
-    motorConfig = new SparkMaxConfig();
-    motorConfig.smartCurrentLimit(60);
-    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     //     followers = new SparkMax[] {
     //     configureFollower(CANDeviceIDs.kShooterFollower1, true),   // inverted
     //     configureFollower(Constants.CANDeviceIDs.kShooterFollower, false),   // same direction
@@ -99,38 +95,38 @@ public class Shooter extends Actuator {
 
     // followerConfig1 = new SparkMaxConfig();
     // followerMotor1 = new SparkMax(Constants.CANDeviceIDs.kShooterFollower1,
-    // PersistMode.kPersistParameters);
-    // followerMotor1.configure(followerConfig1, ResetMode.kNoResetSafeParameters,
-    //   //.quadratureMeasurementPeriod(8);
-    //   .uvwAverageDepth(2);
-    // followerConfig1.encoder
-    //   .uvwMeasurementPeriod(8)
-    // followerConfig1.smartCurrentLimit(60);
     // MotorType.kBrushless);
     // followerConfig1.follow(Constants.CANDeviceIDs.kShooterID, true);
     // followerConfig1.idleMode(SparkBaseConfig.IdleMode.kCoast);
+    // followerConfig1.smartCurrentLimit(60);
     // followerEncoder1 = followerMotor1.getEncoder();
+    // followerConfig1.encoder
     //   .uvwMeasurementPeriod(8)
-    // followerConfig2.encoder
-    // followerEncoder2 = followerMotor2.getEncoder();
-    // followerConfig2.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    // followerConfig2.smartCurrentLimit(60);
+    //   .uvwAverageDepth(2);
+    //   //.quadratureMeasurementPeriod(8);
+    // followerMotor1.configure(followerConfig1, ResetMode.kNoResetSafeParameters,
+    // PersistMode.kPersistParameters);
+
+    // followerConfig2 = new SparkMaxConfig();
+    // followerMotor2 = new SparkMax(Constants.CANDeviceIDs.kShooterFollower2,
     // MotorType.kBrushless);
     // followerConfig2.follow(Constants.CANDeviceIDs.kShooterID, true);
-    // followerMotor2 = new SparkMax(Constants.CANDeviceIDs.kShooterFollower2,
-    // followerConfig2 = new SparkMaxConfig();
+    // followerConfig2.idleMode(SparkBaseConfig.IdleMode.kCoast);
+    // followerConfig2.smartCurrentLimit(60);
+    // followerEncoder2 = followerMotor2.getEncoder();
+    // followerConfig2.encoder
+    //   .uvwMeasurementPeriod(8)
+    //   .uvwAverageDepth(2);
+    //   //.quadratureMeasurementPeriod(8);
+    // followerMotor2.configure(followerConfig2, ResetMode.kNoResetSafeParameters,
+    // PersistMode.kPersistParameters);
 
     limiter = new SlewRateLimiter(ShooterConstants.RPM_SLEW_RATE);
-
-    // PersistMode.kPersistParameters);
-    // followerMotor2.configure(followerConfig2, ResetMode.kNoResetSafeParameters,
-    //   //.quadratureMeasurementPeriod(8);
-    //   .uvwAverageDepth(2);
   }
 
   public boolean isAtSpeed() {
     if (desiredRPM == 0) return false;
-    return Math.abs(desiredRPM - getVelocityRPM()) < toleranceRPM.get();
+    return Math.abs(desiredRPM - getVelocity()) < toleranceRPM.get();
   }
 
   @Override
