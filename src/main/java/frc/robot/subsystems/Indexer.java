@@ -12,10 +12,10 @@ public class Indexer extends FlexActuator {
   private SparkFlex motor;
 
   // Tunable PID values
-  private static final TunableNumber kP = new TunableNumber("Indexer/kP", IndexerConstants.P);
-  private static final TunableNumber kI = new TunableNumber("Indexer/kI", IndexerConstants.I);
-  private static final TunableNumber kD = new TunableNumber("Indexer/kD", IndexerConstants.D);
-  private static final TunableNumber kF = new TunableNumber("Indexer/FF", IndexerConstants.FF);
+  private static final TunableNumber kP = new TunableNumber("Indexer/kP", IndexerConstants.kP);
+  private static final TunableNumber kI = new TunableNumber("Indexer/kI", IndexerConstants.kI);
+  private static final TunableNumber kD = new TunableNumber("Indexer/kD", IndexerConstants.kD);
+  private static final TunableNumber kF = new TunableNumber("Indexer/FF", IndexerConstants.kV);
 
   private final JamProtection jamProtection =
       new JamProtection(
@@ -40,13 +40,17 @@ public class Indexer extends FlexActuator {
   private Indexer() {
     super(
         Constants.CANDeviceIDs.kIndexerID,
-        Constants.IndexerConstants.P,
-        Constants.IndexerConstants.I,
-        Constants.IndexerConstants.D,
-        Constants.IndexerConstants.MinOutput,
-        Constants.IndexerConstants.MaxOutput,
-        Constants.IndexerConstants.FF,
-        Constants.IndexerConstants.Iz,
+        Constants.IndexerConstants.kP,
+        Constants.IndexerConstants.kI,
+        Constants.IndexerConstants.kD,
+        Constants.IndexerConstants.kMinOutput,
+        Constants.IndexerConstants.kMaxOutput,
+        Constants.IndexerConstants.kS,
+        Constants.IndexerConstants.kV,
+        0,
+        0,
+        1,
+        Constants.IndexerConstants.kIz,
         0,
         0,
         60,

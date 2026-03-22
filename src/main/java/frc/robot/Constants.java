@@ -122,34 +122,39 @@ public final class Constants {
   }
 
   public static final class IntakeRollerConstants {
-    public static final double P = 1.0;
-    public static final double I = 0.0;
-    public static final double D = 0.0;
-    public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0;
-    public static final double Iz = 0.0;
+    public static final double kP = 1.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kMinOutput = -1.0;
+    public static final double kMaxOutput = 1.0;
+    public static final double kS = 0.0;
+    public static final double kV = 0.0;
+    public static final double kIz = 0.0;
     public static final double TARGET_SPEED = -1;
   }
 
   public static final class IntakePivotConstants {
-    public static final double P = 1.0;
-    public static final double I = 0.0;
-    public static final double D = 0.2;
-    public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0;
-    public static final double Iz = 0.0;
+    public static final double kP = 1.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.2;
+    public static final double kMinOutput = -1.0;
+    public static final double kMaxOutput = 1.0;
+    public static final double kS = 0.0;
+    public static final double kV = 0.0;
+    public static final double kCos = 0.0;
+    public static final double kCosRatio = 83.333;
+    public static final double kIz = 0.0;
   }
 
   public static final class ShooterConstants {
-    public static final double P = 0.00011;
-    public static final double I = 0.0;
-    public static final double D = 0.0;
-    public static final double FF = 0.000172;
-    public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1.0;
-    public static final double Iz = 0.0;
+    public static final double kP = 0.00011;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kMinOutput = -1.0;
+    public static final double kMaxOutput = 1.0;
+    public static final double kS = 0.0;
+    public static final double kV = 0.002064;
+    public static final double kIz = 0.0;
 
     // Default tuning targets
     public static final double TARGET_RPM = 3730;
@@ -165,13 +170,14 @@ public final class Constants {
   }
 
   public static final class IndexerConstants {
-    public static final double P = 0.000;
-    public static final double I = 0.0;
-    public static final double D = 0.00;
-    public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0004;
-    public static final double Iz = 0.0;
+    public static final double kP = 0.000;
+    public static final double kI = 0.0;
+    public static final double kD = 0.00;
+    public static final double kMinOutput = -1.0;
+    public static final double kMaxOutput = 1.0;
+    public static final double kS = 0.0;
+    public static final double kV = 0.0048;
+    public static final double kIz = 0.0;
 
     // Telemetry constants
     public static final double TARGET_SPEED = 7833;
@@ -180,13 +186,14 @@ public final class Constants {
   }
 
   public static final class AgitatorConstants {
-    public static final double P = 0.000;
-    public static final double I = 0.0;
-    public static final double D = 0.0;
-    public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0002;
-    public static final double Iz = 0.0;
+    public static final double kP = 0.000;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kMinOutput = -1.0;
+    public static final double kMaxOutput = 1.0;
+    public static final double kS = 0.0;
+    public static final double kV = 0.0024;
+    public static final double kIz = 0.0;
 
     // Default tuning targets
     public static final double TARGET_RPM = 2000;
@@ -194,19 +201,21 @@ public final class Constants {
     public static final double JAM_TIME_THRESHOLD_SECONDS = 0.3;
   }
 
+  public static final class HangerConstants {
+    public static final double kP = 1.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kMinOutput = -1.0;
+    public static final double kMaxOutput = 1.0;
+    public static final double kS = 0.0;
+    public static final double kV = 0.0;
+    public static final double kG = 0.0;
+    public static final double kIz = 0.0;
+  }
+
   public static final class HopperConstants {
     public static final int LOW_BALL_THRESHOLD = 3;
     public static final double DETECTION_CONFIDENCE_THRESHOLD = 0.8;
-  }
-
-  public static final class HangerConstants {
-    public static final double P = 1.0;
-    public static final double I = 0.0;
-    public static final double D = 0.0;
-    public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0;
-    public static final double Iz = 0.0;
   }
 
   public static final class BatteryThresholds {

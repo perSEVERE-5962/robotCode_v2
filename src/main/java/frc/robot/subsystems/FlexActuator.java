@@ -28,7 +28,11 @@ public class FlexActuator extends SubsystemBase {
       double kD,
       double kMinOutput,
       double kMaxOutput,
-      double kF,
+      double kS,
+      double kV,
+      double kG,
+      double kCos,
+      double kCosRatio,
       double kIz,
       float kUpperSoftLimit,
       float kLowerSoftLimit,
@@ -46,19 +50,19 @@ public class FlexActuator extends SubsystemBase {
     motorConfig.smartCurrentLimit(kStallLimit);
     motorConfig.voltageCompensation(12.0);
 
-    FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
+    FeedbackSensor feedbackSensor = FeedbackSensor.kPrimaryEncoder;
     if (useThroughBoreEncoder) {
-      feedBackSensor = FeedbackSensor.kAbsoluteEncoder;
+      feedbackSensor = FeedbackSensor.kAbsoluteEncoder;
     }
     motorConfig
         .closedLoop
-        .feedbackSensor(feedBackSensor)
+        .feedbackSensor(feedbackSensor)
         .p(kP)
         .i(kI)
         .d(kD)
         .outputRange(kMinOutput, kMaxOutput)
         .iZone(kIz);
-    motorConfig.closedLoop.feedForward.kV(12.0 * kF);
+    motorConfig.closedLoop.feedForward.kS(kS).kV(kV).kG(kG).kCos(kCos).kCosRatio(kCosRatio);
     motorConfig
         .encoder
         .quadratureAverageDepth(2)
@@ -141,10 +145,10 @@ public class FlexActuator extends SubsystemBase {
   }
 
   /** Hot-reload PID values. Creates new config, takes a few ms. */
-  public void updatePID(double kP, double kI, double kD, double kF) {
+  public void updatePID(double kP, double kI, double kD, double kV) {
     SparkFlexConfig config = new SparkFlexConfig();
     config.closedLoop.p(kP).i(kI).d(kD);
-    config.closedLoop.feedForward.kV(12.0 * kF);
+    config.closedLoop.feedForward.kV(kV);
     motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 }

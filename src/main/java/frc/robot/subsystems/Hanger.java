@@ -10,19 +10,23 @@ public class Hanger extends Actuator {
   private double targetPosition = 0;
 
   // Tunable PID values
-  private static final TunableNumber kP = new TunableNumber("Hanger/kP", HangerConstants.P);
-  private static final TunableNumber kD = new TunableNumber("Hanger/kD", HangerConstants.D);
+  private static final TunableNumber kP = new TunableNumber("Hanger/kP", HangerConstants.kP);
+  private static final TunableNumber kD = new TunableNumber("Hanger/kD", HangerConstants.kD);
 
   private Hanger() {
     super(
         Constants.CANDeviceIDs.kHangerID,
-        Constants.HangerConstants.P,
-        Constants.HangerConstants.I,
-        Constants.HangerConstants.D,
-        Constants.HangerConstants.MinOutput,
-        Constants.HangerConstants.MaxOutput,
-        Constants.HangerConstants.FF,
-        Constants.HangerConstants.Iz,
+        Constants.HangerConstants.kP,
+        Constants.HangerConstants.kI,
+        Constants.HangerConstants.kD,
+        Constants.HangerConstants.kMinOutput,
+        Constants.HangerConstants.kMaxOutput,
+        Constants.HangerConstants.kS,
+        Constants.HangerConstants.kV,
+        Constants.HangerConstants.kG,
+        0,
+        1,
+        Constants.HangerConstants.kIz,
         0,
         0,
         40,

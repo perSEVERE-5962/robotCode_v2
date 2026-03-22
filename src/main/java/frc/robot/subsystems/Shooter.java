@@ -34,10 +34,10 @@ public class Shooter extends Actuator {
   private double targetRPM = 0;
 
   // Tunable PID values
-  private static final TunableNumber kP = new TunableNumber("Shooter/kP", ShooterConstants.P);
-  private static final TunableNumber kI = new TunableNumber("Shooter/kI", ShooterConstants.I);
-  private static final TunableNumber kD = new TunableNumber("Shooter/kD", ShooterConstants.D);
-  private static final TunableNumber kF = new TunableNumber("Shooter/FF", ShooterConstants.FF);
+  private static final TunableNumber kP = new TunableNumber("Shooter/kP", ShooterConstants.kP);
+  private static final TunableNumber kI = new TunableNumber("Shooter/kI", ShooterConstants.kI);
+  private static final TunableNumber kD = new TunableNumber("Shooter/kD", ShooterConstants.kD);
+  private static final TunableNumber kF = new TunableNumber("Shooter/FF", ShooterConstants.kV);
 
   // Tunable setpoints and thresholds
   private static final TunableNumber targetRPMTunable =
@@ -50,13 +50,17 @@ public class Shooter extends Actuator {
   private Shooter() {
     super(
         Constants.CANDeviceIDs.kShooterID,
-        Constants.ShooterConstants.P,
-        Constants.ShooterConstants.I,
-        Constants.ShooterConstants.D,
-        Constants.ShooterConstants.MinOutput,
-        Constants.ShooterConstants.MaxOutput,
-        Constants.ShooterConstants.FF,
-        Constants.ShooterConstants.Iz,
+        Constants.ShooterConstants.kP,
+        Constants.ShooterConstants.kI,
+        Constants.ShooterConstants.kD,
+        Constants.ShooterConstants.kMinOutput,
+        Constants.ShooterConstants.kMaxOutput,
+        Constants.ShooterConstants.kS,
+        Constants.ShooterConstants.kV,
+        0,
+        0,
+        1,
+        Constants.ShooterConstants.kIz,
         0,
         0,
         60,
