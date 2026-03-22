@@ -34,6 +34,7 @@ public class Shooter extends Actuator {
   // private RelativeEncoder followerEncoder2;
   // private SparkMaxConfig followerConfig2;
 
+  private double desiredRPM = 0;
   private double targetRPM = 0;
 
   // Tunable PID values
@@ -152,14 +153,18 @@ public class Shooter extends Actuator {
   }
 
   public boolean isAtSpeed() {
-    if (targetRPM == 0) return false;
-    return Math.abs(targetRPM - getVelocityRPM()) < toleranceRPM.get();
+    if (desiredRPM == 0) return false;
+    return Math.abs(desiredRPM - getVelocityRPM()) < toleranceRPM.get();
   }
 
   @Override
   public void periodic() {
-    TunableNumber.ifChanged(
-        () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+    try {
+      TunableNumber.ifChanged(
+          () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+    } catch (Throwable t) {
+      // CAN fault during PID update must not kill scheduler
+    }
   }
 
   public void move(double speed) {
@@ -194,7 +199,7 @@ public class Shooter extends Actuator {
 
   // Hardware accessors
   public double getTargetRPM() {
-    return targetRPM;
+    return desiredRPM;
   }
 
   public double getAppliedOutput() {

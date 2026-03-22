@@ -395,14 +395,17 @@ public class TelemetryManager {
   }
 
   public boolean isHubActive() {
-    return getSafely(() -> scoringTelemetry.isHubActive(), true);
+    return getSafely(
+        () -> frc.robot.util.HubShiftEngine.getInstance().getOfficialInfo().hubActive(), true);
   }
 
   public double getTimeToNextShiftSec() {
-    return getSafely(() -> scoringTelemetry.getTimeToNextShiftSec(), 0.0);
+    return getSafely(
+        () -> frc.robot.util.HubShiftEngine.getInstance().getOfficialInfo().remainingInState(),
+        0.0);
   }
 
   public boolean isWonAuto() {
-    return getSafely(() -> scoringTelemetry.isWonAuto(), false);
+    return getSafely(() -> frc.robot.util.HubShiftEngine.getInstance().isWonAuto(), false);
   }
 }

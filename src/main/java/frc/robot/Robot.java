@@ -195,9 +195,19 @@ public class Robot extends LoggedRobot {
     safeCall("CommandScheduler", () -> CommandScheduler.getInstance().run());
     safeCall("Tracer", () -> LoggedTracer.record("CommandsMs"));
 
+    safeCall("ShotCalc", () -> frc.robot.util.ShotCalculator.getInstance().calculate());
+
     safeCall("Telemetry", () -> TelemetryManager.getInstance().updateAll());
     safeCall("NaNGuard", () -> checkNaNInfinity());
     safeCall("Tracer", () -> LoggedTracer.record("TelemetryMs"));
+
+    safeCall(
+        "HubShift",
+        () -> {
+          double tof =
+              frc.robot.util.ShotCalculator.getInstance().getParameters().timeOfFlightSec();
+          frc.robot.util.HubShiftEngine.getInstance().update(tof);
+        });
 
     safeCall(
         "ChannelCoordinator",
@@ -349,6 +359,7 @@ public class Robot extends LoggedRobot {
     try {
       EventMarker.modeChange("TELEOP");
       PostMatchSummary.getInstance().startTracking();
+      frc.robot.util.HubShiftEngine.getInstance().initializeTeleop();
     } catch (Throwable t) {
       safeLog("Health/CrashBarrier/TeleopInit", true);
     }

@@ -119,7 +119,7 @@ class AlertManagerTest {
     resetSingleton("frc.robot.telemetry.TelemetryManager");
   }
 
-  // ==================== BATTERY: FALSE POSITIVES ====================
+  // Battery: false positives
 
   @Test
   void testNoBatteryAlertWhenVoltageHealthy() {
@@ -146,7 +146,7 @@ class AlertManagerTest {
         "Battery warning must not fire mid-match (voltage sag is normal)");
   }
 
-  // ==================== BATTERY: FALSE NEGATIVES ====================
+  // Battery: false negatives
 
   @Test
   void testBatteryWarningFiresWhenLowAndDisabled() {
@@ -189,7 +189,7 @@ class AlertManagerTest {
     assertFalse(warnAlert.get());
   }
 
-  // ==================== BATTERY: HYSTERESIS ====================
+  // Battery: hysteresis
 
   @Test
   void testHysteresisPreventsPrematureClearing() throws Exception {
@@ -244,7 +244,7 @@ class AlertManagerTest {
         "Exactly 12.0V should clear warning (12.0 is not < 12.0)");
   }
 
-  // ==================== BATTERY: DEBOUNCER GATE ====================
+  // Battery: debouncer gate
 
   @Test
   void testBatteryWarningRequiresDebouncedDisabled() {
@@ -271,7 +271,7 @@ class AlertManagerTest {
         "Warning must fire after 1.5s debounce satisfied");
   }
 
-  // ==================== ALERT LIST ACCURACY ====================
+  // Alert list accuracy
 
   @Test
   void testCheckAllClearsAlertListEachCall() {
@@ -297,7 +297,7 @@ class AlertManagerTest {
     assertNotSame(list1, list2, "Must return defensive copy");
   }
 
-  // ==================== STALL ALERTS VIA TELEMETRY ====================
+  // Stall alerts via telemetry
 
   @Test
   void testShooterStallAlertActivates() throws Exception {
@@ -350,7 +350,7 @@ class AlertManagerTest {
     assertTrue(am.getActiveAlerts().contains("IntakeStall"));
   }
 
-  // ==================== JAM ALERTS VIA TELEMETRY ====================
+  // Jam alerts via telemetry
 
   @Test
   void testIndexerJamAlertActivates() throws Exception {
@@ -387,7 +387,7 @@ class AlertManagerTest {
     assertTrue(am.getActiveAlerts().contains("IntakeJam"));
   }
 
-  // ==================== BROWNOUT RISK ====================
+  // Brownout risk
 
   @Test
   void testBrownoutRiskAlertActivates() throws Exception {
@@ -412,7 +412,7 @@ class AlertManagerTest {
     assertFalse(am.getActiveAlerts().contains("BrownoutRisk"));
   }
 
-  // ==================== ELASTIC DEBOUNCE ====================
+  // Elastic debounce
 
   @Test
   void testClearDebounceResetsTimers() throws Exception {
@@ -428,7 +428,7 @@ class AlertManagerTest {
     assertTrue(times.isEmpty(), "clearDebounce() must reset all notification timers");
   }
 
-  // ==================== NO FALSE ALARMS ON HEALTHY STATE ====================
+  // No false alarms on healthy state
 
   @Test
   void testNoAlertsOnHealthyState() throws Exception {
@@ -444,7 +444,7 @@ class AlertManagerTest {
     assertEquals(0, alerts.size(), "Healthy robot should have zero active alerts, got: " + alerts);
   }
 
-  // ==================== HELPERS ====================
+  // Helpers
 
   private void satisfyDisabledDebouncer() {
     DriverStationSim.setEnabled(false);
@@ -518,6 +518,19 @@ class AlertManagerTest {
         Object motor = getMotor.invoke(instance);
         if (motor instanceof AutoCloseable) {
           ((AutoCloseable) motor).close();
+        }
+        try {
+          Field followersField = clazz.getDeclaredField("followers");
+          followersField.setAccessible(true);
+          Object[] followers = (Object[]) followersField.get(instance);
+          if (followers != null) {
+            for (Object follower : followers) {
+              if (follower instanceof AutoCloseable) {
+                ((AutoCloseable) follower).close();
+              }
+            }
+          }
+        } catch (NoSuchFieldException e2) {
         }
       }
     } catch (Exception e) {

@@ -157,6 +157,7 @@ public final class Constants {
     public static final double SHOT_DETECTION_DROP_RPM = 200.0;
     public static final double SHOT_DETECTION_MIN_RPM = 1000.0;
     public static final double TEMP_WARNING_CELSIUS = 65.0;
+    public static final double EMERGENCY_DUMP_RPM = 2500.0;
   }
 
   public static final class IndexerConstants {
@@ -365,8 +366,80 @@ public final class Constants {
     public static final double BALL_RADIUS_M = 0.0889; // 3.5" radius
   }
 
-  /** Shot calculator constants (launcher geometry) */
+  /** Shot calculator constants (launcher geometry + Newton solver + SOTM) */
   public static final class ShotCalculatorConstants {
-    public static final double FIXED_LAUNCH_ANGLE_DEG = 68.0; // measured from OnShape CAD
+    // Launcher geometry (drum shooter, rear-mounted)
+    public static final double LAUNCHER_OFFSET_X = -0.0577; // behind center (OnShape)
+    public static final double LAUNCHER_OFFSET_Y = 0.0;
+    public static final double FIXED_LAUNCH_ANGLE_DEG = 60.0; // drum shooter angle
+    // rear-mounted shooter: rotate aim by 180 deg so the back faces the hub
+    public static final double SHOOTER_ANGLE_OFFSET_RAD = Math.PI;
+
+    // Newton solver
+    public static final int MAX_ITERATIONS = 25;
+    public static final double CONVERGENCE_TOLERANCE = 0.001;
+    public static final double TOF_MIN = 0.05;
+    public static final double TOF_MAX = 5.0;
+
+    // Velocity filter
+    public static final double MIN_SOTM_SPEED = 0.1;
+
+    // Latency compensation
+    public static final double PHASE_DELAY_MS = 30.0;
+    public static final double MECH_LATENCY_MS = 20.0;
+
+    // Drag compensation
+    public static final double SOTM_DRAG_COEFF = 0.47;
+
+    // Scoring range
+    public static final double MIN_SCORING_DISTANCE = 0.5;
+    public static final double MAX_SCORING_DISTANCE = 5.0;
+
+    // Speed cap while shooting on the move
+    public static final double MAX_SOTM_SPEED = 3.0;
+
+    // Per-distance RPM band boundaries (meters)
+    public static final double RPM_BAND_SHORT_END = 1.5;
+    public static final double RPM_BAND_MEDIUM_END = 3.0;
+  }
+
+  /** Hub shift timing: shift schedule, fuel delay, fire authorization margins */
+  public static final class HubTimingConstants {
+    public static final double FUEL_COUNT_DELAY_MIN_SEC = 1.0;
+    public static final double FUEL_COUNT_DELAY_MAX_SEC = 2.0;
+    public static final double FUEL_COUNT_EXTENSION_SEC = 3.0;
+    public static final double FIRE_SAFE_MARGIN_SEC = 0.5;
+    public static final double PRE_SPIN_WINDOW_SEC = 3.0;
+    public static final double FALLBACK_MARGIN_EXTRA_SEC = 1.0;
+    public static final double GAME_DATA_ALERT_INTERVAL_SEC = 2.0;
+
+    // Game Manual Section 6.4: 10s transition, 4x25s shifts, 30s endgame = 140s total
+    public static final double TRANSITION_END = 10.0;
+    public static final double SHIFT1_END = 35.0;
+    public static final double SHIFT2_END = 60.0;
+    public static final double SHIFT3_END = 85.0;
+    public static final double SHIFT4_END = 110.0;
+    public static final double ENDGAME_END = 140.0;
+
+    public static final double AUTO_DURATION = 20.0;
+  }
+
+  /** Heading lock controller for SOTM: PID + feedforward + lookahead */
+  public static final class HeadingLockConstants {
+    public static final double P = 3.0;
+    public static final double I = 0.0;
+    public static final double D = 0.1;
+
+    // FF gains (layer OFF by default, these just sit ready)
+    public static final double FF_KS = 0.05;
+    public static final double FF_KV = 0.8;
+    public static final double FF_KA = 0.0;
+
+    // Lookahead (disabled by default)
+    public static final double LOOKAHEAD_SEC = 0.0;
+
+    // FF distance scaling
+    public static final double FF_MIN_DIST_M = 0.5;
+    public static final double FF_MAX_DIST_M = 1.5;
   }
 }
