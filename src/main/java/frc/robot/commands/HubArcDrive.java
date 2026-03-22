@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
@@ -153,15 +152,14 @@ public class HubArcDrive extends Command {
     // System.out.println(headingError);
     // System.out.println("velocity:"+robotVelocity.vyMetersPerSecond);
     double shooterSpeed =
-        Constants.MotorConstants.DESIRED_SHOOTER_RPM
-            + (Math.abs(robotVelocity.vyMetersPerSecond * 350));
+        shooter.getTunableTargetRPM() + (Math.abs(robotVelocity.vyMetersPerSecond * 350));
     shooterSpeed = MathUtil.clamp(shooterSpeed, 0, 3760);
     shooter.moveToVelocityWithPID(shooterSpeed);
     // System.out.println("shooter speed" + shooterSpeed);
 
     if (Math.abs(headingError) < 0.1) {
-      indexer.moveToVelocityWithPID(Constants.MotorConstants.DESIRED_INDEXER_RPM);
-      agitator.move(Constants.MotorConstants.DESIRED_AGITATOR_SPEED);
+      indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
+      agitator.move(agitator.getTunableTargetRPM());
     } else {
       indexer.move(0);
       agitator.move(0);
