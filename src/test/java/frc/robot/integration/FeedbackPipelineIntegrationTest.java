@@ -102,9 +102,7 @@ class FeedbackPipelineIntegrationTest {
     // LEDStatusDisplay.update() requires hardware; use resolveState for LED state verification
   }
 
-  // ==================== PIPELINE FLOW TESTS ====================
-
-  // ==================== BROWNOUT -> CRITICAL LED ====================
+  // Brownout -> Critical LED
 
   @Test
   void testBrownoutFlowsToCriticalLED() throws Exception {
@@ -136,7 +134,7 @@ class FeedbackPipelineIntegrationTest {
         "LED should recover from CRITICAL_ALERT when voltage returns to normal");
   }
 
-  // ==================== DISABLED -> NO HAPTICS ====================
+  // Disabled -> no haptics
 
   @Test
   void testDisabledBlocksAllHaptics() {
@@ -175,7 +173,7 @@ class FeedbackPipelineIntegrationTest {
         LEDState.DISABLED, resolveLEDState(), "LED should show DISABLED when robot is disabled");
   }
 
-  // ==================== ENABLED IDLE STATE ====================
+  // Enabled idle state
 
   @Test
   void testEnabledIdleState() throws Exception {
@@ -194,7 +192,7 @@ class FeedbackPipelineIntegrationTest {
     assertNotEquals(LEDState.DISABLED, state, "LED should not be DISABLED when robot is enabled");
   }
 
-  // ==================== TELEOP TRANSITION -> HAPTIC ====================
+  // Teleop transition -> haptic
 
   @Test
   void testAutoToTeleopTransitionTriggersHaptic() {
@@ -221,7 +219,7 @@ class FeedbackPipelineIntegrationTest {
     assertTrue(feedback.getRightMotor() > 0, "Right rumble should be active");
   }
 
-  // ==================== LOW BATTERY -> WARNING LED ====================
+  // Low battery -> warning LED
 
   @Test
   void testLowBatteryFlowsToWarningLED() throws Exception {
@@ -236,7 +234,7 @@ class FeedbackPipelineIntegrationTest {
         LEDState.WARNING, state, "LED should show WARNING when battery is between 10.0V and 11.5V");
   }
 
-  // ==================== PROGRESSIVE AIM -> LED AIM_PROGRESS ====================
+  // Progressive aim -> LED aim progress
 
   @Test
   void testProgressiveAimFlowsToLED() throws Exception {
@@ -274,7 +272,7 @@ class FeedbackPipelineIntegrationTest {
         "LED should not show AIM_PROGRESS after clearing progressive aim");
   }
 
-  // ==================== PROGRESSIVE AIM STALE -> AUTO CLEAR ====================
+  // Progressive aim stale -> auto clear
 
   @Test
   void testProgressiveAimStaleTimeoutClearsHapticAndLED() throws Exception {
@@ -307,7 +305,7 @@ class FeedbackPipelineIntegrationTest {
         "LED should not show AIM_PROGRESS after stale timeout");
   }
 
-  // ==================== CHANNEL COORDINATOR -> LOW CONFIDENCE -> WARNING ====================
+  // Channel coordinator -> low confidence -> warning
 
   @Test
   void testLowVisionConfidenceFlowsToWarningLED() throws Exception {
@@ -331,7 +329,7 @@ class FeedbackPipelineIntegrationTest {
     // If not low (e.g., confidence never set), that's still a valid pipeline state
   }
 
-  // ==================== MULTIPLE CYCLES STABILITY ====================
+  // Multiple cycles stability
 
   @Test
   void testPipelineStabilityAcrossModeTransitions() throws Exception {
@@ -370,7 +368,7 @@ class FeedbackPipelineIntegrationTest {
     assertEquals(0, driverSim.getRumble(GenericHID.RumbleType.kRightRumble), 0.02);
   }
 
-  // ==================== HELPERS ====================
+  // Helpers
 
   private LEDState resolveLEDState() throws Exception {
     // Build snapshot and resolve state via reflection (avoids needing real LED hardware).
@@ -420,6 +418,21 @@ class FeedbackPipelineIntegrationTest {
         Object motor = getMotor.invoke(instance);
         if (motor instanceof AutoCloseable) {
           ((AutoCloseable) motor).close();
+        }
+        // Close follower motors if present (e.g. Shooter has 3 followers)
+        try {
+          Field followersField = clazz.getDeclaredField("followers");
+          followersField.setAccessible(true);
+          Object[] followers = (Object[]) followersField.get(instance);
+          if (followers != null) {
+            for (Object follower : followers) {
+              if (follower instanceof AutoCloseable) {
+                ((AutoCloseable) follower).close();
+              }
+            }
+          }
+        } catch (NoSuchFieldException e2) {
+          // No followers field, that's fine
         }
       }
     } catch (Exception e) {
