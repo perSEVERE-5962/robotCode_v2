@@ -68,7 +68,9 @@ public class RobotContainer {
 
   final CommandJoystick driverJoystick = new CommandJoystick(2);
   private final SendableChooser<Command> autoChooser;
-
+  Shooter shooter = Shooter.getInstance();
+  Indexer indexer = Indexer.getInstance();
+  Agitator agitator = Agitator.getInstance();
   private boolean useLeftOffset = true;
   private static RobotContainer instance;
 
@@ -326,30 +328,32 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
 
-      driverXbox
-          .a()
-          .onTrue(
-              Commands.defer(
-                  () ->
-                      HubScoringUtil.driveToHubCommand(
-                          drivebase,
-                          getHubCenter(),
-                          SCORING_DISTANCE,
-                          getScoringSide(),
-                          SCORING_ARC_WIDTH_DEGREES),
-                  Set.of(drivebase)));
+      // driverXbox
+      //     .a()
+      //     .onTrue(
+      //         Commands.defer(
+      //             () ->
+      //                 HubScoringUtil.driveToHubCommand(
+      //                     drivebase,
+      //                     getHubCenter(),
+      //                     SCORING_DISTANCE,
+      //                     getScoringSide(),
+      //                     SCORING_ARC_WIDTH_DEGREES),
+      //             Set.of(drivebase)));
 
-      driverXbox.rightBumper().whileTrue(new PivotIntake(-0.4));
-      driverXbox.leftBumper().whileTrue(new PivotIntake(0.4));
-      driverXbox.y().whileTrue(new MoveShooter(1000));
-      driverXbox.b().whileTrue(new MoveAgitator(4000));
+      driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
+      driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
+      driverXbox.y().whileTrue(new MoveShooter(1500));
+      driverXbox.b().whileTrue(new MoveAgitator(5500));
       driverXbox.x().whileTrue(new MoveIndexer(5000));
-      // driverXbox.y().whileTrue(new RetractIntake(..));
+      driverXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
+      driverXbox.leftTrigger().toggleOnTrue(new AimAndShootCommand(drivebase, shooter, indexer, agitator, driverXbox::getLeftX, driverXbox::getLeftX, false));
       // driverXbox.y().whileTrue(new RetractIntake());
       //driverXbox.x().toggleOnTrue(hubArcDrive);
-      //driverXbox.b().onTrue(new DeployIntake());
+      driverXbox.a().whileTrue(new HoldAndIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
-      driverXbox.back().whileTrue(drivebase.centerModulesCommand());
+      //driverXbox.back().whileTrue(drivebase.centerModulesCommand());
+      driverXbox.back().whileTrue(new SetIntakePosition());
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock,
       // drivebase).repeatedly());
 

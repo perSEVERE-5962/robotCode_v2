@@ -83,15 +83,16 @@ public class AimAndShootCommand extends Command {
 
   @Override
   public void initialize() {
+    agitator.moveToVelocityWithPID(-4000);
+    indexer.moveToVelocityWithPID(-5000);
     headingController.reset();
     reachedSpeed = false;
     feeding = false;
     underShootingSince = -1;
 
     // start spinning early with flat RPM, execute() will switch to LUT RPM
-    shooter.moveToVelocityWithPID(shooter.getTunableTargetRPM());
+    shooter.moveToVelocityWithPID(1000);
     // quick reverse to clear any jammed balls before we start feeding
-    agitator.move(-0.35);
 
     if (autoFinish) {
       autoTimer.restart();
@@ -149,7 +150,7 @@ public class AimAndShootCommand extends Command {
       Translation2d cor = LAUNCHER_OFFSET.times(1.0 - corScalar);
 
       ChassisSpeeds speeds =
-          ChassisSpeeds.fromFieldRelativeSpeeds(fwd, str, omega, swerve.getHeading());
+          new ChassisSpeeds(fwd, str, omega);
       swerve.drive(speeds, cor);
     }
 
@@ -197,7 +198,7 @@ public class AimAndShootCommand extends Command {
       double rpmRatio = (targetRpm > 0) ? Math.min(1.0, shooter.getVelocityRPM() / targetRpm) : 0;
       rpmRatio = Math.max(feedRatioFloor.get(), rpmRatio);
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed() * rpmRatio);
-      agitator.move(0.35);
+      agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM());
     } else {
       indexer.move(0);
       agitator.move(0);

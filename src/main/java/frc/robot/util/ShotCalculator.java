@@ -94,17 +94,20 @@ public class ShotCalculator {
   /** Starting LUT from physics sim. Needs real-robot calibration. */
   private void initializeBaselineLUT() {
     double angle = ShotCalculatorConstants.FIXED_LAUNCH_ANGLE_DEG;
-    baseLUT.put(0.50, 2800.0, angle, 0.42);
-    baseLUT.put(1.00, 3200.0, angle, 0.62);
-    baseLUT.put(1.20, 3400.0, angle, 0.70);
-    baseLUT.put(1.50, 3550.0, angle, 0.80);
-    baseLUT.put(2.00, 3750.0, angle, 0.93);
-    baseLUT.put(2.50, 3950.0, angle, 1.07);
-    baseLUT.put(3.00, 4150.0, angle, 1.22);
-    baseLUT.put(3.50, 4350.0, angle, 1.40);
-    baseLUT.put(4.00, 4550.0, angle, 1.59);
-    baseLUT.put(4.50, 4750.0, angle, 1.80);
-    baseLUT.put(5.00, 4950.0, angle, 2.03);
+    baseLUT.put(2.654, 2500.0, angle, 1.1);
+    baseLUT.put(2.01, 2225, angle, 1);
+    baseLUT.put(3.32, 2875, angle, 1.4);
+    baseLUT.put(2.303469332926836, 2360, angle, 1);
+    baseLUT.put(2.9, 2700,angle, 1.3);
+    baseLUT.put(1.9, 2250, angle, 1);
+    baseLUT.put(1.8, 2300,angle, 1);
+    // baseLUT.put(2.00, 3750.0, angle, 0.93);
+    // baseLUT.put(2.50, 3950.0, angle, 1.07);
+    // baseLUT.put(3.00, 4150.0, angle, 1.22);
+    // baseLUT.put(3.50, 4350.0, angle, 1.40);
+    // baseLUT.put(4.00, 4550.0, angle, 1.59);
+    // baseLUT.put(4.50, 4750.0, angle, 1.80);
+    // baseLUT.put(5.00, 4950.0, angle, 2.03);
   }
 
   /** Set swerve reference. Called from RobotContainer during init. */

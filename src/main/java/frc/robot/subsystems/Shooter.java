@@ -34,7 +34,7 @@ public class Shooter extends Actuator {
   // private RelativeEncoder followerEncoder2;
   // private SparkMaxConfig followerConfig2;
 
-  private double desiredRPM = 0;
+  private double desiredRPM = 1500;
   private double targetRPM = 0;
 
   // Tunable PID values
@@ -78,7 +78,7 @@ public class Shooter extends Actuator {
     //     };
     motorConfig = new SparkMaxConfig();
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    motorConfig.smartCurrentLimit(40);
+    motorConfig.smartCurrentLimit(27);
     motorEncoder = motor.getEncoder();
     motorConfig.voltageCompensation(12.0);
     motorConfig.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
@@ -182,7 +182,7 @@ public class Shooter extends Actuator {
     SparkMaxConfig config = new SparkMaxConfig();
     config.follow(Constants.CANDeviceIDs.kShooterID, inverted);
     config.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    config.smartCurrentLimit(40);
+    config.smartCurrentLimit(35);
     config.voltageCompensation(12.0);
     config.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
     follower.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);

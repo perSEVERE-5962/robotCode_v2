@@ -59,7 +59,7 @@ public class Indexer extends FlexActuator {
     motor = getMotor();
     motorConfig = new SparkFlexConfig();
 
-    motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(40);
+    motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(45);
     motorConfig.voltageCompensation(12.0);
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }

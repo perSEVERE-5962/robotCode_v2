@@ -105,30 +105,30 @@ public final class Constants {
   }
 
   public static final class MotorConstants {
-    public static final double DESIRED_SHOOTER_RPM = 1000;
-    public static final double DESIRED_INDEXER_RPM = 5000; // 8.4 * 3730/4
+    public static final double DESIRED_SHOOTER_RPM = 2500;
+    public static final double DESIRED_INDEXER_RPM = 6000; // 8.4 * 3730/4
     public static final double OUT_INTAKE_POS = 38.24;
     public static final double IN_INTAKE_POS = 11.6;
-    public static final double DESIRED_INTAKE_RPM = 0;
+    public static final double DESIRED_INTAKE_RPM = 5000;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
     public static final double DESIRED_AGITATOR_SPEED = .5;
   }
 
   public static final class IntakeRollerConstants {
-    public static final double P = 0.0;
+    public static final double P = 0.0001;
     public static final double I = 0.0;
     public static final double D = 0.0;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0;
+    public static final double FF = 0.02;
     public static final double Iz = 0.0;
   }
 
   public static final class IntakePivotConstants {
-    public static final double P = 1.0;//1.0
+    public static final double P = 0.6;//1.0
     public static final double I = 0.0;
-    public static final double D = 0.2;//.2
+    public static final double D = 0.05;//.2
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double FF = 0.0;
@@ -137,16 +137,16 @@ public final class Constants {
 
   public static final class ShooterConstants {
     // Velocity PID tuning (from Kfir2026)
-    public static final double P = 0.000187;
+    public static final double P = 0.0001;
     public static final double I = 0.0;
     public static final double D = 0.0;
-    public static final double FF = 0.0001;//.000172
+    public static final double FF = 0.000189;//.000172
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double Iz = 0.0;
 
     // Tuning targets
-    public static final double TARGET_RPM = 1000;
+    public static final double TARGET_RPM = 2500;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
     public static final double TARGET_RECOVERY_MS = 150.0;
     public static final double RPM_SLEW_RATE = 1000.0; // max change in RPM per second
@@ -171,21 +171,21 @@ public final class Constants {
     public static final double Iz = 0.0;
 
     // Telemetry constants
-    public static final double TARGET_SPEED = 7833;
+    public static final double TARGET_SPEED = 6000;
     public static final double JAM_CURRENT_THRESHOLD_AMPS = 35.0;
     public static final double JAM_TIME_THRESHOLD_SECONDS = 0.3;
   }
 
   public static final class AgitatorConstants {
-    public static final double P = 0.000;
+    public static final double P = 0.0001;
     public static final double I = 0.0;
     public static final double D = 0.0;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0002;
+    public static final double FF = 0.00021;
     public static final double Iz = 0.0;
 
-    public static final double TARGET_RPM = 2000;
+    public static final double TARGET_RPM = 5676;
     public static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
     public static final double JAM_TIME_THRESHOLD_SECONDS = 0.3;
   }
@@ -426,7 +426,7 @@ public final class Constants {
 
   /** Heading lock controller for SOTM: PID + feedforward + lookahead */
   public static final class HeadingLockConstants {
-    public static final double P = 3.0;
+    public static final double P = 1.0;
     public static final double I = 0.0;
     public static final double D = 0.1;
 

@@ -5,6 +5,9 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
+import frc.robot.Constants.IntakePivotConstants;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.util.TunableNumber;
 
 public class IntakePivot extends Actuator {
   private static IntakePivot instance;
@@ -12,6 +15,11 @@ public class IntakePivot extends Actuator {
   private SparkMaxConfig motorConfig;
   private double targetPosition = 0;
   private static final double POSITION_TOLERANCE_ROTATIONS = 0.05;
+
+  private static final TunableNumber kP = new TunableNumber("Shooter/kP", IntakePivotConstants.P);
+  private static final TunableNumber kI = new TunableNumber("Shooter/kI", IntakePivotConstants.I);
+  private static final TunableNumber kD = new TunableNumber("Shooter/kD", IntakePivotConstants.D);
+  private static final TunableNumber kF = new TunableNumber("Shooter/FF", IntakePivotConstants.FF);
 
   private IntakePivot() {
     super(
@@ -31,7 +39,7 @@ public class IntakePivot extends Actuator {
     motor = getMotor();
     motorConfig = new SparkMaxConfig();
 
-    motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(40);
+    motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(25);
 
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
@@ -65,6 +73,30 @@ public class IntakePivot extends Actuator {
 
   public double getOutputCurrent() {
     return getMotor().getOutputCurrent();
+  }
+  public double getTunableKP() {
+    return kP.get();
+  }
+
+  public double getTunableKI() {
+    return kI.get();
+  }
+
+  public double getTunableKD() {
+    return kD.get();
+  }
+
+  public double getTunableFF() {
+    return kF.get();
+  }
+
+  public void periodic() {
+    try {
+      TunableNumber.ifChanged(
+          () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+    } catch (Throwable t) {
+      // CAN fault during PID update must not kill scheduler
+    }
   }
 
   public static IntakePivot getInstance() {

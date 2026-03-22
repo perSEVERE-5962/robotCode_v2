@@ -34,7 +34,8 @@ public class SpeedUpThenIndex extends Command {
   @Override
   public void initialize() {
     shooter.moveToVelocityWithPID(shooter.getTunableTargetRPM());
-    agitator.moveToVelocityWithPID(-500);
+    agitator.moveToVelocityWithPID(-3000);
+    indexer.moveToVelocityWithPID(-2000);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

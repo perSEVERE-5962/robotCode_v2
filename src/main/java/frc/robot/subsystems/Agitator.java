@@ -1,11 +1,19 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkFlexConfig;
+
 import frc.robot.Constants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
 public class Agitator extends Actuator {
+  private SparkMax motor;
+  private SparkFlexConfig motorConfig;
   private static Agitator instance;
   private static final TunableNumber kP =
       new TunableNumber("Agitator/kP", Constants.AgitatorConstants.P);
@@ -47,9 +55,16 @@ public class Agitator extends Actuator {
         Constants.AgitatorConstants.Iz,
         0,
         0,
-        false,
+        true,
         false,
         false);
+
+        motor = getMotor();
+    motorConfig = new SparkFlexConfig();
+
+    motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(30);
+    //motorConfig.voltageCompensation(12.0);
+    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public double getTemperature() {
