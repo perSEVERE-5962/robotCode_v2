@@ -23,30 +23,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "SS aim"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SS drive"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SS turn"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SS shoot"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "ShakeIntakeAndScoreWithTimeout"

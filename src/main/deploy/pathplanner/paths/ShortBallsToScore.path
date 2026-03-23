@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.924606164383562,
-        "y": 5.991535612590425
+        "x": 8.514192307690866,
+        "y": 6.0699358974325195
       },
       "isLocked": false,
       "linkedName": "Depotshortpickupend"
@@ -20,28 +20,28 @@
         "y": 7.556515410958905
       },
       "prevControl": {
-        "x": 6.1225513698630145,
-        "y": 7.601566780821917
+        "x": 5.632667233085949,
+        "y": 7.5291809576164725
       },
       "nextControl": {
-        "x": 3.4966644293086846,
-        "y": 7.483989753632922
+        "x": 4.297206514209243,
+        "y": 7.599889259351306
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.62,
-        "y": 4.0
+        "x": 2.2465897435897455,
+        "y": 5.348987179487179
       },
       "prevControl": {
-        "x": 1.1669006849315067,
-        "y": 7.511464041095891
+        "x": 1.7582051282036866,
+        "y": 7.337410256406879
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScorePosition"
+      "linkedName": "DepotScorePos"
     }
   ],
   "rotationTargets": [
@@ -67,7 +67,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 142.59464336900126
   },
   "reversed": false,
   "folder": null,
