@@ -360,6 +360,8 @@ public class Robot extends LoggedRobot {
       EventMarker.modeChange("TELEOP");
       PostMatchSummary.getInstance().startTracking();
       frc.robot.util.HubShiftEngine.getInstance().initializeTeleop();
+      frc.robot.util.ShotCalculator.getInstance().resetState();
+      frc.robot.util.DriverFeedback.getInstance().clearProgressiveAim();
     } catch (Throwable t) {
       safeLog("Health/CrashBarrier/TeleopInit", true);
     }

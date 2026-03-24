@@ -190,17 +190,19 @@ public enum Cameras {
       return Optional.empty();
     }
 
-    PhotonPipelineResult bestResult = resultsList.get(0);
-    double ambiguity = bestResult.getBestTarget().getPoseAmbiguity();
-    double currentAmbiguity = 0;
+    PhotonPipelineResult bestResult = null;
+    double ambiguity = Double.MAX_VALUE;
     for (PhotonPipelineResult result : resultsList) {
-      currentAmbiguity = result.getBestTarget().getPoseAmbiguity();
+      if (!result.hasTargets()) {
+        continue;
+      }
+      double currentAmbiguity = result.getBestTarget().getPoseAmbiguity();
       if (currentAmbiguity < ambiguity && currentAmbiguity > 0) {
         bestResult = result;
         ambiguity = currentAmbiguity;
       }
     }
-    return Optional.of(bestResult);
+    return Optional.ofNullable(bestResult);
   }
 
   /**

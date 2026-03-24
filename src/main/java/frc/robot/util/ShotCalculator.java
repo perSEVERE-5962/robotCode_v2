@@ -98,9 +98,9 @@ public class ShotCalculator {
     baseLUT.put(2.01, 2225, angle, 1);
     baseLUT.put(3.32, 2875, angle, 1.4);
     baseLUT.put(2.303469332926836, 2360, angle, 1);
-    baseLUT.put(2.9, 2700,angle, 1.3);
+    baseLUT.put(2.9, 2700, angle, 1.3);
     baseLUT.put(1.9, 2250, angle, 1);
-    baseLUT.put(1.8, 2300,angle, 1);
+    baseLUT.put(1.8, 2300, angle, 1);
     // baseLUT.put(2.00, 3750.0, angle, 0.93);
     // baseLUT.put(2.50, 3950.0, angle, 1.07);
     // baseLUT.put(3.00, 4150.0, angle, 1.22);
@@ -444,5 +444,15 @@ public class ShotCalculator {
   /** Returns the dashboard RPM override, or 0 if not set. */
   public double getRpmOverride() {
     return kRpmOverride.get();
+  }
+
+  /** Clear warm-start cache and velocity history so teleop starts fresh. */
+  public void resetState() {
+    previousTOF = -1;
+    prevRobotVx = 0;
+    prevRobotVy = 0;
+    prevRobotOmega = 0;
+    prevTimestamp = -1;
+    cachedParameters = LaunchParameters.INVALID;
   }
 }
