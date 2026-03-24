@@ -22,8 +22,7 @@ public class PivotIntake extends Command {
 
   @Override
   public void initialize() {
-        intakePivot.move(rpm);
-
+    intakePivot.move(rpm);
   }
 
   @Override

@@ -284,7 +284,7 @@ public class RobotContainer {
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     } else {
-      drivebase.setDefaultCommand(driveRobotOrientedAngularVelocity);
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     }
 
     if (Robot.isSimulation()) {
@@ -355,8 +355,8 @@ public class RobotContainer {
                   shooter,
                   indexer,
                   agitator,
-                  () -> -driverXbox.getLeftY(),
-                  () -> -driverXbox.getLeftX(),
+                  () -> -driverXbox.getLeftY() * -1,
+                  () -> -driverXbox.getLeftX() * 1,
                   false));
       // driverXbox.y().whileTrue(new RetractIntake());
       // driverXbox.x().toggleOnTrue(hubArcDrive);

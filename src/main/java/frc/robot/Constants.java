@@ -107,7 +107,7 @@ public final class Constants {
   public static final class MotorConstants {
     public static final double DESIRED_SHOOTER_RPM = 2500;
     public static final double DESIRED_INDEXER_RPM = 6000; // 8.4 * 3730/4
-    public static final double OUT_INTAKE_POS = 38.24;
+    public static final double OUT_INTAKE_POS = 38.22;
     public static final double IN_INTAKE_POS = 11.6;
     public static final double DESIRED_INTAKE_RPM = 5000;
     public static final double UP_HANGER_POS = 0;
@@ -126,9 +126,9 @@ public final class Constants {
   }
 
   public static final class IntakePivotConstants {
-    public static final double P = 0.6;//1.0
+    public static final double P = 0.6; // 1.0
     public static final double I = 0.0;
-    public static final double D = 0.05;//.2
+    public static final double D = 0.05; // .2
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double FF = 0.0;
@@ -140,7 +140,7 @@ public final class Constants {
     public static final double P = 0.0001;
     public static final double I = 0.0;
     public static final double D = 0.0;
-    public static final double FF = 0.000189;//.000172
+    public static final double FF = 0.000189; // .000172
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double Iz = 0.0;
@@ -167,7 +167,7 @@ public final class Constants {
     public static final double D = 0.00;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.000154;//.0004
+    public static final double FF = 0.000154; // .0004
     public static final double Iz = 0.0;
 
     // Telemetry constants

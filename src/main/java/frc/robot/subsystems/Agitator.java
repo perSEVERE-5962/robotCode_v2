@@ -2,10 +2,8 @@ package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
 import frc.robot.Constants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
@@ -59,11 +57,11 @@ public class Agitator extends Actuator {
         false,
         false);
 
-        motor = getMotor();
+    motor = getMotor();
     motorConfig = new SparkFlexConfig();
 
     motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(30);
-    //motorConfig.voltageCompensation(12.0);
+    // motorConfig.voltageCompensation(12.0);
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 

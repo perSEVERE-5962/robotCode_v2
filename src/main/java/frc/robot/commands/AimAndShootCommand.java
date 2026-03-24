@@ -62,7 +62,7 @@ public class AimAndShootCommand extends Command {
   private static final TunableNumber feedRatioFloor =
       new TunableNumber("AimAndShoot/FeedRatioFloor", 0.5);
   private static final TunableNumber reverseDurationMs =
-      new TunableNumber("AimAndShoot/ReverseDurationMs", 200);
+      new TunableNumber("AimAndShoot/ReverseDurationMs", 650);
   private static final TunableNumber omegaLimit = new TunableNumber("AimAndShoot/OmegaLimit", 0.4);
 
   // X-lock wheels when driver isn't moving to prevent drift while shooting
@@ -91,7 +91,7 @@ public class AimAndShootCommand extends Command {
   @Override
   public void initialize() {
     // reverse to clear jammed balls before feeding, adjust RPM if too aggressive
-    agitator.moveToVelocityWithPID(-4000);
+    agitator.moveToVelocityWithPID(-5000);
     indexer.moveToVelocityWithPID(-5000);
     reverseTimer.restart();
 
