@@ -159,7 +159,7 @@ public class HubArcDrive extends Command {
 
     if (Math.abs(headingError) < 0.1) {
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
-      agitator.move(agitator.getTunableTargetRPM());
+      agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM());
     } else {
       indexer.move(0);
       agitator.move(0);
