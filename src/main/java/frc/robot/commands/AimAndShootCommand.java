@@ -36,11 +36,15 @@ public class AimAndShootCommand extends Command {
 
   private final HeadingController headingController = new HeadingController();
   private final Timer autoTimer = new Timer();
+  private final Timer reverseTimer = new Timer();
 
   // Firing hysteresis state
   private boolean reachedSpeed = false;
   private boolean feeding = false;
   private double underShootingSince = -1;
+
+  // cached to avoid GC pressure in execute()
+  private ChassisSpeeds reusableSpeeds = new ChassisSpeeds();
 
   // blend COR from launcher (precise) to robot center (fast) based on heading error
   private static final double COR_MIN_ERROR_RAD = Math.toRadians(2.0);
@@ -57,6 +61,10 @@ public class AimAndShootCommand extends Command {
       new TunableNumber("AimAndShoot/DebounceMs", 400);
   private static final TunableNumber feedRatioFloor =
       new TunableNumber("AimAndShoot/FeedRatioFloor", 0.5);
+  private static final TunableNumber reverseDurationMs =
+      new TunableNumber("AimAndShoot/ReverseDurationMs", 200);
+  private static final TunableNumber omegaLimit =
+      new TunableNumber("AimAndShoot/OmegaLimit", 0.4);
 
   // X-lock wheels when driver isn't moving to prevent drift while shooting
   private static final double OLOCK_TRANSLATION_THRESHOLD = 0.1;
@@ -83,8 +91,11 @@ public class AimAndShootCommand extends Command {
 
   @Override
   public void initialize() {
+    // reverse to clear jammed balls before feeding, adjust RPM if too aggressive
     agitator.moveToVelocityWithPID(-4000);
     indexer.moveToVelocityWithPID(-5000);
+    reverseTimer.restart();
+
     headingController.reset();
     reachedSpeed = false;
     feeding = false;
@@ -92,7 +103,6 @@ public class AimAndShootCommand extends Command {
 
     // start spinning early with flat RPM, execute() will switch to LUT RPM
     shooter.moveToVelocityWithPID(1000);
-    // quick reverse to clear any jammed balls before we start feeding
 
     if (autoFinish) {
       autoTimer.restart();
@@ -115,12 +125,12 @@ public class AimAndShootCommand extends Command {
             targetHeading,
             params.isValid() ? params.driveAngularVelocityRadPerSec() : 0,
             distToHub,
-            maxOmega);
+            maxOmega * omegaLimit.get());
 
     // drive: let the driver translate while we control heading
     double maxVel = swerve.getSwerveDrive().getMaximumChassisVelocity();
-    double fwd = forwardInput.getAsDouble() * maxVel;
-    double str = strafeInput.getAsDouble() * maxVel;
+    double fwd = MathUtil.applyDeadband(forwardInput.getAsDouble(), 0.08) * maxVel;
+    double str = MathUtil.applyDeadband(strafeInput.getAsDouble(), 0.08) * maxVel;
 
     // cap driver speed so we don't outrun the aim compensation
     if (params.isValid()) {
@@ -149,9 +159,10 @@ public class AimAndShootCommand extends Command {
               1);
       Translation2d cor = LAUNCHER_OFFSET.times(1.0 - corScalar);
 
-      ChassisSpeeds speeds =
-          new ChassisSpeeds(fwd, str, omega);
-      swerve.drive(speeds, cor);
+      reusableSpeeds.vxMetersPerSecond = fwd;
+      reusableSpeeds.vyMetersPerSecond = str;
+      reusableSpeeds.omegaRadiansPerSecond = omega;
+      swerve.drive(reusableSpeeds, cor);
     }
 
     // RPMOverride takes priority, then LUT RPM, then flat dashboard RPM
@@ -165,6 +176,11 @@ public class AimAndShootCommand extends Command {
       targetRPM = shooter.getTunableTargetRPM();
     }
     shooter.moveToVelocityWithPID(targetRPM);
+
+    // still in reverse phase, keep clearing balls while shooter spins up
+    if (!reverseTimer.hasElapsed(reverseDurationMs.get() / 1000.0)) {
+      return;
+    }
 
     boolean atSpeed = shooter.isAtSpeed();
     if (atSpeed && !reachedSpeed) {
@@ -198,10 +214,10 @@ public class AimAndShootCommand extends Command {
       double rpmRatio = (targetRpm > 0) ? Math.min(1.0, shooter.getVelocityRPM() / targetRpm) : 0;
       rpmRatio = Math.max(feedRatioFloor.get(), rpmRatio);
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed() * rpmRatio);
-      agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM());
+      agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM() * rpmRatio);
     } else {
       indexer.move(0);
-      agitator.move(0);
+      agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM() * 0.1);
     }
 
     // progressive aim haptic: operator feels heading error converge

@@ -353,6 +353,32 @@
               "topic": "/SmartDashboard/WonAuto",
               "period": 0.033
             }
+          },
+          {
+            "title": "Reverse Duration (ms)",
+            "x": 500.0,
+            "y": 610.0,
+            "width": 250.0,
+            "height": 70.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/AimAndShoot/ReverseDurationMs",
+              "period": 0.033,
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "Omega Limit",
+            "x": 750.0,
+            "y": 610.0,
+            "width": 250.0,
+            "height": 70.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/AimAndShoot/OmegaLimit",
+              "period": 0.033,
+              "show_submit_button": true
+            }
           }
         ]
       }
