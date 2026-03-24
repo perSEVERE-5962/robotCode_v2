@@ -367,7 +367,7 @@ public class DriverFeedback {
     int countdownSec =
         (timeToNextShift > 0 && timeToNextShift <= 5.5) ? (int) Math.ceil(timeToNextShift) : -1;
     if (countdownSec >= 1 && countdownSec <= 5 && countdownSec != prevCountdownSecond) {
-      playPattern(HUB_COUNTDOWN[countdownSec - 1]);
+      playPattern(HUB_COUNTDOWN[5 - countdownSec]);
     }
     prevCountdownSecond = (timeToNextShift > 0) ? countdownSec : -1;
 
