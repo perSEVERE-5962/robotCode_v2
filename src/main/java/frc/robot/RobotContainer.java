@@ -42,7 +42,10 @@ import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.sim.SimDriveOverride;
 import frc.robot.subsystems.Agitator;
+import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
@@ -71,6 +74,9 @@ public class RobotContainer {
   Shooter shooter = Shooter.getInstance();
   Indexer indexer = Indexer.getInstance();
   Agitator agitator = Agitator.getInstance();
+  IntakePivot intakePivot = IntakePivot.getInstance();
+  IntakeRoller intakeRoller = IntakeRoller.getInstance();
+  Hanger hanger = Hanger.getInstance();
   private boolean useLeftOffset = true;
   private static RobotContainer instance;
 
@@ -179,10 +185,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
     NamedCommands.registerCommand("TimedShoot", new SpeedUpThenIndex().withTimeout(8));
 
-    NamedCommands.registerCommand(
-        "ShakeIntake",
-        (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
-            .repeatedly());
     NamedCommands.registerCommand(
         "ShakeIntake",
         (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
@@ -347,7 +349,7 @@ public class RobotContainer {
       driverXbox.b().whileTrue(new MoveAgitator(5500));
       driverXbox.x().whileTrue(new MoveIndexer(5000));
       driverXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
-      driverXbox.leftTrigger().toggleOnTrue(new AimAndShootCommand(drivebase, shooter, indexer, agitator, driverXbox::getLeftX, driverXbox::getLeftX, false));
+      driverXbox.leftTrigger().whileTrue(new AimAndShootCommand(drivebase, shooter, indexer, agitator, () -> -driverXbox.getLeftY(), () -> -driverXbox.getLeftX(), false));
       // driverXbox.y().whileTrue(new RetractIntake());
       //driverXbox.x().toggleOnTrue(hubArcDrive);
       driverXbox.a().whileTrue(new HoldAndIntake());
