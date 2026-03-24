@@ -398,6 +398,9 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void simulationInit() {
+    edu.wpi.first.wpilibj.simulation.DriverStationSim.setAllianceStationId(
+        edu.wpi.first.hal.AllianceStationID.Blue1);
+
     simDeviceManager = new SimDeviceManager();
     simDeviceManager.init();
     simScenarioRunner = new SimScenarioRunner();
