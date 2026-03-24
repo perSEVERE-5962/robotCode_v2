@@ -63,8 +63,7 @@ public class AimAndShootCommand extends Command {
       new TunableNumber("AimAndShoot/FeedRatioFloor", 0.5);
   private static final TunableNumber reverseDurationMs =
       new TunableNumber("AimAndShoot/ReverseDurationMs", 200);
-  private static final TunableNumber omegaLimit =
-      new TunableNumber("AimAndShoot/OmegaLimit", 0.4);
+  private static final TunableNumber omegaLimit = new TunableNumber("AimAndShoot/OmegaLimit", 0.4);
 
   // X-lock wheels when driver isn't moving to prevent drift while shooting
   private static final double OLOCK_TRANSLATION_THRESHOLD = 0.1;

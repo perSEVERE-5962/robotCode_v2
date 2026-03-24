@@ -37,7 +37,6 @@ import frc.robot.commands.MoveAgitator;
 import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.MoveShooter;
 import frc.robot.commands.PivotIntake;
-import frc.robot.commands.RetractIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.sim.SimDriveOverride;
@@ -52,7 +51,6 @@ import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.DriverTuning;
-import frc.robot.util.HubScoringUtil;
 import java.io.File;
 import java.util.Set;
 import swervelib.SwerveInputStream;
@@ -349,12 +347,22 @@ public class RobotContainer {
       driverXbox.b().whileTrue(new MoveAgitator(5500));
       driverXbox.x().whileTrue(new MoveIndexer(5000));
       driverXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
-      driverXbox.leftTrigger().whileTrue(new AimAndShootCommand(drivebase, shooter, indexer, agitator, () -> -driverXbox.getLeftY(), () -> -driverXbox.getLeftX(), false));
+      driverXbox
+          .leftTrigger()
+          .whileTrue(
+              new AimAndShootCommand(
+                  drivebase,
+                  shooter,
+                  indexer,
+                  agitator,
+                  () -> -driverXbox.getLeftY(),
+                  () -> -driverXbox.getLeftX(),
+                  false));
       // driverXbox.y().whileTrue(new RetractIntake());
-      //driverXbox.x().toggleOnTrue(hubArcDrive);
+      // driverXbox.x().toggleOnTrue(hubArcDrive);
       driverXbox.a().whileTrue(new HoldAndIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
-      //driverXbox.back().whileTrue(drivebase.centerModulesCommand());
+      // driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.back().whileTrue(new SetIntakePosition());
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock,
       // drivebase).repeatedly());
@@ -367,7 +375,7 @@ public class RobotContainer {
                   Constants.IndexerConstants.TARGET_SPEED,
                   hubArcDrive::isScheduled));
       copilotXbox.x().whileTrue(new SetIntakePosition());
-      
+
       copilotXbox
           .b()
           .whileTrue(

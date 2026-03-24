@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
@@ -70,7 +69,7 @@ public class Shooter extends Actuator {
           configureFollower(Constants.CANDeviceIDs.kShooterFollower2, true),
         };
 
-    //limiter = new SlewRateLimiter(ShooterConstants.RPM_SLEW_RATE);
+    // limiter = new SlewRateLimiter(ShooterConstants.RPM_SLEW_RATE);
   }
 
   public double getVelocityRPM() {
