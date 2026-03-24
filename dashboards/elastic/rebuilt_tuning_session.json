@@ -875,7 +875,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/IntakeActuator/kP",
+              "topic": "/SmartDashboard/IntakePivot/kP",
               "period": 0.033,
               "show_submit_button": true
             }
@@ -888,7 +888,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/IntakeActuator/kI",
+              "topic": "/SmartDashboard/IntakePivot/kI",
               "period": 0.033,
               "show_submit_button": true
             }
@@ -901,7 +901,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/IntakeActuator/kD",
+              "topic": "/SmartDashboard/IntakePivot/kD",
               "period": 0.033,
               "show_submit_button": true
             }
@@ -914,7 +914,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/IntakeActuator/FF",
+              "topic": "/SmartDashboard/IntakePivot/FF",
               "period": 0.033,
               "show_submit_button": true
             }
