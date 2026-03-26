@@ -91,23 +91,93 @@ public class ShotCalculator {
     initializeBaselineLUT();
   }
 
-  /** Starting LUT from physics sim. Needs real-robot calibration. */
+  /**
+   * 81-point dense LUT: sim-generated at 0.05m steps (slip=0.5, Cd=0.47, 60 deg, exit=0.5309m),
+   * with real robot RPM values overriding sim at 7 tested distances (1.8-3.32m).
+   */
   private void initializeBaselineLUT() {
     double angle = ShotCalculatorConstants.FIXED_LAUNCH_ANGLE_DEG;
-    baseLUT.put(2.654, 2500.0, angle, 1.1);
-    baseLUT.put(2.01, 2225, angle, 1);
-    baseLUT.put(3.32, 2875, angle, 1.4);
-    baseLUT.put(2.303469332926836, 2360, angle, 1);
-    baseLUT.put(2.9, 2700, angle, 1.3);
-    baseLUT.put(1.9, 2250, angle, 1);
-    baseLUT.put(1.8, 2300, angle, 1);
-    // baseLUT.put(2.00, 3750.0, angle, 0.93);
-    // baseLUT.put(2.50, 3950.0, angle, 1.07);
-    // baseLUT.put(3.00, 4150.0, angle, 1.22);
-    // baseLUT.put(3.50, 4350.0, angle, 1.40);
-    // baseLUT.put(4.00, 4550.0, angle, 1.59);
-    // baseLUT.put(4.50, 4750.0, angle, 1.80);
-    // baseLUT.put(5.00, 4950.0, angle, 2.03);
+    baseLUT.put(1.000, 2570, angle, 0.30);
+    baseLUT.put(1.050, 2464, angle, 0.33);
+    baseLUT.put(1.100, 2392, angle, 0.35);
+    baseLUT.put(1.150, 2339, angle, 0.38);
+    baseLUT.put(1.200, 2303, angle, 0.40);
+    baseLUT.put(1.250, 2278, angle, 0.42);
+    baseLUT.put(1.300, 2260, angle, 0.44);
+    baseLUT.put(1.350, 2248, angle, 0.46);
+    baseLUT.put(1.400, 2241, angle, 0.48);
+    baseLUT.put(1.450, 2238, angle, 0.50);
+    baseLUT.put(1.500, 2238, angle, 0.52);
+    baseLUT.put(1.550, 2240, angle, 0.54);
+    baseLUT.put(1.600, 2245, angle, 0.55);
+    baseLUT.put(1.650, 2251, angle, 0.57);
+    baseLUT.put(1.700, 2258, angle, 0.58);
+    baseLUT.put(1.750, 2267, angle, 0.60);
+    baseLUT.put(1.800, 2300, angle, 0.61); // real robot
+    baseLUT.put(1.850, 2288, angle, 0.63);
+    baseLUT.put(1.900, 2250, angle, 0.66); // real robot
+    baseLUT.put(1.950, 2311, angle, 0.66);
+    baseLUT.put(2.010, 2225, angle, 0.70); // real robot
+    baseLUT.put(2.050, 2337, angle, 0.68);
+    baseLUT.put(2.100, 2351, angle, 0.70);
+    baseLUT.put(2.150, 2365, angle, 0.71);
+    baseLUT.put(2.200, 2379, angle, 0.72);
+    baseLUT.put(2.250, 2394, angle, 0.74);
+    baseLUT.put(2.300, 2360, angle, 0.76); // real robot
+    baseLUT.put(2.350, 2423, angle, 0.76);
+    baseLUT.put(2.400, 2438, angle, 0.77);
+    baseLUT.put(2.450, 2454, angle, 0.78);
+    baseLUT.put(2.500, 2469, angle, 0.80);
+    baseLUT.put(2.550, 2485, angle, 0.81);
+    baseLUT.put(2.600, 2500, angle, 0.82);
+    baseLUT.put(2.654, 2500, angle, 0.84); // real robot
+    baseLUT.put(2.700, 2532, angle, 0.84);
+    baseLUT.put(2.750, 2548, angle, 0.85);
+    baseLUT.put(2.800, 2564, angle, 0.86);
+    baseLUT.put(2.850, 2580, angle, 0.87);
+    baseLUT.put(2.900, 2700, angle, 0.85); // real robot
+    baseLUT.put(2.950, 2613, angle, 0.89);
+    baseLUT.put(3.000, 2628, angle, 0.90);
+    baseLUT.put(3.050, 2644, angle, 0.91);
+    baseLUT.put(3.100, 2660, angle, 0.92);
+    baseLUT.put(3.150, 2676, angle, 0.93);
+    baseLUT.put(3.200, 2692, angle, 0.94);
+    baseLUT.put(3.250, 2709, angle, 0.95);
+    baseLUT.put(3.320, 2875, angle, 0.92); // real robot
+    baseLUT.put(3.350, 2741, angle, 0.97);
+    baseLUT.put(3.400, 2758, angle, 0.98);
+    baseLUT.put(3.450, 2773, angle, 0.99);
+    baseLUT.put(3.500, 2790, angle, 1.00);
+    baseLUT.put(3.550, 2806, angle, 1.01);
+    baseLUT.put(3.600, 2822, angle, 1.02);
+    baseLUT.put(3.650, 2838, angle, 1.03);
+    baseLUT.put(3.700, 2854, angle, 1.04);
+    baseLUT.put(3.750, 2870, angle, 1.05);
+    baseLUT.put(3.800, 2886, angle, 1.06);
+    baseLUT.put(3.850, 2902, angle, 1.06);
+    baseLUT.put(3.900, 2918, angle, 1.07);
+    baseLUT.put(3.950, 2935, angle, 1.08);
+    baseLUT.put(4.000, 2951, angle, 1.09);
+    baseLUT.put(4.050, 2966, angle, 1.10);
+    baseLUT.put(4.100, 2983, angle, 1.11);
+    baseLUT.put(4.150, 2998, angle, 1.12);
+    baseLUT.put(4.200, 3014, angle, 1.12);
+    baseLUT.put(4.250, 3029, angle, 1.13);
+    baseLUT.put(4.300, 3046, angle, 1.14);
+    baseLUT.put(4.350, 3062, angle, 1.15);
+    baseLUT.put(4.400, 3077, angle, 1.16);
+    baseLUT.put(4.450, 3092, angle, 1.17);
+    baseLUT.put(4.500, 3108, angle, 1.17);
+    baseLUT.put(4.550, 3124, angle, 1.18);
+    baseLUT.put(4.600, 3140, angle, 1.19);
+    baseLUT.put(4.650, 3156, angle, 1.20);
+    baseLUT.put(4.700, 3171, angle, 1.21);
+    baseLUT.put(4.750, 3186, angle, 1.21);
+    baseLUT.put(4.800, 3202, angle, 1.22);
+    baseLUT.put(4.850, 3218, angle, 1.23);
+    baseLUT.put(4.900, 3233, angle, 1.24);
+    baseLUT.put(4.950, 3249, angle, 1.24);
+    baseLUT.put(5.000, 3264, angle, 1.25);
   }
 
   /** Set swerve reference. Called from RobotContainer during init. */
