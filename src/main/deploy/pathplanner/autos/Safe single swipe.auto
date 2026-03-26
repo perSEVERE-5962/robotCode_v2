@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "FS aim+drive"
+            "pathName": "safe FS"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "FS shoot"
+            "pathName": "safe FSS"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ShakeIntakeAndScore"
+            "name": "ShakeIntakeAndScoreWithTimeout"
           }
         }
       ]

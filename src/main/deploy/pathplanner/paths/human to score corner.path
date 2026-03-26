@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5190340909090905,
-        "y": 1.2521590909090912
+        "x": 1.7118426724137938,
+        "y": 1.1713038793103454
       },
       "isLocked": false,
       "linkedName": "humanplayer"
     },
     {
       "anchor": {
-        "x": 2.20052801724138,
-        "y": 1.8847844827586209
+        "x": 2.4350969827586213,
+        "y": 1.7968211206896556
       },
       "prevControl": {
-        "x": 1.3553689263322894,
-        "y": 1.163307210031347
+        "x": 1.5163685344827595,
+        "y": 0.9856034482758628
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "outpost score"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -133.02506598911796
+    "rotation": -133.45184230102214
   },
   "reversed": false,
   "folder": "new paths",
