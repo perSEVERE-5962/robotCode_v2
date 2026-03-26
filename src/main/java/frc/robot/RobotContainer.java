@@ -6,6 +6,8 @@ package frc.robot;
 
 import static frc.robot.Constants.HubScoringConstants.*;
 
+import choreo.auto.AutoFactory;
+import choreo.trajectory.SwerveSample;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -13,6 +15,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -70,6 +73,8 @@ public class RobotContainer {
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/neo"));
 
   private final Field2d field = new Field2d();
+
+  private final AutoFactory autoFactory;
 
   // NOTE: This creates a second Vision instance. SwerveSubsystem already creates one internally.
   // Both call getAllUnreadResults() on the same Cameras singletons, causing a race condition.
@@ -158,6 +163,14 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   private RobotContainer() {
+    autoFactory =
+        new AutoFactory(
+            drivebase::getPose,
+            drivebase::resetOdometry,
+            (SwerveSample sample) ->
+                drivebase.drive(new ChassisSpeeds(sample.vx, sample.vy, sample.omega)),
+            true,
+            drivebase);
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -304,6 +317,7 @@ public class RobotContainer {
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock,
       // drivebase).repeatedly());
+      driverXbox.leftTrigger().whileTrue(autoFactory.trajectoryCmd("NewPath"));
 
       copilotXbox
           .y()
