@@ -31,6 +31,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AgitateAndIndex;
 import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.DeployIntake;
+import frc.robot.commands.FeedEject;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
 import frc.robot.commands.MoveAgitator;
@@ -382,6 +383,7 @@ public class RobotContainer {
               new AgitateAndIndex(
                   -Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
+      copilotXbox.leftBumper().whileTrue(new FeedEject());
       copilotXbox
           .rightTrigger()
           .whileTrue(
