@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.8380681818181817,
-        "y": 0.7574318181818183
+        "x": 2.4350969827586213,
+        "y": 1.7968211206896556
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8694659090909087,
-        "y": 0.7265113636363638
+        "x": 1.741163793103449,
+        "y": 1.0931142241379317
       },
       "isLocked": false,
-      "linkedName": "undertrenchshoot"
+      "linkedName": "outpost score"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 0.5100681818181818
       },
       "prevControl": {
-        "x": 1.7560909090863794,
-        "y": 0.6440568181811466
+        "x": 1.7900323275862076,
+        "y": 0.8487715517241383
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": "new paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -102.68038349181987
+    "rotation": -133.45184230102214
   },
   "useDefaultConstraints": true
 }
