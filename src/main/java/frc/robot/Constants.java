@@ -401,6 +401,29 @@ public final class Constants {
     // Per-distance RPM band boundaries (meters)
     public static final double RPM_BAND_SHORT_END = 1.5;
     public static final double RPM_BAND_MEDIUM_END = 3.0;
+
+    // Copilot D-pad RPM trim limits
+    public static final double RPM_OFFSET_MAX = 200.0;
+
+    // Confidence scoring: heading accuracy scaling
+    public static final double HEADING_MAX_ERROR_RAD = Math.toRadians(15);
+    public static final double HEADING_SPEED_SCALAR = 1.0;
+    public static final double HEADING_REFERENCE_DISTANCE = 2.5;
+
+    // Confidence scoring: component weights (geometric mean)
+    public static final double W_CONVERGENCE = 1.0;
+    public static final double W_VELOCITY_STABILITY = 0.8;
+    public static final double W_VISION_CONFIDENCE = 1.2;
+    public static final double W_HEADING_ACCURACY = 1.5;
+    public static final double W_DISTANCE_IN_RANGE = 0.5;
+
+    // Directional polar speed limiting
+    public static final double MAX_POLAR_ANGULAR_RATE_RAD_PER_SEC = 2.0;
+    public static final double POLAR_SPEED_FLOOR_MPS = 0.5;
+
+    // Asymmetric heading tolerance (tight strafing, loose approaching)
+    public static final double CROSS_TRACK_TOLERANCE_DEG = 3.0;
+    public static final double ALONG_TRACK_TOLERANCE_DEG = 8.0;
   }
 
   /** Hub shift timing: shift schedule, fuel delay, fire authorization margins */
