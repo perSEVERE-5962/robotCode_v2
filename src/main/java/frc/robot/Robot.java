@@ -171,6 +171,7 @@ public class Robot extends LoggedRobot {
         Watchdog watchdog = (Watchdog) watchdogField.get(this);
         watchdog.setTimeout(0.5);
       } catch (Exception e) {
+        DriverStation.reportWarning("Failed to disable loop overrun warnings.", false);
       }
     }
 
