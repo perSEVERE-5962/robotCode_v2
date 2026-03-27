@@ -180,8 +180,8 @@ public class VisionTelemetry implements SubsystemTelemetry {
       try {
         leftCamConnected = vision.isCameraConnected(Cameras.LEFT_CAM);
         rightCamConnected = vision.isCameraConnected(Cameras.RIGHT_CAM);
-        frontLeftCamConnected = vision.isCameraConnected(Cameras.FRONT_LEFT_CAM);
-        frontRightCamConnected = vision.isCameraConnected(Cameras.FRONT_RIGHT_CAM);
+        // frontLeftCamConnected = vision.isCameraConnected(Cameras.FRONT_LEFT_CAM);
+        // frontRightCamConnected = vision.isCameraConnected(Cameras.FRONT_RIGHT_CAM);
       } catch (Throwable t) {
         leftCamConnected = false;
         rightCamConnected = false;
