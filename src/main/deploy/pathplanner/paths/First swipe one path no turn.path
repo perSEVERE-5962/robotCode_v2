@@ -1,0 +1,116 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.508011363631967,
+        "y": 0.6234431818169537
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.227295258620691,
+        "y": 0.5848814655172418
+      },
+      "isLocked": false,
+      "linkedName": "HumanPlayTrench"
+    },
+    {
+      "anchor": {
+        "x": 8.572984913793103,
+        "y": 0.8683189655172419
+      },
+      "prevControl": {
+        "x": 7.620437012778448,
+        "y": 0.7817237017886425
+      },
+      "nextControl": {
+        "x": 8.82195821541003,
+        "y": 0.89095290202787
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.064752155172414,
+        "y": 3.096724137931035
+      },
+      "prevControl": {
+        "x": 8.35972742047912,
+        "y": 3.1800867129090595
+      },
+      "nextControl": {
+        "x": 6.715980603447837,
+        "y": 2.7155495689651974
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.8380681818181817,
+        "y": 0.7574318181818183
+      },
+      "prevControl": {
+        "x": 8.07008326802464,
+        "y": 0.15146199059529175
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "undertrenchshoot"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 106.82140989004071
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 112.83365417799284
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.9533213644524237,
+      "maxWaypointRelativePos": 2.3105924596050245,
+      "constraints": {
+        "maxVelocity": 1.234,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "DeployAndIntakeEvent",
+      "waypointRelativePos": 0.36983842010772067,
+      "endWaypointRelativePos": 3.0,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -102.68038349181987
+  },
+  "reversed": false,
+  "folder": "new paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 45.0
+  },
+  "useDefaultConstraints": true
+}

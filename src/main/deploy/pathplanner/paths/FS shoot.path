@@ -3,39 +3,44 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5484078711985685,
-        "y": 4.010661896243291
+        "x": 6.981647727272726,
+        "y": 3.0558522727272726
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.380178890876565,
-        "y": 3.994436493738819
+        "x": 5.961272727272727,
+        "y": 0.3039318181818178
       },
       "isLocked": false,
-      "linkedName": "CenterStart"
+      "linkedName": "endFS"
     },
     {
       "anchor": {
-        "x": 2.490782051282053,
-        "y": 3.9419743589743597
+        "x": 3.8380681818181817,
+        "y": 0.7574318181818183
       },
       "prevControl": {
-        "x": 3.305612104949316,
-        "y": 3.9526362552176506
+        "x": 5.435625,
+        "y": 0.5719090909090914
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScorePosition"
+      "linkedName": "undertrenchshoot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3977987421383648,
+      "rotationDegrees": -89.4262635688209
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "",
+      "name": "DeployAndIntakeEvent",
       "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
+      "endWaypointRelativePos": 0.42908438061041587,
       "command": null
     }
   ],
@@ -49,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -102.68038349181987
   },
   "reversed": false,
-  "folder": null,
+  "folder": "new paths",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 0.0
+    "velocity": 1.0,
+    "rotation": -140.38931175997337
   },
   "useDefaultConstraints": true
 }

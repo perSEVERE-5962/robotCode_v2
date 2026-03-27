@@ -1,0 +1,88 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "DepotTrenchToCenter"
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "ShortPickUpBalls"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "HoldAndRunIntakeTimed"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "ShortBallsToScore"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShakeIntakeAndScoreWithTimeout"
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "ToDepot"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "HoldAndRunIntakeTimed"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "DepotToScore"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShakeIntakeAndScore"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "New plans test",
+  "choreoAuto": false
+}

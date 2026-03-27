@@ -8,6 +8,8 @@ import static frc.robot.Constants.HubScoringConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -173,8 +175,9 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   private RobotContainer() {
     // Configure the trigger bindings
-    configureBindings();
+    
     DriverStation.silenceJoystickConnectionWarning(true);
+    new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
     NamedCommands.registerCommand("DeployIntake", new DeployIntake());
 
@@ -184,35 +187,20 @@ public class RobotContainer {
     NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
     NamedCommands.registerCommand("TimedShoot", new SpeedUpThenIndex().withTimeout(8));
 
-    NamedCommands.registerCommand(
-        "ShakeIntake",
-        (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
-            .repeatedly()
-            .withTimeout(8));
-    NamedCommands.registerCommand(
-        "ShakeIntakeAndScore",
-        ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
-                .repeatedly())
-            .alongWith(new SpeedUpThenIndex()));
+    NamedCommands.registerCommand("ShakeIntake", (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly());
+    NamedCommands.registerCommand("ShakeIntake", (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly().withTimeout(8));
+    NamedCommands.registerCommand("ShakeIntakeAndScore", ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly()).alongWith(new SpeedUpThenIndex()));
+    NamedCommands.registerCommand("ShakeIntakeAndScoreWithTimeout", ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly()).alongWith(new SpeedUpThenIndex()).withTimeout(4));
+    
 
-    NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
-    NamedCommands.registerCommand(
-        "AimAndShoot",
-        new AimAndShootCommand(
-            drivebase,
-            Shooter.getInstance(),
-            Indexer.getInstance(),
-            Agitator.getInstance(),
-            () -> 0,
-            () -> 0,
-            true));
+        NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
 
     // Another option that allows you to specify the default auto by its name
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
-
+    configureBindings();
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)

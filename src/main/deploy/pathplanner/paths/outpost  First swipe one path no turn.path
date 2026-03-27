@@ -1,0 +1,147 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.508011363631967,
+        "y": 0.6234431818169537
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.0025,
+        "y": 0.6630711206896558
+      },
+      "isLocked": false,
+      "linkedName": "HumanPlayTrench"
+    },
+    {
+      "anchor": {
+        "x": 7.781314655172414,
+        "y": 0.7901293103448279
+      },
+      "prevControl": {
+        "x": 6.956316722665831,
+        "y": 0.6984628733996492
+      },
+      "nextControl": {
+        "x": 8.04520474137931,
+        "y": 0.8194504310344839
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.722672413793104,
+        "y": 3.067403017241379
+      },
+      "prevControl": {
+        "x": 7.972672413793104,
+        "y": 3.067403017241379
+      },
+      "nextControl": {
+        "x": 6.140176763297909,
+        "y": 3.067403017241379
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.7576293103448286,
+        "y": 0.8585452586206896
+      },
+      "prevControl": {
+        "x": 8.106635355566087,
+        "y": -0.12679796023586476
+      },
+      "nextControl": {
+        "x": 2.3862284482758627,
+        "y": 0.9269612068965524
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.4350969827586213,
+        "y": 1.7968211206896556
+      },
+      "prevControl": {
+        "x": 2.0734698275862073,
+        "y": 1.4547413793103454
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "outpost score"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 92.86240522611182
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 92.93567344642126
+    },
+    {
+      "waypointRelativePos": 2.5911949685534625,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.9533213644524237,
+      "maxWaypointRelativePos": 2.3105924596050245,
+      "constraints": {
+        "maxVelocity": 1.234,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 10.0,
+        "y": 0.5
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 2.7217235188509834,
+      "maxWaypointRelativePos": 2.859964093357271,
+      "name": "Point Towards Zone"
+    }
+  ],
+  "eventMarkers": [
+    {
+      "name": "DeployAndIntakeEvent",
+      "waypointRelativePos": 0.36983842010772067,
+      "endWaypointRelativePos": 3.0,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -133.45184230102214
+  },
+  "reversed": false,
+  "folder": "new paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 45.0
+  },
+  "useDefaultConstraints": true
+}

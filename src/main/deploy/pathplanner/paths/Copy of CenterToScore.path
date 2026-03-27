@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.0,
-        "y": 0.603
+        "x": 3.5484078711985685,
+        "y": 4.010661896243291
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.882013665331587,
-        "y": 0.6030000000000001
-      },
-      "isLocked": false,
-      "linkedName": "HumanTrench"
-    },
-    {
-      "anchor": {
-        "x": 2.62,
-        "y": 2.258318425760286
-      },
-      "prevControl": {
-        "x": 2.730217387576094,
-        "y": 1.56644303667234
-      },
-      "nextControl": {
-        "x": 2.5168418602303775,
-        "y": 2.905880300164367
+        "x": 2.3800662199036147,
+        "y": 4.010661896243291
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.490782051282053,
-        "y": 3.9419743589743597
+        "x": 2.62,
+        "y": 4.0
       },
       "prevControl": {
-        "x": 2.4944104113405916,
-        "y": 2.4975349120373895
+        "x": 3.4348998051238553,
+        "y": 4.0
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScorePosition"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -57,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "new paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 179.96479020003696
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

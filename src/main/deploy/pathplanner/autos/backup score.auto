@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterToScore"
+            "pathName": "Copy of CenterToScore"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ShakeIntakeAndScore"
+            "name": "shoot"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "New plans test",
   "choreoAuto": false
 }

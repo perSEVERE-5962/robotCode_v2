@@ -7,19 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterToScore"
+            "pathName": "safe FS"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "safe FSS"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ShakeIntakeAndScore"
+            "name": "ShakeIntakeAndScoreWithTimeout"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "New plans test",
   "choreoAuto": false
 }

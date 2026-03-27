@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.5714978601997143,
-        "y": 0.6256633380884444
+        "x": 7.218704545454545,
+        "y": 2.808488636363636
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2587589682351377,
-        "y": 1.2907484869521881
+        "x": 5.889125,
+        "y": 0.4997613636363649
       },
       "isLocked": false,
-      "linkedName": "HumanPickUp"
+      "linkedName": "endofcenterturn"
     },
     {
       "anchor": {
-        "x": 2.490782051282053,
-        "y": 3.9419743589743597
+        "x": 3.8380681818181817,
+        "y": 0.7574318181818183
       },
       "prevControl": {
-        "x": 2.0261927674214117,
-        "y": 3.619473119558365
+        "x": 5.631454545454545,
+        "y": 0.5616022727272729
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScorePosition"
+      "linkedName": "undertrenchshoot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3977987421383648,
+      "rotationDegrees": -93.27586729187145
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -102.68038349181987
   },
   "reversed": false,
-  "folder": null,
+  "folder": "new paths",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 90.0
+    "velocity": 1.0,
+    "rotation": 109.747
   },
   "useDefaultConstraints": true
 }

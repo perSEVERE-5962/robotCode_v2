@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.0,
-        "y": 0.603
+        "x": 2.4350969827586213,
+        "y": 1.7968211206896556
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.882013665331587,
-        "y": 0.6030000000000001
+        "x": 1.741163793103449,
+        "y": 1.0931142241379317
       },
       "isLocked": false,
-      "linkedName": "HumanTrench"
+      "linkedName": "outpost score"
     },
     {
       "anchor": {
-        "x": 2.62,
-        "y": 2.258318425760286
+        "x": 0.48835227272727255,
+        "y": 0.5100681818181818
       },
       "prevControl": {
-        "x": 2.730217387576094,
-        "y": 1.56644303667234
-      },
-      "nextControl": {
-        "x": 2.5168418602303775,
-        "y": 2.905880300164367
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 2.490782051282053,
-        "y": 3.9419743589743597
-      },
-      "prevControl": {
-        "x": 2.4944104113405916,
-        "y": 2.4975349120373895
+        "x": 1.7900323275862076,
+        "y": 0.8487715517241383
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScorePosition"
+      "linkedName": "humanplayer"
     }
   ],
   "rotationTargets": [],
@@ -58,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "new paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 179.96479020003696
+    "rotation": -133.45184230102214
   },
   "useDefaultConstraints": true
 }

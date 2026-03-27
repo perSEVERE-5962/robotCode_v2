@@ -7,19 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterToScore"
+            "pathName": "FS aim+drive"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FS shoot"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ShakeIntakeAndScore"
+            "name": "ShakeIntakeAndScoreWithTimeout"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "New plans test",
   "choreoAuto": false
 }
