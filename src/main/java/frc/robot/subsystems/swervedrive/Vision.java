@@ -166,6 +166,8 @@ public class Vision {
     double now = Timer.getFPGATimestamp();
 
     for (Cameras camera : Cameras.values()) {
+      camera.poseEstimator.addHeadingData(
+          Timer.getFPGATimestamp(), swerveDrive.getPose().getRotation());
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent()) {
         var pose = poseEst.get();
