@@ -175,7 +175,14 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   private RobotContainer() {
     // Configure the trigger bindings
-    
+    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
+
+    // Another option that allows you to specify the default auto by its name
+    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+    configureBindings();
+
+
     DriverStation.silenceJoystickConnectionWarning(true);
     new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
@@ -195,7 +202,7 @@ public class RobotContainer {
                   indexer,
                   agitator,
                   () -> -driverXbox.getLeftY() * -1,
-                  () -> -driverXbox.getLeftX() * 1,
+                  () -> -driverXbox.getLeftX() * -1,
                   false)));
     NamedCommands.registerCommand("ShakeIntakeAndScoreWithTimeout", ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly()).alongWith(new AimAndShootCommand(
                   drivebase,
@@ -203,19 +210,14 @@ public class RobotContainer {
                   indexer,
                   agitator,
                   () -> -driverXbox.getLeftY() * -1,
-                  () -> -driverXbox.getLeftX() * 1,
+                  () -> -driverXbox.getLeftX() * -1,
                   false)).withTimeout(4));
     
 
         NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
 
     // Build an auto chooser. This will use Commands.none() as the default option.
-    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
-
-    // Another option that allows you to specify the default auto by its name
-    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
-    configureBindings();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    
 
     // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
     DriverTuning.initialize();
@@ -359,7 +361,7 @@ public class RobotContainer {
                   indexer,
                   agitator,
                   () -> -driverXbox.getLeftY() * -1,
-                  () -> -driverXbox.getLeftX() * 1,
+                  () -> -driverXbox.getLeftX() * -1,
                   false));
       // driverXbox.y().whileTrue(new RetractIntake());
       // driverXbox.x().toggleOnTrue(hubArcDrive);
