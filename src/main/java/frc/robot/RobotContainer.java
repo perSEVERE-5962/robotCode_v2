@@ -189,8 +189,22 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("ShakeIntake", (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly());
     NamedCommands.registerCommand("ShakeIntake", (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly().withTimeout(8));
-    NamedCommands.registerCommand("ShakeIntakeAndScore", ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly()).alongWith(new SpeedUpThenIndex()));
-    NamedCommands.registerCommand("ShakeIntakeAndScoreWithTimeout", ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly()).alongWith(new SpeedUpThenIndex()).withTimeout(4));
+    NamedCommands.registerCommand("ShakeIntakeAndScore", ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly()).alongWith( new AimAndShootCommand(
+                  drivebase,
+                  shooter,
+                  indexer,
+                  agitator,
+                  () -> -driverXbox.getLeftY() * -1,
+                  () -> -driverXbox.getLeftX() * 1,
+                  false)));
+    NamedCommands.registerCommand("ShakeIntakeAndScoreWithTimeout", ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly()).alongWith(new AimAndShootCommand(
+                  drivebase,
+                  shooter,
+                  indexer,
+                  agitator,
+                  () -> -driverXbox.getLeftY() * -1,
+                  () -> -driverXbox.getLeftX() * 1,
+                  false)).withTimeout(4));
     
 
         NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());

@@ -266,7 +266,7 @@ public enum Cameras {
       updateEstimationStdDevs(visionEst, change.getTargets());
     }
     estimatedRobotPose = visionEst;
-    System.out.println("updated pose");
+    //System.out.println("updated pose");
   }
 
   /**
