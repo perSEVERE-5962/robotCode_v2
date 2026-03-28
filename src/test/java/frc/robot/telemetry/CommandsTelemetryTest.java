@@ -34,7 +34,7 @@ class CommandsTelemetryTest extends TelemetryTestBase {
   @Test
   void testCommandInitializeIncrementsExecutions() {
     Command cmd = new InstantCommand(() -> {}).withName("TestCmd");
-    cmd.schedule();
+    CommandScheduler.getInstance().schedule(cmd);
     CommandScheduler.getInstance().run();
 
     assertTrue(telemetry.getTotalExecutions() > 0, "Execution count should increment");
@@ -43,7 +43,7 @@ class CommandsTelemetryTest extends TelemetryTestBase {
   @Test
   void testCommandFinishTracked() throws Exception {
     Command cmd = new InstantCommand(() -> {}).withName("QuickCmd");
-    cmd.schedule();
+    CommandScheduler.getInstance().schedule(cmd);
     CommandScheduler.getInstance().run();
 
     int finished = getField(telemetry, "finishedCount");
@@ -53,14 +53,14 @@ class CommandsTelemetryTest extends TelemetryTestBase {
   @Test
   void testActiveListUpdatedWithRunningCommand() throws Exception {
     Command cmd = new WaitCommand(10).withName("LongRunning");
-    cmd.schedule();
+    CommandScheduler.getInstance().schedule(cmd);
     CommandScheduler.getInstance().run();
     telemetry.update();
 
     String list = getField(telemetry, "activeList");
     assertTrue(list.contains("LongRunning"), "Active list should contain running command name");
 
-    cmd.cancel();
+    CommandScheduler.getInstance().cancel(cmd);
     CommandScheduler.getInstance().run();
   }
 
@@ -68,26 +68,26 @@ class CommandsTelemetryTest extends TelemetryTestBase {
   void testActiveCountMatchesRunningCommands() throws Exception {
     Command cmd1 = new WaitCommand(10).withName("Cmd1");
     Command cmd2 = new WaitCommand(10).withName("Cmd2");
-    cmd1.schedule();
-    cmd2.schedule();
+    CommandScheduler.getInstance().schedule(cmd1);
+    CommandScheduler.getInstance().schedule(cmd2);
     CommandScheduler.getInstance().run();
     telemetry.update();
 
     int count = getField(telemetry, "activeCount");
     assertEquals(2, count, "Should track 2 active commands");
 
-    cmd1.cancel();
-    cmd2.cancel();
+    CommandScheduler.getInstance().cancel(cmd1);
+    CommandScheduler.getInstance().cancel(cmd2);
     CommandScheduler.getInstance().run();
   }
 
   @Test
   void testInterruptedCountTracked() throws Exception {
     Command cmd = new WaitCommand(10).withName("InterruptMe");
-    cmd.schedule();
+    CommandScheduler.getInstance().schedule(cmd);
     CommandScheduler.getInstance().run();
 
-    cmd.cancel();
+    CommandScheduler.getInstance().cancel(cmd);
     CommandScheduler.getInstance().run();
 
     int interrupted = getField(telemetry, "interruptedCount");

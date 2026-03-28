@@ -509,7 +509,7 @@ public class FullVideoShowcaseScenario implements SimScenario {
   private void stopArcDrive() {
     if (arcDriveCmd != null) {
       try {
-        arcDriveCmd.cancel();
+        CommandScheduler.getInstance().cancel(arcDriveCmd);
       } catch (RuntimeException ignored) {
       }
       arcDriveCmd = null;
@@ -530,7 +530,7 @@ public class FullVideoShowcaseScenario implements SimScenario {
   private void stopShooting() {
     if (shooterCmd != null) {
       try {
-        shooterCmd.cancel();
+        CommandScheduler.getInstance().cancel(shooterCmd);
       } catch (RuntimeException ignored) {
       }
       shooterCmd = null;

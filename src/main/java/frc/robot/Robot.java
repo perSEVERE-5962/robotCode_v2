@@ -352,7 +352,7 @@ public class Robot extends LoggedRobot {
   public void teleopInit() {
     // cancelAll() is critical (stops auto commands). Telemetry helpers are not.
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+      CommandScheduler.getInstance().cancel(m_autonomousCommand);
     } else {
       CommandScheduler.getInstance().cancelAll();
     }
