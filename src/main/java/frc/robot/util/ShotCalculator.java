@@ -170,55 +170,55 @@ public class ShotCalculator {
     baseLUT.put(1.650, 2251, angle, 0.57);
     baseLUT.put(1.700, 2258, angle, 0.58);
     baseLUT.put(1.750, 2267, angle, 0.60);
-    baseLUT.put(1.800, 2300, angle, 0.61); // real robot
+    baseLUT.put(1.800, 2300, angle, 1); // real robot
     baseLUT.put(1.850, 2288, angle, 0.63);
     baseLUT.put(1.900, 2250, angle, 0.66); // real robot
     baseLUT.put(1.950, 2311, angle, 0.66);
-    baseLUT.put(2.010, 2225, angle, 0.70); // real robot
+    baseLUT.put(2.010, 2225, angle, 1); // real robot
     baseLUT.put(2.050, 2337, angle, 0.68);
     baseLUT.put(2.100, 2351, angle, 0.70);
     baseLUT.put(2.150, 2365, angle, 0.71);
     baseLUT.put(2.200, 2379, angle, 0.72);
     baseLUT.put(2.250, 2394, angle, 0.74);
-    baseLUT.put(2.300, 2360, angle, 0.76); // real robot
+    baseLUT.put(2.300, 2360, angle, 1); // real robot
     baseLUT.put(2.350, 2423, angle, 0.76);
     baseLUT.put(2.400, 2438, angle, 0.77);
     baseLUT.put(2.450, 2454, angle, 0.78);
     baseLUT.put(2.500, 2469, angle, 0.80);
     baseLUT.put(2.550, 2485, angle, 0.81);
     baseLUT.put(2.600, 2500, angle, 0.82);
-    baseLUT.put(2.654, 2500, angle, 0.84); // real robot
-    baseLUT.put(2.700, 2532, angle, 0.84);
-    baseLUT.put(2.750, 2548, angle, 0.85);
-    baseLUT.put(2.800, 2564, angle, 0.86);
-    baseLUT.put(2.850, 2580, angle, 0.87);
-    baseLUT.put(2.900, 2700, angle, 0.85); // real robot
-    baseLUT.put(2.950, 2613, angle, 0.89);
-    baseLUT.put(3.000, 2628, angle, 0.90);
-    baseLUT.put(3.050, 2644, angle, 0.91);
-    baseLUT.put(3.100, 2660, angle, 0.92);
-    baseLUT.put(3.150, 2676, angle, 0.93);
-    baseLUT.put(3.200, 2692, angle, 0.94);
-    baseLUT.put(3.250, 2709, angle, 0.95);
+    baseLUT.put(2.654, 2500, angle, 1); // real robot
+    baseLUT.put(2.700, 2600, angle, 01);
+    baseLUT.put(2.750, 2640, angle, 01);
+    baseLUT.put(2.800, 2640, angle, 01);
+    baseLUT.put(2.850, 2640, angle, 001);
+    baseLUT.put(2.900, 2700, angle, 01); // real robot
+    baseLUT.put(2.950, 2740, angle, 0.89);
+    baseLUT.put(3.000, 2770, angle, 0.90);
+    baseLUT.put(3.050, 2700, angle, 0.91);
+    baseLUT.put(3.100, 2700, angle, 0.92);
+    baseLUT.put(3.150, 2740, angle, 0.93);
+    baseLUT.put(3.200, 2780, angle, 0.94);
+    baseLUT.put(3.250, 2800, angle, 0.95);
     baseLUT.put(3.320, 2875, angle, 0.92); // real robot
-    baseLUT.put(3.350, 2741, angle, 0.97);
-    baseLUT.put(3.400, 2758, angle, 0.98);
-    baseLUT.put(3.450, 2773, angle, 0.99);
-    baseLUT.put(3.500, 2790, angle, 1.00);
-    baseLUT.put(3.550, 2806, angle, 1.01);
-    baseLUT.put(3.600, 2822, angle, 1.02);
-    baseLUT.put(3.650, 2838, angle, 1.03);
-    baseLUT.put(3.700, 2854, angle, 1.04);
-    baseLUT.put(3.750, 2870, angle, 1.05);
-    baseLUT.put(3.800, 2886, angle, 1.06);
-    baseLUT.put(3.850, 2902, angle, 1.06);
-    baseLUT.put(3.900, 2918, angle, 1.07);
-    baseLUT.put(3.950, 2935, angle, 1.08);
-    baseLUT.put(4.000, 2951, angle, 1.09);
-    baseLUT.put(4.050, 2966, angle, 1.10);
-    baseLUT.put(4.100, 2983, angle, 1.11);
-    baseLUT.put(4.150, 2998, angle, 1.12);
-    baseLUT.put(4.200, 3014, angle, 1.12);
+    baseLUT.put(3.350, 2900, angle, 0.97);
+    baseLUT.put(3.400, 2920, angle, 0.98);
+    baseLUT.put(3.450, 2940, angle, 0.99);
+    baseLUT.put(3.500, 2950, angle, 1.00);
+    baseLUT.put(3.550, 2960, angle, 1.01);
+    baseLUT.put(3.600, 2980, angle, 1.02);
+    baseLUT.put(3.650, 3000, angle, 1.03);
+    baseLUT.put(3.700, 3000, angle, 1.04);
+    baseLUT.put(3.750, 3000, angle, 1.05);
+    baseLUT.put(3.800, 3100, angle, 1.06);
+    baseLUT.put(3.850, 3000, angle, 1.06);
+    baseLUT.put(3.900, 3000, angle, 1.07);
+    baseLUT.put(3.950, 3000, angle, 1.08);
+    baseLUT.put(4.000, 3000, angle, 1.09);
+    baseLUT.put(4.050, 3000, angle, 1.10);
+    baseLUT.put(4.100, 3000, angle, 1.11);
+    baseLUT.put(4.150, 3000, angle, 1.12);
+    baseLUT.put(4.200, 3000, angle, 1.12);
     baseLUT.put(4.250, 3029, angle, 1.13);
     baseLUT.put(4.300, 3046, angle, 1.14);
     baseLUT.put(4.350, 3062, angle, 1.15);

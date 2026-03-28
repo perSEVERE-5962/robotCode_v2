@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.540053879310346,
-        "y": 2.656907327586207
+        "x": 6.418717221828491,
+        "y": 2.3797732104890144
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.158879310344828,
-        "y": 0.9367349137931036
+        "x": 6.037542652862973,
+        "y": 0.6596007966959114
       },
       "isLocked": false,
       "linkedName": "End safe FS"
@@ -82,7 +82,7 @@
   "folder": "new paths",
   "idealStartingState": {
     "velocity": 1.0,
-    "rotation": 30.173520029644237
+    "rotation": 33.76781598773277
   },
   "useDefaultConstraints": true
 }

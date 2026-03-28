@@ -54,7 +54,7 @@ public class AimAndShootCommand extends Command {
 
   // Tunable thresholds matching SpeedUpThenIndex
   private static final TunableNumber autoTimeoutSec =
-      new TunableNumber("AimAndShoot/AutoTimeoutSec", 4.0);
+      new TunableNumber("AimAndShoot/AutoTimeoutSec", 4.5);
   private static final TunableNumber underShootPct =
       new TunableNumber("AimAndShoot/UnderShootPct", 0.85);
   private static final TunableNumber underShootDebounceMs =
@@ -111,6 +111,7 @@ public class AimAndShootCommand extends Command {
   @Override
   public void execute() {
     // aim: point rear at hub
+    System.out.print("working");
     ShotCalculator shotCalc = ShotCalculator.getInstance();
     ShotCalculator.LaunchParameters params = shotCalc.getParameters();
     Rotation2d targetHeading = params.isValid() ? params.driveAngle() : computeFallbackAim();

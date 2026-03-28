@@ -12,7 +12,7 @@ public class AgitateAndIndex extends Command {
   private Indexer indexer;
   private double indexRPM;
 
-  public AgitateAndIndex(double agitateRPM, double indexRPM, BooleanSupplier arcDriveOn) {
+  public AgitateAndIndex(double agitateRPM, double indexRPM) {
     this.agitateRPM = agitateRPM;
     agitator = Agitator.getInstance();
     this.arcDriveOn = arcDriveOn;
@@ -28,16 +28,11 @@ public class AgitateAndIndex extends Command {
 
   @Override
   public void execute() {
-    if (arcDriveOn.getAsBoolean() && HubArcDrive.checkHeadingError()) {
+   
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
       agitator.moveToVelocityWithPID(agitateRPM);
-    } else if (arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
-      indexer.moveToVelocityWithPID(0);
-      agitator.moveToVelocityWithPID(0);
-    } else {
-      indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
-      agitator.moveToVelocityWithPID(agitateRPM);
-    }
+    
+   
   }
 
   @Override

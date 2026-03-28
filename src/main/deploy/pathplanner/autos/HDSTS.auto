@@ -33,6 +33,12 @@
           "data": {
             "pathName": "HS shoot"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScore"
+          }
         }
       ]
     }

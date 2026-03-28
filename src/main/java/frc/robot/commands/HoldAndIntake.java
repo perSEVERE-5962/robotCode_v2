@@ -16,7 +16,7 @@ public class HoldAndIntake extends Command {
 
   private IntakePivot intakePivot;
 
-  public HoldAndIntake() {
+  public  HoldAndIntake() {
     intakeRoller = IntakeRoller.getInstance();
     intakePivot = IntakePivot.getInstance();
 
