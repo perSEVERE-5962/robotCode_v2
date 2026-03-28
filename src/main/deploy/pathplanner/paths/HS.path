@@ -94,14 +94,7 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "DeployAndIntakeEvent",
-      "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": 3.0,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

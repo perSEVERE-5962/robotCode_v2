@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.508011363631967,
-        "y": 0.6234431818169537
+        "x": 5.791092342342344,
+        "y": 0.6672409909909913
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.600534090904692,
-        "y": 0.6131363636351363
+        "x": 6.883615069615069,
+        "y": 0.656934172809174
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "end safe pt1"
     },
     {
       "anchor": {
@@ -70,14 +70,7 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "DeployAndIntakeEvent",
-      "waypointRelativePos": 1.05,
-      "endWaypointRelativePos": 3.0,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

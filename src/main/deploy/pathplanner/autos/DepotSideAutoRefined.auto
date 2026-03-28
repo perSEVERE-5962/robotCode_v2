@@ -9,6 +9,12 @@
           "data": {
             "commands": [
               {
+                "type": "path",
+                "data": {
+                  "pathName": "TrenchToBallPickpt1"
+                }
+              },
+              {
                 "type": "parallel",
                 "data": {
                   "commands": [

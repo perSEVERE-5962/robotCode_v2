@@ -7,13 +7,45 @@
         {
           "type": "path",
           "data": {
-            "pathName": "FS aim+drive"
+            "pathName": "FS aim+drive pt1"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "FS shoot"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "FS aim+drive pt2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoldAndRunIntakeTimed"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "FS shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoldAndRunIntakeTimed"
+                }
+              }
+            ]
           }
         },
         {
@@ -23,15 +55,47 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "HS"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "HS"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoldAndRunIntakeTimed"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "HS shoot"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "HS shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoldAndRunIntakeTimed"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScore"
           }
         },
         {
