@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -46,14 +44,7 @@ public final class Constants {
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
 
-  public static final class FieldConstants {
-    public static final AprilTagFieldLayout FIELD_LAYOUT =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
-
-    public static final double DistanceToHub = 0.4;
-  }
-
-  public static class OperatorConstants {
+  public static final class OperatorConstants {
 
     // Joystick Deadband
     public static final double DEADBAND = 0.1;
@@ -81,17 +72,6 @@ public final class Constants {
     // Tolerances
     public static final double POSITION_TOLERANCE = 0.05; // meters
     public static final double ANGLE_TOLERANCE = 2.0; // degrees
-  }
-
-  public static class PhotonvisionConstants {
-
-    /*
-    deploy order for Json files of swerve modules
-    frontleft,
-    frontright,
-    backleft,
-    backright
-     */
   }
 
   public static final class CANDeviceIDs {
@@ -249,7 +229,6 @@ public final class Constants {
       return !TUNING_MODE;
     }
 
-    // back left left 11.54, 11.54, 45 degrees 15 desgrees
     /** Gradle entry point: exits 1 if deploy is unsafe. */
     public static void main(String... args) {
       if (!isSafeForDeploy()) {
