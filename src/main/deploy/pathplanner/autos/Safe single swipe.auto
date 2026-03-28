@@ -7,19 +7,51 @@
         {
           "type": "path",
           "data": {
-            "pathName": "safe FS"
+            "pathName": "safe pt1"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "safe FSS"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "safe FS"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoldAndRunIntakeTimed"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "safe FSS"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoldAndRunIntakeTimed"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ShakeIntakeAndScoreWithTimeout"
+            "name": "ShakeIntakeAndScore"
           }
         }
       ]
