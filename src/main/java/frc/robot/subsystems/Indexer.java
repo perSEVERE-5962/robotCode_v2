@@ -57,6 +57,7 @@ public class Indexer extends FlexActuator {
         true,
         true,
         false,
+        false,
         false);
     motor = getMotor();
   }

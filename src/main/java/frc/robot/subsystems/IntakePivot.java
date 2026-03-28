@@ -27,7 +27,8 @@ public class IntakePivot extends Actuator {
         false,
         false,
         false,
-        true);
+        true,
+        false);
   }
 
   @Override

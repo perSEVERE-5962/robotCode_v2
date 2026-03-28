@@ -47,6 +47,7 @@ public class IntakeRoller extends Actuator {
         true,
         true,
         false,
+        false,
         false);
     motor = getMotor();
   }

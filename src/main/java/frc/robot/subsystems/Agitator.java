@@ -55,6 +55,7 @@ public class Agitator extends Actuator {
         false,
         false,
         false,
+        false,
         false);
   }
 

@@ -67,6 +67,7 @@ public class Shooter extends Actuator {
         false,
         true,
         false,
+        false,
         false);
 
     // and the constructor becomes:

@@ -33,6 +33,7 @@ public class Hanger extends Actuator {
         false,
         false,
         false,
+        false,
         false);
   }
 

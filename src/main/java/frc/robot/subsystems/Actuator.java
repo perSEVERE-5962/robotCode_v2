@@ -9,9 +9,11 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SoftLimitConfig;
+import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -40,13 +42,14 @@ public class Actuator extends SubsystemBase {
       boolean inverted,
       boolean coast,
       boolean useThroughBoreEncoder,
-      boolean useSoftLimits) {
+      boolean useSoftLimits,
+      boolean useCos) {
 
     motor = new SparkMax(kID, SparkLowLevel.MotorType.kBrushless);
     SparkMaxConfig motorConfig = new SparkMaxConfig();
 
     motorConfig.inverted(inverted);
-    motorConfig.idleMode(coast ? SparkMaxConfig.IdleMode.kCoast : SparkMaxConfig.IdleMode.kBrake);
+    motorConfig.idleMode(coast ? SparkBaseConfig.IdleMode.kCoast : SparkBaseConfig.IdleMode.kBrake);
     motorConfig.smartCurrentLimit(kStallLimit);
     motorConfig.voltageCompensation(12.0);
 
@@ -62,7 +65,13 @@ public class Actuator extends SubsystemBase {
         .d(kD)
         .outputRange(kMinOutput, kMaxOutput)
         .iZone(kIz);
-    motorConfig.closedLoop.feedForward.kS(kS).kV(kV).kG(kG).kCos(kCos).kCosRatio(kCosRatio);
+    motorConfig.closedLoop.feedForward.kS(kS).kV(kV);
+    // kCos should be used for arms, kG should be used for elevators
+    if (useCos) {
+      motorConfig.closedLoop.feedForward.kCos(kCos).kCosRatio(kCosRatio);
+    } else {
+      motorConfig.closedLoop.feedForward.kG(kG);
+    }
     motorConfig
         .encoder
         .quadratureAverageDepth(2)
@@ -119,11 +128,11 @@ public class Actuator extends SubsystemBase {
 
   /* -1 <= position <= 1 */
   public void moveToPositionWithPID(double position) {
-    motor.getClosedLoopController().setSetpoint(position, SparkMax.ControlType.kPosition);
+    motor.getClosedLoopController().setSetpoint(position, SparkBase.ControlType.kPosition);
   }
 
   public void moveToVelocityWithPID(double rpm) {
-    motor.getClosedLoopController().setSetpoint(rpm, SparkMax.ControlType.kVelocity);
+    motor.getClosedLoopController().setSetpoint(rpm, SparkBase.ControlType.kVelocity);
   }
 
   /* -1.0 <= speed <= 1.0 */
