@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.HubScoringConstants;
 import frc.robot.Constants.ShotCalculatorConstants;
 import frc.robot.subsystems.Agitator;
@@ -61,8 +62,8 @@ public class AimAndShootCommand extends Command {
       new TunableNumber("AimAndShoot/DebounceMs", 400);
   private static final TunableNumber feedRatioFloor =
       new TunableNumber("AimAndShoot/FeedRatioFloor", 0.5);
-  private static final TunableNumber reverseDurationMs =
-      new TunableNumber("AimAndShoot/ReverseDurationMs", 650);
+  // private static final TunableNumber reverseDurationMs =
+  //     new TunableNumber("AimAndShoot/ReverseDurationMs", 650);
   private static final TunableNumber omegaLimit = new TunableNumber("AimAndShoot/OmegaLimit", 0.4);
 
   // X-lock wheels when driver isn't moving to prevent drift while shooting
@@ -91,7 +92,7 @@ public class AimAndShootCommand extends Command {
   @Override
   public void initialize() {
     // reverse to clear jammed balls before feeding, adjust RPM if too aggressive
-    agitator.moveToVelocityWithPID(-5000);
+    //agitator.runVelocity();
     indexer.moveToVelocityWithPID(-5000);
     reverseTimer.restart();
 
@@ -178,11 +179,11 @@ public class AimAndShootCommand extends Command {
     shooter.moveToVelocityWithPID(targetRPM);
 
     // still in reverse phase, keep clearing balls while shooter spins up
-    if (!reverseTimer.hasElapsed(reverseDurationMs.get() / 1000.0)) {
-      return;
-    }
+    // if (!reverseTimer.hasElapsed(reverseDurationMs.get() / 1000.0)) {
+    //   return;
+    // }
 
-    boolean atSpeed = shooter.isAtSpeed();
+    boolean atSpeed = shooter.isAtSpeed(targetRPM);
     if (atSpeed && !reachedSpeed) {
       reachedSpeed = true;
       feeding = true;
@@ -211,13 +212,16 @@ public class AimAndShootCommand extends Command {
 
     if (feeding) {
       double targetRpm = shooter.getTargetRPM();
-      double rpmRatio = (targetRpm > 0) ? Math.min(1.0, shooter.getVelocityRPM() / targetRpm) : 0;
-      rpmRatio = Math.max(feedRatioFloor.get(), rpmRatio);
-      indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed() * rpmRatio);
-      agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM() * rpmRatio);
-    } else {
-      indexer.move(0);
-      agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM() * 0.1);
+      // double rpmRatio = (targetRpm > 0) ? Math.min(1.0, shooter.getVelocityRPM() / targetRpm) : 0;
+      // rpmRatio = Math.max(feedRatioFloor.get(), rpmRatio);
+      indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
+      agitator.runVelocity();
+    //} else {
+    //   indexer.move(0);
+    //   agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM() * 0.1);
+    }
+    else{
+      agitator.stopVelocity();
     }
 
     // progressive aim haptic: operator feels heading error converge
@@ -242,7 +246,7 @@ public class AimAndShootCommand extends Command {
   public void end(boolean interrupted) {
     shooter.move(0);
     indexer.move(0);
-    agitator.move(0);
+    agitator.stopVelocity();
     try {
       frc.robot.util.DriverFeedback.getInstance().clearProgressiveAim();
     } catch (Throwable t) {

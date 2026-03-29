@@ -1,0 +1,11 @@
+{
+  "download": {
+    "deleteAfter": false,
+    "localDir": "C:\\Users\\Public\\Documents\\FRC\\Log Files\\WPILogs",
+    "remoteDir": "/u/logs",
+    "serverTeam": "5962"
+  },
+  "output": {
+    "outputFolder": "C:\\Users\\Public\\Documents\\FRC\\Log Files\\WPILogs"
+  }
+}

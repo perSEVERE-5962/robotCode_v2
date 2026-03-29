@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.8061931818181804,
-        "y": 5.601636363636365
+        "x": 7.677432432432433,
+        "y": 5.595427927927927
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.517363636359226,
-        "y": 7.683613636365511
+        "x": 8.99617192247818,
+        "y": 7.631722110003823
       },
       "isLocked": false,
-      "linkedName": "DepotCenterPicked"
+      "linkedName": "depotBallsPicked"
     },
     {
       "anchor": {
@@ -20,7 +20,7 @@
         "y": 5.993295454545455
       },
       "prevControl": {
-        "x": 0.8800113636319535,
+        "x": 0.8800113636319538,
         "y": 8.415397727274602
       },
       "nextControl": null,
@@ -29,6 +29,10 @@
     }
   ],
   "rotationTargets": [
+    {
+      "waypointRelativePos": 0.27945060750132106,
+      "rotationDegrees": 180.0
+    },
     {
       "waypointRelativePos": 0.5,
       "rotationDegrees": -178.3153156819729
@@ -53,7 +57,7 @@
   "folder": "depotAutoPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -98.32565033042663
+    "rotation": -99.46232220802536
   },
   "useDefaultConstraints": true
 }

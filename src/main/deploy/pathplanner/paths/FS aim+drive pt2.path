@@ -73,10 +73,10 @@
   "constraintZones": [
     {
       "name": "intaking",
-      "minWaypointRelativePos": 1.3931777378815093,
+      "minWaypointRelativePos": 1.4719626168224305,
       "maxWaypointRelativePos": 3.0,
       "constraints": {
-        "maxVelocity": 1.75,
+        "maxVelocity": 1.234,
         "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,

@@ -4,15 +4,25 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import com.ctre.phoenix.*;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import frc.robot.Constants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
-public class Agitator extends Actuator {
-  private SparkMax motor;
-  private SparkFlexConfig motorConfig;
+public class Agitator extends SubsystemBase{
+  private TalonFX motor ;
+  private TalonFXConfiguration motorConfig;
   private static Agitator instance;
+  private VelocityVoltage rVelocityVoltageuest;
   private static final TunableNumber kP =
       new TunableNumber("Agitator/kP", Constants.AgitatorConstants.P);
   private static final TunableNumber kI =
@@ -42,58 +52,81 @@ public class Agitator extends Actuator {
 
   private Agitator() {
     // Actuator base class handles motor creation, PID, brake mode, and 40A current limit
-    super(
-        Constants.CANDeviceIDs.kAgitatorID,
-        Constants.AgitatorConstants.P,
-        Constants.AgitatorConstants.I,
-        Constants.AgitatorConstants.D,
-        Constants.AgitatorConstants.MinOutput,
-        Constants.AgitatorConstants.MaxOutput,
-        Constants.AgitatorConstants.FF,
-        Constants.AgitatorConstants.Iz,
-        0,
-        0,
-        true,
-        false,
-        false);
+    // super(
+    //     Constants.CANDeviceIDs.kAgitatorID,
+    //     Constants.AgitatorConstants.P,
+    //     Constants.AgitatorConstants.I,
+    //     Constants.AgitatorConstants.D,
+    //     Constants.AgitatorConstants.MinOutput,
+    //     Constants.AgitatorConstants.MaxOutput,
+    //     Constants.AgitatorConstants.FF,
+    //     Constants.AgitatorConstants.Iz,
+    //     0,
+    //     0,
+    //     true,
+    //     false,
+    //     false);
 
-    motor = getMotor();
-    motorConfig = new SparkFlexConfig();
+    motor = new TalonFX(51);
+    motorConfig = new TalonFXConfiguration();
+    rVelocityVoltageuest = new VelocityVoltage(0);
 
-    motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(30);
-    // motorConfig.voltageCompensation(12.0);
-    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    /* Voltage-based velocity requires a velocity feed forward to account for the back-emf of the motor */
+    motorConfig.Slot0.kS = 0.1; // To account for friction, add 0.1 V of static feedforward
+    motorConfig.Slot0.kV = 0.12; // Kraken X60 is a 500 kV motor, 500 rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts / rotation per second
+    motorConfig.Slot0.kP = 0.15; // An error of 1 rotation per second results in 0.11 V output
+    motorConfig.Slot0.kI = 0; // No output for integrated error
+    motorConfig.Slot0.kD = 0; // No output for error derivative
+    // Peak output of 8 volts
+    motor.getConfigurator().apply(motorConfig);
+
+    
+   // motorConfig.voltageCompensation(12.0);
+    
   }
 
   public double getTemperature() {
-    return getMotor().getMotorTemperature();
+     return 0.0;
   }
 
   public double getAppliedOutput() {
-    return getMotor().getAppliedOutput();
+    return 0.0;
   }
 
   public double getOutputCurrent() {
-    return getMotor().getOutputCurrent();
+    return 0.0;
   }
 
   public double getVelocityRPM() {
-    return getMotor().getEncoder().getVelocity();
+    return 0.0;
   }
 
-  @Override
-  public void periodic() {
-    // JamProtection detects and reports only. It never overrides the motor.
-    // Telemetry reads the state; the driver decides what to do about it.
-    try {
-      jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
-    } catch (Throwable t) {
-      // CAN failure degrades jam detection, never kills drive control
-    }
+
+  public void runVelocity(){
+    motor.setControl(rVelocityVoltageuest.withVelocity((-1*(6000.0/60))));
   }
+
+  public void runVelocityReverse(){
+    motor.setControl(rVelocityVoltageuest.withVelocity(((6000.0/60))));
+  }
+
+  public void stopVelocity(){
+    motor.setControl(rVelocityVoltageuest.withVelocity(0));
+  }
+
+  //@Override
+  // public void periodic() {
+  //   // JamProtection detects and reports only. It never overrides the motor.
+  //   // Telemetry reads the state; the driver decides what to do about it.
+  //   try {
+  //     jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
+  //   } catch (Throwable t) {
+  //     // CAN failure degrades jam detection, never kills drive control
+  //   }
+  // }
 
   public boolean isRunning() {
-    return Math.abs(getMotor().getAppliedOutput()) > 0.05;
+    return true;
   }
 
   public JamProtection getJamProtection() {
@@ -101,28 +134,28 @@ public class Agitator extends Actuator {
   }
 
   public double getTunableTargetRPM() {
-    return targetSpeed.get();
+    return 0.0;
   }
 
   public double getJamCurrentThreshold() {
-    return jamCurrentThreshold.get();
+    return 0.0;
   }
 
   public double getJamTimeThreshold() {
-    return jamTimeThreshold.get();
+    return 0.0;
   }
 
   // PID gain getters
   public double getTunableKP() {
-    return kP.get();
+    return 0.0;
   }
 
   public double getTunableKI() {
-    return kI.get();
+   return 0.0;
   }
 
   public double getTunableKD() {
-    return kD.get();
+    return 0.0;
   }
 
   public double getTunableFF() {

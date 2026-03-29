@@ -231,7 +231,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("DeployIntake", new DeployIntake());
 
     NamedCommands.registerCommand("HoldAndRunIntake", new HoldAndIntake());
-    NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(3));
+    NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(4));
 
     NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
     NamedCommands.registerCommand("TimedShoot", new SpeedUpThenIndex().withTimeout(8));
@@ -253,7 +253,7 @@ public class RobotContainer {
                   agitator,
                   () -> -driverXbox.getLeftY() * -1,
                   () -> -driverXbox.getLeftX() * -1,
-                  true)).withTimeout(4));
+                  true)).withTimeout(3.67));
     
 
         NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
@@ -353,9 +353,9 @@ public class RobotContainer {
 
       // driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       // driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
-      driverXbox.y().whileTrue(new MoveShooter(1500));
-      driverXbox.b().whileTrue(new MoveAgitator(5500));
-      driverXbox.x().whileTrue(new MoveIndexer(5000));
+      //driverXbox.y().whileTrue(new MoveShooter(1500));
+      //driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
+      //driverXbox.x().whileTrue(new MoveIndexer(5000));
       driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
       driverXbox
           .leftTrigger()
@@ -391,7 +391,7 @@ public class RobotContainer {
           .whileTrue(
                  new FeedEject());
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
-      copilotXbox.b().whileTrue(new AgitateAndIndex(-5000, -5000));
+      copilotXbox.b().whileTrue(new AgitateAndIndex(-5000));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.3));
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.3));
       // copilotXbox
@@ -436,12 +436,12 @@ public class RobotContainer {
                         .moveToVelocityWithPID(Constants.ShooterConstants.EMERGENCY_DUMP_RPM);
                     Indexer.getInstance()
                         .moveToVelocityWithPID(Indexer.getInstance().getTunableTargetSpeed());
-                    Agitator.getInstance().move(0.5);
+                    Agitator.getInstance().runVelocity();
                   },
                   () -> {
                     Shooter.getInstance().move(0);
                     Indexer.getInstance().move(0);
-                    Agitator.getInstance().move(0);
+                    Agitator.getInstance().runVelocity();
                   },
                   Shooter.getInstance(),
                   Indexer.getInstance(),

@@ -9,39 +9,35 @@ public class MoveAgitator extends Command {
   private double rpm;
   private BooleanSupplier arcDriveOn;
 
-  public MoveAgitator(double rpm, BooleanSupplier arcDriveOn) {
-    this.rpm = rpm;
-    agitator = Agitator.getInstance();
-    this.arcDriveOn = arcDriveOn;
-    addRequirements(agitator);
-  }
+  public MoveAgitator() {
 
-  public MoveAgitator(double rpm) {
-    agitator = Agitator.getInstance();
-    this.rpm = rpm;
-    addRequirements(agitator);
-  }
+  //   agitator = Agitator.getInstance();
+  //   addRequirements(agitator);
+  // }
 
-  @Override
-  public void initialize() {}
+  // public MoveAgitator(double rpm) {
+  //   agitator = Agitator.getInstance();
+  //   this.rpm = rpm;
+  //   addRequirements(agitator);
+  // }
 
-  @Override
-  public void execute() {
-    if (arcDriveOn != null && arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
-      agitator.moveToVelocityWithPID(0);
-    } else {
-      agitator.moveToVelocityWithPID(rpm);
-      System.out.println(agitator.getMotorVelocity());
-    }
-  }
+  // @Override
+  // public void initialize() {}
 
-  @Override
-  public void end(boolean interrupted) {
-    agitator.move(0);
-  }
+  // @Override
+  // public void execute() {
+  //   agitator.runVelocity();
+  //   }
+  
 
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+  // @Override
+  // public void end(boolean interrupted) {
+  //   agitator.move(0);
+  // }
+
+  // @Override
+  // public boolean isFinished() {
+  //   return false;
+  // }
+}
 }
