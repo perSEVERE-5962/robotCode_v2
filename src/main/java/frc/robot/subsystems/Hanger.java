@@ -24,7 +24,6 @@ public class Hanger extends Actuator {
         Constants.HangerConstants.kS,
         Constants.HangerConstants.kV,
         Constants.HangerConstants.kG,
-        0,
         1,
         Constants.HangerConstants.kIz,
         0,

@@ -17,8 +17,7 @@ public class IntakePivot extends Actuator {
         Constants.IntakePivotConstants.kMaxOutput,
         Constants.IntakePivotConstants.kS,
         Constants.IntakePivotConstants.kV,
-        0,
-        Constants.IntakePivotConstants.kCos,
+        Constants.IntakePivotConstants.kG,
         Constants.IntakePivotConstants.kCosRatio,
         Constants.IntakePivotConstants.kIz,
         60f,
@@ -28,7 +27,7 @@ public class IntakePivot extends Actuator {
         false,
         false,
         true,
-        false);
+        true);
   }
 
   @Override

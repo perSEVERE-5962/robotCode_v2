@@ -46,7 +46,6 @@ public class Agitator extends Actuator {
         Constants.AgitatorConstants.kS,
         Constants.AgitatorConstants.kV,
         0,
-        0,
         1,
         Constants.AgitatorConstants.kIz,
         0,

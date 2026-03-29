@@ -58,7 +58,6 @@ public class Shooter extends Actuator {
         Constants.ShooterConstants.kS,
         Constants.ShooterConstants.kV,
         0,
-        0,
         1,
         Constants.ShooterConstants.kIz,
         0,

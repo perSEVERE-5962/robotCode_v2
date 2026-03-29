@@ -38,7 +38,6 @@ public class IntakeRoller extends Actuator {
         Constants.IntakeRollerConstants.kS,
         Constants.IntakeRollerConstants.kV,
         0,
-        0,
         1,
         Constants.IntakeRollerConstants.kIz,
         0,

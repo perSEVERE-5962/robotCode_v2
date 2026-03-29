@@ -33,7 +33,6 @@ public class FlexActuator extends SubsystemBase {
       double kS,
       double kV,
       double kG,
-      double kCos,
       double kCosRatio,
       double kIz,
       float kUpperSoftLimit,
@@ -68,7 +67,7 @@ public class FlexActuator extends SubsystemBase {
     motorConfig.closedLoop.feedForward.kS(kS).kV(kV);
     // kCos should be used for arms, kG should be used for elevators
     if (useCos) {
-      motorConfig.closedLoop.feedForward.kCos(kCos).kCosRatio(kCosRatio);
+      motorConfig.closedLoop.feedForward.kCos(kG).kCosRatio(kCosRatio);
     } else {
       motorConfig.closedLoop.feedForward.kG(kG);
     }

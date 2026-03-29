@@ -48,7 +48,6 @@ public class Indexer extends FlexActuator {
         Constants.IndexerConstants.kS,
         Constants.IndexerConstants.kV,
         0,
-        0,
         1,
         Constants.IndexerConstants.kIz,
         0,

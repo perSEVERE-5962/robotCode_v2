@@ -121,7 +121,7 @@ public final class Constants {
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
     public static final double kV = 0.0;
-    public static final double kCos = 0.0;
+    public static final double kG = 0.0;
     public static final double kCosRatio = 83.333;
     public static final double kIz = 0.0;
   }
