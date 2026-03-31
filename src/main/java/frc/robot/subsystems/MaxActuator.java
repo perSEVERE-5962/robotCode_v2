@@ -9,19 +9,19 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SoftLimitConfig;
-import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public abstract class FlexActuator extends SubsystemBase implements Actuator {
-  private SparkFlex motor;
+public abstract class MaxActuator extends SubsystemBase implements Actuator {
+  private SparkMax motor;
   private RelativeEncoder encoder;
   private SparkAbsoluteEncoder absoluteEncoder;
   private boolean useThroughBoreEncoder;
 
-  protected FlexActuator(
+  protected MaxActuator(
       int kID,
       double kP,
       double kI,
@@ -36,11 +36,11 @@ public abstract class FlexActuator extends SubsystemBase implements Actuator {
       boolean useThroughBoreEncoder,
       boolean useSoftLimits) {
 
-    motor = new SparkFlex(kID, SparkLowLevel.MotorType.kBrushless);
-    SparkFlexConfig motorConfig = new SparkFlexConfig();
+    motor = new SparkMax(kID, SparkLowLevel.MotorType.kBrushless);
+    SparkMaxConfig motorConfig = new SparkMaxConfig();
 
     motorConfig.inverted(inverted);
-    motorConfig.idleMode(SparkFlexConfig.IdleMode.kBrake);
+    motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
     motorConfig.smartCurrentLimit(40);
 
     FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
@@ -107,11 +107,11 @@ public abstract class FlexActuator extends SubsystemBase implements Actuator {
   }
 
   public void moveToPositionWithPID(double position) {
-    motor.getClosedLoopController().setSetpoint(position, SparkFlex.ControlType.kPosition);
+    motor.getClosedLoopController().setSetpoint(position, SparkMax.ControlType.kPosition);
   }
 
   public void moveToVelocityWithPID(double rpm) {
-    motor.getClosedLoopController().setSetpoint(rpm, SparkFlex.ControlType.kVelocity);
+    motor.getClosedLoopController().setSetpoint(rpm, SparkMax.ControlType.kVelocity);
   }
 
   /* -1.0 <= speed <= 1.0 */
@@ -119,7 +119,7 @@ public abstract class FlexActuator extends SubsystemBase implements Actuator {
     motor.set(speed);
   }
 
-  public SparkFlex getMotor() {
+  public SparkMax getMotor() {
     return motor;
   }
 
@@ -134,7 +134,7 @@ public abstract class FlexActuator extends SubsystemBase implements Actuator {
 
   /** Hot-reload PID values. Creates new config, takes a few ms. */
   public void updatePID(double kP, double kI, double kD, double kF) {
-    SparkFlexConfig config = new SparkFlexConfig();
+    SparkMaxConfig config = new SparkMaxConfig();
     config.closedLoop.p(kP).i(kI).d(kD);
     config.closedLoop.feedForward.kV(12.0 * kF);
     motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);

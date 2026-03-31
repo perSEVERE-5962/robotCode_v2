@@ -6,7 +6,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 
-public class IntakePivot extends Actuator {
+public class IntakePivot extends MaxActuator {
   private static IntakePivot instance;
   private SparkMax motor;
   private SparkMaxConfig motorConfig;
