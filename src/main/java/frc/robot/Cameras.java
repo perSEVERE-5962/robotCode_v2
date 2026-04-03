@@ -51,7 +51,7 @@ public enum Cameras {
       new Translation3d(-0.293, -0.293, 0.229),
       VecBuilder.fill(0.3, 0.3, 0.6),
       VecBuilder.fill(0.1, 0.1, 0.2)),
-  //Front-left camera, angled 45 deg outward */
+  // Front-left camera, angled 45 deg outward */
   FRONT_LEFT_CAM(
       "front-left",
       new Rotation3d(0, Math.toRadians(0), Math.toRadians(90)),
@@ -67,7 +67,7 @@ public enum Cameras {
       new Translation3d(
           Units.inchesToMeters(6.0), Units.inchesToMeters(-13.5), Units.inchesToMeters(12)),
       VecBuilder.fill(0.3, 0.3, 0.6),
-      VecBuilder.fill(0.1, 0.1, 0.2)); 
+      VecBuilder.fill(0.1, 0.1, 0.2));
 
   /** Latency alert to use when high latency is detected. */
   public final Alert latencyAlert;
@@ -266,7 +266,7 @@ public enum Cameras {
       updateEstimationStdDevs(visionEst, change.getTargets());
     }
     estimatedRobotPose = visionEst;
-    //System.out.println("updated pose");
+    // System.out.println("updated pose");
   }
 
   /**

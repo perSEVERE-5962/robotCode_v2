@@ -9,7 +9,6 @@ import static frc.robot.Constants.HubScoringConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -36,9 +35,6 @@ import frc.robot.commands.DeployIntake;
 import frc.robot.commands.FeedEject;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
-import frc.robot.commands.MoveAgitator;
-import frc.robot.commands.MoveIndexer;
-import frc.robot.commands.MoveShooter;
 import frc.robot.commands.PivotIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
@@ -175,23 +171,23 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   private RobotContainer() {
     // Configure the trigger bindings
-        registerNamedAutoCommands();
+    registerNamedAutoCommands();
 
-        autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
-        SmartDashboard.putData("Auto Chooser", autoChooser);
+    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
-//drivebase.setupPathPlanner();
+    // drivebase.setupPathPlanner();
     // Another option that allows you to specify the default auto by its name
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
 
-       configureBindings();
+    configureBindings();
     new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
     DriverStation.silenceJoystickConnectionWarning(true);
 
     frc.robot.util.ShotCalculator.getInstance().setSwerve(drivebase);
 
     // Build an auto chooser. This will use Commands.none() as the default option.
-        // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
+    // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
     DriverTuning.initialize();
 
     // Wire up telemetry references
@@ -199,8 +195,7 @@ public class RobotContainer {
     TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
     TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
     DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
-    //autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
-
+    // autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
 
     // Fire control init
 
@@ -226,8 +221,8 @@ public class RobotContainer {
     // doesn't compete with other haptic patterns for HID rumble output.
   }
 
-  private void registerNamedAutoCommands(){
- NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+  private void registerNamedAutoCommands() {
+    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
     NamedCommands.registerCommand("DeployIntake", new DeployIntake());
 
     NamedCommands.registerCommand("HoldAndRunIntake", new HoldAndIntake());
@@ -236,28 +231,46 @@ public class RobotContainer {
     NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
     NamedCommands.registerCommand("TimedShoot", new SpeedUpThenIndex().withTimeout(8));
 
-    NamedCommands.registerCommand("ShakeIntake", (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly());
-    NamedCommands.registerCommand("ShakeIntake", (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly().withTimeout(8));
-    NamedCommands.registerCommand("ShakeIntakeAndScore", ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly()).alongWith( new AimAndShootCommand(
-                  drivebase,
-                  shooter,
-                  indexer,
-                  agitator,
-                  () -> -driverXbox.getLeftY() * -1,
-                  () -> -driverXbox.getLeftX() * -1,
-                  false)));
-    NamedCommands.registerCommand("ShakeIntakeAndScoreWithTimeout", ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly()).alongWith(new AimAndShootCommand(
-                  drivebase,
-                  shooter,
-                  indexer,
-                  agitator,
-                  () -> -driverXbox.getLeftY() * -1,
-                  () -> -driverXbox.getLeftX() * -1,
-                  true)).withTimeout(3.67));
-    
+    NamedCommands.registerCommand(
+        "ShakeIntake",
+        (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+            .repeatedly());
+    NamedCommands.registerCommand(
+        "ShakeIntake",
+        (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+            .repeatedly()
+            .withTimeout(8));
+    NamedCommands.registerCommand(
+        "ShakeIntakeAndScore",
+        ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+                .repeatedly())
+            .alongWith(
+                new AimAndShootCommand(
+                    drivebase,
+                    shooter,
+                    indexer,
+                    agitator,
+                    () -> -driverXbox.getLeftY() * -1,
+                    () -> -driverXbox.getLeftX() * -1,
+                    false)));
+    NamedCommands.registerCommand(
+        "ShakeIntakeAndScoreWithTimeout",
+        ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+                .repeatedly())
+            .alongWith(
+                new AimAndShootCommand(
+                    drivebase,
+                    shooter,
+                    indexer,
+                    agitator,
+                    () -> -driverXbox.getLeftY() * -1,
+                    () -> -driverXbox.getLeftX() * -1,
+                    true))
+            .withTimeout(3.67));
 
-        NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
+    NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
   }
+
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
@@ -353,9 +366,9 @@ public class RobotContainer {
 
       // driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       // driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
-      //driverXbox.y().whileTrue(new MoveShooter(1500));
-      //driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
-      //driverXbox.x().whileTrue(new MoveIndexer(5000));
+      // driverXbox.y().whileTrue(new MoveShooter(1500));
+      // driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
+      // driverXbox.x().whileTrue(new MoveIndexer(5000));
       driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
       driverXbox
           .leftTrigger()
@@ -370,7 +383,7 @@ public class RobotContainer {
                   false));
       // driverXbox.y().whileTrue(new RetractIntake());
       // driverXbox.x().toggleOnTrue(hubArcDrive);
-      //driverXbox.a().whileTrue(new HoldAndIntake());
+      // driverXbox.a().whileTrue(new HoldAndIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       // driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.back().whileTrue(new SetIntakePosition());
@@ -384,12 +397,9 @@ public class RobotContainer {
       //             Constants.AgitatorConstants.TARGET_RPM,
       //             Constants.IndexerConstants.TARGET_SPEED,
       //             hubArcDrive::isScheduled));
-      //copilotXbox.x().whileTrue(new HoldAndIntake());
+      // copilotXbox.x().whileTrue(new HoldAndIntake());
 
-      copilotXbox
-          .rightTrigger()
-          .whileTrue(
-                 new FeedEject());
+      copilotXbox.rightTrigger().whileTrue(new FeedEject());
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
       copilotXbox.b().whileTrue(new AgitateAndIndex(-5000));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.3));
@@ -421,10 +431,7 @@ public class RobotContainer {
                     var engine = frc.robot.util.HubShiftEngine.getInstance();
                     engine.setWonAutoOverride(!engine.isWonAuto());
                   }));
-      copilotXbox
-          .back()
-          .onTrue(
-              new SetIntakePosition());
+      copilotXbox.back().onTrue(new SetIntakePosition());
 
       // emergency dump: flat RPM, immediate feed, bypasses everything
       copilotXbox

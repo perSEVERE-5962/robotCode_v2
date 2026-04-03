@@ -1,25 +1,17 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
-
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import com.ctre.phoenix.*;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
-public class Agitator extends SubsystemBase{
-  private TalonFX motor ;
+public class Agitator extends SubsystemBase {
+  private TalonFX motor;
   private TalonFXConfiguration motorConfig;
   private static Agitator instance;
   private VelocityVoltage rVelocityVoltageuest;
@@ -73,20 +65,21 @@ public class Agitator extends SubsystemBase{
 
     /* Voltage-based velocity requires a velocity feed forward to account for the back-emf of the motor */
     motorConfig.Slot0.kS = 0.1; // To account for friction, add 0.1 V of static feedforward
-    motorConfig.Slot0.kV = 0.12; // Kraken X60 is a 500 kV motor, 500 rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts / rotation per second
+    motorConfig.Slot0.kV =
+        0.12; // Kraken X60 is a 500 kV motor, 500 rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts
+    // / rotation per second
     motorConfig.Slot0.kP = 0.15; // An error of 1 rotation per second results in 0.11 V output
     motorConfig.Slot0.kI = 0; // No output for integrated error
     motorConfig.Slot0.kD = 0; // No output for error derivative
     // Peak output of 8 volts
     motor.getConfigurator().apply(motorConfig);
 
-    
-   // motorConfig.voltageCompensation(12.0);
-    
+    // motorConfig.voltageCompensation(12.0);
+
   }
 
   public double getTemperature() {
-     return 0.0;
+    return 0.0;
   }
 
   public double getAppliedOutput() {
@@ -101,20 +94,19 @@ public class Agitator extends SubsystemBase{
     return 0.0;
   }
 
-
-  public void runVelocity(){
-    motor.setControl(rVelocityVoltageuest.withVelocity((-1*(6000.0/60))));
+  public void runVelocity() {
+    motor.setControl(rVelocityVoltageuest.withVelocity((-1 * (6000.0 / 60))));
   }
 
-  public void runVelocityReverse(){
-    motor.setControl(rVelocityVoltageuest.withVelocity(((6000.0/60))));
+  public void runVelocityReverse() {
+    motor.setControl(rVelocityVoltageuest.withVelocity(((6000.0 / 60))));
   }
 
-  public void stopVelocity(){
+  public void stopVelocity() {
     motor.setControl(rVelocityVoltageuest.withVelocity(0));
   }
 
-  //@Override
+  // @Override
   // public void periodic() {
   //   // JamProtection detects and reports only. It never overrides the motor.
   //   // Telemetry reads the state; the driver decides what to do about it.
@@ -151,7 +143,7 @@ public class Agitator extends SubsystemBase{
   }
 
   public double getTunableKI() {
-   return 0.0;
+    return 0.0;
   }
 
   public double getTunableKD() {

@@ -289,8 +289,7 @@ public class DriveTelemetry implements SubsystemTelemetry {
           SafeLog.put(
               "Drive/ModuleSetpoints/" + name + "/Angle", moduleSetpoints[i].angle.getRadians());
           SafeLog.put(
-              "Drive/ModuleSetpoints/" + name + "/Speed",
-              moduleSetpoints[i].speedMetersPerSecond);
+              "Drive/ModuleSetpoints/" + name + "/Speed", moduleSetpoints[i].speedMetersPerSecond);
         }
       }
 

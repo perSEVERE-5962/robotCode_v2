@@ -1,10 +1,10 @@
 package frc.robot.telemetry;
 
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.IdentityHashMap;

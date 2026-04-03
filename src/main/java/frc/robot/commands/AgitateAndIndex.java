@@ -15,7 +15,7 @@ public class AgitateAndIndex extends Command {
   public AgitateAndIndex(double indexRPM) {
     this.agitateRPM = agitateRPM;
     agitator = Agitator.getInstance();
-  
+
     this.indexRPM = indexRPM;
     indexer = Indexer.getInstance();
     addRequirements(agitator, indexer);
@@ -28,11 +28,9 @@ public class AgitateAndIndex extends Command {
 
   @Override
   public void execute() {
-   
-      indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
-      agitator.runVelocityReverse();
-    
-   
+
+    indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
+    agitator.runVelocityReverse();
   }
 
   @Override

@@ -121,9 +121,7 @@ public class ShooterTelemetry implements SubsystemTelemetry {
       busVoltage = shooter.getBusVoltage();
       // Compute atSpeed ourselves because the no-arg isAtSpeed() checks against
       // desiredRPM which may not be set when moveToVelocityWithPID is overridden
-      atSpeed =
-          (targetRPM > 0)
-              && (Math.abs(targetRPM - velocityRPM) < shooter.getToleranceRPM());
+      atSpeed = (targetRPM > 0) && (Math.abs(targetRPM - velocityRPM) < shooter.getToleranceRPM());
 
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = shooter.getStickyFaultsRaw();

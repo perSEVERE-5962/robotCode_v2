@@ -11,33 +11,32 @@ public class MoveAgitator extends Command {
 
   public MoveAgitator() {
 
-  //   agitator = Agitator.getInstance();
-  //   addRequirements(agitator);
-  // }
+    //   agitator = Agitator.getInstance();
+    //   addRequirements(agitator);
+    // }
 
-  // public MoveAgitator(double rpm) {
-  //   agitator = Agitator.getInstance();
-  //   this.rpm = rpm;
-  //   addRequirements(agitator);
-  // }
+    // public MoveAgitator(double rpm) {
+    //   agitator = Agitator.getInstance();
+    //   this.rpm = rpm;
+    //   addRequirements(agitator);
+    // }
 
-  // @Override
-  // public void initialize() {}
+    // @Override
+    // public void initialize() {}
 
-  // @Override
-  // public void execute() {
-  //   agitator.runVelocity();
-  //   }
-  
+    // @Override
+    // public void execute() {
+    //   agitator.runVelocity();
+    //   }
 
-  // @Override
-  // public void end(boolean interrupted) {
-  //   agitator.move(0);
-  // }
+    // @Override
+    // public void end(boolean interrupted) {
+    //   agitator.move(0);
+    // }
 
-  // @Override
-  // public boolean isFinished() {
-  //   return false;
-  // }
-}
+    // @Override
+    // public boolean isFinished() {
+    //   return false;
+    // }
+  }
 }

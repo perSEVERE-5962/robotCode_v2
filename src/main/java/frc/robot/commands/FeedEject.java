@@ -29,7 +29,7 @@ public class FeedEject extends Command {
     if (shooter.isAtSpeed(234)) {
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
       agitator.runVelocity();
-    } 
+    }
   }
 
   @Override

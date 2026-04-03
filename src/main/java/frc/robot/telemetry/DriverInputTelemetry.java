@@ -1,8 +1,8 @@
 package frc.robot.telemetry;
 
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Constants;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Constants;
 
 /** Driver/operator controller input logging and idle tracking. */
 public class DriverInputTelemetry implements SubsystemTelemetry {

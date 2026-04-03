@@ -202,9 +202,9 @@ public class ShotCalculator {
     // baseLUT.put(3.200, 2780, angle, 0.94);
     // baseLUT.put(3.250, 2800, angle, 0.95);
     baseLUT.put(3.320, 2710, angle, 0.92); // real robot
-    //baseLUT.put(3.350, 2870, angle, 0.97);
+    // baseLUT.put(3.350, 2870, angle, 0.97);
     baseLUT.put(3.400, 2730, angle, 0.98);
-   // baseLUT.put(3.450, 2940, angle, 0.99);
+    // baseLUT.put(3.450, 2940, angle, 0.99);
     baseLUT.put(3.500, 2780, angle, 1.00);
     // baseLUT.put(3.550, 2960, angle, 1.01);
     baseLUT.put(3.600, 2780, angle, 1.02);
@@ -603,9 +603,7 @@ public class ShotCalculator {
         passing);
   }
 
-  /**
-   * 5-component weighted geometric mean confidence score (0-100).
-   */
+  /** 5-component weighted geometric mean confidence score (0-100). */
   private double computeConfidence(
       double solverQuality, double currentSpeed, double headingErrorRad, double distance) {
     double convergenceQuality = solverQuality;
@@ -648,7 +646,8 @@ public class ShotCalculator {
     double logSum = 0;
     for (int i = 0; i < 5; i++) {
       if (c[i] <= 0) {
-        logConfidenceComponents(convergenceQuality, velocityStability, visionConf, headingAccuracy, distInRange, 0);
+        logConfidenceComponents(
+            convergenceQuality, velocityStability, visionConf, headingAccuracy, distInRange, 0);
         return 0;
       }
       logSum += w[i] * Math.log(c[i]);
@@ -657,13 +656,18 @@ public class ShotCalculator {
     double composite = Math.exp(logSum / sumW) * 100.0;
     composite = MathUtil.clamp(composite, 0, 100);
 
-    logConfidenceComponents(convergenceQuality, velocityStability, visionConf, headingAccuracy, distInRange, composite);
+    logConfidenceComponents(
+        convergenceQuality, velocityStability, visionConf, headingAccuracy, distInRange, composite);
     return composite;
   }
 
   private void logConfidenceComponents(
-      double convergence, double velStability, double visionConf,
-      double headingAcc, double distInRange, double composite) {
+      double convergence,
+      double velStability,
+      double visionConf,
+      double headingAcc,
+      double distInRange,
+      double composite) {
     SafeLog.put("Scoring/ShotConfidence", composite);
     if (Constants.TUNING_MODE) {
       SafeLog.put("Scoring/ShotConfidence/Convergence", convergence);
@@ -709,9 +713,7 @@ public class ShotCalculator {
     return Math.max(speedFloorMps, maxSpeed);
   }
 
-  /**
-   * Decompose velocity into lateral (cross-track) and radial (along-track) relative to hub.
-   */
+  /** Decompose velocity into lateral (cross-track) and radial (along-track) relative to hub. */
   public static double[] decomposeHV(double vx, double vy, double toHubX, double toHubY) {
     double dist = Math.hypot(toHubX, toHubY);
     if (dist < 0.01) return new double[] {0, 0};
@@ -722,9 +724,7 @@ public class ShotCalculator {
     return new double[] {lateral, radial};
   }
 
-  /**
-   * Heading tolerance blended by velocity direction. Strafing = tight, approaching = loose.
-   */
+  /** Heading tolerance blended by velocity direction. Strafing = tight, approaching = loose. */
   public static double computeAsymmetricTolerance(
       double lateralSpeed, double radialSpeed, double crossTrackTolDeg, double alongTrackTolDeg) {
     double total = Math.abs(lateralSpeed) + Math.abs(radialSpeed);
@@ -831,46 +831,126 @@ public class ShotCalculator {
 
   // Public accessors
 
-  public LaunchParameters getParameters() { return cachedParameters; }
-  public double getConfidence() { return cachedParameters.confidence(); }
-  public boolean isValid() { return cachedParameters.isValid(); }
-  public double getSolvedDistance() { return solvedDistance; }
-  public double getPolarSpeedLimitMps() { return polarSpeedLimitMps; }
-  public double getTargetAngularRate() { return targetAngularRate; }
-  public double getHorizontalCompensationMps() { return horizontalCompMps; }
-  public double getVerticalCompensationRPM() { return verticalCompRPM; }
-  public double getRpmOverride() { return kRpmOverride.get(); }
+  public LaunchParameters getParameters() {
+    return cachedParameters;
+  }
+
+  public double getConfidence() {
+    return cachedParameters.confidence();
+  }
+
+  public boolean isValid() {
+    return cachedParameters.isValid();
+  }
+
+  public double getSolvedDistance() {
+    return solvedDistance;
+  }
+
+  public double getPolarSpeedLimitMps() {
+    return polarSpeedLimitMps;
+  }
+
+  public double getTargetAngularRate() {
+    return targetAngularRate;
+  }
+
+  public double getHorizontalCompensationMps() {
+    return horizontalCompMps;
+  }
+
+  public double getVerticalCompensationRPM() {
+    return verticalCompRPM;
+  }
+
+  public double getRpmOverride() {
+    return kRpmOverride.get();
+  }
 
   public void setAimBiasSupplier(java.util.function.DoubleSupplier supplier) {
     this.aimBiasSupplier = supplier;
   }
 
-  public double getBaseRPM(double distance) { return baseLUT.getRPM(distance); }
-  public void addRpmCorrection(double distance, double deltaRpm) { correctionRpmMap.put(distance, deltaRpm); }
-  public void addTofCorrection(double distance, double deltaTof) { correctionTofMap.put(distance, deltaTof); }
-  public void clearCorrections() { correctionRpmMap.clear(); correctionTofMap.clear(); }
-
-  public void adjustOffset(double delta) {
-    rpmOffset = MathUtil.clamp(rpmOffset + delta,
-        -ShotCalculatorConstants.RPM_OFFSET_MAX, ShotCalculatorConstants.RPM_OFFSET_MAX);
+  public double getBaseRPM(double distance) {
+    return baseLUT.getRPM(distance);
   }
 
-  public void resetOffset() { rpmOffset = 0; }
-  public double getOffset() { return rpmOffset; }
-  public void resetState() { previousTOF = -1; previousSpeed = 0; }
+  public void addRpmCorrection(double distance, double deltaRpm) {
+    correctionRpmMap.put(distance, deltaRpm);
+  }
 
-  public double getTimeOfFlight(double distanceM) { return effectiveTOF(distanceM); }
-  public double getMinTimeOfFlight() { return effectiveTOF(ShotCalculatorConstants.MIN_SCORING_DISTANCE); }
-  public double getMaxTimeOfFlight() { return effectiveTOF(ShotCalculatorConstants.MAX_SCORING_DISTANCE); }
+  public void addTofCorrection(double distance, double deltaTof) {
+    correctionTofMap.put(distance, deltaTof);
+  }
+
+  public void clearCorrections() {
+    correctionRpmMap.clear();
+    correctionTofMap.clear();
+  }
+
+  public void adjustOffset(double delta) {
+    rpmOffset =
+        MathUtil.clamp(
+            rpmOffset + delta,
+            -ShotCalculatorConstants.RPM_OFFSET_MAX,
+            ShotCalculatorConstants.RPM_OFFSET_MAX);
+  }
+
+  public void resetOffset() {
+    rpmOffset = 0;
+  }
+
+  public double getOffset() {
+    return rpmOffset;
+  }
+
+  public void resetState() {
+    previousTOF = -1;
+    previousSpeed = 0;
+  }
+
+  public double getTimeOfFlight(double distanceM) {
+    return effectiveTOF(distanceM);
+  }
+
+  public double getMinTimeOfFlight() {
+    return effectiveTOF(ShotCalculatorConstants.MIN_SCORING_DISTANCE);
+  }
+
+  public double getMaxTimeOfFlight() {
+    return effectiveTOF(ShotCalculatorConstants.MAX_SCORING_DISTANCE);
+  }
 
   // diagnostic accessors
-  public double getDiagRobotX() { return diagRobotX; }
-  public double getDiagRobotY() { return diagRobotY; }
-  public double getDiagHubX() { return diagHubX; }
-  public double getDiagHubY() { return diagHubY; }
-  public double getDiagCompTargetX() { return diagCompTargetX; }
-  public double getDiagCompTargetY() { return diagCompTargetY; }
-  public double getDiagSolvedTOF() { return diagSolvedTOF; }
+  public double getDiagRobotX() {
+    return diagRobotX;
+  }
 
-  ShotLUT getBaseLUT() { return baseLUT; }
+  public double getDiagRobotY() {
+    return diagRobotY;
+  }
+
+  public double getDiagHubX() {
+    return diagHubX;
+  }
+
+  public double getDiagHubY() {
+    return diagHubY;
+  }
+
+  public double getDiagCompTargetX() {
+    return diagCompTargetX;
+  }
+
+  public double getDiagCompTargetY() {
+    return diagCompTargetY;
+  }
+
+  public double getDiagSolvedTOF() {
+    return diagSolvedTOF;
+  }
+
+  ShotLUT getBaseLUT() {
+    return baseLUT;
+  }
 }

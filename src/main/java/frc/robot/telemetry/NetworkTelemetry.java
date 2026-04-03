@@ -1,8 +1,8 @@
 package frc.robot.telemetry;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Constants;
 
 /** Network bandwidth monitoring for R704 compliance (VH-109: 7 Mbps). */
 public class NetworkTelemetry implements SubsystemTelemetry {

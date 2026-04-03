@@ -80,7 +80,7 @@ public class SimDeviceManager {
       shooterSim = new SparkSim(shooter.getMotor(), DCMotor.getNEO(1));
       indexerSim = new SparkSim(indexer.getMotor(), DCMotor.getNEO(1));
       intakeSim = new SparkSim(intake.getMotor(), DCMotor.getNEO(1));
-      //agitatorSim = new SparkSim(agitator.getMotor(), DCMotor.getNEO(1));
+      // agitatorSim = new SparkSim(agitator.getMotor(), DCMotor.getNEO(1));
       intakeActuatorSim = new SparkSim(intakeActuator.getMotor(), DCMotor.getNEO(1));
       hangerSim = new SparkSim(hanger.getMotor(), DCMotor.getNEO(1));
       initialized = true;

@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.HubScoringConstants;
 import frc.robot.Constants.ShotCalculatorConstants;
@@ -93,7 +92,7 @@ public class AimAndShootCommand extends Command {
   @Override
   public void initialize() {
     // reverse to clear jammed balls before feeding, adjust RPM if too aggressive
-    //agitator.runVelocity();
+    // agitator.runVelocity();
     indexer.moveToVelocityWithPID(-5000);
     reverseTimer.restart();
 
@@ -213,15 +212,15 @@ public class AimAndShootCommand extends Command {
 
     if (feeding) {
       double targetRpm = shooter.getTargetRPM();
-      // double rpmRatio = (targetRpm > 0) ? Math.min(1.0, shooter.getVelocityRPM() / targetRpm) : 0;
+      // double rpmRatio = (targetRpm > 0) ? Math.min(1.0, shooter.getVelocityRPM() / targetRpm) :
+      // 0;
       // rpmRatio = Math.max(feedRatioFloor.get(), rpmRatio);
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
       agitator.runVelocity();
-    //} else {
-    //   indexer.move(0);
-    //   agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM() * 0.1);
-    }
-    else{
+      // } else {
+      //   indexer.move(0);
+      //   agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM() * 0.1);
+    } else {
       agitator.stopVelocity();
     }
 

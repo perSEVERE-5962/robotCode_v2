@@ -67,7 +67,7 @@ public class AgitatorTelemetry implements SubsystemTelemetry {
       velocityRPM = agitator.getVelocityRPM();
 
       deviceConnected = connectDebouncer.calculate(true);
-      //deviceFaultsRaw = agitator.getStickyFaultsRaw();
+      // deviceFaultsRaw = agitator.getStickyFaultsRaw();
     } catch (Throwable t) {
       deviceConnected = connectDebouncer.calculate(false);
       deviceFaultsRaw = -1;

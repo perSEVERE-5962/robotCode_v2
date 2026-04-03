@@ -16,7 +16,7 @@ public class HoldAndIntake extends Command {
 
   private IntakePivot intakePivot;
 
-  public  HoldAndIntake() {
+  public HoldAndIntake() {
     intakeRoller = IntakeRoller.getInstance();
     intakePivot = IntakePivot.getInstance();
 
@@ -31,7 +31,7 @@ public class HoldAndIntake extends Command {
   @Override
   public void execute() {
     intakeRoller.move(-1);
-    //System.out.println(intakeRoller.getMotorVelocity());
+    // System.out.println(intakeRoller.getMotorVelocity());
   }
 
   @Override
