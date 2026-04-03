@@ -4,6 +4,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StallDetectionConstants;
@@ -108,12 +109,21 @@ public class ShooterTelemetry implements SubsystemTelemetry {
 
     try {
       velocityRPM = shooter.getVelocityRPM();
-      targetRPM = shooter.getTargetRPM();
       appliedOutput = shooter.getAppliedOutput();
+      targetRPM = shooter.getTargetRPM();
+      // Fallback: if desiredRPM is never set (Tuning4 commented out the setter),
+      // use the dashboard TunableNumber as a reasonable approximation
+      if (targetRPM == 0 && (Math.abs(appliedOutput) > 0.01 || Math.abs(velocityRPM) > 50)) {
+        targetRPM = shooter.getTunableTargetRPM();
+      }
       currentAmps = shooter.getOutputCurrent();
       temperatureCelsius = shooter.getTemperature();
       busVoltage = shooter.getBusVoltage();
-      atSpeed = shooter.isAtSpeed();
+      // Compute atSpeed ourselves because the no-arg isAtSpeed() checks against
+      // desiredRPM which may not be set when moveToVelocityWithPID is overridden
+      atSpeed =
+          (targetRPM > 0)
+              && (Math.abs(targetRPM - velocityRPM) < shooter.getToleranceRPM());
 
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = shooter.getStickyFaultsRaw();
@@ -301,51 +311,52 @@ public class ShooterTelemetry implements SubsystemTelemetry {
 
   @Override
   public void log() {
+    // Competition signals: always logged
     SafeLog.put("Shooter/Available", subsystemAvailable);
     SafeLog.put("Shooter/VelocityRPM", velocityRPM);
     SafeLog.put("Shooter/TargetRPM", targetRPM);
-    SafeLog.put("Shooter/VelocityError", velocityError);
     SafeLog.put("Shooter/AtSpeed", atSpeed);
-    SafeLog.put("Shooter/AtSpeedPercent", atSpeedPercent);
-    SafeLog.put("Shooter/FilteredSpinUpPercent", filteredSpinUpPercent);
     SafeLog.put("Shooter/AppliedOutput", appliedOutput);
     SafeLog.put("Shooter/CurrentAmps", currentAmps);
     SafeLog.put("Shooter/TemperatureCelsius", temperatureCelsius);
+    SafeLog.put("Shooter/TemperatureWarning", temperatureWarning);
     SafeLog.put("Shooter/BusVoltage", busVoltage);
-    SafeLog.put("Shooter/IsSpinningUp", isSpinningUp);
-    SafeLog.put("Shooter/SpinUpTimeMs", lastSpinUpDurationMs);
-    SafeLog.put("Shooter/SpinUpInterrupted", spinUpInterrupted);
     SafeLog.put("Shooter/ShotDetected", shotDetected);
     SafeLog.put("Shooter/TotalShots", totalShotCount);
-    SafeLog.put("Shooter/VelocityDrop", velocityDrop);
-    SafeLog.put("Shooter/ActualFireRate", actualFireRate);
-    SafeLog.put("Shooter/TargetFireRate", ShooterConstants.TARGET_FIRE_RATE_PER_SEC);
-    SafeLog.put("Shooter/ActualRecoveryMs", actualRecoveryMs);
-    SafeLog.put("Shooter/TargetRecoveryMs", ShooterConstants.TARGET_RECOVERY_MS);
-    SafeLog.put("Shooter/IsRecoverySpinUp", isRecoverySpinUp);
-
     SafeLog.put("Shooter/LastShotVelocityRPM", lastShotVelocityRPM);
-    SafeLog.put("Shooter/TemperatureWarning", temperatureWarning);
-    SafeLog.put("Shooter/PIDTuningEvent", pidTuningEvent);
-    if (pidTuningEvent) {
-      SafeLog.put("Shooter/Config/kP", prevKP);
-      SafeLog.put("Shooter/Config/kI", prevKI);
-      SafeLog.put("Shooter/Config/kD", prevKD);
-      SafeLog.put("Shooter/Config/FF", prevFF);
-    }
-
-    SafeLog.put("Shooter/Device/Connected", deviceConnected);
-    SafeLog.put("Shooter/Device/FaultsRaw", deviceFaultsRaw);
-
+    SafeLog.put("Shooter/SpinUpTimeMs", lastSpinUpDurationMs);
     SafeLog.put("Shooter/Stalled", stalled);
-    SafeLog.put("Shooter/StallDurationMs", stallDurationMs);
-
+    SafeLog.put("Shooter/Device/Connected", deviceConnected);
     SafeLog.put("Shooter/State", shooterState);
-    SafeLog.put("Shooter/PreviousState", previousShooterState);
-    SafeLog.put("Shooter/StateChanged", stateChangedThisCycle);
-    SafeLog.put("Shooter/ActiveCommand", activeCommandName);
-    SafeLog.put("Shooter/TorqueReversalsPerSec", torqueReversalCount);
-    SafeLog.put("Shooter/TorqueReversalAlert", torqueReversalAlert);
+
+    // Debug/tuning signals: only logged when tuning to reduce CAN and log bandwidth
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("Shooter/ActiveCommand", activeCommandName);
+      SafeLog.put("Shooter/VelocityError", velocityError);
+      SafeLog.put("Shooter/AtSpeedPercent", atSpeedPercent);
+      SafeLog.put("Shooter/FilteredSpinUpPercent", filteredSpinUpPercent);
+      SafeLog.put("Shooter/IsSpinningUp", isSpinningUp);
+      SafeLog.put("Shooter/SpinUpInterrupted", spinUpInterrupted);
+      SafeLog.put("Shooter/IsRecoverySpinUp", isRecoverySpinUp);
+      SafeLog.put("Shooter/VelocityDrop", velocityDrop);
+      SafeLog.put("Shooter/ActualFireRate", actualFireRate);
+      SafeLog.put("Shooter/TargetFireRate", ShooterConstants.TARGET_FIRE_RATE_PER_SEC);
+      SafeLog.put("Shooter/ActualRecoveryMs", actualRecoveryMs);
+      SafeLog.put("Shooter/TargetRecoveryMs", ShooterConstants.TARGET_RECOVERY_MS);
+      SafeLog.put("Shooter/PIDTuningEvent", pidTuningEvent);
+      if (pidTuningEvent) {
+        SafeLog.put("Shooter/Config/kP", prevKP);
+        SafeLog.put("Shooter/Config/kI", prevKI);
+        SafeLog.put("Shooter/Config/kD", prevKD);
+        SafeLog.put("Shooter/Config/FF", prevFF);
+      }
+      SafeLog.put("Shooter/Device/FaultsRaw", deviceFaultsRaw);
+      SafeLog.put("Shooter/StallDurationMs", stallDurationMs);
+      SafeLog.put("Shooter/PreviousState", previousShooterState);
+      SafeLog.put("Shooter/StateChanged", stateChangedThisCycle);
+      SafeLog.put("Shooter/TorqueReversalsPerSec", torqueReversalCount);
+      SafeLog.put("Shooter/TorqueReversalAlert", torqueReversalAlert);
+    }
   }
 
   @Override

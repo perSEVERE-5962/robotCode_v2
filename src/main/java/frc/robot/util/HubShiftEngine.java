@@ -3,6 +3,7 @@ package frc.robot.util;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Constants.HubTimingConstants;
 import frc.robot.telemetry.SafeLog;
 
@@ -276,19 +277,23 @@ public class HubShiftEngine {
   }
 
   private void logTelemetry() {
+    // competition signals (always logged)
     SafeLog.put("HubShift/Phase", officialInfo.phase().name());
     SafeLog.put("HubShift/OfficialActive", officialInfo.hubActive());
-    SafeLog.put("HubShift/ShiftedActive", shiftedInfo.hubActive());
-    SafeLog.put("HubShift/ElapsedInPhase", officialInfo.elapsedInPhase());
-    SafeLog.put("HubShift/RemainingInState", officialInfo.remainingInState());
     SafeLog.put("HubShift/TimeToNextActive", officialInfo.timeToNextActive());
-    SafeLog.put("HubShift/TimeUntilDeactivation", officialInfo.timeUntilDeactivation());
     SafeLog.put("HubShift/WonAuto", wonAuto);
-    SafeLog.put("HubShift/WonAutoFromFMS", wonAutoFromFMS);
-    SafeLog.put("HubShift/ScheduleConfidence", confidence.name());
+    SafeLog.put("HubShift/TimeUntilDeactivation", officialInfo.timeUntilDeactivation());
     SafeLog.put("HubShift/GameDataMissing", gameDataMissing);
-    SafeLog.put("HubShift/TrackingEnabled", isHubTrackingEnabled());
-    SafeLog.put("HubShift/CurrentTOF", currentTOF);
+
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("HubShift/ShiftedActive", shiftedInfo.hubActive());
+      SafeLog.put("HubShift/ElapsedInPhase", officialInfo.elapsedInPhase());
+      SafeLog.put("HubShift/RemainingInState", officialInfo.remainingInState());
+      SafeLog.put("HubShift/WonAutoFromFMS", wonAutoFromFMS);
+      SafeLog.put("HubShift/ScheduleConfidence", confidence.name());
+      SafeLog.put("HubShift/TrackingEnabled", isHubTrackingEnabled());
+      SafeLog.put("HubShift/CurrentTOF", currentTOF);
+    }
   }
 
   public ShiftInfo getOfficialInfo() {

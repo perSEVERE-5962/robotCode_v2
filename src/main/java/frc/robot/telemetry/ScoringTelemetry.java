@@ -1,6 +1,7 @@
 package frc.robot.telemetry;
 
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.util.HubShiftEngine;
 
@@ -158,26 +159,28 @@ public class ScoringTelemetry implements SubsystemTelemetry {
 
   @Override
   public void log() {
-    SafeLog.put("Scoring/Available", scoringAvailable);
     SafeLog.put("Scoring/ReadyToShoot", readyToShoot);
     SafeLog.put("Scoring/Conditions/ShooterReady", shooterReady);
-    SafeLog.put("Scoring/Conditions/IndexerClear", indexerClear);
     SafeLog.put("Scoring/Conditions/VisionLocked", visionLocked);
     SafeLog.put("Scoring/Conditions/HasBall", hasBall);
     SafeLog.put("Scoring/Conditions/HubActive", hubActive);
-    SafeLog.put("Scoring/TimeSinceReadyMs", timeSinceReadyMs);
-    SafeLog.put("Scoring/HubShiftNumber", hubShiftNumber);
-    SafeLog.put("Scoring/TimeToNextShiftSec", timeToNextShiftSec);
-    SafeLog.put("Scoring/Conditions/WonAuto", wonAuto);
-    SafeLog.put("Scoring/Conditions/WonAutoFromFMS", wonAutoFromFMS);
-
-    SafeLog.put("Scoring/Previous/ShooterReady", previousShooterReady);
-    SafeLog.put("Scoring/Previous/IndexerClear", previousIndexerClear);
-    SafeLog.put("Scoring/Previous/VisionLocked", previousVisionLocked);
-    SafeLog.put("Scoring/Previous/HubActive", previousHubActive);
-    SafeLog.put("Scoring/Previous/ReadyToShoot", previousReadyToShoot);
-    SafeLog.put("Scoring/ReadyStateChanged", readyStateChanged);
+    SafeLog.put("Scoring/Conditions/IndexerClear", indexerClear);
     SafeLog.put("Scoring/ReadyLostReason", readyLostReason);
+    SafeLog.put("Scoring/Conditions/WonAuto", wonAuto);
+    SafeLog.put("Scoring/ReadyStateChanged", readyStateChanged);
+    SafeLog.put("Scoring/TimeSinceReadyMs", timeSinceReadyMs);
+
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("Scoring/Available", scoringAvailable);
+      SafeLog.put("Scoring/Previous/ShooterReady", previousShooterReady);
+      SafeLog.put("Scoring/Previous/IndexerClear", previousIndexerClear);
+      SafeLog.put("Scoring/Previous/VisionLocked", previousVisionLocked);
+      SafeLog.put("Scoring/Previous/HubActive", previousHubActive);
+      SafeLog.put("Scoring/Previous/ReadyToShoot", previousReadyToShoot);
+      SafeLog.put("Scoring/HubShiftNumber", hubShiftNumber);
+      SafeLog.put("Scoring/TimeToNextShiftSec", timeToNextShiftSec);
+      SafeLog.put("Scoring/Conditions/WonAutoFromFMS", wonAutoFromFMS);
+    }
   }
 
   @Override

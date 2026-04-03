@@ -1,6 +1,7 @@
 package frc.robot.telemetry;
 
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -143,18 +144,19 @@ public class CommandsTelemetry implements SubsystemTelemetry {
 
   @Override
   public void log() {
-    SafeLog.put("Commands/ActiveList", activeList);
-    SafeLog.put("Commands/ActiveCount", activeCount);
-    SafeLog.put("Commands/TotalExecutions", totalExecutions);
-    SafeLog.put("Commands/LastCommandName", lastCommandName);
-    SafeLog.put("Commands/LastCommandDurationMs", lastCommandDurationMs);
-
-    SafeLog.put("Commands/InterruptedCount", interruptedCount);
-    SafeLog.put("Commands/FinishedCount", finishedCount);
-
-    SafeLog.put("Commands/GhostList", ghostCommandList);
     SafeLog.put("Commands/GhostCount", ghostCommandCount);
     SafeLog.put("Commands/GhostAlert", ghostCommandAlert);
+
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("Commands/ActiveCount", activeCount);
+      SafeLog.put("Commands/ActiveList", activeList);
+      SafeLog.put("Commands/FinishedCount", finishedCount);
+      SafeLog.put("Commands/InterruptedCount", interruptedCount);
+      SafeLog.put("Commands/TotalExecutions", totalExecutions);
+      SafeLog.put("Commands/LastCommandName", lastCommandName);
+      SafeLog.put("Commands/LastCommandDurationMs", lastCommandDurationMs);
+      SafeLog.put("Commands/GhostList", ghostCommandList);
+    }
   }
 
   @Override

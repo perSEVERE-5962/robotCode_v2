@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import frc.robot.Constants;
 import frc.robot.telemetry.SafeLog;
 import frc.robot.telemetry.TelemetryManager;
 
@@ -56,7 +57,9 @@ public class ChannelCoordinator {
   public void log() {
     SafeLog.put("AMDA/Mode", mode.name());
     SafeLog.put("AMDA/Confidence", confidence);
-    SafeLog.put("AMDA/ModeChanged", modeChanged);
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("AMDA/ModeChanged", modeChanged);
+    }
   }
 
   public ConfidenceMode getMode() {

@@ -1,6 +1,7 @@
 package frc.robot.telemetry;
 
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants;
 import edu.wpi.first.wpilibj.XboxController;
 
 /** Driver/operator controller input logging and idle tracking. */
@@ -134,27 +135,27 @@ public class DriverInputTelemetry implements SubsystemTelemetry {
     SafeLog.put("Driver/LeftTrigger", driverLeftTrigger);
     SafeLog.put("Driver/RightTrigger", driverRightTrigger);
     SafeLog.put("Driver/Buttons", driverButtons);
-    SafeLog.put("Driver/POV", driverPOV);
-
-    SafeLog.put("Driver/InputMagnitude", driverInputMagnitude);
     SafeLog.put("Driver/Active", driverActive);
-    SafeLog.put("Driver/IdleTimeMs", driverIdleTimeMs);
 
-    SafeLog.put("Operator/LeftStick/X", operatorLeftX);
-    SafeLog.put("Operator/LeftStick/Y", operatorLeftY);
-    SafeLog.put("Operator/RightStick/X", operatorRightX);
-    SafeLog.put("Operator/RightStick/Y", operatorRightY);
     SafeLog.put("Operator/LeftTrigger", operatorLeftTrigger);
     SafeLog.put("Operator/RightTrigger", operatorRightTrigger);
     SafeLog.put("Operator/Buttons", operatorButtons);
-    SafeLog.put("Operator/POV", operatorPOV);
-
-    SafeLog.put("Operator/InputMagnitude", operatorInputMagnitude);
     SafeLog.put("Operator/Active", operatorActive);
 
-    SafeLog.put("Driver/DeadbandActiveX", deadbandActiveX);
-    SafeLog.put("Driver/DeadbandActiveY", deadbandActiveY);
-    SafeLog.put("Operator/IdleTimeMs", operatorIdleTimeMs);
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("Driver/POV", driverPOV);
+      SafeLog.put("Driver/IdleTimeMs", driverIdleTimeMs);
+      SafeLog.put("Driver/InputMagnitude", driverInputMagnitude);
+      SafeLog.put("Driver/DeadbandActiveX", deadbandActiveX);
+      SafeLog.put("Driver/DeadbandActiveY", deadbandActiveY);
+      SafeLog.put("Operator/LeftStick/X", operatorLeftX);
+      SafeLog.put("Operator/LeftStick/Y", operatorLeftY);
+      SafeLog.put("Operator/RightStick/X", operatorRightX);
+      SafeLog.put("Operator/RightStick/Y", operatorRightY);
+      SafeLog.put("Operator/POV", operatorPOV);
+      SafeLog.put("Operator/InputMagnitude", operatorInputMagnitude);
+      SafeLog.put("Operator/IdleTimeMs", operatorIdleTimeMs);
+    }
   }
 
   @Override

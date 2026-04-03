@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Constants;
 import frc.robot.Constants.HubScoringConstants;
 import frc.robot.Constants.ShotCalculatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -663,12 +664,14 @@ public class ShotCalculator {
   private void logConfidenceComponents(
       double convergence, double velStability, double visionConf,
       double headingAcc, double distInRange, double composite) {
-    SafeLog.put("Scoring/ShotConfidence/Convergence", convergence);
-    SafeLog.put("Scoring/ShotConfidence/VelocityStability", velStability);
-    SafeLog.put("Scoring/ShotConfidence/VisionConfidence", visionConf);
-    SafeLog.put("Scoring/ShotConfidence/HeadingAccuracy", headingAcc);
-    SafeLog.put("Scoring/ShotConfidence/DistanceInRange", distInRange);
     SafeLog.put("Scoring/ShotConfidence", composite);
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("Scoring/ShotConfidence/Convergence", convergence);
+      SafeLog.put("Scoring/ShotConfidence/VelocityStability", velStability);
+      SafeLog.put("Scoring/ShotConfidence/VisionConfidence", visionConf);
+      SafeLog.put("Scoring/ShotConfidence/HeadingAccuracy", headingAcc);
+      SafeLog.put("Scoring/ShotConfidence/DistanceInRange", distInRange);
+    }
   }
 
   // SOTM math helpers
@@ -747,39 +750,44 @@ public class ShotCalculator {
   }
 
   private void logTelemetry() {
+    // competition signals (always logged)
+    SafeLog.put("Scoring/ShotCalc/Distance", solvedDistance);
     SafeLog.put("Scoring/ShotCalc/EffectiveRPM", cachedParameters.rpm());
     SafeLog.put("Scoring/ShotCalc/HoodAngleDeg", cachedParameters.hoodAngleDeg());
-    SafeLog.put("Scoring/ShotCalc/EffectiveTOF", cachedParameters.timeOfFlightSec());
-    SafeLog.put("Scoring/ShotCalc/Distance", solvedDistance);
     SafeLog.put("Scoring/ShotCalc/DriveAngle", cachedParameters.driveAngle().getRadians());
-    SafeLog.put(
-        "Scoring/ShotCalc/DriveAngularVelocity", cachedParameters.driveAngularVelocityRadPerSec());
     SafeLog.put("Scoring/ShotCalc/IsValid", cachedParameters.isValid());
     SafeLog.put("Scoring/ShotCalc/ConvergenceIterations", iterationsUsed);
-    SafeLog.put("Scoring/ShotCalc/WarmStartUsed", warmStartUsed);
-    SafeLog.put("Scoring/ShotCalc/VelocityFiltered", velocityFiltered);
     SafeLog.put("Scoring/ShotCalc/BehindHub", behindHub);
     SafeLog.put("Scoring/ShotCalc/SpeedCapped", speedCapped);
-    SafeLog.put("Scoring/ShotCalc/RPMOffset", rpmOffset);
-    SafeLog.put(
-        "Scoring/ShotCalc/DragCompTOF", dragCompensatedTOF(cachedParameters.timeOfFlightSec()));
-    SafeLog.put(
-        "Scoring/ShotCalc/DistanceBandMultiplier", getDistanceBandMultiplier(solvedDistance));
-    SafeLog.put("Scoring/ShotCalc/DistanceBand", getDistanceBandName(solvedDistance));
-    SafeLog.put("Scoring/ShotCalc/PolarSpeedLimitMps", polarSpeedLimitMps);
-    SafeLog.put("Scoring/ShotCalc/VelocityToHubAngleDeg", velocityToHubAngleDeg);
-    SafeLog.put("Scoring/ShotCalc/AimBiasDeg", appliedAimBiasDeg);
-    SafeLog.put("Scoring/ShotCalc/TargetAngularRateRadPerSec", targetAngularRate);
-    SafeLog.put("Scoring/ShotCalc/HorizontalCompensationMps", horizontalCompMps);
-    SafeLog.put("Scoring/ShotCalc/VerticalCompensationRPM", verticalCompRPM);
-    SafeLog.put("Scoring/ShotCalc/CrossTrackErrorDeg", crossTrackErrorDeg);
-    SafeLog.put("Scoring/ShotCalc/AlongTrackErrorDeg", alongTrackErrorDeg);
-    SafeLog.put("Scoring/ShotCalc/RPMOverrideActive", kRpmOverride.get() > 0);
-    SafeLog.put("ShotCalc/HubCenterX", getHubCenter().getX());
-    SafeLog.put("ShotCalc/HubCenterY", getHubCenter().getY());
-    SafeLog.put("ShotCalc/PolarSpeedLimitMps", polarSpeedLimitMps);
 
-    logShotDiagnostics();
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("Scoring/ShotCalc/EffectiveTOF", cachedParameters.timeOfFlightSec());
+      SafeLog.put(
+          "Scoring/ShotCalc/DriveAngularVelocity",
+          cachedParameters.driveAngularVelocityRadPerSec());
+      SafeLog.put("Scoring/ShotCalc/WarmStartUsed", warmStartUsed);
+      SafeLog.put("Scoring/ShotCalc/VelocityFiltered", velocityFiltered);
+      SafeLog.put("Scoring/ShotCalc/RPMOffset", rpmOffset);
+      SafeLog.put(
+          "Scoring/ShotCalc/DragCompTOF", dragCompensatedTOF(cachedParameters.timeOfFlightSec()));
+      SafeLog.put(
+          "Scoring/ShotCalc/DistanceBandMultiplier", getDistanceBandMultiplier(solvedDistance));
+      SafeLog.put("Scoring/ShotCalc/DistanceBand", getDistanceBandName(solvedDistance));
+      SafeLog.put("Scoring/ShotCalc/PolarSpeedLimitMps", polarSpeedLimitMps);
+      SafeLog.put("Scoring/ShotCalc/VelocityToHubAngleDeg", velocityToHubAngleDeg);
+      SafeLog.put("Scoring/ShotCalc/AimBiasDeg", appliedAimBiasDeg);
+      SafeLog.put("Scoring/ShotCalc/TargetAngularRateRadPerSec", targetAngularRate);
+      SafeLog.put("Scoring/ShotCalc/HorizontalCompensationMps", horizontalCompMps);
+      SafeLog.put("Scoring/ShotCalc/VerticalCompensationRPM", verticalCompRPM);
+      SafeLog.put("Scoring/ShotCalc/CrossTrackErrorDeg", crossTrackErrorDeg);
+      SafeLog.put("Scoring/ShotCalc/AlongTrackErrorDeg", alongTrackErrorDeg);
+      SafeLog.put("Scoring/ShotCalc/RPMOverrideActive", kRpmOverride.get() > 0);
+      SafeLog.put("ShotCalc/HubCenterX", getHubCenter().getX());
+      SafeLog.put("ShotCalc/HubCenterY", getHubCenter().getY());
+      SafeLog.put("ShotCalc/PolarSpeedLimitMps", polarSpeedLimitMps);
+
+      logShotDiagnostics();
+    }
   }
 
   private void logShotDiagnostics() {

@@ -3,6 +3,7 @@ package frc.robot.telemetry;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.StallDetectionConstants;
 import frc.robot.subsystems.IntakeRoller;
@@ -155,23 +156,25 @@ public class IntakeTelemetry implements SubsystemTelemetry {
   public void log() {
     SafeLog.put("Intake/Available", subsystemAvailable);
     SafeLog.put("Intake/Running", running);
-    SafeLog.put("Intake/Direction", direction);
-    SafeLog.put("Intake/AppliedOutput", appliedOutput);
-    SafeLog.put("Intake/CurrentAmps", currentAmps);
-    SafeLog.put("Intake/TemperatureCelsius", temperatureCelsius);
-    SafeLog.put("Intake/JamDetected", jamDetected);
-    SafeLog.put("Intake/TotalJamCount", totalJamCount);
-    SafeLog.put("Intake/CurrentPerSpeedRatio", currentPerSpeedRatio);
-
-    SafeLog.put("Intake/Device/Connected", deviceConnected);
-    SafeLog.put("Intake/Device/FaultsRaw", deviceFaultsRaw);
     SafeLog.put("Intake/VelocityRPM", velocityRPM);
+    SafeLog.put("Intake/CurrentAmps", currentAmps);
+    SafeLog.put("Intake/Device/Connected", deviceConnected);
     SafeLog.put("Intake/Stalled", stalled);
-    SafeLog.put("Intake/StallDurationMs", stallDurationMs);
-    SafeLog.put("Intake/ActiveCommand", activeCommandName);
-    SafeLog.put("Intake/JamProtection/State", jamProtectionState);
-    SafeLog.put("Intake/JamProtection/Attempts", jamProtectionAttempts);
-    SafeLog.put("Intake/JamProtection/Intervening", jamProtectionIntervening);
+    SafeLog.put("Intake/JamDetected", jamDetected);
+
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("Intake/Direction", direction);
+      SafeLog.put("Intake/AppliedOutput", appliedOutput);
+      SafeLog.put("Intake/TemperatureCelsius", temperatureCelsius);
+      SafeLog.put("Intake/TotalJamCount", totalJamCount);
+      SafeLog.put("Intake/CurrentPerSpeedRatio", currentPerSpeedRatio);
+      SafeLog.put("Intake/Device/FaultsRaw", deviceFaultsRaw);
+      SafeLog.put("Intake/StallDurationMs", stallDurationMs);
+      SafeLog.put("Intake/ActiveCommand", activeCommandName);
+      SafeLog.put("Intake/JamProtection/State", jamProtectionState);
+      SafeLog.put("Intake/JamProtection/Attempts", jamProtectionAttempts);
+      SafeLog.put("Intake/JamProtection/Intervening", jamProtectionIntervening);
+    }
   }
 
   @Override

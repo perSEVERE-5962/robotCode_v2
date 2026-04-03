@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.telemetry.SafeLog;
 import frc.robot.telemetry.TelemetryManager;
 
@@ -482,11 +483,13 @@ public class DriverFeedback {
     applyRumble(controller, driverRumble ? left : 0, driverRumble ? right : 0);
     applyRumble(copilotController, copilotRumble ? left : 0, copilotRumble ? right : 0);
 
-    // Diagnostic signals so pit crew can verify copilot is actually connected
     SafeLog.put("DriverFeedback/CopilotConnected", hasCopilot);
-    SafeLog.put(
-        "DriverFeedback/CopilotPort", copilotController != null ? copilotController.getPort() : -1);
     SafeLog.put("DriverFeedback/JamSource", lastJamSource);
+    if (Constants.TUNING_MODE) {
+      SafeLog.put(
+          "DriverFeedback/CopilotPort",
+          copilotController != null ? copilotController.getPort() : -1);
+    }
   }
 
   private void applyRumble(GenericHID hid, double left, double right) {

@@ -2,6 +2,7 @@ package frc.robot.telemetry;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.subsystems.IntakePivot;
 
@@ -79,17 +80,19 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
 
   @Override
   public void log() {
-    SafeLog.put("IntakeActuator/Available", subsystemAvailable);
     SafeLog.put("IntakeActuator/PositionRotations", positionRotations);
-    SafeLog.put("IntakeActuator/TargetPosition", targetPosition);
     SafeLog.put("IntakeActuator/AtTarget", atTarget);
-    SafeLog.put("IntakeActuator/AppliedOutput", appliedOutput);
-    SafeLog.put("IntakeActuator/CurrentAmps", currentAmps);
-    SafeLog.put("IntakeActuator/TemperatureCelsius", temperatureCelsius);
-
     SafeLog.put("IntakeActuator/Device/Connected", deviceConnected);
-    SafeLog.put("IntakeActuator/Device/FaultsRaw", deviceFaultsRaw);
-    SafeLog.put("IntakeActuator/ActiveCommand", activeCommandName);
+    SafeLog.put("IntakeActuator/CurrentAmps", currentAmps);
+    SafeLog.put("IntakeActuator/AppliedOutput", appliedOutput);
+
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("IntakeActuator/Available", subsystemAvailable);
+      SafeLog.put("IntakeActuator/TargetPosition", targetPosition);
+      SafeLog.put("IntakeActuator/TemperatureCelsius", temperatureCelsius);
+      SafeLog.put("IntakeActuator/Device/FaultsRaw", deviceFaultsRaw);
+      SafeLog.put("IntakeActuator/ActiveCommand", activeCommandName);
+    }
   }
 
   @Override

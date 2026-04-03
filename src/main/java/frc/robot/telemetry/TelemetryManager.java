@@ -3,6 +3,7 @@ package frc.robot.telemetry;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.util.EventMarker;
@@ -94,6 +95,7 @@ public class TelemetryManager {
     driverFeedbackTelemetry = new DriverFeedbackTelemetry();
     ledTelemetry = new LEDTelemetry();
 
+    // Competition: always registered
     telemetryList.add(systemHealthTelemetry);
     telemetryList.add(commandsTelemetry);
     telemetryList.add(driveTelemetry);
@@ -101,19 +103,23 @@ public class TelemetryManager {
     telemetryList.add(indexerTelemetry);
     telemetryList.add(intakeTelemetry);
     telemetryList.add(intakeActuatorTelemetry);
-    telemetryList.add(hangerTelemetry);
     telemetryList.add(visionTelemetry);
     telemetryList.add(scoringTelemetry);
     telemetryList.add(new MatchTelemetry());
     telemetryList.add(networkTelemetry);
     telemetryList.add(driverInputTelemetry);
-    telemetryList.add(matchStatsTelemetry);
-    telemetryList.add(shotVisualizerTelemetry);
-    telemetryList.add(shotPredictorTelemetry);
     telemetryList.add(canHealthTelemetry);
     telemetryList.add(driverFeedbackTelemetry);
     telemetryList.add(ledTelemetry);
     telemetryList.add(agitatorTelemetry);
+
+    // Debug only: disabled in competition to cut ~119 signals + LoggedTracer overhead
+    if (Constants.TUNING_MODE) {
+      telemetryList.add(hangerTelemetry);
+      telemetryList.add(matchStatsTelemetry);
+      telemetryList.add(shotVisualizerTelemetry);
+      telemetryList.add(shotPredictorTelemetry);
+    }
 
     // Register signals that should not stay true for extended periods
     stalenessTrackers.put(
@@ -182,12 +188,19 @@ public class TelemetryManager {
 
     for (SubsystemTelemetry telemetry : telemetryList) {
       String name = safeGetName(telemetry);
-      double segStart = Timer.getFPGATimestamp();
-      runSafely(telemetry::update, name + "/update");
-      runSafely(telemetry::log, name + "/log");
-      SafeLog.put(
-          "LoggedTracer/Tel/" + name + "Ms", (Timer.getFPGATimestamp() - segStart) * 1000.0);
+      if (Constants.TUNING_MODE) {
+        double segStart = Timer.getFPGATimestamp();
+        runSafely(telemetry::update, name + "/update");
+        runSafely(telemetry::log, name + "/log");
+        SafeLog.put(
+            "LoggedTracer/Tel/" + name + "Ms", (Timer.getFPGATimestamp() - segStart) * 1000.0);
+      } else {
+        runSafely(telemetry::update, name + "/update");
+        runSafely(telemetry::log, name + "/log");
+      }
     }
+
+    SafeLog.put("Config/TuningMode", Constants.TUNING_MODE);
 
     runSafely(EventMarker::flushCycleEvents, "EventMarker/flush");
     runSafely(this::checkStaleness, "Health/Staleness");

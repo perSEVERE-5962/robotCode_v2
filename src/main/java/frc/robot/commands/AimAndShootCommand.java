@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants;
 import frc.robot.Constants.HubScoringConstants;
 import frc.robot.Constants.ShotCalculatorConstants;
 import frc.robot.subsystems.Agitator;
@@ -233,12 +234,14 @@ public class AimAndShootCommand extends Command {
 
     // telemetry
     SafeLog.put("AimAndShoot/Active", true);
-    SafeLog.put(
-        "AimAndShoot/HeadingErrorDeg", Math.toDegrees(headingController.getPositionError()));
     SafeLog.put("AimAndShoot/Feeding", feeding);
-    SafeLog.put("AimAndShoot/ShooterAtSpeed", reachedSpeed);
     if (autoFinish) {
       SafeLog.put("AimAndShoot/AutoTimerSec", autoTimer.get());
+    }
+    if (Constants.TUNING_MODE) {
+      SafeLog.put(
+          "AimAndShoot/HeadingErrorDeg", Math.toDegrees(headingController.getPositionError()));
+      SafeLog.put("AimAndShoot/ShooterAtSpeed", reachedSpeed);
     }
   }
 

@@ -1,5 +1,6 @@
 package frc.robot.telemetry;
 
+import frc.robot.Constants;
 import frc.robot.util.DriverFeedback;
 
 public class DriverFeedbackTelemetry implements SubsystemTelemetry {
@@ -50,12 +51,14 @@ public class DriverFeedbackTelemetry implements SubsystemTelemetry {
   public void log() {
     SafeLog.put("DriverFeedback/ActivePattern", activePattern);
     SafeLog.put("DriverFeedback/Priority", priority);
-    SafeLog.put("DriverFeedback/Description", description);
     SafeLog.put("DriverFeedback/LeftMotor", leftMotor);
     SafeLog.put("DriverFeedback/RightMotor", rightMotor);
-    SafeLog.put("DriverFeedback/ProgressiveAimError", progressiveAimError);
-    SafeLog.put("DriverFeedback/PatternCount", patternCount);
     SafeLog.put("DriverFeedback/HapticTarget", hapticTarget);
+
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("DriverFeedback/Description", description);
+      SafeLog.put("DriverFeedback/PatternCount", patternCount);
+    }
   }
 
   @Override

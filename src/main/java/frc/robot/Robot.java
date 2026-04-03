@@ -280,6 +280,11 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
+    // Auto-switch to competition mode when FMS connects
+    if (Constants.TUNING_MODE && DriverStation.isFMSAttached()) {
+      Constants.TUNING_MODE = false;
+    }
+
     try {
       if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME)) {
         m_robotContainer.setMotorBrake(false);

@@ -43,7 +43,9 @@ class TelemetryManagerCrashIsolationTest {
   @Test
   void testAllNineteenTelemetryClassesRegistered() throws Exception {
     List<?> list = getField(manager, "telemetryList");
-    assertEquals(20, list.size(), "TelemetryManager should register exactly 20 telemetry classes");
+    // 16 in competition (TUNING_MODE=false), 20 in debug (TUNING_MODE=true)
+    int expected = frc.robot.Constants.TUNING_MODE ? 20 : 16;
+    assertEquals(expected, list.size(), "TelemetryManager should register expected telemetry classes");
   }
 
   @Test
