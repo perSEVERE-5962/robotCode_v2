@@ -3,7 +3,8 @@ package frc.robot.telemetry;
 import static org.junit.jupiter.api.Assertions.*;
 
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants;
+//import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -26,7 +27,7 @@ class ShooterTelemetryTest extends SparkSimTestBase {
 
   @Test
   void testSpinUpTimingTracked() throws Exception {
-    shooter.moveToVelocityWithPID(ShooterConstants.TARGET_RPM);
+    shooter.moveToVelocityWithPID(Shooter.getTunableTargetRPM());
 
     setMotorVelocity(shooterSim, 1000);
     DriverStationSim.notifyNewData();
@@ -46,7 +47,7 @@ class ShooterTelemetryTest extends SparkSimTestBase {
 
   @Test
   void testSpinUpNotResetByOscillation() throws Exception {
-    shooter.moveToVelocityWithPID(ShooterConstants.TARGET_RPM);
+    shooter.moveToVelocityWithPID(Shooter.getTunableTargetRPM());
     double target = shooter.getTargetRPM();
     double tolerance = Shooter.getToleranceRPM();
 
@@ -76,7 +77,7 @@ class ShooterTelemetryTest extends SparkSimTestBase {
 
   @Test
   void testShotDetection() throws Exception {
-    shooter.moveToVelocityWithPID(ShooterConstants.TARGET_RPM);
+    shooter.moveToVelocityWithPID(Shooter.getTunableTargetRPM());
     double target = shooter.getTargetRPM();
 
     setMotorVelocity(shooterSim, target);
@@ -88,7 +89,7 @@ class ShooterTelemetryTest extends SparkSimTestBase {
     assertEquals(0, telemetry.getTotalShots(), "No shots yet");
     assertTrue(telemetry.isAtSpeed(), "Should be at speed before shot test");
 
-    double dippedVelocity = target - ShooterConstants.SHOT_DETECTION_DROP_RPM - 100;
+    double dippedVelocity = target - Shooter.getShotDropThreshold() - 100;
     setMotorVelocity(shooterSim, dippedVelocity);
     DriverStationSim.notifyNewData();
     telemetry.update();
@@ -111,9 +112,9 @@ class ShooterTelemetryTest extends SparkSimTestBase {
 
   @Test
   void testMultipleShotsCountCorrectly() throws Exception {
-    shooter.moveToVelocityWithPID(ShooterConstants.TARGET_RPM);
+    shooter.moveToVelocityWithPID(Shooter.getTunableTargetRPM());
     double target = shooter.getTargetRPM();
-    double dipped = target - ShooterConstants.SHOT_DETECTION_DROP_RPM - 100;
+    double dipped = target - Shooter.getShotDropThreshold() - 100;
 
     setMotorVelocity(shooterSim, target);
     for (int i = 0; i < 3; i++) {
@@ -139,9 +140,9 @@ class ShooterTelemetryTest extends SparkSimTestBase {
 
   @Test
   void testRecoveryTimeTracked() throws Exception {
-    shooter.moveToVelocityWithPID(ShooterConstants.TARGET_RPM);
+    shooter.moveToVelocityWithPID(Shooter.getTunableTargetRPM());
     double target = shooter.getTargetRPM();
-    double dipped = target - ShooterConstants.SHOT_DETECTION_DROP_RPM - 100;
+    double dipped = target - Shooter.getShotDropThreshold() - 100;
 
     setMotorVelocity(shooterSim, target);
     for (int i = 0; i < 3; i++) {
@@ -169,7 +170,7 @@ class ShooterTelemetryTest extends SparkSimTestBase {
 
   @Test
   void testStallNotTriggeredDuringStartup() throws Exception {
-    shooter.moveToVelocityWithPID(ShooterConstants.TARGET_RPM);
+    shooter.moveToVelocityWithPID(Shooter.getTunableTargetRPM());
     setMotorVelocity(shooterSim, 0);
     DriverStationSim.notifyNewData();
 
@@ -191,7 +192,7 @@ class ShooterTelemetryTest extends SparkSimTestBase {
     setField(telemetry, "inStallCondition", true);
     setField(telemetry, "stallStartTime", edu.wpi.first.wpilibj.Timer.getFPGATimestamp());
 
-    shooter.moveToVelocityWithPID(ShooterConstants.TARGET_RPM);
+    shooter.moveToVelocityWithPID(Shooter.getTunableTargetRPM());
     double target = shooter.getTargetRPM();
     setMotorVelocity(shooterSim, target);
     DriverStationSim.notifyNewData();

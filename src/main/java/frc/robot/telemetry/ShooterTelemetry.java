@@ -182,7 +182,7 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     double shotDropThreshold = Shooter.getShotDropThreshold();
     shotDetected =
         (velocityDrop > shotDropThreshold)
-            && (previousVelocityRPM > ShooterConstants.SHOT_DETECTION_MIN_RPM)
+            && (previousVelocityRPM > 1000.0)
             && wasAtSpeedBeforeUpdate
             && (targetRPM > 0);
 
@@ -198,7 +198,7 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     }
     previousVelocityRPM = velocityRPM;
 
-    temperatureWarning = temperatureCelsius > ShooterConstants.TEMP_WARNING_CELSIUS;
+    temperatureWarning = temperatureCelsius > 65.0;
 
     pidTuningEvent = false;
     try {

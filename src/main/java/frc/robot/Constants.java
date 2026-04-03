@@ -110,6 +110,8 @@ public final class Constants {
     public static final double kS = 0.0;
     public static final double kV = 0.0;
     public static final double kIz = 0.0;
+
+    // Default tuning targets
     public static final double TARGET_SPEED = -1;
   }
 
@@ -140,13 +142,8 @@ public final class Constants {
     public static final double TARGET_RPM = 3730;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
     public static final double TARGET_RECOVERY_MS = 150.0;
-
-    // Telemetry constants
     public static final double SPEED_TOLERANCE_RPM = 120.0;
-    public static final double VELOCITY_CONVERSION = 1.0;
     public static final double SHOT_DETECTION_DROP_RPM = 200.0;
-    public static final double SHOT_DETECTION_MIN_RPM = 1000.0;
-    public static final double TEMP_WARNING_CELSIUS = 65.0;
   }
 
   public static final class IndexerConstants {

@@ -127,7 +127,7 @@ public class SimDeviceManager {
       // shooter RPM to trigger shot detection in ShooterTelemetry
       boolean indexerActive = indexerRPM > 100;
       boolean shooterAtSpeed =
-          shooterRPM > (ShooterConstants.TARGET_RPM - ShooterConstants.SPEED_TOLERANCE_RPM);
+          shooterRPM > (Shooter.getTunableTargetRPM() - Shooter.getToleranceRPM());
       double now = Timer.getFPGATimestamp();
 
       if (indexerActive && shooterAtSpeed && (now - lastShotSimTime) > SHOT_SIM_INTERVAL) {
