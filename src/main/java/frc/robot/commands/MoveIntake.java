@@ -15,12 +15,12 @@ public class MoveIntake extends Command {
   }
 
   @Override
-  public void initialize() {}
-
-  @Override
-  public void execute() {
+  public void initialize() {
     intakeRoller.moveToVelocityWithPID(rpm);
   }
+
+  @Override
+  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {

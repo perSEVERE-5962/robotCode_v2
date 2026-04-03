@@ -14,12 +14,12 @@ public class RetractIntake extends Command {
   }
 
   @Override
-  public void initialize() {}
-
-  @Override
-  public void execute() {
+  public void initialize() {
     intakePivot.moveToPositionWithPID(Constants.MotorConstants.IN_INTAKE_POS);
   }
+
+  @Override
+  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {}

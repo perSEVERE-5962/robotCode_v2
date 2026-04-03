@@ -14,12 +14,12 @@ public class DeployHanger extends Command {
   }
 
   @Override
-  public void initialize() {}
-
-  @Override
-  public void execute() {
+  public void initialize() {
     hanger.moveToPositionWithPID(Constants.MotorConstants.UP_HANGER_POS);
   }
+
+  @Override
+  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {}
