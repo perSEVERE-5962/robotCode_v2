@@ -38,6 +38,9 @@ import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.sim.SimDriveOverride;
+import frc.robot.subsystems.Agitator;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.telemetry.TelemetryManager;
@@ -291,12 +294,19 @@ public class RobotContainer {
       driverXbox
           .x()
           .toggleOnTrue(
-              new HubArcDrive(
-                  drivebase,
-                  driverXbox::getLeftX,
-                  getHubCenter(),
-                  SCORING_DISTANCE,
-                  getScoringSide()));
+              Commands.defer(
+                  () ->
+                      new HubArcDrive(
+                          drivebase,
+                          driverXbox::getLeftX,
+                          getHubCenter(),
+                          SCORING_DISTANCE,
+                          getScoringSide()),
+                  Set.of(
+                      drivebase,
+                      Shooter.getInstance(),
+                      Indexer.getInstance(),
+                      Agitator.getInstance())));
       driverXbox.b().onTrue(new DeployIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
