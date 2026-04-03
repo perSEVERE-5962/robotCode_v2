@@ -88,14 +88,13 @@ public class HubArcDrive extends Command {
     // get desired distance vs real distance
     double distanceError = scoringDistance - distanceFromHub;
     double radialSpeed = distanceError * 1.5; // p controller to keep distance
-    radialSpeed = MathUtil.clamp(radialSpeed, -1.0, 1.0); // get speed
 
     // if within tolerance stop moving
     if (Math.abs(distanceError) < 0.05) {
       radialSpeed = 0;
     }
     // movement around the arc
-    double tangentialSpeed = strafeStrength * 1.0;
+    double tangentialSpeed = strafeStrength * 1.7; // p controller
 
     // get x and y from distance to hub
     double radialX = Math.cos(angleFromHub);
@@ -106,18 +105,6 @@ public class HubArcDrive extends Command {
 
     double fieldVx = radialSpeed * radialX + tangentialSpeed * tangentialX;
     double fieldVy = radialSpeed * radialY + tangentialSpeed * tangentialY;
-    double maxX =
-        MathUtil.clamp(
-            fieldVx,
-            -swerve.getSwerveDrive().getMaximumChassisVelocity() * 0.7,
-            swerve.getSwerveDrive().getMaximumChassisVelocity()
-                * 0.7); // clamp speeds for controlled turning
-    double maxY =
-        MathUtil.clamp(
-            fieldVy,
-            -swerve.getSwerveDrive().getMaximumChassisVelocity() * 0.7,
-            swerve.getSwerveDrive().getMaximumChassisVelocity()
-                * 0.7); // clamp speeds for controlled turning
 
     // get robot velocity
     ChassisSpeeds robotVelocity = swerve.getFieldVelocity();
@@ -137,23 +124,13 @@ public class HubArcDrive extends Command {
     // robot speed
     headingError = compensatedAim.minus(currentHeading).getRadians();
     headingError = MathUtil.angleModulus(headingError);
-    double headingSpeed = headingError * 4.5; // tune pid
-    headingSpeed += tangentialSpeed / scoringDistance;
-    double maxHeadingSpeed = swerve.getSwerveDrive().getMaximumChassisAngularVelocity();
-    headingSpeed =
-        MathUtil.clamp(
-            headingSpeed,
-            -maxHeadingSpeed * 0.4,
-            maxHeadingSpeed * 0.4); // clamp speeds for controlled turning
+    double headingSpeed = headingError * 4.5; // p controller
+    // headingSpeed += tangentialSpeed / scoringDistance;
     ChassisSpeeds speeds =
-        ChassisSpeeds.fromFieldRelativeSpeeds(maxX, maxY, headingSpeed, currentHeading);
+        ChassisSpeeds.fromFieldRelativeSpeeds(fieldVx, fieldVy, headingSpeed, currentHeading);
 
     swerve.drive(speeds);
-    double shooterSpeed =
-        Constants.MotorConstants.DESIRED_SHOOTER_RPM
-            + Math.abs(robotVelocity.vyMetersPerSecond * 350);
-    shooterSpeed = MathUtil.clamp(shooterSpeed, 0, 3760);
-    shooter.moveToVelocityWithPID(shooterSpeed);
+    shooter.moveToVelocityWithPID(Shooter.getTunableTargetRPM());
   }
 
   @Override

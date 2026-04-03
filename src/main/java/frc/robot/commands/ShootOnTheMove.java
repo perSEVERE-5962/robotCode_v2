@@ -143,7 +143,7 @@ public class ShootOnTheMove extends Command {
     double timeOfFlight = timeOfFlightMap.get(distanceToHub);
     double shooterRPM = 0;
     Translation2d compensatedTarget = hubCenter; // will be refined each iteration
-    for (int i = 0; i <= 3; i++) {
+    for (int i = 0; i <= 10; i++) {
 
       // how far the piece drifts during flight due to robot motion
       Translation2d drift = robotVel.times(timeOfFlight);
@@ -158,9 +158,9 @@ public class ShootOnTheMove extends Command {
 
     Rotation2d targetAngle = compensatedTarget.minus(robotPos).getAngle();
     double headingError = MathUtil.angleModulus(targetAngle.minus(currentHeading).getRadians());
-    double headingSpeed = MathUtil.clamp(headingError * 2, -4, 4);
-    double maxV = swerve.getSwerveDrive().getMaximumChassisVelocity();
+    double headingSpeed = headingError * 2.2;
 
+    double maxV = swerve.getSwerveDrive().getMaximumChassisVelocity();
     ChassisSpeeds speeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
             forwardInput.getAsDouble() * maxV * 0.6,
