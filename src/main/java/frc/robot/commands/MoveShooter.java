@@ -21,7 +21,6 @@ public class MoveShooter extends Command {
 
   @Override
   public void execute() {
-    System.out.println(shooter.getMotorVelocity());
     shooter.moveToVelocityWithPID(rpm);
   }
 

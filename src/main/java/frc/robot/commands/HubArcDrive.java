@@ -169,11 +169,8 @@ public class HubArcDrive extends Command {
   public boolean isFinished() {
     Pose2d pose = swerve.getPose();
     if (scoringSide == BLUE_SCORING_SIDE && pose.getX() > 4.611) {
-      System.out.print("Wrong side");
       return true;
-
     } else if (scoringSide == RED_SCORING_SIDE && pose.getX() < 11.901424) {
-      System.out.print("Wrong side");
       return true;
     }
     return false;
