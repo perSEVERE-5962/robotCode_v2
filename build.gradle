@@ -138,12 +138,11 @@ tasks.register('checkDeploy', JavaExec) {
 }
 
 // Wire: any task starting with "deploy" must run checkDeploy first
-// DISABLED for build season tuning. Re-enable before competition:
-// afterEvaluate {
-//     tasks.matching { it.name.startsWith('deploy') && it.name != 'checkDeploy' }.configureEach {
-//         it.dependsOn 'checkDeploy'
-//     }
-// }
+afterEvaluate {
+    tasks.matching { it.name.startsWith('deploy') && it.name != 'checkDeploy' }.configureEach {
+        it.dependsOn 'checkDeploy'
+    }
+}
 
 // Configure jar and deploy tasks
 deployArtifact.jarTask = jar
