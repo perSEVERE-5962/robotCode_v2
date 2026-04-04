@@ -3,8 +3,6 @@ package frc.robot.telemetry;
 import static org.junit.jupiter.api.Assertions.*;
 
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
-import frc.robot.Constants;
-//import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;

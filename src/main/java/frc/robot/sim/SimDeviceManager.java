@@ -5,7 +5,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import frc.robot.Constants;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;

@@ -203,7 +203,6 @@ public class DriveTelemetry implements SubsystemTelemetry {
             driveMotorConnected[i] = !faults.can;
             driveFaultsRaw[i] = faults.rawBits;
             driveTemperature[i] = spark.getMotorTemperature();
-            spark.close();
           }
         } catch (Throwable t) {
           driveMotorConnected[i] = false;
@@ -217,7 +216,6 @@ public class DriveTelemetry implements SubsystemTelemetry {
             SparkBase.Faults faults = spark.getFaults();
             turnMotorConnected[i] = !faults.can;
             turnFaultsRaw[i] = faults.rawBits;
-            spark.close();
           }
         } catch (Throwable t) {
           turnMotorConnected[i] = false;
