@@ -66,7 +66,7 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
   }
 
   public double getMotorVelocity() {
-    return motor.getVelocity().getValueAsDouble();
+    return motor.getVelocity().getValueAsDouble() * 60.0;
   }
 
   public void moveToPositionWithPID(double position) {
