@@ -12,8 +12,7 @@ import edu.wpi.first.math.numbers.N3;
 /**
  * Pure-math vision pose filter. No WPILib sim deps, fully unit-testable.
  *
- * <p>Rejection checks, distance/velocity std dev scaling, and single-tag pose blending. Cross-team
- * validated: 6/12 top FRC teams implement similar filtering (1540, 5026, 4795, 3636, 118, 360).
+ * <p>10-gate rejection, distance/velocity std dev scaling, and single-tag pose blending.
  */
 public final class VisionFilter {
 
