@@ -26,11 +26,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import swervelib.SwerveDrive;
+import frc.robot.Constants.VisionConstants;
 
 /**
  * Example PhotonVision class to aid in the pursuit of accurate odometry. Taken from
@@ -60,6 +62,8 @@ public class Vision {
   List<PoseObservation> poseObservations = new LinkedList<>();
 
   private final List<Short> tagIds = new ArrayList<>();
+
+  private List<PhotonTrackedTarget> fuelTargets = new ArrayList<>();
 
   // Target lock tracking (for ReadyToShoot composite)
   private static final int LOCK_THRESHOLD_FRAMES = 5;
@@ -97,6 +101,7 @@ public class Vision {
 
       openSimCameraViews();
     }
+    
   }
 
   /**

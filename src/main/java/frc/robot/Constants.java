@@ -91,6 +91,27 @@ public final class Constants {
     backright
      */
   }
+  public static final class VisionConstants {
+    // Minimum ML model confidence to trust a FUEL detection (0.0 - 1.0)
+    public static final float MIN_CONFIDENCE = 0.5f;
+
+    // Class ID for FUEL as assigned by the PhotonVision built-in model
+    // Verify this in the PhotonVision UI — usually 0 since it's the only class
+    public static final int FUEL_CLASS_ID = 0;
+
+    // Stop driving when ball fills this much of the camera frame (%)
+    public static final double BALL_AREA_THRESHOLD = 8.0;
+
+    // How centered the ball needs to be before driving forward (degrees)
+    public static final double AIM_TOLERANCE_DEG = 2.0;
+
+    // Minimum detections to consider it a cluster
+    public static final int CLUSTER_MIN_SIZE = 2;
+    
+    public static final String CAMERA_NAME = "ball_camera";
+
+    public static final int OBJECT_DETECT_PIPELINE = 0;
+  }
 
   public static final class CANDeviceIDs {
     public static final int kIndexerID = 50;

@@ -140,6 +140,7 @@ public class SwerveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // When vision is enabled we must manually update odometry in SwerveDrive
+    
     if (visionDriveTest) {
       swerveDrive.updateOdometry();
       // Vision does network I/O to cameras. CommandScheduler.run() has zero

@@ -5,7 +5,9 @@
 package frc.robot;
 
 import static frc.robot.Constants.HubScoringConstants.*;
-
+import frc.robot.subsystems.BallVision;
+import frc.robot.commands.ChaseBallCommand;
+import frc.robot.Constants.VisionConstants;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
@@ -29,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AgitateAndIndex;
 import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.DeployIntake;
@@ -40,6 +43,7 @@ import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.sim.SimDriveOverride;
 import frc.robot.subsystems.Agitator;
+import frc.robot.subsystems.BallVision;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.IntakePivot;
@@ -74,6 +78,7 @@ public class RobotContainer {
   IntakePivot intakePivot = IntakePivot.getInstance();
   IntakeRoller intakeRoller = IntakeRoller.getInstance();
   Hanger hanger = Hanger.getInstance();
+  private final BallVision ballVision = new BallVision(VisionConstants.CAMERA_NAME);
   private boolean useLeftOffset = true;
   private static RobotContainer instance;
 
