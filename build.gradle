@@ -1,7 +1,8 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2026.2.1"
-    id("com.diffplug.spotless") version "6.25.0"
+    id "com.diffplug.spotless" version "8.4.0"
+    id "com.peterabeles.gversion" version "1.10"
 }
 
 java {
@@ -40,7 +41,7 @@ deploy {
                 frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
                     files = project.fileTree('src/main/deploy')
                     directory = '/home/lvuser/deploy'
-                    deleteOldFiles = false // Change to true to delete files on roboRIO that no
+                    deleteOldFiles = true // Change to true to delete files on roboRIO that no
                                            // longer exist in deploy directory of this project
                 }
             }
@@ -154,6 +155,16 @@ tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
 }
 
+project.compileJava.dependsOn(createVersionFile)
+gversion {
+    srcDir = "src/main/java/"
+    classPackage = "frc.robot"
+    className = "BuildConstants"
+    dateFormat = "yyyy-MM-dd HH:mm:ss z"
+    timeZone = "America/New_York"
+    indent = "  "
+}
+
 // Spotless
 spotless {
     format "misc", {
@@ -168,23 +179,8 @@ spotless {
         importOrder()
         googleJavaFormat()
         toggleOffOn()
-        indentWithSpaces(2)
+        leadingTabsToSpaces(2)
         endWithNewline()
         trimTrailingWhitespace()
-    }
-}
-
-// Prevent Spotless from running automatically during build/check
-gradle.projectsEvaluated {
-    tasks.named("check").configure {
-        dependsOn.removeIf { dep ->
-            if (dep instanceof TaskProvider) {
-                return dep.name == "spotlessCheck"
-            }
-            if (dep instanceof Task) {
-                return dep.name == "spotlessCheck"
-            }
-            return dep == "spotlessCheck"
-        }
     }
 }
