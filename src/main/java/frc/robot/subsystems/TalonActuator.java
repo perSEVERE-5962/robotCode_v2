@@ -47,8 +47,8 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
     // iZone ignored because it doesn't seem to have it
     config.MotorOutput.PeakForwardDutyCycle = kMaxOutput;
     config.MotorOutput.PeakReverseDutyCycle = kMinOutput;
-    config.Voltage.PeakForwardVoltage = kMaxOutput / 12.0;
-    config.Voltage.PeakReverseVoltage = kMinOutput / 12.0;
+    config.Voltage.PeakForwardVoltage = kMaxOutput * 12.0;
+    config.Voltage.PeakReverseVoltage = kMinOutput * 12.0;
 
     motor.setPosition(0);
 
