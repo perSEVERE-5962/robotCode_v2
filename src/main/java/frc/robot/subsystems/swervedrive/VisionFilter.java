@@ -30,6 +30,16 @@ public final class VisionFilter {
   public static final double VELOCITY_SCALE_FACTOR = 0.3;
   public static final double DISTANCE_SCALE_DIVISOR = 30.0;
 
+  // New gate thresholds
+  public static final double MAX_GYRO_RATE_DEG_PER_SEC = 120.0;
+  public static final double STALE_THRESHOLD_STOPPED_SEC = 1.0;
+  public static final double STALE_THRESHOLD_FAST_SEC = 0.3;
+  public static final double STALE_SPEED_CUTOFF_MPS = 2.0;
+  public static final double MAX_SINGLE_TAG_DISTANCE_M = 5.0;
+
+  // 2026 REBUILT: blue tags 1-16, red tags 17-32
+  private static final int BLUE_TAG_MAX = 16;
+
   // Skip pose jump check during early auto
   private static final double AUTO_GRACE_PERIOD_SEC = 2.0;
 
@@ -40,7 +50,11 @@ public final class VisionFilter {
     ROLL_PITCH,
     FIELD_BOUNDS,
     HEADING_DIVERGENCE,
-    POSE_JUMP
+    POSE_JUMP,
+    GYRO_RATE,
+    OPPOSING_ALLIANCE,
+    STALE,
+    DISTANCE
   }
 
   /**
@@ -61,25 +75,63 @@ public final class VisionFilter {
       Rotation2d gyroHeading,
       Pose2d currentPose,
       double autoElapsedSec) {
+    return evaluate(
+        visionPose,
+        tagCount,
+        worstAmbiguity,
+        gyroHeading,
+        currentPose,
+        autoElapsedSec,
+        0,
+        0,
+        0,
+        false,
+        new int[0],
+        0);
+  }
 
-    // Ambiguity check (single-tag only, multi-tag PnP doesn't suffer)
+  /**
+   * Run all 10 rejection checks on a vision pose estimate.
+   *
+   * @param gyroRateDegPerSec current gyro angular velocity (for mid-spin rejection)
+   * @param robotSpeedMps current robot speed (for staleness scaling)
+   * @param ageSec age of this vision frame in seconds
+   * @param isBlueAlliance true if we're on blue alliance
+   * @param tagIds fiducial IDs of all tags used in this estimate
+   * @param avgTagDistanceM average distance from camera to visible tags
+   */
+  public static RejectionReason evaluate(
+      Pose3d visionPose,
+      int tagCount,
+      double worstAmbiguity,
+      Rotation2d gyroHeading,
+      Pose2d currentPose,
+      double autoElapsedSec,
+      double gyroRateDegPerSec,
+      double robotSpeedMps,
+      double ageSec,
+      boolean isBlueAlliance,
+      int[] tagIds,
+      double avgTagDistanceM) {
+
+    // Gate 1: Ambiguity (single-tag only, multi-tag PnP doesn't suffer)
     if (tagCount == 1 && worstAmbiguity > MAX_AMBIGUITY) {
       return RejectionReason.AMBIGUITY;
     }
 
-    // Z-height sanity (robot can't fly or be underground)
+    // Gate 2: Z-height sanity (robot can't fly or be underground)
     if (Math.abs(visionPose.getZ()) > MAX_Z_HEIGHT_M) {
       return RejectionReason.Z_HEIGHT;
     }
 
-    // Roll/pitch sanity (extreme tilt = bad PnP solve)
+    // Gate 3: Roll/pitch sanity (extreme tilt = bad PnP solve)
     double rollDeg = Math.toDegrees(visionPose.getRotation().getX());
     double pitchDeg = Math.toDegrees(visionPose.getRotation().getY());
     if (Math.abs(rollDeg) > MAX_ROLL_PITCH_DEG || Math.abs(pitchDeg) > MAX_ROLL_PITCH_DEG) {
       return RejectionReason.ROLL_PITCH;
     }
 
-    // Field bounds (robot can't be outside the walls)
+    // Gate 4: Field bounds (robot can't be outside the walls)
     Pose2d pose2d = visionPose.toPose2d();
     double x = pose2d.getX();
     double y = pose2d.getY();
@@ -90,7 +142,7 @@ public final class VisionFilter {
       return RejectionReason.FIELD_BOUNDS;
     }
 
-    // Heading divergence (single-tag heading is unreliable, gyro is truth)
+    // Gate 5: Heading divergence (single-tag heading is unreliable, gyro is truth)
     if (tagCount == 1 && gyroHeading != null) {
       double headingDiffDeg = Math.abs(pose2d.getRotation().minus(gyroHeading).getDegrees());
       if (headingDiffDeg > MAX_HEADING_DIVERGENCE_DEG) {
@@ -98,12 +150,42 @@ public final class VisionFilter {
       }
     }
 
-    // Pose jump (can't teleport, but skip during early auto)
+    // Gate 6: Pose jump (can't teleport, but skip during early auto)
     if (currentPose != null && autoElapsedSec > AUTO_GRACE_PERIOD_SEC) {
       double jumpM = pose2d.getTranslation().getDistance(currentPose.getTranslation());
       if (jumpM > MAX_POSE_JUMP_M) {
         return RejectionReason.POSE_JUMP;
       }
+    }
+
+    // Gate 7: Gyro rate (PnP is unreliable mid-spin, motion blur ruins corners)
+    if (Math.abs(gyroRateDegPerSec) > MAX_GYRO_RATE_DEG_PER_SEC) {
+      return RejectionReason.GYRO_RATE;
+    }
+
+    // Gate 8: Opposing alliance single-tag (cross-field single-tag is too noisy)
+    if (tagCount == 1 && tagIds.length > 0) {
+      int id = tagIds[0];
+      boolean tagIsBlue = id <= BLUE_TAG_MAX;
+      if (tagIsBlue != isBlueAlliance) {
+        return RejectionReason.OPPOSING_ALLIANCE;
+      }
+    }
+
+    // Gate 9: Staleness (speed-dependent: tighter when moving fast)
+    if (ageSec > 0) {
+      double speedFraction = Math.min(1.0, robotSpeedMps / STALE_SPEED_CUTOFF_MPS);
+      double staleLimit =
+          STALE_THRESHOLD_STOPPED_SEC
+              + (STALE_THRESHOLD_FAST_SEC - STALE_THRESHOLD_STOPPED_SEC) * speedFraction;
+      if (ageSec > staleLimit) {
+        return RejectionReason.STALE;
+      }
+    }
+
+    // Gate 10: Distance (single-tag beyond 5m has too much pixel error)
+    if (tagCount == 1 && avgTagDistanceM > MAX_SINGLE_TAG_DISTANCE_M) {
+      return RejectionReason.DISTANCE;
     }
 
     return RejectionReason.ACCEPTED;

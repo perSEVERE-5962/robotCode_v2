@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swervedrive;
 
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -11,6 +13,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Cameras;
@@ -157,6 +160,12 @@ public class Vision {
     ChassisSpeeds fieldVel = swerveDrive.getFieldVelocity();
     double speedMps = Math.hypot(fieldVel.vxMetersPerSecond, fieldVel.vyMetersPerSecond);
 
+    // Gyro rate for mid-spin rejection
+    double gyroRateDps = swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond);
+
+    // Alliance for opposing-tag rejection
+    boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
+
     blendingActive = false;
     blendWeight = 0;
 
@@ -164,66 +173,72 @@ public class Vision {
 
     for (Cameras camera : Cameras.values()) {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
-      if (poseEst.isPresent()) {
-        var pose = poseEst.get();
-        swerveDrive.addVisionMeasurement(
-            pose.estimatedPose.toPose2d(), pose.timestampSeconds, camera.curStdDevs);
-
-        if (poseEst.isEmpty()) {
-          continue;
-        }
-
-        EstimatedRobotPose est = poseEst.get();
-
-        // Reject stale (>1s old) or future timestamps
-        double age = now - est.timestampSeconds;
-        if (age < 0 || age > 1.0) {
-          continue;
-        }
-
-        int tagCount = est.targetsUsed.size();
-        double worstAmbiguity = getWorstAmbiguity(est);
-
-        RejectionReason reason =
-            VisionFilter.evaluate(
-                est.estimatedPose,
-                tagCount,
-                worstAmbiguity,
-                gyroHeading,
-                currentFusedPose,
-                autoElapsed);
-
-        if (reason != RejectionReason.ACCEPTED) {
-          rejectedCount++;
-          rejectionsByGate[reason.ordinal()]++;
-          lastRejection = reason;
-          continue;
-        }
-
-        acceptedCount++;
-
-        double avgDist = getAverageTagDistance(est, swerveDrive);
-        Matrix<N3, N1> stdDevs =
-            VisionFilter.computeStdDevs(
-                tagCount,
-                avgDist,
-                speedMps,
-                camera.getSingleTagStdDevs(),
-                camera.getMultiTagStdDevs());
-
-        // Pose blending for single-tag close estimates
-        Pose2d poseToUse = est.estimatedPose.toPose2d();
-        if (tagCount == 1 && avgDist < VisionFilter.BLEND_DISTANCE_THRESHOLD_M) {
-          double w = VisionFilter.computeBlendWeight(avgDist);
-          if (w > 0) {
-            poseToUse = VisionFilter.blendPose(currentFusedPose, poseToUse, w);
-            blendingActive = true;
-            blendWeight = Math.max(blendWeight, w);
-          }
-        }
-
-        swerveDrive.addVisionMeasurement(poseToUse, est.timestampSeconds, stdDevs);
+      if (poseEst.isEmpty()) {
+        continue;
       }
+
+      EstimatedRobotPose est = poseEst.get();
+
+      // Reject future timestamps
+      double age = now - est.timestampSeconds;
+      if (age < 0) {
+        continue;
+      }
+
+      int tagCount = est.targetsUsed.size();
+      double worstAmbiguity = getWorstAmbiguity(est);
+      double avgDist = getAverageTagDistance(est, swerveDrive);
+
+      // Collect tag IDs for opposing alliance gate
+      int[] estTagIds = new int[est.targetsUsed.size()];
+      for (int i = 0; i < est.targetsUsed.size(); i++) {
+        estTagIds[i] = est.targetsUsed.get(i).getFiducialId();
+      }
+
+      RejectionReason reason =
+          VisionFilter.evaluate(
+              est.estimatedPose,
+              tagCount,
+              worstAmbiguity,
+              gyroHeading,
+              currentFusedPose,
+              autoElapsed,
+              gyroRateDps,
+              speedMps,
+              age,
+              isBlue,
+              estTagIds,
+              avgDist);
+
+      if (reason != RejectionReason.ACCEPTED) {
+        rejectedCount++;
+        rejectionsByGate[reason.ordinal()]++;
+        lastRejection = reason;
+        continue;
+      }
+
+      acceptedCount++;
+
+      Matrix<N3, N1> stdDevs =
+          VisionFilter.computeStdDevs(
+              tagCount,
+              avgDist,
+              speedMps,
+              camera.getSingleTagStdDevs(),
+              camera.getMultiTagStdDevs());
+
+      // Pose blending for single-tag close estimates
+      Pose2d poseToUse = est.estimatedPose.toPose2d();
+      if (tagCount == 1 && avgDist < VisionFilter.BLEND_DISTANCE_THRESHOLD_M) {
+        double w = VisionFilter.computeBlendWeight(avgDist);
+        if (w > 0) {
+          poseToUse = VisionFilter.blendPose(currentFusedPose, poseToUse, w);
+          blendingActive = true;
+          blendWeight = Math.max(blendWeight, w);
+        }
+      }
+
+      swerveDrive.addVisionMeasurement(poseToUse, est.timestampSeconds, stdDevs);
     }
   }
 

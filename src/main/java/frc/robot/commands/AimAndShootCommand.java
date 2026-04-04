@@ -112,7 +112,6 @@ public class AimAndShootCommand extends Command {
   @Override
   public void execute() {
     // aim: point rear at hub
-    System.out.print("working");
     ShotCalculator shotCalc = ShotCalculator.getInstance();
     ShotCalculator.LaunchParameters params = shotCalc.getParameters();
     Rotation2d targetHeading = params.isValid() ? params.driveAngle() : computeFallbackAim();

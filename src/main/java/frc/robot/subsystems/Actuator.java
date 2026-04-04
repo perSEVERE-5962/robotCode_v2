@@ -11,6 +11,7 @@ import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SignalsConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -73,6 +74,18 @@ public class Actuator extends SubsystemBase {
 
       motorConfig.apply(softLimitConfig);
     }
+
+    // Reduce CAN bus utilization: slow down frames we read infrequently
+    SignalsConfig signals = motorConfig.signals;
+    signals.primaryEncoderVelocityPeriodMs(20);
+    signals.appliedOutputPeriodMs(20);
+    signals.busVoltagePeriodMs(20);
+    signals.outputCurrentPeriodMs(20);
+    signals.motorTemperaturePeriodMs(250);
+    signals.faultsPeriodMs(250);
+    signals.warningsPeriodMs(250);
+    signals.primaryEncoderPositionPeriodMs(useThroughBoreEncoder ? 20 : 500);
+
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     this.useThroughBoreEncoder = useThroughBoreEncoder;
   }
