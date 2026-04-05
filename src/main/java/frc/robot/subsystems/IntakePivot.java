@@ -1,15 +1,9 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 
-public class IntakePivot extends MaxActuator {
+public class IntakePivot extends TalonActuator {
   private static IntakePivot instance;
-  private SparkMax motor;
-  private SparkMaxConfig motorConfig;
   private double targetPosition = 0;
   private static final double POSITION_TOLERANCE_ROTATIONS = 0.05;
 
@@ -28,12 +22,6 @@ public class IntakePivot extends MaxActuator {
         false,
         false,
         true);
-    motor = getMotor();
-    motorConfig = new SparkMaxConfig();
-
-    motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(40);
-
-    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
@@ -47,7 +35,7 @@ public class IntakePivot extends MaxActuator {
   }
 
   public double getTemperature() {
-    return getMotor().getMotorTemperature();
+    return getMotor().getDeviceTemp().getValueAsDouble();
   }
 
   // Hardware accessors
@@ -56,15 +44,15 @@ public class IntakePivot extends MaxActuator {
   }
 
   public void setMotorPositionToScoring() {
-    getMotor().getEncoder().setPosition(38.24);
+    getMotor().setPosition(38.24);
   }
 
   public double getAppliedOutput() {
-    return getMotor().getAppliedOutput();
+    return getMotor().getDutyCycle().getValueAsDouble();
   }
 
   public double getOutputCurrent() {
-    return getMotor().getOutputCurrent();
+    return getMotor().getStatorCurrent().getValueAsDouble();
   }
 
   public static IntakePivot getInstance() {
