@@ -27,8 +27,8 @@ public class SimDeviceManager {
   private SparkSim shooterSim;
   private SparkSim indexerSim;
   private SparkSim intakeSim;
-  private SparkSim agitatorSim;
-  private SparkSim intakeActuatorSim;
+  //private SparkSim agitatorSim;
+  //private SparkSim intakeActuatorSim;
   private SparkSim hangerSim;
   private boolean initialized = false;
 
@@ -36,10 +36,10 @@ public class SimDeviceManager {
   private double shooterRPM = 0;
   private double indexerRPM = 0;
   private double intakeRPM = 0;
-  private double agitatorRPM = 0;
+  //private double agitatorRPM = 0;
 
   // Position motor state with sticky targets (same command-conflict fix as shooter)
-  private double intakeActuatorPos = 0;
+  //private double intakeActuatorPos = 0;
   private double hangerPos = 0;
   private static final double POSITION_TAU = 0.300; // 300ms approach
   private double lastActuatorTarget = 0;
@@ -80,8 +80,8 @@ public class SimDeviceManager {
       shooterSim = new SparkSim(shooter.getMotor(), DCMotor.getNEO(1));
       indexerSim = new SparkSim(indexer.getMotor(), DCMotor.getNEO(1));
       intakeSim = new SparkSim(intake.getMotor(), DCMotor.getNEO(1));
-      agitatorSim = new SparkSim(agitator.getMotor(), DCMotor.getNEO(1));
-      intakeActuatorSim = new SparkSim(intakeActuator.getMotor(), DCMotor.getNEO(1));
+      //agitatorSim = new SparkSim(agitator.getMotor(), DCMotor.getNEO(1));
+      //intakeActuatorSim = new SparkSim(intakeActuator.getMotor(), DCMotor.getNEO(1));
       hangerSim = new SparkSim(hanger.getMotor(), DCMotor.getNEO(1));
       initialized = true;
     } catch (RuntimeException e) {
@@ -119,9 +119,9 @@ public class SimDeviceManager {
       double intakeTarget = intakeOutput * NEO_FREE_SPEED_RPM;
       intakeRPM = updateMotorToTarget(intakeSim, intakeRPM, intakeTarget);
 
-      double agitatorOutput = agitatorSim.getAppliedOutput();
-      double agitatorTarget = agitatorOutput * NEO_FREE_SPEED_RPM;
-      agitatorRPM = updateMotorToTarget(agitatorSim, agitatorRPM, agitatorTarget);
+      //double agitatorOutput = agitatorSim.getAppliedOutput();
+      //double agitatorTarget = agitatorOutput * NEO_FREE_SPEED_RPM;
+      //agitatorRPM = updateMotorToTarget(agitatorSim, agitatorRPM, agitatorTarget);
 
       // When indexer is active and shooter is at speed, periodically drop
       // shooter RPM to trigger shot detection in ShooterTelemetry
@@ -155,8 +155,8 @@ public class SimDeviceManager {
       } else {
         lastActuatorTarget = rawActuatorTarget;
       }
-      intakeActuatorPos =
-          updatePositionToTarget(intakeActuatorSim, intakeActuatorPos, lastActuatorTarget);
+      //intakeActuatorPos =
+      //    updatePositionToTarget(intakeActuatorSim, intakeActuatorPos, lastActuatorTarget);
 
       Hanger hangerInst = Hanger.getInstance();
       if (hangerInst == null) return;
@@ -178,9 +178,9 @@ public class SimDeviceManager {
       SafeLog.put("Sim/Debug/IndexerRPM", indexerRPM);
       SafeLog.put("Sim/Debug/IntakeOutput", intakeSim.getAppliedOutput());
       SafeLog.put("Sim/Debug/IntakeRPM", intakeRPM);
-      SafeLog.put("Sim/Debug/AgitatorOutput", agitatorSim.getAppliedOutput());
-      SafeLog.put("Sim/Debug/AgitatorRPM", agitatorRPM);
-      SafeLog.put("Sim/Debug/IntakeActuatorPos", intakeActuatorPos);
+      //SafeLog.put("Sim/Debug/AgitatorOutput", agitatorSim.getAppliedOutput());
+      //SafeLog.put("Sim/Debug/AgitatorRPM", agitatorRPM);
+      //SafeLog.put("Sim/Debug/IntakeActuatorPos", intakeActuatorPos);
       SafeLog.put("Sim/Debug/IntakeActuatorTarget", lastActuatorTarget);
       SafeLog.put("Sim/Debug/HangerPos", hangerPos);
       SafeLog.put("Sim/Debug/HangerTarget", lastHangerTarget);
@@ -225,13 +225,13 @@ public class SimDeviceManager {
     return intakeSim;
   }
 
-  public SparkSim getAgitatorSim() {
+  /*public SparkSim getAgitatorSim() {
     return agitatorSim;
   }
 
   public SparkSim getIntakeActuatorSim() {
     return intakeActuatorSim;
-  }
+  }*/
 
   public SparkSim getHangerSim() {
     return hangerSim;
