@@ -127,7 +127,7 @@ public final class Constants {
 
   public static final class IntakePivotConstants {
     public static final double kG = 0.15;
-    public static final double P = 2.3; // 1.0
+    public static final double P = 7.8; // 1.0
     public static final double I = 0.0;
     public static final double D = 0.00; // .2
     public static final double MinOutput = -1.0;
