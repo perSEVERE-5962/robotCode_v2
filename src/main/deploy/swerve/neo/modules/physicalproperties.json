@@ -6,6 +6,10 @@
     "drive": 40,
     "angle": 20
   },
+  "friction": {
+    "drive": 0.17697,
+    "angle": 0.27829
+  },
   "conversionFactors": {
     "angle": {
       "gearRatio": 21.4285714286
