@@ -12,7 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
+import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -27,7 +27,7 @@ public class HubArcDrive extends Command {
   private Shooter shooter;
   private final Rotation2d scoringSide;
   private Indexer indexer;
-  private static double headingError;
+  private Agitator agitator;
 
   // Command for drive mode where robot orbits around hub, maintaining distance and holding its
   // rotation towards the center of hub,
@@ -46,8 +46,9 @@ public class HubArcDrive extends Command {
     this.shooter = Shooter.getInstance();
     this.scoringSide = scoringSide;
     indexer = Indexer.getInstance();
+    agitator = Agitator.getInstance();
 
-    addRequirements(swerve, shooter);
+    addRequirements(swerve, shooter, indexer, agitator);
   }
 
   @Override
@@ -134,7 +135,7 @@ public class HubArcDrive extends Command {
     // compare desired heading vs wanted heading
     // Heading control with velocity compensation, to compensate for the velocity of ball due to
     // robot speed
-    headingError = compensatedAim.minus(currentHeading).getRadians();
+    double headingError = compensatedAim.minus(currentHeading).getRadians();
     headingError = Math.atan2(Math.sin(headingError), Math.cos(headingError));
     double headingSpeed = headingError * 4.5; // tune pid
     headingSpeed += tangentialSpeed / scoringDistance;
@@ -151,18 +152,26 @@ public class HubArcDrive extends Command {
     // System.out.println(headingError);
     // System.out.println("velocity:"+robotVelocity.vyMetersPerSecond);
     double shooterSpeed =
-        Constants.MotorConstants.DESIRED_SHOOTER_RPM
-            + (Math.abs(robotVelocity.vyMetersPerSecond * 350));
+        shooter.getTunableTargetRPM() + (Math.abs(robotVelocity.vyMetersPerSecond * 350));
     shooterSpeed = MathUtil.clamp(shooterSpeed, 0, 3760);
     shooter.moveToVelocityWithPID(shooterSpeed);
     // System.out.println("shooter speed" + shooterSpeed);
 
+    if (Math.abs(headingError) < 0.1) {
+      indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
+      agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM());
+    } else {
+      indexer.move(0);
+      agitator.move(0);
+    }
   }
 
   @Override
   public void end(boolean interrupted) {
     swerve.drive(new ChassisSpeeds(0, 0, 0));
     shooter.move(0);
+    indexer.move(0);
+    agitator.move(0);
   }
 
   @Override
@@ -177,13 +186,5 @@ public class HubArcDrive extends Command {
       return true;
     }
     return false;
-  }
-
-  public static boolean checkHeadingError() {
-    if (headingError < .1 && headingError > -0.1) {
-      return true;
-    } else {
-      return false;
-    }
   }
 }

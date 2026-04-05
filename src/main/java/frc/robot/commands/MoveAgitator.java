@@ -2,19 +2,10 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Agitator;
-import java.util.function.BooleanSupplier;
 
 public class MoveAgitator extends Command {
   private Agitator agitator;
   private double rpm;
-  private BooleanSupplier arcDriveOn;
-
-  public MoveAgitator(double rpm, BooleanSupplier arcDriveOn) {
-    this.rpm = rpm;
-    agitator = Agitator.getInstance();
-    this.arcDriveOn = arcDriveOn;
-    addRequirements(agitator);
-  }
 
   public MoveAgitator(double rpm) {
     agitator = Agitator.getInstance();
@@ -27,12 +18,8 @@ public class MoveAgitator extends Command {
 
   @Override
   public void execute() {
-    if (arcDriveOn != null && arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
-      agitator.moveToVelocityWithPID(0);
-    } else {
-      agitator.moveToVelocityWithPID(rpm);
-      System.out.println(agitator.getMotorVelocity());
-    }
+    agitator.moveToVelocityWithPID(rpm);
+    System.out.println(agitator.getMotorVelocity());
   }
 
   @Override
