@@ -29,7 +29,7 @@ public final class Constants {
    *
    * <p>IMPORTANT: Set to FALSE before competition deployment!
    */
-  public static final boolean TUNING_MODE = true;
+  public static final boolean TUNING_MODE = false;
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
@@ -107,12 +107,12 @@ public final class Constants {
   public static final class MotorConstants {
     public static final double DESIRED_SHOOTER_RPM = 2500;
     public static final double DESIRED_INDEXER_RPM = 6000; // 8.4 * 3730/4
-    public static final double OUT_INTAKE_POS = 38.27;
+    public static final double OUT_INTAKE_POS = 38.4;
     public static final double IN_INTAKE_POS = 11.6;
     public static final double DESIRED_INTAKE_RPM = 5000;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
-    public static final double DESIRED_AGITATOR_SPEED = .5;
+    public static final double DESIRED_AGITATOR_SPEED = 5990;
   }
 
   public static final class IntakeRollerConstants {
@@ -126,9 +126,10 @@ public final class Constants {
   }
 
   public static final class IntakePivotConstants {
-    public static final double P = 0.6; // 1.0
+    public static final double kG = 0.0;
+    public static final double P = 0.0; // 1.0
     public static final double I = 0.0;
-    public static final double D = 0.05; // .2
+    public static final double D = 0.00; // .2
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double FF = 0.0;
@@ -137,7 +138,7 @@ public final class Constants {
 
   public static final class ShooterConstants {
     // Velocity PID tuning (from Kfir2026)
-    public static final double P = 0.0001;
+    public static final double P = 0.00009;
     public static final double I = 0.0;
     public static final double D = 0.0;
     public static final double FF = 0.000189; // .000172
@@ -152,7 +153,7 @@ public final class Constants {
     public static final double RPM_SLEW_RATE = 1000.0; // max change in RPM per second
 
     // Telemetry constants
-    public static final double SPEED_TOLERANCE_RPM = 50.0;
+    public static final double SPEED_TOLERANCE_RPM = 150.0;
     public static final double VELOCITY_CONVERSION = 1.0;
     public static final double SHOT_DETECTION_DROP_RPM = 200.0;
     public static final double SHOT_DETECTION_MIN_RPM = 1000.0;
@@ -172,21 +173,21 @@ public final class Constants {
 
     // Telemetry constants
     public static final double TARGET_SPEED = 6000;
-    public static final double JAM_CURRENT_THRESHOLD_AMPS = 35.0;
+    public static final double JAM_CURRENT_THRESHOLD_AMPS = 70;
     public static final double JAM_TIME_THRESHOLD_SECONDS = 0.3;
   }
 
   public static final class AgitatorConstants {
-    public static final double P = 0.0001;
+    public static final double P = 0.000;
     public static final double I = 0.0;
     public static final double D = 0.0;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.00021;
+    public static final double FF = 0.00016;
     public static final double Iz = 0.0;
 
     public static final double TARGET_RPM = 5676;
-    public static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
+    public static final double JAM_CURRENT_THRESHOLD_AMPS = 79;
     public static final double JAM_TIME_THRESHOLD_SECONDS = 0.3;
   }
 
@@ -399,7 +400,7 @@ public final class Constants {
     public static final double MAX_SOTM_SPEED = 3.0;
 
     // Per-distance RPM band boundaries (meters)
-    public static final double RPM_BAND_SHORT_END = 1.5;
+    public static final double RPM_BAND_SHORT_END = 2.2;
     public static final double RPM_BAND_MEDIUM_END = 3.0;
 
     // Copilot D-pad RPM trim limits
@@ -449,7 +450,7 @@ public final class Constants {
 
   /** Heading lock controller for SOTM: PID + feedforward + lookahead */
   public static final class HeadingLockConstants {
-    public static final double P = 1.0;
+    public static final double P = 2.6;
     public static final double I = 0.0;
     public static final double D = 0.1;
 

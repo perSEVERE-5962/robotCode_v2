@@ -11,7 +11,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -23,14 +23,14 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "HoldAndRunIntakeTimed"
+                  "name": "HoldAndRunIntake"
                 }
               }
             ]
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -42,7 +42,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "HoldAndRunIntakeTimed"
+                  "name": "HoldAndRunIntake"
                 }
               }
             ]

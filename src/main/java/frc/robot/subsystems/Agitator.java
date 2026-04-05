@@ -4,15 +4,23 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import com.ctre.phoenix.*;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import frc.robot.Constants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
-public class Agitator extends Actuator {
-  private SparkMax motor;
-  private SparkFlexConfig motorConfig;
+public class Agitator extends TalonActuator {
   private static Agitator instance;
+  private VelocityVoltage rVelocityVoltageuest;
   private static final TunableNumber kP =
       new TunableNumber("Agitator/kP", Constants.AgitatorConstants.P);
   private static final TunableNumber kI =
@@ -44,6 +52,8 @@ public class Agitator extends Actuator {
     // Actuator base class handles motor creation, PID, brake mode, and 40A current limit
     super(
         Constants.CANDeviceIDs.kAgitatorID,
+        0,
+        0,
         Constants.AgitatorConstants.P,
         Constants.AgitatorConstants.I,
         Constants.AgitatorConstants.D,
@@ -52,48 +62,42 @@ public class Agitator extends Actuator {
         Constants.AgitatorConstants.FF,
         Constants.AgitatorConstants.Iz,
         0,
-        0,
+        1,
         true,
         false,
         false);
-
-    motor = getMotor();
-    motorConfig = new SparkFlexConfig();
-
-    motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(30);
-    // motorConfig.voltageCompensation(12.0);
-    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public double getTemperature() {
-    return getMotor().getMotorTemperature();
+    return getMotor().getDeviceTemp().getValueAsDouble();
   }
 
   public double getAppliedOutput() {
-    return getMotor().getAppliedOutput();
+    return getMotor().getDutyCycle().getValueAsDouble();
   }
 
   public double getOutputCurrent() {
-    return getMotor().getOutputCurrent();
+    return getMotor().getStatorCurrent().getValueAsDouble();
   }
 
   public double getVelocityRPM() {
-    return getMotor().getEncoder().getVelocity();
+    return getMotor().getVelocity().getValueAsDouble();
   }
 
-  @Override
-  public void periodic() {
-    // JamProtection detects and reports only. It never overrides the motor.
-    // Telemetry reads the state; the driver decides what to do about it.
-    try {
-      jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
-    } catch (Throwable t) {
-      // CAN failure degrades jam detection, never kills drive control
-    }
-  }
+
+  //@Override
+  // public void periodic() {
+  //   // JamProtection detects and reports only. It never overrides the motor.
+  //   // Telemetry reads the state; the driver decides what to do about it.
+  //   try {
+  //     jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
+  //   } catch (Throwable t) {
+  //     // CAN failure degrades jam detection, never kills drive control
+  //   }
+  // }
 
   public boolean isRunning() {
-    return Math.abs(getMotor().getAppliedOutput()) > 0.05;
+    return Math.abs(getMotor().getDutyCycle().getValueAsDouble()) > 0.05;
   }
 
   public JamProtection getJamProtection() {
@@ -101,28 +105,28 @@ public class Agitator extends Actuator {
   }
 
   public double getTunableTargetRPM() {
-    return targetSpeed.get();
+    return 0.0;
   }
 
   public double getJamCurrentThreshold() {
-    return jamCurrentThreshold.get();
+    return 0.0;
   }
 
   public double getJamTimeThreshold() {
-    return jamTimeThreshold.get();
+    return 0.0;
   }
 
   // PID gain getters
   public double getTunableKP() {
-    return kP.get();
+    return 0.0;
   }
 
   public double getTunableKI() {
-    return kI.get();
+   return 0.0;
   }
 
   public double getTunableKD() {
-    return kD.get();
+    return 0.0;
   }
 
   public double getTunableFF() {

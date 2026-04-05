@@ -54,6 +54,8 @@ import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.DriverTuning;
+import frc.robot.util.HubScoringUtil;
+import frc.robot.util.SysId;
 import java.io.File;
 import java.util.Set;
 import swervelib.SwerveInputStream;
@@ -231,7 +233,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("DeployIntake", new DeployIntake());
 
     NamedCommands.registerCommand("HoldAndRunIntake", new HoldAndIntake());
-    NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(3));
+    NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(4));
 
     NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
     NamedCommands.registerCommand("TimedShoot", new SpeedUpThenIndex().withTimeout(8));
@@ -253,7 +255,7 @@ public class RobotContainer {
                   agitator,
                   () -> -driverXbox.getLeftY() * -1,
                   () -> -driverXbox.getLeftX() * -1,
-                  true)).withTimeout(4));
+                  true)).withTimeout(3.67));
     
 
         NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
@@ -351,11 +353,11 @@ public class RobotContainer {
       //                     SCORING_ARC_WIDTH_DEGREES),
       //             Set.of(drivebase)));
 
-      // driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
-      // driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
-      driverXbox.y().whileTrue(new MoveShooter(1500));
-      driverXbox.b().whileTrue(new MoveAgitator(5500));
-      driverXbox.x().whileTrue(new MoveIndexer(5000));
+      driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
+      driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
+      //driverXbox.y().whileTrue(new MoveShooter(1500));
+      //driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
+      //driverXbox.x().whileTrue(new MoveIndexer(5000));
       driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
       driverXbox
           .leftTrigger()
@@ -369,13 +371,21 @@ public class RobotContainer {
                   () -> -driverXbox.getLeftX() * -1,
                   false));
       // driverXbox.y().whileTrue(new RetractIntake());
-      // driverXbox.x().toggleOnTrue(hubArcDrive);
-      //driverXbox.a().whileTrue(new HoldAndIntake());
+      driverXbox.x().whileTrue(new MoveAgitator());
+      driverXbox.a().whileTrue(new HoldAndIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       // driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       driverXbox.back().whileTrue(new SetIntakePosition());
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock,
       // drivebase).repeatedly());
+      driverXbox.povDown().whileTrue(SysId.agitatorSysIdCommand());
+      driverXbox.povLeft().whileTrue(SysId.indexerSysIdCommand());
+      driverXbox.povUp().whileTrue(SysId.shooterSysIdCommand());
+      driverXbox.povRight().whileTrue(SysId.intakePivotSysIdCommand());
+      driverXbox.rightBumper().whileTrue(SysId.intakeRollerSysIdCommand());
+      driverXbox.leftBumper().whileTrue(SysId.hangerSysIdCommand());
+      driverXbox.rightTrigger().whileTrue(drivebase.sysIdAngleMotorCommand());
+      driverXbox.leftTrigger().whileTrue(drivebase.sysIdDriveMotorCommand());
 
       // copilotXbox
       //     .y()
@@ -427,27 +437,27 @@ public class RobotContainer {
               new SetIntakePosition());
 
       // emergency dump: flat RPM, immediate feed, bypasses everything
-      copilotXbox
-          .povDown()
-          .whileTrue(
-              Commands.runEnd(
-                  () -> {
-                    Shooter.getInstance()
-                        .moveToVelocityWithPID(Constants.ShooterConstants.EMERGENCY_DUMP_RPM);
-                    Indexer.getInstance()
-                        .moveToVelocityWithPID(Indexer.getInstance().getTunableTargetSpeed());
-                    Agitator.getInstance().move(0.5);
-                  },
-                  () -> {
-                    Shooter.getInstance().move(0);
-                    Indexer.getInstance().move(0);
-                    Agitator.getInstance().move(0);
-                  },
-                  Shooter.getInstance(),
-                  Indexer.getInstance(),
-                  Agitator.getInstance()));
+      // copilotXbox
+      //     .povDown()
+      //     .whileTrue(
+      //         Commands.runEnd(
+      //             () -> {
+      //               Shooter.getInstance()
+      //                   .moveToVelocityWithPID(Constants.ShooterConstants.EMERGENCY_DUMP_RPM);
+      //               Indexer.getInstance()
+      //                   .moveToVelocityWithPID(Indexer.getInstance().getTunableTargetSpeed());
+      //               Agitator.getInstance().runVelocity();
+      //             },
+      //             () -> {
+      //               Shooter.getInstance().move(0);
+      //               Indexer.getInstance().move(0);
+      //               Agitator.getInstance().runVelocity();
+      //             },
+      //             Shooter.getInstance(),
+      //             Indexer.getInstance(),
+      //             Agitator.getInstance()));
 
-      //       Trigger crossingZone = new Trigger(()->{
+      // //       Trigger crossingZone = new Trigger(()->{
       //     Pose2d pose = drivebase.getPose();
       //
       // if(pose.getTranslation().getX()<RED_HUB_CENTER.getX()+1&&pose.getTranslation().getX()>RED_HUB_CENTER.getX()-1||

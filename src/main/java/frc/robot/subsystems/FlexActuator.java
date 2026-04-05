@@ -15,13 +15,13 @@ import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class FlexActuator extends SubsystemBase {
+public abstract class FlexActuator extends SubsystemBase implements Actuator {
   private SparkFlex motor;
   private RelativeEncoder encoder;
   private SparkAbsoluteEncoder absoluteEncoder;
   private boolean useThroughBoreEncoder;
 
-  public FlexActuator(
+  protected FlexActuator(
       int kID,
       double kP,
       double kI,
@@ -30,8 +30,8 @@ public class FlexActuator extends SubsystemBase {
       double kMaxOutput,
       double kF,
       double kIz,
-      float kUpperSoftLimit,
-      float kLowerSoftLimit,
+      double kUpperSoftLimit,
+      double kLowerSoftLimit,
       boolean inverted,
       boolean useThroughBoreEncoder,
       boolean useSoftLimits) {
@@ -106,7 +106,6 @@ public class FlexActuator extends SubsystemBase {
     }
   }
 
-  /* -1 <= position <= 1 */
   public void moveToPositionWithPID(double position) {
     motor.getClosedLoopController().setSetpoint(position, SparkFlex.ControlType.kPosition);
   }

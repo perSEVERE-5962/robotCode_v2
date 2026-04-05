@@ -12,10 +12,10 @@ public class AgitateAndIndex extends Command {
   private Indexer indexer;
   private double indexRPM;
 
-  public AgitateAndIndex(double agitateRPM, double indexRPM) {
+  public AgitateAndIndex(double indexRPM, double agitateRPM) {
     this.agitateRPM = agitateRPM;
     agitator = Agitator.getInstance();
-    this.arcDriveOn = arcDriveOn;
+  
     this.indexRPM = indexRPM;
     indexer = Indexer.getInstance();
     addRequirements(agitator, indexer);
@@ -23,7 +23,8 @@ public class AgitateAndIndex extends Command {
 
   @Override
   public void initialize() {
-    agitator.moveToVelocityWithPID(-600);
+    agitator.moveToVelocityWithPID(agitateRPM);
+
   }
 
   @Override
@@ -38,7 +39,7 @@ public class AgitateAndIndex extends Command {
   @Override
   public void end(boolean interrupted) {
     indexer.moveToVelocityWithPID(0);
-    agitator.moveToVelocityWithPID(0);
+    agitator.move(0);
   }
 
   @Override

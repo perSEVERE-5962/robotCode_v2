@@ -12,7 +12,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.util.TunableNumber;
 
-public class Shooter extends Actuator {
+public class Shooter extends MaxActuator {
   private static Shooter instance;
   private SlewRateLimiter limiter;
   private SparkMax[] followers;
@@ -56,7 +56,7 @@ public class Shooter extends Actuator {
     motor = getMotor();
     motorConfig = new SparkMaxConfig();
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    motorConfig.smartCurrentLimit(32);
+    motorConfig.smartCurrentLimit(30);
     motorEncoder = motor.getEncoder();
     motorConfig.voltageCompensation(12.0);
     motorConfig.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
@@ -74,6 +74,11 @@ public class Shooter extends Actuator {
 
   public double getVelocityRPM() {
     return motorEncoder.getVelocity() * ShooterConstants.VELOCITY_CONVERSION;
+  }
+
+  public boolean isAtSpeed(double wantedRpm) {
+    if (wantedRpm == 0) return false;
+    return Math.abs(wantedRpm - getVelocityRPM()) < toleranceRPM.get();
   }
 
   public boolean isAtSpeed() {
@@ -95,11 +100,11 @@ public class Shooter extends Actuator {
     motor.set(speed);
   }
 
-  @Override
-  public void moveToVelocityWithPID(double rpm) {
-    this.desiredRPM = rpm;
-    motor.getClosedLoopController().setSetpoint(rpm, SparkMax.ControlType.kVelocity);
-  }
+  // @Override
+  // public void moveToVelocityWithPID(double rpm) {
+  //   this.desiredRPM = rpm;
+  //   motor.getClosedLoopController().setSetpoint(rpm, SparkMax.ControlType.kVelocity);
+  // }
 
   private SparkMax configureFollower(int canId, boolean inverted) {
     SparkMax follower = new SparkMax(canId, MotorType.kBrushless);

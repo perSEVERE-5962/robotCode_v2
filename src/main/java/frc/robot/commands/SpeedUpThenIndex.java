@@ -34,8 +34,8 @@ public class SpeedUpThenIndex extends Command {
   @Override
   public void initialize() {
     shooter.moveToVelocityWithPID(shooter.getTunableTargetRPM());
-    agitator.moveToVelocityWithPID(-3000);
-    indexer.moveToVelocityWithPID(-2000);
+    agitator.moveToVelocityWithPID(-5000);
+    indexer.moveToVelocityWithPID(-5000);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -44,7 +44,7 @@ public class SpeedUpThenIndex extends Command {
     if (shooter.isAtSpeed()) {
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
       // System.out.println(indexer.getMotorVelocity());
-      agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM());
+      agitator.moveToVelocityWithPID(5990);
     }
     // if(AgitatorTelemetry.isStalled()){
     //         agitator.moveToVelocityWithPID(-2000);
@@ -61,7 +61,7 @@ public class SpeedUpThenIndex extends Command {
 
     indexer.moveToVelocityWithPID(0);
     // System.out.println();
-    agitator.moveToVelocityWithPID(0);
+    agitator.move(0);
   }
 
   // Returns true when the command should end.

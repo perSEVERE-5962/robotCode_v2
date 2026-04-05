@@ -1,17 +1,11 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakePivotConstants;
 import frc.robot.util.TunableNumber;
 
-public class IntakePivot extends Actuator {
+public class IntakePivot extends TalonActuator {
   private static IntakePivot instance;
-  private SparkMax motor;
-  private SparkMaxConfig motorConfig;
   private double targetPosition = 0;
   private static final double POSITION_TOLERANCE_ROTATIONS = 0.05;
 
@@ -27,6 +21,7 @@ public class IntakePivot extends Actuator {
   private IntakePivot() {
     super(
         Constants.CANDeviceIDs.kIntakePivotID,
+        Constants.IntakePivotConstants.kG,
         Constants.IntakePivotConstants.P,
         Constants.IntakePivotConstants.I,
         Constants.IntakePivotConstants.D,
@@ -36,15 +31,11 @@ public class IntakePivot extends Actuator {
         Constants.IntakePivotConstants.Iz,
         60f,
         11.5F,
+        58.33,
         false,
         false,
-        true);
-    motor = getMotor();
-    motorConfig = new SparkMaxConfig();
-
-    motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(25);
-
-    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        false);
+        setStartingPosition();
   }
 
   @Override
@@ -58,7 +49,7 @@ public class IntakePivot extends Actuator {
   }
 
   public double getTemperature() {
-    return getMotor().getMotorTemperature();
+    return getMotor().getDeviceTemp().getValueAsDouble();
   }
 
   // Hardware accessors
@@ -66,16 +57,20 @@ public class IntakePivot extends Actuator {
     return targetPosition;
   }
 
-  public void setMotorPositionToScoring() {
-    getMotor().getEncoder().setPosition(38.24);
+  public void setStartingPosition() {
+    getMotor().setPosition(0);
+  }
+
+  public void setMotorPositionToScoring(){
+    getMotor().setPosition(30);
   }
 
   public double getAppliedOutput() {
-    return getMotor().getAppliedOutput();
+    return getMotor().getDutyCycle().getValueAsDouble();
   }
 
   public double getOutputCurrent() {
-    return getMotor().getOutputCurrent();
+    return getMotor().getStatorCurrent().getValueAsDouble();
   }
 
   public double getTunableKP() {
