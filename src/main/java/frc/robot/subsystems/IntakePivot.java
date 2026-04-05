@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 
-public class IntakePivot extends MaxActuator {
+public class IntakePivot extends TalonActuator {
   private static IntakePivot instance;
 
   private double targetPosition = 0;
@@ -41,7 +41,7 @@ public class IntakePivot extends MaxActuator {
   }
 
   public double getTemperature() {
-    return getMotor().getMotorTemperature();
+    return getMotor().getDeviceTemp().getValueAsDouble();
   }
 
   // Hardware accessors
@@ -54,11 +54,11 @@ public class IntakePivot extends MaxActuator {
   }
 
   public double getAppliedOutput() {
-    return getMotor().getAppliedOutput();
+    return getMotor().getDutyCycle().getValueAsDouble();
   }
 
   public double getOutputCurrent() {
-    return getMotor().getOutputCurrent();
+    return getMotor().getStatorCurrent().getValueAsDouble();
   }
 
   public static IntakePivot getInstance() {
