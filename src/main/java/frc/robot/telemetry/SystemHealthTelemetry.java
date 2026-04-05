@@ -125,14 +125,15 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
 
   @Override
   public void update() {
-    double currentTimestamp = Timer.getFPGATimestamp();
-    if (lastLoopTimestamp > 0) {
-      loopTimeMs = (currentTimestamp - lastLoopTimestamp) * 1000.0;
-      if (loopTimeMs > LOOP_OVERRUN_THRESHOLD_MS) {
-        loopOverrunCount++;
+    try {
+      double currentTimestamp = Timer.getFPGATimestamp();
+      if (lastLoopTimestamp > 0) {
+        loopTimeMs = (currentTimestamp - lastLoopTimestamp) * 1000.0;
+        if (loopTimeMs > LOOP_OVERRUN_THRESHOLD_MS) {
+          loopOverrunCount++;
+        }
       }
-    }
-    lastLoopTimestamp = currentTimestamp;
+      lastLoopTimestamp = currentTimestamp;
 
       batteryVoltage = RobotController.getBatteryVoltage();
       sharedBatteryVoltage = batteryVoltage;
