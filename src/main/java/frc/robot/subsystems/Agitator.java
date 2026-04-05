@@ -5,7 +5,7 @@ import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
-public class Agitator extends MaxActuator {
+public class Agitator extends TalonActuator {
   private static Agitator instance;
   private static final TunableNumber kP =
       new TunableNumber("Agitator/kP", Constants.AgitatorConstants.P);
@@ -53,19 +53,19 @@ public class Agitator extends MaxActuator {
   }
 
   public double getTemperature() {
-    return getMotor().getMotorTemperature();
+    return getMotor().getDeviceTemp().getValueAsDouble();
   }
 
   public double getAppliedOutput() {
-    return getMotor().getAppliedOutput();
+    return getMotor().getDutyCycle().getValueAsDouble();
   }
 
   public double getOutputCurrent() {
-    return getMotor().getOutputCurrent();
+    return getMotor().getStatorCurrent().getValueAsDouble();
   }
 
   public double getVelocityRPM() {
-    return getMotor().getEncoder().getVelocity();
+    return getMotor().getVelocity().getValueAsDouble();
   }
 
   @Override
@@ -80,7 +80,7 @@ public class Agitator extends MaxActuator {
   }
 
   public boolean isRunning() {
-    return Math.abs(getMotor().getAppliedOutput()) > 0.05;
+    return Math.abs(getMotor().getDutyCycle().getValueAsDouble()) > 0.05;
   }
 
   public JamProtection getJamProtection() {
