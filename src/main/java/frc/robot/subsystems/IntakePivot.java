@@ -50,7 +50,7 @@ public class IntakePivot extends TalonActuator {
   }
 
   public void setMotorPositionToScoring() {
-    getMotor().getEncoder().setPosition(Constants.MotorConstants.OUT_INTAKE_POS);
+    getMotor().setPosition(Constants.MotorConstants.OUT_INTAKE_POS);
   }
 
   public double getAppliedOutput() {
