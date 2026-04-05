@@ -52,12 +52,12 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
     config.Slot0.kD = kD;
     config.Slot0.kS = kS;
     config.Slot0.kV = kV;
+    config.Slot0.kG = kG;
     // kCos should be used for arms, kG should be used for elevators
     if (useCos) {
-      config.Slot0.kG = kG;
       config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+      config.Feedback.SensorToMechanismRatio = kCosRatio;
     } else {
-      config.Slot0.kG = kG;
       config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
     }
     // iZone ignored because it doesn't seem to have it
