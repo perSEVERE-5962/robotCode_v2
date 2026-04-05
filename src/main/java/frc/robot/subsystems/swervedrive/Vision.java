@@ -170,27 +170,21 @@ public class Vision {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent()) {
         var pose = poseEst.get();
-        swerveDrive.addVisionMeasurement(
-            pose.estimatedPose.toPose2d(), pose.timestampSeconds, camera.curStdDevs);
-
-        if (poseEst.isEmpty()) {
-          continue;
-        }
-
-        EstimatedRobotPose est = poseEst.get();
+        // swerveDrive.addVisionMeasurement(
+        //    pose.estimatedPose.toPose2d(), pose.timestampSeconds, camera.curStdDevs);
 
         // Reject stale (>1s old) or future timestamps
-        double age = now - est.timestampSeconds;
+        double age = now - pose.timestampSeconds;
         if (age < 0 || age > 1.0) {
           continue;
         }
 
-        int tagCount = est.targetsUsed.size();
-        double worstAmbiguity = getWorstAmbiguity(est);
+        int tagCount = pose.targetsUsed.size();
+        double worstAmbiguity = getWorstAmbiguity(pose);
 
         RejectionReason reason =
             VisionFilter.evaluate(
-                est.estimatedPose,
+                pose.estimatedPose,
                 tagCount,
                 worstAmbiguity,
                 gyroHeading,
@@ -206,7 +200,7 @@ public class Vision {
 
         acceptedCount++;
 
-        double avgDist = getAverageTagDistance(est, swerveDrive);
+        double avgDist = getAverageTagDistance(pose, swerveDrive);
         Matrix<N3, N1> stdDevs =
             VisionFilter.computeStdDevs(
                 tagCount,
@@ -216,7 +210,7 @@ public class Vision {
                 camera.getMultiTagStdDevs());
 
         // Pose blending for single-tag close estimates
-        Pose2d poseToUse = est.estimatedPose.toPose2d();
+        Pose2d poseToUse = pose.estimatedPose.toPose2d();
         if (tagCount == 1 && avgDist < VisionFilter.BLEND_DISTANCE_THRESHOLD_M) {
           double w = VisionFilter.computeBlendWeight(avgDist);
           if (w > 0) {
@@ -226,7 +220,7 @@ public class Vision {
           }
         }
 
-        swerveDrive.addVisionMeasurement(poseToUse, est.timestampSeconds, stdDevs);
+        swerveDrive.addVisionMeasurement(poseToUse, pose.timestampSeconds, stdDevs);
       }
     }
   }
