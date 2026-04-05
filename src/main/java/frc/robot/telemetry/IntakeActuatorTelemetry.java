@@ -48,9 +48,9 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
       positionRotations = intakeActuator.getPosition();
       targetPosition = intakeActuator.getTargetPosition();
       atTarget = intakeActuator.isAtTarget();
-      appliedOutput = intakeActuator.getAppliedOutput();
-      currentAmps = intakeActuator.getOutputCurrent();
-      temperatureCelsius = intakeActuator.getTemperature();
+      // appliedOutput = intakeActuator.getAppliedOutput();
+      // currentAmps = intakeActuator.getOutputCurrent();
+      // temperatureCelsius = intakeActuator.getTemperature();
 
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = intakeActuator.getStickyFaultsRaw();

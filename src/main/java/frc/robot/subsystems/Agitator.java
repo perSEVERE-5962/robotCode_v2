@@ -53,7 +53,6 @@ public class Agitator extends TalonActuator {
     super(
         Constants.CANDeviceIDs.kAgitatorID,
         0,
-        0,
         Constants.AgitatorConstants.P,
         Constants.AgitatorConstants.I,
         Constants.AgitatorConstants.D,
@@ -62,8 +61,9 @@ public class Agitator extends TalonActuator {
         Constants.AgitatorConstants.FF,
         Constants.AgitatorConstants.Iz,
         0,
+        0,
         1,
-        true,
+        false,
         false,
         false);
   }
@@ -85,16 +85,16 @@ public class Agitator extends TalonActuator {
   }
 
 
-  //@Override
-  // public void periodic() {
-  //   // JamProtection detects and reports only. It never overrides the motor.
-  //   // Telemetry reads the state; the driver decides what to do about it.
-  //   try {
-  //     jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
-  //   } catch (Throwable t) {
-  //     // CAN failure degrades jam detection, never kills drive control
-  //   }
-  // }
+  @Override
+  public void periodic() {
+    // JamProtection detects and reports only. It never overrides the motor.
+    // Telemetry reads the state; the driver decides what to do about it.
+    try {
+      jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
+    } catch (Throwable t) {
+      // CAN failure degrades jam detection, never kills drive control
+    }
+  }
 
   public boolean isRunning() {
     return Math.abs(getMotor().getDutyCycle().getValueAsDouble()) > 0.05;

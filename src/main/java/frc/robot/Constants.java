@@ -107,8 +107,8 @@ public final class Constants {
   public static final class MotorConstants {
     public static final double DESIRED_SHOOTER_RPM = 2500;
     public static final double DESIRED_INDEXER_RPM = 6000; // 8.4 * 3730/4
-    public static final double OUT_INTAKE_POS = 38.4;
-    public static final double IN_INTAKE_POS = 11.6;
+    public static final double OUT_INTAKE_POS = 0.0;
+    public static final double IN_INTAKE_POS = 0.3;
     public static final double DESIRED_INTAKE_RPM = 5000;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
@@ -126,8 +126,8 @@ public final class Constants {
   }
 
   public static final class IntakePivotConstants {
-    public static final double kG = 0.0;
-    public static final double P = 0.0; // 1.0
+    public static final double kG = 0.15;
+    public static final double P = 2.3; // 1.0
     public static final double I = 0.0;
     public static final double D = 0.00; // .2
     public static final double MinOutput = -1.0;
@@ -178,12 +178,12 @@ public final class Constants {
   }
 
   public static final class AgitatorConstants {
-    public static final double P = 0.000;
+    public static final double P = 0.1;
     public static final double I = 0.0;
     public static final double D = 0.0;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.00016;
+    public static final double FF = 0.016;
     public static final double Iz = 0.0;
 
     public static final double TARGET_RPM = 5676;

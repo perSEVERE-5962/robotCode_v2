@@ -55,7 +55,7 @@ import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.DriverTuning;
 import frc.robot.util.HubScoringUtil;
-import frc.robot.util.SysId;
+//import frc.robot.util.SysId;
 import java.io.File;
 import java.util.Set;
 import swervelib.SwerveInputStream;
@@ -378,14 +378,14 @@ public class RobotContainer {
       driverXbox.back().whileTrue(new SetIntakePosition());
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock,
       // drivebase).repeatedly());
-      driverXbox.povDown().whileTrue(SysId.agitatorSysIdCommand());
-      driverXbox.povLeft().whileTrue(SysId.indexerSysIdCommand());
-      driverXbox.povUp().whileTrue(SysId.shooterSysIdCommand());
-      driverXbox.povRight().whileTrue(SysId.intakePivotSysIdCommand());
-      driverXbox.rightBumper().whileTrue(SysId.intakeRollerSysIdCommand());
-      driverXbox.leftBumper().whileTrue(SysId.hangerSysIdCommand());
-      driverXbox.rightTrigger().whileTrue(drivebase.sysIdAngleMotorCommand());
-      driverXbox.leftTrigger().whileTrue(drivebase.sysIdDriveMotorCommand());
+      // driverXbox.povDown().whileTrue(SysId.agitatorSysIdCommand());
+      // driverXbox.povLeft().whileTrue(SysId.indexerSysIdCommand());
+      // driverXbox.povUp().whileTrue(SysId.shooterSysIdCommand());
+      // driverXbox.povRight().whileTrue(SysId.intakePivotSysIdCommand());
+      // driverXbox.rightBumper().whileTrue(SysId.intakeRollerSysIdCommand());
+      // driverXbox.leftBumper().whileTrue(SysId.hangerSysIdCommand());
+      // driverXbox.rightTrigger().whileTrue(drivebase.sysIdAngleMotorCommand());
+      // driverXbox.leftTrigger().whileTrue(drivebase.sysIdDriveMotorCommand());
 
       // copilotXbox
       //     .y()
