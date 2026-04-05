@@ -5,7 +5,7 @@ import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
-public class Agitator extends Actuator {
+public class Agitator extends MaxActuator {
   private static Agitator instance;
   private static final TunableNumber kP =
       new TunableNumber("Agitator/kP", Constants.AgitatorConstants.kP);

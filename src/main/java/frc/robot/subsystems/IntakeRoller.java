@@ -7,7 +7,7 @@ import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
-public class IntakeRoller extends Actuator {
+public class IntakeRoller extends MaxActuator {
   private SparkMax motor;
   private static IntakeRoller instance;
 

@@ -4,7 +4,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.HangerConstants;
 import frc.robot.util.TunableNumber;
 
-public class Hanger extends Actuator {
+public class Hanger extends MaxActuator {
   private static Hanger instance;
 
   private double targetPosition = 0;

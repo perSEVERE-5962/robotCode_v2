@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 
-public class IntakePivot extends Actuator {
+public class IntakePivot extends MaxActuator {
   private static IntakePivot instance;
 
   private double targetPosition = 0;

@@ -10,20 +10,20 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public abstract class FlexActuator extends SubsystemBase implements Actuator {
-  private SparkFlex motor;
+public abstract class MaxActuator extends SubsystemBase implements Actuator {
+  private SparkMax motor;
   private RelativeEncoder encoder;
   private SparkAbsoluteEncoder absoluteEncoder;
   private boolean useThroughBoreEncoder;
 
-  protected FlexActuator(
+  protected MaxActuator(
       int kID,
       double kP,
       double kI,
@@ -44,8 +44,8 @@ public abstract class FlexActuator extends SubsystemBase implements Actuator {
       boolean useSoftLimits,
       boolean useCos) {
 
-    motor = new SparkFlex(kID, SparkLowLevel.MotorType.kBrushless);
-    SparkFlexConfig motorConfig = new SparkFlexConfig();
+    motor = new SparkMax(kID, SparkLowLevel.MotorType.kBrushless);
+    SparkMaxConfig motorConfig = new SparkMaxConfig();
 
     motorConfig.inverted(inverted);
     motorConfig.idleMode(coast ? SparkBaseConfig.IdleMode.kCoast : SparkBaseConfig.IdleMode.kBrake);
@@ -138,7 +138,7 @@ public abstract class FlexActuator extends SubsystemBase implements Actuator {
     motor.set(speed);
   }
 
-  public SparkFlex getMotor() {
+  public SparkMax getMotor() {
     return motor;
   }
 
@@ -153,7 +153,7 @@ public abstract class FlexActuator extends SubsystemBase implements Actuator {
 
   /** Hot-reload PID values. Creates new config, takes a few ms. */
   public void updatePID(double kP, double kI, double kD, double kV) {
-    SparkFlexConfig config = new SparkFlexConfig();
+    SparkMaxConfig config = new SparkMaxConfig();
     config.closedLoop.p(kP).i(kI).d(kD);
     config.closedLoop.feedForward.kV(kV);
     motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
