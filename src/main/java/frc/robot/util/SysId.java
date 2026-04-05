@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,14 +25,16 @@ public class SysId {
 
   public static Command agitatorSysIdCommand() {
     Agitator inst = Agitator.getInstance();
+    final VoltageOut m_voltReq = new VoltageOut(0.0);
     SysIdRoutine routine =
         new SysIdRoutine(
             new Config(),
             new Mechanism(
-                (Voltage voltage) -> inst.getMotor().setVoltage(voltage),
+                (Voltage voltage) ->
+                    inst.getMotor().setControl(m_voltReq.withOutput(voltage.in(Volts))),
                 (SysIdRoutineLog log) -> {
                   log.motor("agitator")
-                      .voltage(Volts.of(inst.getMotor().getBusVoltage()))
+                      .voltage(inst.getMotor().getMotorVoltage().getValue())
                       .linearPosition(Meters.of(inst.getPosition()))
                       .linearVelocity(MetersPerSecond.of(inst.getMotorVelocity()));
                 },
@@ -124,14 +127,16 @@ public class SysId {
 
   public static Command intakePivotSysIdCommand() {
     IntakePivot inst = IntakePivot.getInstance();
+    final VoltageOut m_voltReq = new VoltageOut(0.0);
     SysIdRoutine routine =
         new SysIdRoutine(
             new Config(),
             new Mechanism(
-                (Voltage voltage) -> inst.getMotor().setVoltage(voltage),
+                (Voltage voltage) ->
+                    inst.getMotor().setControl(m_voltReq.withOutput(voltage.in(Volts))),
                 (SysIdRoutineLog log) -> {
                   log.motor("intakePivot")
-                      .voltage(Volts.of(inst.getMotor().getBusVoltage()))
+                      .voltage(inst.getMotor().getMotorVoltage().getValue())
                       .linearPosition(Meters.of(inst.getPosition()))
                       .linearVelocity(MetersPerSecond.of(inst.getMotorVelocity()));
                 },
