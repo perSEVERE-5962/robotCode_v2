@@ -28,9 +28,11 @@ import frc.robot.util.PostMatchSummary;
 import frc.robot.util.PreMatchDiagnostics;
 import frc.robot.util.PredictiveAlerts;
 import java.lang.reflect.Field;
+import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
@@ -84,7 +86,12 @@ public class Robot extends LoggedRobot {
       Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
       Logger.recordMetadata("GitDirty", BuildConstants.DIRTY == 1 ? "true" : "false");
 
-      if (isReal()) {
+      if (Constants.REPLAY) {
+        String inPath = LogFileUtil.findReplayLog();
+        String outPath = LogFileUtil.addPathSuffix(inPath, "_sim");
+        Logger.setReplaySource(new WPILOGReader(inPath));
+        Logger.addDataReceiver(new WPILOGWriter(outPath));
+      } else if (isReal()) {
         // USB logging, skip if USB not mounted
         try {
           Logger.addDataReceiver(new WPILOGWriter());
