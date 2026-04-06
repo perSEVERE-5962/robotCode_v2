@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swervedrive;
 
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -7,10 +9,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Cameras;
@@ -157,74 +161,181 @@ public class Vision {
     ChassisSpeeds fieldVel = swerveDrive.getFieldVelocity();
     double speedMps = Math.hypot(fieldVel.vxMetersPerSecond, fieldVel.vyMetersPerSecond);
 
+    // Gyro rate for mid-spin rejection
+    double gyroRateDps = swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond);
+
+    // Alliance for opposing-tag rejection
+    boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
+
     blendingActive = false;
     blendWeight = 0;
 
     double now = Timer.getFPGATimestamp();
 
-    for (Cameras camera : Cameras.values()) {
-      Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
-      if (poseEst.isPresent()) {
-        var pose = poseEst.get();
-        swerveDrive.addVisionMeasurement(
-            pose.estimatedPose.toPose2d(), pose.timestampSeconds, camera.curStdDevs);
+    boolean underDefense = VisionFilter.isUnderDefense(gyroRateDps, speedMps);
 
-        if (poseEst.isEmpty()) {
-          continue;
+    // Find freshest frame across all cameras so we can skip stale ones
+    double freshestTimestamp = 0;
+    for (Cameras cam : Cameras.values()) {
+      if (!cam.resultsList.isEmpty()) {
+        for (PhotonPipelineResult r : cam.resultsList) {
+          freshestTimestamp = Math.max(freshestTimestamp, r.getTimestampSeconds());
         }
-
-        EstimatedRobotPose est = poseEst.get();
-
-        // Reject stale (>1s old) or future timestamps
-        double age = now - est.timestampSeconds;
-        if (age < 0 || age > 1.0) {
-          continue;
-        }
-
-        int tagCount = est.targetsUsed.size();
-        double worstAmbiguity = getWorstAmbiguity(est);
-
-        RejectionReason reason =
-            VisionFilter.evaluate(
-                est.estimatedPose,
-                tagCount,
-                worstAmbiguity,
-                gyroHeading,
-                currentFusedPose,
-                autoElapsed);
-
-        if (reason != RejectionReason.ACCEPTED) {
-          rejectedCount++;
-          rejectionsByGate[reason.ordinal()]++;
-          lastRejection = reason;
-          continue;
-        }
-
-        acceptedCount++;
-
-        double avgDist = getAverageTagDistance(est, swerveDrive);
-        Matrix<N3, N1> stdDevs =
-            VisionFilter.computeStdDevs(
-                tagCount,
-                avgDist,
-                speedMps,
-                camera.getSingleTagStdDevs(),
-                camera.getMultiTagStdDevs());
-
-        // Pose blending for single-tag close estimates
-        Pose2d poseToUse = est.estimatedPose.toPose2d();
-        if (tagCount == 1 && avgDist < VisionFilter.BLEND_DISTANCE_THRESHOLD_M) {
-          double w = VisionFilter.computeBlendWeight(avgDist);
-          if (w > 0) {
-            poseToUse = VisionFilter.blendPose(currentFusedPose, poseToUse, w);
-            blendingActive = true;
-            blendWeight = Math.max(blendWeight, w);
-          }
-        }
-
-        swerveDrive.addVisionMeasurement(poseToUse, est.timestampSeconds, stdDevs);
       }
     }
+
+    for (Cameras camera : Cameras.values()) {
+      if (!camera.camera.isConnected()) {
+        continue;
+      }
+
+      Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
+      if (poseEst.isEmpty()) {
+        continue;
+      }
+
+      EstimatedRobotPose est = poseEst.get();
+
+      // Reject future timestamps
+      double age = now - est.timestampSeconds;
+      if (age < 0) {
+        continue;
+      }
+
+      // Skip frames that lag behind the freshest camera by too much
+      if (freshestTimestamp > 0
+          && (freshestTimestamp - est.timestampSeconds)
+              > VisionFilter.FRAME_RECENCY_THRESHOLD_SEC) {
+        continue;
+      }
+
+      int tagCount = est.targetsUsed.size();
+      double worstAmbiguity = getWorstAmbiguity(est);
+      double avgDist = getAverageTagDistance(est, swerveDrive);
+
+      // Collect tag IDs for opposing alliance gate
+      int[] estTagIds = new int[est.targetsUsed.size()];
+      for (int i = 0; i < est.targetsUsed.size(); i++) {
+        estTagIds[i] = est.targetsUsed.get(i).getFiducialId();
+      }
+
+      RejectionReason reason =
+          VisionFilter.evaluate(
+              est.estimatedPose,
+              tagCount,
+              worstAmbiguity,
+              gyroHeading,
+              currentFusedPose,
+              autoElapsed,
+              gyroRateDps,
+              speedMps,
+              age,
+              isBlue,
+              estTagIds,
+              avgDist,
+              underDefense);
+
+      // If ambiguous, try resolving by picking the PnP solution closer to odometry
+      Pose3d poseToFilter = est.estimatedPose;
+      boolean resolvedAmbiguity = false;
+      if (reason == RejectionReason.AMBIGUITY && tagCount == 1) {
+        Optional<Pose3d> resolved = resolveAmbiguousPose(est, camera, currentFusedPose);
+        if (resolved.isPresent()) {
+          poseToFilter = resolved.get();
+          resolvedAmbiguity = true;
+          // Re-run remaining gates on resolved pose (skip ambiguity check)
+          reason =
+              VisionFilter.evaluate(
+                  poseToFilter,
+                  tagCount,
+                  0.0, // pass ambiguity gate this time
+                  gyroHeading,
+                  currentFusedPose,
+                  autoElapsed,
+                  gyroRateDps,
+                  speedMps,
+                  age,
+                  isBlue,
+                  estTagIds,
+                  avgDist,
+                  underDefense);
+        }
+      }
+
+      if (reason != RejectionReason.ACCEPTED) {
+        rejectedCount++;
+        rejectionsByGate[reason.ordinal()]++;
+        lastRejection = reason;
+        continue;
+      }
+
+      acceptedCount++;
+
+      Matrix<N3, N1> stdDevs =
+          VisionFilter.computeStdDevs(
+              tagCount,
+              avgDist,
+              speedMps,
+              camera.getSingleTagStdDevs(),
+              camera.getMultiTagStdDevs());
+
+      // Under defense, odometry drifts from wheel slip so we trust vision more
+      if (underDefense) {
+        stdDevs = stdDevs.times(VisionFilter.DEFENSE_STD_DEV_SCALE);
+      }
+
+      // Resolved ambiguity is still less confident than an unambiguous reading
+      if (resolvedAmbiguity) {
+        stdDevs = stdDevs.times(VisionFilter.AMBIGUITY_STD_DEV_INFLATE);
+      }
+
+      // Pose blending for single-tag close estimates
+      Pose2d poseToUse = poseToFilter.toPose2d();
+      if (tagCount == 1 && avgDist < VisionFilter.BLEND_DISTANCE_THRESHOLD_M) {
+        double w = VisionFilter.computeBlendWeight(avgDist);
+        if (w > 0) {
+          poseToUse = VisionFilter.blendPose(currentFusedPose, poseToUse, w);
+          blendingActive = true;
+          blendWeight = Math.max(blendWeight, w);
+        }
+      }
+
+      swerveDrive.addVisionMeasurement(poseToUse, est.timestampSeconds, stdDevs);
+    }
+  }
+
+  /**
+   * For ambiguous single-tag detections, compare both PnP solutions and pick the one closer to
+   * where odometry thinks we are. Returns empty if we can't resolve it.
+   */
+  private Optional<Pose3d> resolveAmbiguousPose(
+      EstimatedRobotPose est, Cameras camera, Pose2d currentPose) {
+    if (est.targetsUsed.size() != 1) {
+      return Optional.empty();
+    }
+
+    PhotonTrackedTarget target = est.targetsUsed.get(0);
+    Optional<Pose3d> tagFieldPose = fieldLayout.getTagPose(target.getFiducialId());
+    if (tagFieldPose.isEmpty()) {
+      return Optional.empty();
+    }
+
+    // Best pose is what PhotonPoseEstimator already computed
+    Pose3d bestPose = est.estimatedPose;
+
+    // Compute alternate pose from the other PnP solution
+    // robotPose = tagPose * cameraToTarget^-1 * robotToCam^-1
+    Transform3d altCamToTarget = target.getAlternateCameraToTarget();
+    Transform3d robotToCam = camera.getRobotToCamera();
+    Pose3d altPose =
+        tagFieldPose.get().transformBy(altCamToTarget.inverse()).transformBy(robotToCam.inverse());
+
+    // Pick whichever is closer to current odometry
+    double bestDist =
+        bestPose.toPose2d().getTranslation().getDistance(currentPose.getTranslation());
+    double altDist = altPose.toPose2d().getTranslation().getDistance(currentPose.getTranslation());
+
+    return Optional.of(altDist < bestDist ? altPose : bestPose);
   }
 
   /** Get the worst (highest) ambiguity across all targets in an estimate. */

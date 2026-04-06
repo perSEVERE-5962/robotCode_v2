@@ -1,0 +1,63 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.677432432432433,
+        "y": 5.595427927927927
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 8.99617192247818,
+        "y": 7.631722110003823
+      },
+      "isLocked": false,
+      "linkedName": "depotBallsPicked"
+    },
+    {
+      "anchor": {
+        "x": 2.6527840909090905,
+        "y": 5.993295454545455
+      },
+      "prevControl": {
+        "x": 0.8800113636319538,
+        "y": 8.415397727274602
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "DepotSideScore"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.27945060750132106,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": -178.3153156819729
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 130.0302592721165
+  },
+  "reversed": false,
+  "folder": "depotAutoPaths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -99.46232220802536
+  },
+  "useDefaultConstraints": true
+}

@@ -3,6 +3,7 @@ package frc.robot.telemetry;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.util.EventMarker;
@@ -16,6 +17,7 @@ import java.util.function.Supplier;
 public class TelemetryManager {
   private static TelemetryManager instance;
   private final List<SubsystemTelemetry> telemetryList = new ArrayList<>();
+  private final List<SubsystemTelemetry> tuningOnlyList = new ArrayList<>();
 
   private int cycleFailures = 0;
   private String lastFailedName = "none";
@@ -94,6 +96,7 @@ public class TelemetryManager {
     driverFeedbackTelemetry = new DriverFeedbackTelemetry();
     ledTelemetry = new LEDTelemetry();
 
+    // Competition: always registered
     telemetryList.add(systemHealthTelemetry);
     telemetryList.add(commandsTelemetry);
     telemetryList.add(driveTelemetry);
@@ -101,19 +104,21 @@ public class TelemetryManager {
     telemetryList.add(indexerTelemetry);
     telemetryList.add(intakeTelemetry);
     telemetryList.add(intakeActuatorTelemetry);
-    telemetryList.add(hangerTelemetry);
     telemetryList.add(visionTelemetry);
     telemetryList.add(scoringTelemetry);
     telemetryList.add(new MatchTelemetry());
     telemetryList.add(networkTelemetry);
     telemetryList.add(driverInputTelemetry);
-    telemetryList.add(matchStatsTelemetry);
-    telemetryList.add(shotVisualizerTelemetry);
-    telemetryList.add(shotPredictorTelemetry);
     telemetryList.add(canHealthTelemetry);
     telemetryList.add(driverFeedbackTelemetry);
     telemetryList.add(ledTelemetry);
     telemetryList.add(agitatorTelemetry);
+
+    // Debug only: skipped in competition updateAll() to cut ~119 signals + LoggedTracer overhead
+    tuningOnlyList.add(hangerTelemetry);
+    tuningOnlyList.add(matchStatsTelemetry);
+    tuningOnlyList.add(shotVisualizerTelemetry);
+    tuningOnlyList.add(shotPredictorTelemetry);
 
     // Register signals that should not stay true for extended periods
     stalenessTrackers.put(
@@ -182,12 +187,31 @@ public class TelemetryManager {
 
     for (SubsystemTelemetry telemetry : telemetryList) {
       String name = safeGetName(telemetry);
-      double segStart = Timer.getFPGATimestamp();
-      runSafely(telemetry::update, name + "/update");
-      runSafely(telemetry::log, name + "/log");
-      SafeLog.put(
-          "LoggedTracer/Tel/" + name + "Ms", (Timer.getFPGATimestamp() - segStart) * 1000.0);
+      if (Constants.TUNING_MODE) {
+        double segStart = Timer.getFPGATimestamp();
+        runSafely(telemetry::update, name + "/update");
+        runSafely(telemetry::log, name + "/log");
+        SafeLog.put(
+            "LoggedTracer/Tel/" + name + "Ms", (Timer.getFPGATimestamp() - segStart) * 1000.0);
+      } else {
+        runSafely(telemetry::update, name + "/update");
+        runSafely(telemetry::log, name + "/log");
+      }
     }
+
+    // Tuning-only telemetry: fully skipped in competition (no update, no log)
+    if (Constants.TUNING_MODE) {
+      for (SubsystemTelemetry telemetry : tuningOnlyList) {
+        String name = safeGetName(telemetry);
+        double segStart = Timer.getFPGATimestamp();
+        runSafely(telemetry::update, name + "/update");
+        runSafely(telemetry::log, name + "/log");
+        SafeLog.put(
+            "LoggedTracer/Tel/" + name + "Ms", (Timer.getFPGATimestamp() - segStart) * 1000.0);
+      }
+    }
+
+    SafeLog.put("Config/TuningMode", Constants.TUNING_MODE);
 
     runSafely(EventMarker::flushCycleEvents, "EventMarker/flush");
     runSafely(this::checkStaleness, "Health/Staleness");
@@ -395,14 +419,17 @@ public class TelemetryManager {
   }
 
   public boolean isHubActive() {
-    return getSafely(() -> scoringTelemetry.isHubActive(), true);
+    return getSafely(
+        () -> frc.robot.util.HubShiftEngine.getInstance().getOfficialInfo().hubActive(), true);
   }
 
   public double getTimeToNextShiftSec() {
-    return getSafely(() -> scoringTelemetry.getTimeToNextShiftSec(), 0.0);
+    return getSafely(
+        () -> frc.robot.util.HubShiftEngine.getInstance().getOfficialInfo().remainingInState(),
+        0.0);
   }
 
   public boolean isWonAuto() {
-    return getSafely(() -> scoringTelemetry.isWonAuto(), false);
+    return getSafely(() -> frc.robot.util.HubShiftEngine.getInstance().isWonAuto(), false);
   }
 }

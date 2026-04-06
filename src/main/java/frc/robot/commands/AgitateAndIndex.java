@@ -12,10 +12,10 @@ public class AgitateAndIndex extends Command {
   private Indexer indexer;
   private double indexRPM;
 
-  public AgitateAndIndex(double agitateRPM, double indexRPM, BooleanSupplier arcDriveOn) {
+  public AgitateAndIndex(double indexRPM, double agitateRPM) {
     this.agitateRPM = agitateRPM;
     agitator = Agitator.getInstance();
-    this.arcDriveOn = arcDriveOn;
+
     this.indexRPM = indexRPM;
     indexer = Indexer.getInstance();
     addRequirements(agitator, indexer);
@@ -23,27 +23,20 @@ public class AgitateAndIndex extends Command {
 
   @Override
   public void initialize() {
-    agitator.moveToVelocityWithPID(-600);
+    agitator.moveToVelocityWithPID(agitateRPM);
   }
 
   @Override
   public void execute() {
-    if (arcDriveOn.getAsBoolean() && HubArcDrive.checkHeadingError()) {
-      indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
-      agitator.moveToVelocityWithPID(agitateRPM);
-    } else if (arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
-      indexer.moveToVelocityWithPID(0);
-      agitator.moveToVelocityWithPID(0);
-    } else {
-      indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
-      agitator.moveToVelocityWithPID(agitateRPM);
-    }
+
+    indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
+    agitator.moveToVelocityWithPID(agitateRPM);
   }
 
   @Override
   public void end(boolean interrupted) {
     indexer.moveToVelocityWithPID(0);
-    agitator.moveToVelocityWithPID(0);
+    agitator.move(0);
   }
 
   @Override

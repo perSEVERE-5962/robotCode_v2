@@ -8,6 +8,7 @@ import static frc.robot.Constants.HubScoringConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,20 +30,27 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AgitateAndIndex;
+import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.DeployIntake;
+import frc.robot.commands.FeedEject;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
+import frc.robot.commands.MoveAgitator;
 import frc.robot.commands.PivotIntake;
-import frc.robot.commands.RetractIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.sim.SimDriveOverride;
+import frc.robot.subsystems.Agitator;
+import frc.robot.subsystems.Hanger;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.IntakeRoller;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.DriverTuning;
-import frc.robot.util.HubScoringUtil;
 import java.io.File;
 import java.util.Set;
 import swervelib.SwerveInputStream;
@@ -61,7 +69,12 @@ public class RobotContainer {
 
   final CommandJoystick driverJoystick = new CommandJoystick(2);
   private final SendableChooser<Command> autoChooser;
-
+  Shooter shooter = Shooter.getInstance();
+  Indexer indexer = Indexer.getInstance();
+  Agitator agitator = Agitator.getInstance();
+  IntakePivot intakePivot = IntakePivot.getInstance();
+  IntakeRoller intakeRoller = IntakeRoller.getInstance();
+  Hanger hanger = Hanger.getInstance();
   private boolean useLeftOffset = true;
   private static RobotContainer instance;
 
@@ -159,13 +172,62 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   private RobotContainer() {
     // Configure the trigger bindings
+    registerNamedAutoCommands();
+
+    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    // drivebase.setupPathPlanner();
+    // Another option that allows you to specify the default auto by its name
+    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+
     configureBindings();
+    new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
     DriverStation.silenceJoystickConnectionWarning(true);
+
+    frc.robot.util.ShotCalculator.getInstance().setSwerve(drivebase);
+
+    // Build an auto chooser. This will use Commands.none() as the default option.
+    // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
+    DriverTuning.initialize();
+
+    // Wire up telemetry references
+    TelemetryManager.getInstance().setVision(drivebase.getVision());
+    TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
+    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
+    DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
+    // autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
+
+    // Fire control init
+
+    // Pre-spin: auto-spin shooter 5s before hub goes active so RPM is ready at window open.
+    // Requires Shooter so it yields to AimAndShootCommand when operator presses RT.
+    // runEnd stops the motor when the trigger goes false.
+    // new Trigger(
+    //         () -> {
+    //           var info = frc.robot.util.HubShiftEngine.getInstance().getOfficialInfo();
+    //           return !info.hubActive()
+    //               && info.timeToNextActive() > 0
+    //               && info.timeToNextActive() < 5.0;
+    //         })
+    //     .whileTrue(
+    //         Commands.runEnd(
+    //             () ->
+    //                 Shooter.getInstance()
+    //                     .moveToVelocityWithPID(Shooter.getInstance().getTunableTargetRPM()),
+    //             () -> Shooter.getInstance().move(0),
+    //             Shooter.getInstance()));
+
+    // Hub deactivation warning is handled inside DriverFeedback.update() so it
+    // doesn't compete with other haptic patterns for HID rumble output.
+  }
+
+  private void registerNamedAutoCommands() {
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
     NamedCommands.registerCommand("DeployIntake", new DeployIntake());
 
     NamedCommands.registerCommand("HoldAndRunIntake", new HoldAndIntake());
-    NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(3));
+    NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(4));
 
     NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
     NamedCommands.registerCommand("TimedShoot", new SpeedUpThenIndex().withTimeout(8));
@@ -183,26 +245,31 @@ public class RobotContainer {
         "ShakeIntakeAndScore",
         ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
                 .repeatedly())
-            .alongWith(new SpeedUpThenIndex()));
+            .alongWith(
+                new AimAndShootCommand(
+                    drivebase,
+                    shooter,
+                    indexer,
+                    agitator,
+                    () -> -driverXbox.getLeftY() * -1,
+                    () -> -driverXbox.getLeftX() * -1,
+                    false)));
+    NamedCommands.registerCommand(
+        "ShakeIntakeAndScoreWithTimeout",
+        ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+                .repeatedly())
+            .alongWith(
+                new AimAndShootCommand(
+                    drivebase,
+                    shooter,
+                    indexer,
+                    agitator,
+                    () -> -driverXbox.getLeftY() * -1,
+                    () -> -driverXbox.getLeftX() * -1,
+                    true))
+            .withTimeout(3.67));
 
     NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
-
-    // Build an auto chooser. This will use Commands.none() as the default option.
-    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
-
-    // Another option that allows you to specify the default auto by its name
-    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
-
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-
-    // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
-    DriverTuning.initialize();
-
-    // Wire up telemetry references
-    TelemetryManager.getInstance().setVision(drivebase.getVision());
-    TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
-    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
-    DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
   }
 
   /**
@@ -285,50 +352,118 @@ public class RobotContainer {
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
 
+      // driverXbox
+      //     .a()
+      //     .onTrue(
+      //         Commands.defer(
+      //             () ->
+      //                 HubScoringUtil.driveToHubCommand(
+      //                     drivebase,
+      //                     getHubCenter(),
+      //                     SCORING_DISTANCE,
+      //                     getScoringSide(),
+      //                     SCORING_ARC_WIDTH_DEGREES),
+      //             Set.of(drivebase)));
+
+      driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
+      driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
+      // driverXbox.y().whileTrue(new MoveShooter(1500));
+      // driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
+      // driverXbox.x().whileTrue(new MoveIndexer(5000));
+      driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
       driverXbox
-          .a()
-          .onTrue(
-              Commands.defer(
-                  () ->
-                      HubScoringUtil.driveToHubCommand(
-                          drivebase,
-                          getHubCenter(),
-                          SCORING_DISTANCE,
-                          getScoringSide(),
-                          SCORING_ARC_WIDTH_DEGREES),
-                  Set.of(drivebase)));
-      driverXbox.y().whileTrue(new RetractIntake());
-      driverXbox.x().toggleOnTrue(hubArcDrive);
-      driverXbox.b().onTrue(new DeployIntake());
+          .leftTrigger()
+          .whileTrue(
+              new AimAndShootCommand(
+                  drivebase,
+                  shooter,
+                  indexer,
+                  agitator,
+                  () -> -driverXbox.getLeftY() * -1,
+                  () -> -driverXbox.getLeftX() * -1,
+                  false));
+      // driverXbox.y().whileTrue(new RetractIntake());
+      driverXbox.x().whileTrue(new MoveAgitator());
+      driverXbox.a().whileTrue(new HoldAndIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
-      driverXbox.back().whileTrue(drivebase.centerModulesCommand());
+      // driverXbox.back().whileTrue(drivebase.centerModulesCommand());
+      driverXbox.back().whileTrue(new SetIntakePosition());
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock,
       // drivebase).repeatedly());
+      // driverXbox.povDown().whileTrue(SysId.agitatorSysIdCommand());
+      // driverXbox.povLeft().whileTrue(SysId.indexerSysIdCommand());
+      // driverXbox.povUp().whileTrue(SysId.shooterSysIdCommand());
+      // driverXbox.povRight().whileTrue(SysId.intakePivotSysIdCommand());
+      // driverXbox.rightBumper().whileTrue(SysId.intakeRollerSysIdCommand());
+      // driverXbox.leftBumper().whileTrue(SysId.hangerSysIdCommand());
+      // driverXbox.rightTrigger().whileTrue(drivebase.sysIdAngleMotorCommand());
+      // driverXbox.leftTrigger().whileTrue(drivebase.sysIdDriveMotorCommand());
 
-      copilotXbox
-          .y()
-          .whileTrue(
-              new AgitateAndIndex(
-                  Constants.AgitatorConstants.TARGET_RPM,
-                  Constants.IndexerConstants.TARGET_SPEED,
-                  hubArcDrive::isScheduled));
-      copilotXbox.x().whileTrue(new SetIntakePosition());
-      copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.4));
-      copilotXbox.leftBumper().whileTrue(new PivotIntake(0.4));
-      copilotXbox
-          .b()
-          .whileTrue(
-              new AgitateAndIndex(
-                  -Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
+      // copilotXbox
+      //     .y()
+      //     .whileTrue(
+      //         new AgitateAndIndex(
+      //             Constants.AgitatorConstants.TARGET_RPM,
+      //             Constants.IndexerConstants.TARGET_SPEED,
+      //             hubArcDrive::isScheduled));
+      // copilotXbox.x().whileTrue(new HoldAndIntake());
+
+      copilotXbox.rightTrigger().whileTrue(new FeedEject());
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
-      copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
+      copilotXbox.b().whileTrue(new AgitateAndIndex(-5000, -5000));
+      copilotXbox.leftBumper().whileTrue(new PivotIntake(0.3));
+      copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.3));
+      // copilotXbox
+      //     .rightTrigger()
+      //     .whileTrue(
+      //         new AimAndShootCommand(
+      //             drivebase,
+      //             Shooter.getInstance(),
+      //             Indexer.getInstance(),
+      //             Agitator.getInstance(),
+      //             () -> -driverXbox.getLeftY(),
+      //             () -> -driverXbox.getLeftX(),
+      //             false));
       copilotXbox
           .leftTrigger()
           .whileTrue(
               (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
                   .repeatedly());
 
-      //       Trigger crossingZone = new Trigger(()->{
+      // second controller Start toggles wonAuto override (fixes bad FMS data mid-match)
+      // second controller Back clears override and returns to FMS-derived schedule
+      copilotXbox
+          .start()
+          .onTrue(
+              Commands.runOnce(
+                  () -> {
+                    var engine = frc.robot.util.HubShiftEngine.getInstance();
+                    engine.setWonAutoOverride(!engine.isWonAuto());
+                  }));
+      copilotXbox.back().onTrue(new SetIntakePosition());
+
+      // emergency dump: flat RPM, immediate feed, bypasses everything
+      // copilotXbox
+      //     .povDown()
+      //     .whileTrue(
+      //         Commands.runEnd(
+      //             () -> {
+      //               Shooter.getInstance()
+      //                   .moveToVelocityWithPID(Constants.ShooterConstants.EMERGENCY_DUMP_RPM);
+      //               Indexer.getInstance()
+      //                   .moveToVelocityWithPID(Indexer.getInstance().getTunableTargetSpeed());
+      //               Agitator.getInstance().runVelocity();
+      //             },
+      //             () -> {
+      //               Shooter.getInstance().move(0);
+      //               Indexer.getInstance().move(0);
+      //               Agitator.getInstance().runVelocity();
+      //             },
+      //             Shooter.getInstance(),
+      //             Indexer.getInstance(),
+      //             Agitator.getInstance()));
+
+      // //       Trigger crossingZone = new Trigger(()->{
       //     Pose2d pose = drivebase.getPose();
       //
       // if(pose.getTranslation().getX()<RED_HUB_CENTER.getX()+1&&pose.getTranslation().getX()>RED_HUB_CENTER.getX()-1||

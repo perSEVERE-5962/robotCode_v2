@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Cameras;
 import frc.robot.Constants;
 import java.io.File;
@@ -45,7 +44,6 @@ import org.json.simple.parser.ParseException;
 import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
-import swervelib.SwerveDriveTest;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -349,23 +347,23 @@ public class SwerveSubsystem extends SubsystemBase {
    *
    * @return SysId Drive Command
    */
-  public Command sysIdDriveMotorCommand() {
-    return SwerveDriveTest.generateSysIdCommand(
-        SwerveDriveTest.setDriveSysIdRoutine(new Config(), this, swerveDrive, 12, true),
-        3.0,
-        5.0,
-        3.0);
-  }
+  // public Command sysIdDriveMotorCommand() {
+  //   return SwerveDriveTest.generateSysIdCommand(
+  //       SwerveDriveTest.setDriveSysIdRoutine(new Config(), this, swerveDrive, 12, true),
+  //       3.0,
+  //       5.0,
+  //       3.0);
+  // }
 
-  /**
-   * Command to characterize the robot angle motors using SysId
-   *
-   * @return SysId Angle Command
-   */
-  public Command sysIdAngleMotorCommand() {
-    return SwerveDriveTest.generateSysIdCommand(
-        SwerveDriveTest.setAngleSysIdRoutine(new Config(), this, swerveDrive), 3.0, 5.0, 3.0);
-  }
+  // /**
+  //  * Command to characterize the robot angle motors using SysId
+  //  *
+  //  * @return SysId Angle Command
+  //  */
+  // public Command sysIdAngleMotorCommand() {
+  //   return SwerveDriveTest.generateSysIdCommand(
+  //       SwerveDriveTest.setAngleSysIdRoutine(new Config(), this, swerveDrive), 3.0, 5.0, 3.0);
+  // }
 
   /**
    * Returns a Command that centers the modules of the SwerveDrive subsystem.
@@ -719,6 +717,11 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public SwerveDrive getSwerveDrive() {
     return swerveDrive;
+  }
+
+  /** Drive with a custom center of rotation for COR-blended shooting. */
+  public void drive(ChassisSpeeds velocity, Translation2d centerOfRotation) {
+    swerveDrive.drive(velocity, centerOfRotation);
   }
 
   public Vision getVision() {

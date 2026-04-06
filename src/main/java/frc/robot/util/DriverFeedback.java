@@ -5,14 +5,14 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.telemetry.SafeLog;
 import frc.robot.telemetry.TelemetryManager;
 
 public class DriverFeedback {
   private static DriverFeedback instance;
 
-  // --- Inner types ---
-
+  // Inner types
   public record Step(double left, double right, double durationSec) {}
 
   public enum HapticTarget {
@@ -30,8 +30,7 @@ public class DriverFeedback {
     CRITICAL
   }
 
-  // --- Haptic patterns ---
-
+  // Haptic patterns
   // CRITICAL: auto result at teleop start -> BOTH controllers
   // Both start with a strong buzz (teleop started!), then indicate win/loss.
   // Right follow-up = won auto (right side = scoring/positive in our pattern language)
@@ -162,7 +161,7 @@ public class DriverFeedback {
     HUB_COUNTDOWN_5, HUB_COUNTDOWN_4, HUB_COUNTDOWN_3, HUB_COUNTDOWN_2, HUB_COUNTDOWN_1
   };
 
-  // --- Test pattern table (indexed 1-9 from Elastic slider) ---
+  // Test pattern table (indexed 1-9 from Elastic slider)
   private static final HapticPattern[] TEST_PATTERNS = {
     AUTO_WON,
     AUTO_LOST,
@@ -192,7 +191,7 @@ public class DriverFeedback {
       new TunableNumber("DriverFeedback/TestPattern", 0);
   private int lastTestPatternValue = 0;
 
-  // --- Playback engine state ---
+  // Playback engine state
   private HapticPattern activePattern = null;
   private HapticTarget activeTarget = HapticTarget.BOTH;
   private int stepIndex = 0;
@@ -201,30 +200,30 @@ public class DriverFeedback {
   private double currentRight = 0;
   private int patternCount = 0;
 
-  // --- Edge detection state ---
+  // Edge detection state
   private boolean prevReadyToShoot = false;
   private boolean prevHubActive = true; // default true (safe: no false trigger on startup)
   private boolean endgameWarningPlayed = false;
   private boolean prevEnabled = false;
   private boolean prevAutonomous = false;
 
-  // --- Jam protection edge detection ---
+  // Jam protection edge detection
   private boolean prevJamIntervening = false;
   private String lastJamSource = "none";
 
-  // --- Progressive aim ---
+  // Progressive aim
   private boolean progressiveAimActive = false;
   private double progressiveAimError = -1;
   private static final double PROGRESSIVE_AIM_STALE_TIMEOUT_SEC = 0.25;
   private double lastProgressiveAimUpdateSec = -1;
 
-  // --- Spin-up rumble (continuous background on DRIVER) ---
+  // Spin-up rumble (continuous background on DRIVER)
   private double spinUpPercent = 0;
 
-  // --- Hub graduated countdown ---
+  // Hub graduated countdown
   private int prevCountdownSecond = -1;
 
-  // --- Game data missing alert (repeats during transition) ---
+  // Game data missing alert (repeats during transition)
   // Transition period is ~10s from teleop start. If FMS is attached but hasn't
   // sent the 'R'/'B' auto-winner message, hub shift logic is running blind.
   private static final double GAME_DATA_TRANSITION_SEC = 10.0;
@@ -232,11 +231,11 @@ public class DriverFeedback {
   private double lastGameDataAlertTime = 0;
   private double teleopStartTime = -1;
 
-  // --- Accessibility ---
+  // Accessibility
   private static final TunableNumber hapticScale =
       new TunableNumber("DriverFeedback/hapticScale", 1.0);
 
-  // --- Controllers ---
+  // Controllers
   private GenericHID controller = null;
   private GenericHID copilotController = null;
 
@@ -309,7 +308,7 @@ public class DriverFeedback {
       prevHubActive = hubActive;
     }
 
-    // --- No haptics while disabled ---
+    // No haptics while disabled
     if (!isEnabled) {
       // Keep edge state in sync so we don't get false triggers on re-enable
       prevReadyToShoot = readyToShoot;
@@ -324,7 +323,7 @@ public class DriverFeedback {
       return;
     }
 
-    // --- Match phase events (CRITICAL -> BOTH) ---
+    // Match phase events (CRITICAL -> BOTH)
     // At auto-to-teleop transition, signal whether we won or lost auto.
     // FMS sends 'R' or 'B' via game-specific message; ScoringTelemetry parses it.
     // Won auto = our hub inactive first (collect/defend), lost = hub active (score NOW).
@@ -339,7 +338,7 @@ public class DriverFeedback {
       }
     }
 
-    // --- Game data missing alert (CRITICAL -> BOTH, repeats every 2s) ---
+    // Game data missing alert (CRITICAL -> BOTH, repeats every 2s)
     // FMS attached but no auto-winner data during transition period = hub logic is guessing
     if (isEnabled && !isAutonomous && teleopStartTime > 0) {
       double teleopElapsed = now - teleopStartTime;
@@ -357,7 +356,7 @@ public class DriverFeedback {
       }
     }
 
-    // --- Hub shift events (HIGH -> COPILOT) ---
+    // Hub shift events (HIGH -> COPILOT)
     if (hubActive && !prevHubActive) {
       playPattern(HUB_ACTIVATED);
     }
@@ -365,20 +364,20 @@ public class DriverFeedback {
       playPattern(HUB_DEACTIVATED);
     }
 
-    // --- Graduated hub countdown (5s to 1s, MEDIUM -> BOTH) ---
+    // Graduated hub countdown (5s to 1s, MEDIUM -> BOTH)
     int countdownSec =
         (timeToNextShift > 0 && timeToNextShift <= 5.5) ? (int) Math.ceil(timeToNextShift) : -1;
     if (countdownSec >= 1 && countdownSec <= 5 && countdownSec != prevCountdownSecond) {
-      playPattern(HUB_COUNTDOWN[countdownSec - 1]);
+      playPattern(HUB_COUNTDOWN[5 - countdownSec]);
     }
     prevCountdownSecond = (timeToNextShift > 0) ? countdownSec : -1;
 
-    // --- Scoring events (HIGH -> COPILOT) ---
+    // Scoring events (HIGH -> COPILOT)
     if (readyToShoot && !prevReadyToShoot) {
       playPattern(READY_TO_SHOOT);
     }
 
-    // --- Jam protection events (HIGH -> COPILOT) ---
+    // Jam protection events (HIGH -> COPILOT)
     if (jamIntervening && !prevJamIntervening) {
       playPattern(JAM_DETECTED);
       // Capture which subsystem triggered so pit crew can see it in telemetry
@@ -398,7 +397,7 @@ public class DriverFeedback {
     prevEnabled = isEnabled;
     prevAutonomous = isAutonomous;
 
-    // --- Pattern playback ---
+    // Pattern playback
     if (activePattern != null) {
       Step step = activePattern.steps()[stepIndex];
       double elapsed = now - stepStartTime;
@@ -422,7 +421,7 @@ public class DriverFeedback {
       }
     }
 
-    // --- Progressive aim (only when no pattern active, routes to COPILOT) ---
+    // Progressive aim (only when no pattern active, routes to COPILOT)
     HapticTarget rumbleTarget = activeTarget;
     if (activePattern == null && progressiveAimActive && progressiveAimError >= 0) {
       rumbleTarget = HapticTarget.COPILOT;
@@ -444,8 +443,27 @@ public class DriverFeedback {
       currentLeft = normalized * maxIntensity;
       currentRight = 0;
     } else if (activePattern == null && !progressiveAimActive) {
-      currentLeft = 0;
-      currentRight = 0;
+      // Hub deactivation urgency: increasing left rumble when hub window is closing
+      double deactTime = 0;
+      try {
+        var info = HubShiftEngine.getInstance().getOfficialInfo();
+        if (info.hubActive()
+            && info.timeUntilDeactivation() < 8.0
+            && info.timeUntilDeactivation() > 0
+            && DriverStation.isTeleop()) {
+          deactTime = info.timeUntilDeactivation();
+        }
+      } catch (RuntimeException e) {
+        // fail-open: no urgency rumble if HubShiftEngine unavailable
+      }
+      if (deactTime > 0 && deactTime < 8.0) {
+        double urgency = 1.0 - (deactTime / 8.0);
+        urgency = Math.max(0, Math.min(1, urgency));
+        currentLeft = urgency * hapticScale.get();
+      } else {
+        currentLeft = 0;
+        currentRight = 0;
+      }
     }
 
     // Apply scale and clamp
@@ -465,11 +483,13 @@ public class DriverFeedback {
     applyRumble(controller, driverRumble ? left : 0, driverRumble ? right : 0);
     applyRumble(copilotController, copilotRumble ? left : 0, copilotRumble ? right : 0);
 
-    // Diagnostic signals so pit crew can verify copilot is actually connected
     SafeLog.put("DriverFeedback/CopilotConnected", hasCopilot);
-    SafeLog.put(
-        "DriverFeedback/CopilotPort", copilotController != null ? copilotController.getPort() : -1);
     SafeLog.put("DriverFeedback/JamSource", lastJamSource);
+    if (Constants.TUNING_MODE) {
+      SafeLog.put(
+          "DriverFeedback/CopilotPort",
+          copilotController != null ? copilotController.getPort() : -1);
+    }
   }
 
   private void applyRumble(GenericHID hid, double left, double right) {
@@ -530,8 +550,7 @@ public class DriverFeedback {
     applyRumble(copilotController, 0, 0);
   }
 
-  // --- Accessors for telemetry ---
-
+  // Accessors for telemetry
   public String getActivePatternName() {
     return activePattern != null ? activePattern.name() : "none";
   }

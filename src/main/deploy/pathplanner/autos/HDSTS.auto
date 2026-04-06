@@ -1,0 +1,107 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FS aim+drive pt1"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "FS aim+drive pt2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoldAndRunIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "FS shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoldAndRunIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScoreWithTimeout"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "HS"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoldAndRunIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "HS shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoldAndRunIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScore"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "New plans test",
+  "choreoAuto": false
+}

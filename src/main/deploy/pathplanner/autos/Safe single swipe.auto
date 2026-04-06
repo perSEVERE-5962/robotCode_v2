@@ -1,0 +1,63 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "safe pt1"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "safe FS"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoldAndRunIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "safe FSS"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoldAndRunIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScore"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "New plans test",
+  "choreoAuto": false
+}

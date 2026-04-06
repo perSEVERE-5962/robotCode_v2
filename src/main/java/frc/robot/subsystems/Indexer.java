@@ -53,14 +53,14 @@ public class Indexer extends FlexActuator {
         Constants.IndexerConstants.Iz,
         0,
         0,
-        true,
+        false,
         false,
         false);
     motor = getMotor();
     motorConfig = new SparkFlexConfig();
 
-    motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(20);
-
+    motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(45);
+    motorConfig.voltageCompensation(12.0);
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
@@ -70,8 +70,12 @@ public class Indexer extends FlexActuator {
 
   @Override
   public void periodic() {
-    TunableNumber.ifChanged(
-        () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+    try {
+      TunableNumber.ifChanged(
+          () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+    } catch (Throwable t) {
+      // CAN fault during PID update must not kill scheduler
+    }
 
     // JamProtection detects and reports only. It never overrides the motor.
     // Telemetry reads the state; the driver decides what to do about it.
