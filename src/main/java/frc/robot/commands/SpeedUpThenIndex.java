@@ -19,14 +19,12 @@ public class SpeedUpThenIndex extends Command {
 
   private Agitator agitator;
   private Indexer indexer;
-  private AgitatorTelemetry agitatorTelemetry;
 
   public SpeedUpThenIndex() {
     // Use addRequirements() here to declare subsystem dependencies.
     shooter = Shooter.getInstance();
     indexer = Indexer.getInstance();
     agitator = Agitator.getInstance();
-    agitatorTelemetry = new AgitatorTelemetry();
     addRequirements(shooter, indexer, agitator);
   }
 
@@ -44,9 +42,6 @@ public class SpeedUpThenIndex extends Command {
       indexer.moveToVelocityWithPID(Indexer.getTunableTargetSpeed());
       agitator.moveToVelocityWithPID(Agitator.getTunableTargetRPM());
     }
-    // if (AgitatorTelemetry.isStalled()) {
-    //   agitator.moveToVelocityWithPID(-2000);
-    // }
   }
 
   // Called once the command ends or is interrupted.
