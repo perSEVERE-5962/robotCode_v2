@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
-import frc.robot.telemetry.AgitatorTelemetry;
 
 /*
  * Command to speed up shooter then run indexer.
