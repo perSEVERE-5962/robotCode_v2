@@ -74,15 +74,15 @@ Go/no-go verdict in 30 seconds. Top = health, middle = motor temps, bottom = sen
 | Top Issue 3 | Text Display | 3x1 | Summary/TopIssue3 |
 | Shooter Temp | Number Bar | 3x1 | Shooter/TemperatureCelsius |
 | Indexer Temp | Number Bar | 3x1 | Indexer/TemperatureCelsius |
-| Intake Temp | Number Bar | 3x1 | Intake/TemperatureCelsius |
-| IntakeAct Temp | Number Bar | 3x1 | IntakeActuator/TemperatureCelsius |
+| IntakeRoller Temp | Number Bar | 3x1 | IntakeRoller/TemperatureCelsius |
+| IntakePivot Temp | Number Bar | 3x1 | IntakePivot/TemperatureCelsius |
 | Hanger Temp | Number Bar | 3x1 | Hanger/TemperatureCelsius |
 | Gyro | Boolean Box | 2x1 | Drive/Gyro/Connected |
 | Left Cam | Boolean Box | 2x1 | Vision/Camera/LeftCam/Connected |
 | Right Cam | Boolean Box | 2x1 | Vision/Camera/RightCam/Connected |
 | Vision Latency | Text Display | 2x1 | Vision/LatencyMs |
 | Idx Jam | Boolean Box | 2x1 | Indexer/JamDetected |
-| Int Jam | Boolean Box | 2x1 | Intake/JamDetected |
+| Int Jam | Boolean Box | 2x1 | IntakeRoller/JamDetected |
 | CAN Util | Number Bar | 3x1 | SystemHealth/CANUtilization |
 | Alerts | Text Display | 15x1 | Alerts/ActiveList |
 

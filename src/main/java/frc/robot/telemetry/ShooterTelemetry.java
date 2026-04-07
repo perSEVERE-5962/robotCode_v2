@@ -107,7 +107,7 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     boolean wasAtSpeedBeforeUpdate = wasAtSpeed;
 
     try {
-      velocityRPM = shooter.getVelocityRPM();
+      velocityRPM = shooter.getVelocity();
       targetRPM = shooter.getTargetRPM();
       appliedOutput = shooter.getAppliedOutput();
       currentAmps = shooter.getOutputCurrent();
@@ -179,10 +179,10 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     wasSpinningUp = isSpinningUp;
 
     velocityDrop = previousVelocityRPM - velocityRPM;
-    double shotDropThreshold = shooter.getShotDropThreshold();
+    double shotDropThreshold = Shooter.getShotDropThreshold();
     shotDetected =
         (velocityDrop > shotDropThreshold)
-            && (previousVelocityRPM > ShooterConstants.SHOT_DETECTION_MIN_RPM)
+            && (previousVelocityRPM > 1000.0)
             && wasAtSpeedBeforeUpdate
             && (targetRPM > 0);
 
@@ -198,14 +198,14 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     }
     previousVelocityRPM = velocityRPM;
 
-    temperatureWarning = temperatureCelsius > ShooterConstants.TEMP_WARNING_CELSIUS;
+    temperatureWarning = temperatureCelsius > 65.0;
 
     pidTuningEvent = false;
     try {
-      double curKP = shooter.getTunableKP();
-      double curKI = shooter.getTunableKI();
-      double curKD = shooter.getTunableKD();
-      double curFF = shooter.getTunableFF();
+      double curKP = Shooter.getTunableKP();
+      double curKI = Shooter.getTunableKI();
+      double curKD = Shooter.getTunableKD();
+      double curFF = Shooter.getTunableFF();
       if (prevKP >= 0
           && (curKP != prevKP || curKI != prevKI || curKD != prevKD || curFF != prevFF)) {
         pidTuningEvent = true;

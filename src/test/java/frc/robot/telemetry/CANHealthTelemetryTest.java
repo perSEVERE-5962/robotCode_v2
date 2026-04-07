@@ -12,8 +12,8 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
 
   private ShooterTelemetry shooterTelemetry;
   private IndexerTelemetry indexerTelemetry;
-  private IntakeTelemetry intakeTelemetry;
-  private IntakeActuatorTelemetry intakeActuatorTelemetry;
+  private IntakeRollerTelemetry intakeRollerTelemetry;
+  private IntakePivotTelemetry intakePivotTelemetry;
   private HangerTelemetry hangerTelemetry;
   private AgitatorTelemetry agitatorTelemetry;
   private VisionTelemetry visionTelemetry;
@@ -24,8 +24,8 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
   void setUp() {
     shooterTelemetry = new ShooterTelemetry();
     indexerTelemetry = new IndexerTelemetry();
-    intakeTelemetry = new IntakeTelemetry();
-    intakeActuatorTelemetry = new IntakeActuatorTelemetry();
+    intakeRollerTelemetry = new IntakeRollerTelemetry();
+    intakePivotTelemetry = new IntakePivotTelemetry();
     hangerTelemetry = new HangerTelemetry();
     agitatorTelemetry = new AgitatorTelemetry();
     visionTelemetry = new VisionTelemetry();
@@ -34,8 +34,8 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
         new CANHealthTelemetry(
             shooterTelemetry,
             indexerTelemetry,
-            intakeTelemetry,
-            intakeActuatorTelemetry,
+            intakeRollerTelemetry,
+            intakePivotTelemetry,
             hangerTelemetry,
             agitatorTelemetry,
             visionTelemetry,
@@ -50,8 +50,8 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     String list = telemetry.getDisconnectedList();
     assertTrue(list.contains("Shooter"));
     assertTrue(list.contains("Indexer"));
-    assertTrue(list.contains("Intake"));
-    assertTrue(list.contains("IntakeActuator"));
+    assertTrue(list.contains("IntakeRoller"));
+    assertTrue(list.contains("IntakePivot"));
     assertTrue(list.contains("Hanger"));
     assertTrue(list.contains("Agitator"));
     assertTrue(list.contains("Gyro"));
@@ -65,8 +65,8 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
   void testAllConnected() throws Exception {
     setField(shooterTelemetry, "deviceConnected", true);
     setField(indexerTelemetry, "deviceConnected", true);
-    setField(intakeTelemetry, "deviceConnected", true);
-    setField(intakeActuatorTelemetry, "deviceConnected", true);
+    setField(intakeRollerTelemetry, "deviceConnected", true);
+    setField(intakePivotTelemetry, "deviceConnected", true);
     setField(hangerTelemetry, "deviceConnected", true);
     setField(agitatorTelemetry, "deviceConnected", true);
     setField(driveTelemetry, "gyroConnected", true);
@@ -88,8 +88,8 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     // Connect all mechanism devices
     setField(shooterTelemetry, "deviceConnected", true);
     setField(indexerTelemetry, "deviceConnected", true);
-    setField(intakeTelemetry, "deviceConnected", true);
-    setField(intakeActuatorTelemetry, "deviceConnected", true);
+    setField(intakeRollerTelemetry, "deviceConnected", true);
+    setField(intakePivotTelemetry, "deviceConnected", true);
     setField(hangerTelemetry, "deviceConnected", true);
     setField(agitatorTelemetry, "deviceConnected", true);
     setField(driveTelemetry, "gyroConnected", true);

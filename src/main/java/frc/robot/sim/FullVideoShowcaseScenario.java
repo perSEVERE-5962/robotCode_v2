@@ -499,7 +499,7 @@ public class FullVideoShowcaseScenario implements SimScenario {
       var swerve = rc.getSwerveSubsystem();
       arcDriveCmd =
           new HubArcDrive(
-              swerve, SimDriveOverride::getX, RED_HUB_CENTER, distance, RED_SCORING_SIDE);
+              swerve, SimDriveOverride::getX, RED_HUB_CENTER, distance, RED_SCORING_SIDE, 90.0);
       CommandScheduler.getInstance().schedule(arcDriveCmd);
     } catch (RuntimeException e) {
       SafeLog.put("Sim/FullShowcase/ArcError", e.getClass().getSimpleName());
@@ -509,7 +509,7 @@ public class FullVideoShowcaseScenario implements SimScenario {
   private void stopArcDrive() {
     if (arcDriveCmd != null) {
       try {
-        arcDriveCmd.cancel();
+        CommandScheduler.getInstance().cancel(arcDriveCmd);
       } catch (RuntimeException ignored) {
       }
       arcDriveCmd = null;
@@ -530,7 +530,7 @@ public class FullVideoShowcaseScenario implements SimScenario {
   private void stopShooting() {
     if (shooterCmd != null) {
       try {
-        shooterCmd.cancel();
+        CommandScheduler.getInstance().cancel(shooterCmd);
       } catch (RuntimeException ignored) {
       }
       shooterCmd = null;

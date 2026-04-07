@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.subsystems.IntakePivot;
 
-/** IntakeActuator telemetry: position and motor health. */
-public class IntakeActuatorTelemetry implements SubsystemTelemetry {
-  private IntakePivot intakeActuator; // grabbed again in update() if not ready yet
+/** IntakePivot telemetry: position and motor health. */
+public class IntakePivotTelemetry implements SubsystemTelemetry {
+  private IntakePivot intakePivot; // grabbed again in update() if not ready yet
   private boolean subsystemAvailable = false;
 
   private static final double POSITION_TOLERANCE = 0.05;
@@ -26,17 +26,17 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
 
   private String activeCommandName = "none";
 
-  public IntakeActuatorTelemetry() {
-    this.intakeActuator = IntakePivot.getInstance();
+  public IntakePivotTelemetry() {
+    this.intakePivot = IntakePivot.getInstance();
   }
 
   @Override
   public void update() {
-    if (intakeActuator == null) {
-      intakeActuator = IntakePivot.getInstance();
+    if (intakePivot == null) {
+      intakePivot = IntakePivot.getInstance();
     }
 
-    if (intakeActuator == null) {
+    if (intakePivot == null) {
       subsystemAvailable = false;
       setDefaultValues();
       return;
@@ -45,15 +45,15 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
     subsystemAvailable = true;
 
     try {
-      positionRotations = intakeActuator.getPosition();
-      targetPosition = intakeActuator.getTargetPosition();
-      atTarget = intakeActuator.isAtTarget();
-      appliedOutput = intakeActuator.getAppliedOutput();
-      currentAmps = intakeActuator.getOutputCurrent();
-      temperatureCelsius = intakeActuator.getTemperature();
+      positionRotations = intakePivot.getPosition();
+      targetPosition = intakePivot.getTargetPosition();
+      atTarget = intakePivot.isAtTarget();
+      appliedOutput = intakePivot.getAppliedOutput();
+      currentAmps = intakePivot.getOutputCurrent();
+      temperatureCelsius = intakePivot.getTemperature();
 
       deviceConnected = connectDebouncer.calculate(true);
-      deviceFaultsRaw = intakeActuator.getStickyFaultsRaw();
+      deviceFaultsRaw = intakePivot.getStickyFaultsRaw();
     } catch (Throwable t) {
       deviceConnected = connectDebouncer.calculate(false);
       deviceFaultsRaw = -1;
@@ -61,7 +61,7 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
     }
 
     try {
-      Command currentCmd = intakeActuator.getCurrentCommand();
+      Command currentCmd = intakePivot.getCurrentCommand();
       activeCommandName = (currentCmd != null) ? currentCmd.getName() : "none";
     } catch (Throwable t) {
       activeCommandName = "unknown";
@@ -79,22 +79,22 @@ public class IntakeActuatorTelemetry implements SubsystemTelemetry {
 
   @Override
   public void log() {
-    SafeLog.put("IntakeActuator/Available", subsystemAvailable);
-    SafeLog.put("IntakeActuator/PositionRotations", positionRotations);
-    SafeLog.put("IntakeActuator/TargetPosition", targetPosition);
-    SafeLog.put("IntakeActuator/AtTarget", atTarget);
-    SafeLog.put("IntakeActuator/AppliedOutput", appliedOutput);
-    SafeLog.put("IntakeActuator/CurrentAmps", currentAmps);
-    SafeLog.put("IntakeActuator/TemperatureCelsius", temperatureCelsius);
+    SafeLog.put("IntakePivot/Available", subsystemAvailable);
+    SafeLog.put("IntakePivot/PositionRotations", positionRotations);
+    SafeLog.put("IntakePivot/TargetPosition", targetPosition);
+    SafeLog.put("IntakePivot/AtTarget", atTarget);
+    SafeLog.put("IntakePivot/AppliedOutput", appliedOutput);
+    SafeLog.put("IntakePivot/CurrentAmps", currentAmps);
+    SafeLog.put("IntakePivot/TemperatureCelsius", temperatureCelsius);
 
-    SafeLog.put("IntakeActuator/Device/Connected", deviceConnected);
-    SafeLog.put("IntakeActuator/Device/FaultsRaw", deviceFaultsRaw);
-    SafeLog.put("IntakeActuator/ActiveCommand", activeCommandName);
+    SafeLog.put("IntakePivot/Device/Connected", deviceConnected);
+    SafeLog.put("IntakePivot/Device/FaultsRaw", deviceFaultsRaw);
+    SafeLog.put("IntakePivot/ActiveCommand", activeCommandName);
   }
 
   @Override
   public String getName() {
-    return "IntakeActuator";
+    return "IntakePivot";
   }
 
   public double getTemperature() {

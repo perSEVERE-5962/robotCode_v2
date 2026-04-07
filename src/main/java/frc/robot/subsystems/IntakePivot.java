@@ -4,23 +4,29 @@ import frc.robot.Constants;
 
 public class IntakePivot extends TalonActuator {
   private static IntakePivot instance;
+
   private double targetPosition = 0;
-  private static final double POSITION_TOLERANCE_ROTATIONS = 0.05;
 
   private IntakePivot() {
     super(
         Constants.CANDeviceIDs.kIntakePivotID,
-        Constants.IntakePivotConstants.P,
-        Constants.IntakePivotConstants.I,
-        Constants.IntakePivotConstants.D,
-        Constants.IntakePivotConstants.MinOutput,
-        Constants.IntakePivotConstants.MaxOutput,
-        Constants.IntakePivotConstants.FF,
-        Constants.IntakePivotConstants.Iz,
+        Constants.IntakePivotConstants.kP,
+        Constants.IntakePivotConstants.kI,
+        Constants.IntakePivotConstants.kD,
+        Constants.IntakePivotConstants.kMinOutput,
+        Constants.IntakePivotConstants.kMaxOutput,
+        Constants.IntakePivotConstants.kS,
+        Constants.IntakePivotConstants.kV,
+        Constants.IntakePivotConstants.kG,
+        Constants.IntakePivotConstants.kCosRatio,
+        Constants.IntakePivotConstants.kIz,
         60f,
-        11.5F,
+        11.5f,
+        40,
         false,
         false,
+        false,
+        true,
         true);
   }
 
@@ -31,7 +37,7 @@ public class IntakePivot extends TalonActuator {
   }
 
   public boolean isAtTarget() {
-    return Math.abs(getPosition() - targetPosition) < POSITION_TOLERANCE_ROTATIONS;
+    return Math.abs(getPosition() - targetPosition) < Constants.MotorConstants.INTAKE_POS_TOLERANCE;
   }
 
   public double getTemperature() {
@@ -44,7 +50,7 @@ public class IntakePivot extends TalonActuator {
   }
 
   public void setMotorPositionToScoring() {
-    getMotor().setPosition(38.24);
+    getMotor().setPosition(Constants.MotorConstants.OUT_INTAKE_POS);
   }
 
   public double getAppliedOutput() {

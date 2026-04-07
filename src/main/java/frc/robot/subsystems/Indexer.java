@@ -1,9 +1,6 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.config.SparkFlexConfig;
 import frc.robot.Constants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.JamProtectionConstants;
@@ -11,15 +8,14 @@ import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
 public class Indexer extends FlexActuator {
-  private SparkFlex motor;
-  private SparkFlexConfig motorConfig;
   private static Indexer instance;
+  private SparkFlex motor;
 
   // Tunable PID values
-  private static final TunableNumber kP = new TunableNumber("Indexer/kP", IndexerConstants.P);
-  private static final TunableNumber kI = new TunableNumber("Indexer/kI", IndexerConstants.I);
-  private static final TunableNumber kD = new TunableNumber("Indexer/kD", IndexerConstants.D);
-  private static final TunableNumber kF = new TunableNumber("Indexer/FF", IndexerConstants.FF);
+  private static final TunableNumber kP = new TunableNumber("Indexer/kP", IndexerConstants.kP);
+  private static final TunableNumber kI = new TunableNumber("Indexer/kI", IndexerConstants.kI);
+  private static final TunableNumber kD = new TunableNumber("Indexer/kD", IndexerConstants.kD);
+  private static final TunableNumber kF = new TunableNumber("Indexer/FF", IndexerConstants.kV);
 
   private final JamProtection jamProtection =
       new JamProtection(
@@ -44,24 +40,25 @@ public class Indexer extends FlexActuator {
   private Indexer() {
     super(
         Constants.CANDeviceIDs.kIndexerID,
-        Constants.IndexerConstants.P,
-        Constants.IndexerConstants.I,
-        Constants.IndexerConstants.D,
-        Constants.IndexerConstants.MinOutput,
-        Constants.IndexerConstants.MaxOutput,
-        Constants.IndexerConstants.FF,
-        Constants.IndexerConstants.Iz,
+        Constants.IndexerConstants.kP,
+        Constants.IndexerConstants.kI,
+        Constants.IndexerConstants.kD,
+        Constants.IndexerConstants.kMinOutput,
+        Constants.IndexerConstants.kMaxOutput,
+        Constants.IndexerConstants.kS,
+        Constants.IndexerConstants.kV,
+        0,
+        1,
+        Constants.IndexerConstants.kIz,
         0,
         0,
+        60,
         true,
+        true,
+        false,
         false,
         false);
     motor = getMotor();
-    motorConfig = new SparkFlexConfig();
-
-    motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(20);
-
-    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public double getTemperature() {
@@ -76,7 +73,7 @@ public class Indexer extends FlexActuator {
     // JamProtection detects and reports only. It never overrides the motor.
     // Telemetry reads the state; the driver decides what to do about it.
     try {
-      jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
+      jamProtection.update(getOutputCurrent(), getVelocity(), isRunning());
     } catch (Throwable t) {
       // CAN failure degrades jam detection, never kills drive control
     }
@@ -95,41 +92,37 @@ public class Indexer extends FlexActuator {
     return motor.getOutputCurrent();
   }
 
-  public double getVelocityRPM() {
-    return getMotorVelocity();
-  }
-
   public boolean isRunning() {
     return Math.abs(motor.getAppliedOutput()) > 0.05;
   }
 
   // Tunable accessors
-  public double getTunableTargetSpeed() {
+  public static double getTunableTargetSpeed() {
     return targetSpeed.get();
   }
 
-  public double getJamCurrentThreshold() {
+  public static double getJamCurrentThreshold() {
     return jamCurrentThreshold.get();
   }
 
-  public double getJamTimeThreshold() {
+  public static double getJamTimeThreshold() {
     return jamTimeThreshold.get();
   }
 
   // PID gain getters
-  public double getTunableKP() {
+  public static double getTunableKP() {
     return kP.get();
   }
 
-  public double getTunableKI() {
+  public static double getTunableKI() {
     return kI.get();
   }
 
-  public double getTunableKD() {
+  public static double getTunableKD() {
     return kD.get();
   }
 
-  public double getTunableFF() {
+  public static double getTunableFF() {
     return kF.get();
   }
 

@@ -110,8 +110,8 @@ public class PostMatchSummary {
       if (shooter != null) shooterTemp = shooter.getTemperature();
       Indexer indexer = Indexer.getInstance();
       if (indexer != null) indexerTemp = indexer.getTemperature();
-      IntakeRoller intake = IntakeRoller.getInstance();
-      if (intake != null) intakeTemp = intake.getTemperature();
+      IntakeRoller intakeRoller = IntakeRoller.getInstance();
+      if (intakeRoller != null) intakeTemp = intakeRoller.getTemperature();
       Agitator agitator = Agitator.getInstance();
       if (agitator != null) agitatorTemp = agitator.getTemperature();
 

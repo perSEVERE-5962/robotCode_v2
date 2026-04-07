@@ -302,7 +302,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/Intake/TemperatureCelsius",
+                    "logKey": "/RealOutputs/IntakeRoller/TemperatureCelsius",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -312,7 +312,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/IntakeActuator/TemperatureCelsius",
+                    "logKey": "/RealOutputs/IntakePivot/TemperatureCelsius",
                     "logType": "Number",
                     "visible": true,
                     "options": {

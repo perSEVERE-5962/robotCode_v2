@@ -5,7 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.IterativeRobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.sim.SimDeviceManager;
@@ -25,9 +28,12 @@ import frc.robot.util.LoggedTracer;
 import frc.robot.util.PostMatchSummary;
 import frc.robot.util.PreMatchDiagnostics;
 import frc.robot.util.PredictiveAlerts;
+import java.lang.reflect.Field;
+import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
@@ -38,7 +44,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  */
 public class Robot extends LoggedRobot {
 
-  private static Robot instance;
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
 
@@ -52,14 +57,6 @@ public class Robot extends LoggedRobot {
 
   // Logging status
   private boolean loggingAvailable = false;
-
-  public Robot() {
-    instance = this;
-  }
-
-  public static Robot getInstance() {
-    return instance;
-  }
 
   private void installExceptionHandler() {
     Thread.setDefaultUncaughtExceptionHandler(
@@ -90,7 +87,12 @@ public class Robot extends LoggedRobot {
       Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
       Logger.recordMetadata("GitDirty", BuildConstants.DIRTY == 1 ? "true" : "false");
 
-      if (isReal()) {
+      if (Constants.REPLAY) {
+        String inPath = LogFileUtil.findReplayLog();
+        String outPath = LogFileUtil.addPathSuffix(inPath, "_sim");
+        Logger.setReplaySource(new WPILOGReader(inPath));
+        Logger.addDataReceiver(new WPILOGWriter(outPath));
+      } else if (isReal()) {
         // USB logging, skip if USB not mounted
         try {
           Logger.addDataReceiver(new WPILOGWriter());
@@ -170,22 +172,33 @@ public class Robot extends LoggedRobot {
     installExceptionHandler();
     configureLogging();
 
+    if (Constants.disableLoopOverrun) {
+      try {
+        Field watchdogField = IterativeRobotBase.class.getDeclaredField("m_watchdog");
+        watchdogField.setAccessible(true);
+        Watchdog watchdog = (Watchdog) watchdogField.get(this);
+        watchdog.setTimeout(0.5);
+      } catch (Exception e) {
+        DriverStation.reportWarning("Failed to disable loop overrun warnings.", false);
+      }
+    }
+
+    // Instantiate our RobotContainer. This will perform all our button bindings,
+    // and put our autonomous chooser on the dashboard.
     m_robotContainer = RobotContainer.getInstance();
 
     // Create a timer to disable motor brake a few seconds after disable. This will
     // let the robot stop immediately when disabled, but then also let it be pushed more
     disabledTimer = new Timer();
 
+    RobotController.setBrownoutVoltage(6.0);
+
     if (isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
 
     // Send test notification to Elastic Dashboard (protected)
-    try {
-      ElasticUtil.sendInfo("Robot", "Code initialized successfully");
-    } catch (Throwable t) {
-      // Dashboard notification failed - not critical
-    }
+    ElasticUtil.sendInfo("Robot", "Code initialized successfully");
   }
 
   @Override
@@ -327,6 +340,10 @@ public class Robot extends LoggedRobot {
       safeLog("Health/CrashBarrier/AutonomousInit", true);
     }
 
+    // Print the selected autonomous command upon autonomous init
+    System.out.println("Auto selected: " + m_autonomousCommand);
+
+    // schedule the autonomous command selected in the autoChooser
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
       try {
@@ -344,7 +361,11 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit() {
     // cancelAll() is critical (stops auto commands). Telemetry helpers are not.
-    CommandScheduler.getInstance().cancelAll();
+    if (m_autonomousCommand != null) {
+      CommandScheduler.getInstance().cancel(m_autonomousCommand);
+    } else {
+      CommandScheduler.getInstance().cancelAll();
+    }
 
     try {
       EventMarker.modeChange("TELEOP");
@@ -399,8 +420,8 @@ public class Robot extends LoggedRobot {
       simFuelManager.configureRobot(0.66, 0.66, 0.25, swerve::getPose, swerve::getFieldVelocity);
       // wire intake zone so balls get picked up when intake is running
       try {
-        IntakeRoller intake = IntakeRoller.getInstance();
-        simFuelManager.addIntakeZone(0.10, 0.45, -0.20, 0.20, intake::isRunning);
+        IntakeRoller intakeRoller = IntakeRoller.getInstance();
+        simFuelManager.addIntakeZone(0.10, 0.45, -0.20, 0.20, intakeRoller::isRunning);
       } catch (Throwable t) {
         // intake not available, shots fire freely without ball tracking
       }

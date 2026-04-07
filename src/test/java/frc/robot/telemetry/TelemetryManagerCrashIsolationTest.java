@@ -48,7 +48,6 @@ class TelemetryManagerCrashIsolationTest {
 
   @Test
   void testThrowingClassDoesNotCrashUpdateAll() throws Exception {
-    @SuppressWarnings("unchecked")
     List<SubsystemTelemetry> list = getField(manager, "telemetryList");
     SubsystemTelemetry thrower =
         new SubsystemTelemetry() {
@@ -78,7 +77,6 @@ class TelemetryManagerCrashIsolationTest {
 
   @Test
   void testFailureCountIncrements() throws Exception {
-    @SuppressWarnings("unchecked")
     List<SubsystemTelemetry> list = getField(manager, "telemetryList");
     SubsystemTelemetry thrower =
         new SubsystemTelemetry() {
@@ -110,7 +108,6 @@ class TelemetryManagerCrashIsolationTest {
 
   @Test
   void testLastFailedNameCaptured() throws Exception {
-    @SuppressWarnings("unchecked")
     List<SubsystemTelemetry> list = getField(manager, "telemetryList");
     SubsystemTelemetry thrower =
         new SubsystemTelemetry() {

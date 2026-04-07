@@ -26,12 +26,10 @@ public class DeployIntake extends Command {
 
   @Override
   public boolean isFinished() {
-    double currentPos = intakePivot.getPosition();
-    if (currentPos >= (Constants.MotorConstants.OUT_INTAKE_POS - .08)
-        && currentPos <= (Constants.MotorConstants.OUT_INTAKE_POS + .08)) {
+    if (Math.abs(Constants.MotorConstants.OUT_INTAKE_POS - intakePivot.getPosition())
+        < Constants.MotorConstants.INTAKE_POS_TOLERANCE) {
       return true;
-    } else {
-      return false;
     }
+    return false;
   }
 }

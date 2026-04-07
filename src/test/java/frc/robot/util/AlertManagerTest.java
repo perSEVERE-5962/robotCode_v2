@@ -76,8 +76,8 @@ class AlertManagerTest {
       "batteryCriticalAlert",
       "shooterTempAlert",
       "indexerTempAlert",
-      "intakeTempAlert",
-      "intakeActuatorTempAlert",
+      "intakeRollerTempAlert",
+      "intakePivotTempAlert",
       "canUtilizationAlert",
       "canBusOffAlert",
       "loopTimeWarningAlert",
@@ -343,8 +343,8 @@ class AlertManagerTest {
 
   @Test
   void testIntakeStallAlertActivates() throws Exception {
-    Object intakeTel = getTelemetryField("intakeTelemetry");
-    setField(intakeTel, "stalled", true);
+    Object intakeRollerTel = getTelemetryField("intakeRollerTelemetry");
+    setField(intakeRollerTel, "stalled", true);
     am.checkAll();
 
     assertTrue(am.getActiveAlerts().contains("IntakeStall"));
@@ -380,8 +380,8 @@ class AlertManagerTest {
 
   @Test
   void testIntakeJamAlertActivates() throws Exception {
-    Object intakeTel = getTelemetryField("intakeTelemetry");
-    setField(intakeTel, "jamDetected", true);
+    Object intakeRollerTel = getTelemetryField("intakeRollerTelemetry");
+    setField(intakeRollerTel, "jamDetected", true);
     am.checkAll();
 
     assertTrue(am.getActiveAlerts().contains("IntakeJam"));
@@ -455,7 +455,7 @@ class AlertManagerTest {
   }
 
   private void clearTelemetryState() throws Exception {
-    String[] telFields = {"shooterTelemetry", "indexerTelemetry", "intakeTelemetry"};
+    String[] telFields = {"shooterTelemetry", "indexerTelemetry", "intakeRollerTelemetry"};
     for (String tf : telFields) {
       Object tel = getTelemetryField(tf);
       if (tel != null) {

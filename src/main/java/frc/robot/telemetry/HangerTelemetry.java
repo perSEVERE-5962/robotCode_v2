@@ -4,7 +4,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DeviceHealthConstants;
-import frc.robot.Constants.HangerConstants;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.subsystems.Hanger;
 
@@ -62,7 +61,7 @@ public class HangerTelemetry implements SubsystemTelemetry {
       temperatureCelsius = hanger.getTemperature();
 
       isDeployed =
-          Math.abs(position - MotorConstants.UP_HANGER_POS) < HangerConstants.POSITION_TOLERANCE;
+          Math.abs(position - MotorConstants.UP_HANGER_POS) < MotorConstants.HANGER_POS_TOLERANCE;
       isClimbing = targetPosition == MotorConstants.DOWN_HANGER_POS && !atPosition;
 
       double range = MotorConstants.UP_HANGER_POS - MotorConstants.DOWN_HANGER_POS;

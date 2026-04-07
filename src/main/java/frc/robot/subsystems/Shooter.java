@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -18,8 +17,6 @@ public class Shooter extends MaxActuator {
   private SparkMax[] followers;
 
   private SparkMax motor;
-  private RelativeEncoder motorEncoder;
-  private SparkMaxConfig motorConfig;
 
   // private SparkMax followerMotor;
   // private RelativeEncoder followerEncoder;
@@ -37,10 +34,10 @@ public class Shooter extends MaxActuator {
   private double targetRPM = 0;
 
   // Tunable PID values
-  private static final TunableNumber kP = new TunableNumber("Shooter/kP", ShooterConstants.P);
-  private static final TunableNumber kI = new TunableNumber("Shooter/kI", ShooterConstants.I);
-  private static final TunableNumber kD = new TunableNumber("Shooter/kD", ShooterConstants.D);
-  private static final TunableNumber kF = new TunableNumber("Shooter/FF", ShooterConstants.FF);
+  private static final TunableNumber kP = new TunableNumber("Shooter/kP", ShooterConstants.kP);
+  private static final TunableNumber kI = new TunableNumber("Shooter/kI", ShooterConstants.kI);
+  private static final TunableNumber kD = new TunableNumber("Shooter/kD", ShooterConstants.kD);
+  private static final TunableNumber kF = new TunableNumber("Shooter/FF", ShooterConstants.kV);
 
   // Tunable setpoints and thresholds
   private static final TunableNumber targetRPMTunable =
@@ -53,15 +50,21 @@ public class Shooter extends MaxActuator {
   private Shooter() {
     super(
         Constants.CANDeviceIDs.kShooterID,
-        ShooterConstants.P,
-        ShooterConstants.I,
-        ShooterConstants.D,
-        ShooterConstants.MinOutput,
-        ShooterConstants.MaxOutput,
-        ShooterConstants.FF,
-        ShooterConstants.Iz,
+        Constants.ShooterConstants.kP,
+        Constants.ShooterConstants.kI,
+        Constants.ShooterConstants.kD,
+        Constants.ShooterConstants.kMinOutput,
+        Constants.ShooterConstants.kMaxOutput,
+        Constants.ShooterConstants.kS,
+        Constants.ShooterConstants.kV,
+        0,
+        1,
+        Constants.ShooterConstants.kIz,
         0,
         0,
+        60,
+        false,
+        true,
         false,
         false,
         false);
@@ -74,21 +77,6 @@ public class Shooter extends MaxActuator {
           configureFollower(Constants.CANDeviceIDs.kShooterFollower2, true), // inverted
         };
     motor = getMotor();
-
-    motorConfig = new SparkMaxConfig();
-    motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    motorConfig.smartCurrentLimit(60);
-    motorEncoder = motor.getEncoder();
-    motorConfig.voltageCompensation(12.0);
-    motorConfig.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
-    // .quadratureMeasurementPeriod(8);
-    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-
-    //     followers = new SparkMax[] {
-    //     configureFollower(Constants.CANDeviceIDs.kShooterFollower, false),   // same direction
-    //     configureFollower(CANDeviceIDs.kShooterFollower1, true),   // inverted
-    //     configureFollower(CANDeviceIDs.kShooterFollower2, true),   // inverted
-    // };
 
     // followerConfig = new SparkMaxConfig();
     // followerMotor = new SparkMax(Constants.CANDeviceIDs.kShooterFollower, MotorType.kBrushless);
@@ -131,27 +119,18 @@ public class Shooter extends MaxActuator {
     // followerMotor2.configure(followerConfig2, ResetMode.kNoResetSafeParameters,
     // PersistMode.kPersistParameters);
 
-    limiter = new SlewRateLimiter(ShooterConstants.RPM_SLEW_RATE);
-  }
-
-  public double getVelocityRPM() {
-    return motorEncoder.getVelocity() * ShooterConstants.VELOCITY_CONVERSION;
+    limiter = new SlewRateLimiter(Constants.MotorConstants.SHOOTER_RPM_SLEW_RATE);
   }
 
   public boolean isAtSpeed() {
     if (desiredRPM == 0) return false;
-    return Math.abs(desiredRPM - getVelocityRPM()) < toleranceRPM.get();
+    return Math.abs(desiredRPM - getVelocity()) < toleranceRPM.get();
   }
 
   @Override
   public void periodic() {
     TunableNumber.ifChanged(
         () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
-  }
-
-  public void move(double speed) {
-    motor.set(speed);
-    // targetRPM = speed * 5700;
   }
 
   @Override
@@ -170,10 +149,6 @@ public class Shooter extends MaxActuator {
     config.smartCurrentLimit(60);
     follower.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     return follower;
-  }
-
-  public double getMotorVelocity() {
-    return getVelocityRPM();
   }
 
   public double getTemperature() {
@@ -198,32 +173,32 @@ public class Shooter extends MaxActuator {
   }
 
   // Tunable accessors
-  public double getTunableTargetRPM() {
+  public static double getTunableTargetRPM() {
     return targetRPMTunable.get();
   }
 
-  public double getToleranceRPM() {
+  public static double getToleranceRPM() {
     return toleranceRPM.get();
   }
 
-  public double getShotDropThreshold() {
+  public static double getShotDropThreshold() {
     return shotDropRPM.get();
   }
 
   // PID gain getters
-  public double getTunableKP() {
+  public static double getTunableKP() {
     return kP.get();
   }
 
-  public double getTunableKI() {
+  public static double getTunableKI() {
     return kI.get();
   }
 
-  public double getTunableKD() {
+  public static double getTunableKD() {
     return kD.get();
   }
 
-  public double getTunableFF() {
+  public static double getTunableFF() {
     return kF.get();
   }
 

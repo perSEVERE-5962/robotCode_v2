@@ -29,21 +29,21 @@ public class AgitateAndIndex extends Command {
   @Override
   public void execute() {
     if (arcDriveOn.getAsBoolean() && HubArcDrive.checkHeadingError()) {
-      indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
+      indexer.moveToVelocityWithPID(indexRPM);
       agitator.moveToVelocityWithPID(agitateRPM);
     } else if (arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
-      indexer.moveToVelocityWithPID(0);
-      agitator.moveToVelocityWithPID(0);
+      indexer.move(0);
+      agitator.move(0);
     } else {
-      indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
+      indexer.moveToVelocityWithPID(indexRPM);
       agitator.moveToVelocityWithPID(agitateRPM);
     }
   }
 
   @Override
   public void end(boolean interrupted) {
-    indexer.moveToVelocityWithPID(0);
-    agitator.moveToVelocityWithPID(0);
+    indexer.move(0);
+    agitator.move(0);
   }
 
   @Override

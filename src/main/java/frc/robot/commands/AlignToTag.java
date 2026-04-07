@@ -7,15 +7,16 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Cameras;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
+import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import frc.robot.util.DriverFeedback;
 import java.util.List;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -31,7 +32,7 @@ public class AlignToTag extends Command {
   // consider not stopping the robot when hastarget becomes false, allowing the robot to align using
   // gyro.
   private boolean hasTarget = false;
-  Pose2d targetPose;
+  private Pose2d targetPose;
 
   private final ProfiledPIDController xPID =
       new ProfiledPIDController(
@@ -40,7 +41,7 @@ public class AlignToTag extends Command {
           0.0,
           new TrapezoidProfile.Constraints(
               3.0, // max velocity(for tuning)
-              3.0 // max accelleration(for tuning)
+              3.0 // max acceleration(for tuning)
               ));
 
   private final ProfiledPIDController yPID =
@@ -52,6 +53,7 @@ public class AlignToTag extends Command {
           0.0,
           0.0,
           new TrapezoidProfile.Constraints(Math.toRadians(180), Math.toRadians(360)));
+
   private final double posTol = 0.07; // 7 cm
   private final double angTol = Math.toRadians(2); // 2 degrees
 
@@ -151,8 +153,7 @@ public class AlignToTag extends Command {
             currentRobotPose.getX(),
             currentRobotPose.getY(),
             0,
-            new edu.wpi.first.math.geometry.Rotation3d(
-                0, 0, currentRobotPose.getRotation().getRadians()));
+            new Rotation3d(0, 0, currentRobotPose.getRotation().getRadians()));
 
     Pose3d calculatedTagPose3d = currentRobotPose3d.plus(robotToTarget);
     Pose2d calculatedTagPose2d = calculatedTagPose3d.toPose2d();

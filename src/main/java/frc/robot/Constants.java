@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -31,12 +28,17 @@ public final class Constants {
    */
   public static final boolean TUNING_MODE = true;
 
+  public static final boolean REPLAY = false;
+
+  public static final boolean disableLoopOverrun = true;
+
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
-  public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
-  public static final double MAX_SPEED = Units.feetToMeters(14.5);
-  // Maximum speed of the robot in meters per second, used to limit acceleration.
   public static final Matter CHASSIS =
       new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
+  public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
+  public static final double MAX_SPEED = Units.feetToMeters(14.5);
+
+  // Maximum speed of the robot in meters per second, used to limit acceleration.
 
   public static final class DrivebaseConstants {
 
@@ -44,14 +46,7 @@ public final class Constants {
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
 
-  public static final class FieldConstants {
-    public static final AprilTagFieldLayout FIELD_LAYOUT =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
-
-    public static final double DistanceToHub = 0.4;
-  }
-
-  public static class OperatorConstants {
+  public static final class OperatorConstants {
 
     // Joystick Deadband
     public static final double DEADBAND = 0.1;
@@ -81,17 +76,6 @@ public final class Constants {
     public static final double ANGLE_TOLERANCE = 2.0; // degrees
   }
 
-  public static class PhotonvisionConstants {
-
-    /*
-    deploy order for Json files of swerve modules
-    frontleft,
-    frontright,
-    backleft,
-    backright
-     */
-  }
-
   public static final class CANDeviceIDs {
     public static final int kIndexerID = 50;
     public static final int kShooterID = 52;
@@ -106,68 +90,73 @@ public final class Constants {
 
   public static final class MotorConstants {
     public static final double DESIRED_SHOOTER_RPM = 3730;
+    public static final double SHOOTER_RPM_SLEW_RATE = 1000.0; // max change in RPM per second
     public static final double DESIRED_INDEXER_RPM = 7833; // 8.4 * 3730/4
+    public static final double BACKWARDS_INDEXER_RPM = 999;
     public static final double OUT_INTAKE_POS = 38.24;
     public static final double IN_INTAKE_POS = 11.6;
     public static final double DESIRED_INTAKE_RPM = 0;
+    public static final double INTAKE_POS_TOLERANCE = .2;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
-    public static final double DESIRED_AGITATOR_SPEED = .5;
+    public static final double DESIRED_AGITATOR_RPM = 999;
+    public static final double HANGER_POS_TOLERANCE = 0.1;
   }
 
   public static final class IntakeRollerConstants {
-    public static final double P = 1.0;
-    public static final double I = 0.0;
-    public static final double D = 0.0;
-    public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0;
-    public static final double Iz = 0.0;
+    public static final double kP = 1.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kMinOutput = -1.0;
+    public static final double kMaxOutput = 1.0;
+    public static final double kS = 0.0;
+    public static final double kV = 0.0;
+    public static final double kIz = 0.0;
+
+    // Default tuning targets
+    public static final double TARGET_SPEED = -1;
   }
 
   public static final class IntakePivotConstants {
-    public static final double P = 1.0;
-    public static final double I = 0.0;
-    public static final double D = 0.2;
-    public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0;
-    public static final double Iz = 0.0;
+    public static final double kP = 1.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.2;
+    public static final double kMinOutput = -1.0;
+    public static final double kMaxOutput = 1.0;
+    public static final double kS = 0.0;
+    public static final double kV = 0.0;
+    public static final double kG = 0.0;
+    public static final double kCosRatio = 83.333;
+    public static final double kIz = 0.0;
   }
 
   public static final class ShooterConstants {
-    // Velocity PID tuning (from Kfir2026)
-    public static final double P = 0.00011;
-    public static final double I = 0.0;
-    public static final double D = 0.0;
-    public static final double FF = 0.000172;
-    public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1.0;
-    public static final double Iz = 0.0;
+    public static final double kP = 0.00011;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kMinOutput = -1.0;
+    public static final double kMaxOutput = 1.0;
+    public static final double kS = 0.0;
+    public static final double kV = 0.002064;
+    public static final double kIz = 0.0;
 
-    // Tuning targets
+    // Default tuning targets
     public static final double TARGET_RPM = 3730;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
     public static final double TARGET_RECOVERY_MS = 150.0;
-    public static final double RPM_SLEW_RATE = 1000.0; // max change in RPM per second
-
-    // Telemetry constants
-    public static final double SPEED_TOLERANCE_RPM = 50.0;
-    public static final double VELOCITY_CONVERSION = 1.0;
+    public static final double SPEED_TOLERANCE_RPM = 120.0;
     public static final double SHOT_DETECTION_DROP_RPM = 200.0;
-    public static final double SHOT_DETECTION_MIN_RPM = 1000.0;
-    public static final double TEMP_WARNING_CELSIUS = 65.0;
   }
 
   public static final class IndexerConstants {
-    // Velocity PID (from Alden)
-    public static final double P = 0.000;
-    public static final double I = 0.0;
-    public static final double D = 0.00;
-    public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0004;
-    public static final double Iz = 0.0;
+    public static final double kP = 0.000;
+    public static final double kI = 0.0;
+    public static final double kD = 0.00;
+    public static final double kMinOutput = -1.0;
+    public static final double kMaxOutput = 1.0;
+    public static final double kS = 0.0;
+    public static final double kV = 0.0048;
+    public static final double kIz = 0.0;
 
     // Telemetry constants
     public static final double TARGET_SPEED = 7833;
@@ -176,33 +165,36 @@ public final class Constants {
   }
 
   public static final class AgitatorConstants {
-    public static final double P = 0.000;
-    public static final double I = 0.0;
-    public static final double D = 0.0;
-    public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0002;
-    public static final double Iz = 0.0;
+    public static final double kP = 0.000;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kMinOutput = -1.0;
+    public static final double kMaxOutput = 1.0;
+    public static final double kS = 0.0;
+    public static final double kV = 0.0024;
+    public static final double kIz = 0.0;
 
+    // Default tuning targets
     public static final double TARGET_RPM = 2000;
     public static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
     public static final double JAM_TIME_THRESHOLD_SECONDS = 0.3;
   }
 
+  public static final class HangerConstants {
+    public static final double kP = 1.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kMinOutput = -1.0;
+    public static final double kMaxOutput = 1.0;
+    public static final double kS = 0.0;
+    public static final double kV = 0.0;
+    public static final double kG = 0.0;
+    public static final double kIz = 0.0;
+  }
+
   public static final class HopperConstants {
     public static final int LOW_BALL_THRESHOLD = 3;
     public static final double DETECTION_CONFIDENCE_THRESHOLD = 0.8;
-  }
-
-  public static final class HangerConstants {
-    public static final double P = 1.0;
-    public static final double I = 0.0;
-    public static final double D = 0.0;
-    public static final double MinOutput = -1.0;
-    public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0;
-    public static final double Iz = 0.0;
-    public static final double POSITION_TOLERANCE = 0.1;
   }
 
   public static final class BatteryThresholds {
@@ -232,11 +224,11 @@ public final class Constants {
    */
   public static final class DeploySafetyCheck {
     /** Returns false if TUNING_MODE is on (unsafe for competition deploy). */
+    @SuppressWarnings("unused")
     public static boolean isSafeForDeploy() {
-      return !TUNING_MODE;
+      return !TUNING_MODE && !REPLAY;
     }
 
-    // back left left 11.54, 11.54, 45 degrees 15 desgrees
     /** Gradle entry point: exits 1 if deploy is unsafe. */
     public static void main(String... args) {
       if (!isSafeForDeploy()) {
@@ -276,8 +268,8 @@ public final class Constants {
       "Shooter", // 8
       "Indexer", // 9
       "Agitator", // 10
-      "Intake", // 11
-      "IntakeActuator", // 12
+      "IntakeRoller", // 11
+      "IntakePivot", // 12
       "Hanger", // 13
       "Ch14", // 14 - unused/unknown
       "Ch15", // 15 - unused/unknown

@@ -10,21 +10,27 @@ public class Hanger extends MaxActuator {
   private double targetPosition = 0;
 
   // Tunable PID values
-  private static final TunableNumber kP = new TunableNumber("Hanger/kP", HangerConstants.P);
-  private static final TunableNumber kD = new TunableNumber("Hanger/kD", HangerConstants.D);
+  private static final TunableNumber kP = new TunableNumber("Hanger/kP", HangerConstants.kP);
+  private static final TunableNumber kD = new TunableNumber("Hanger/kD", HangerConstants.kD);
 
   private Hanger() {
     super(
         Constants.CANDeviceIDs.kHangerID,
-        HangerConstants.P,
-        HangerConstants.I,
-        HangerConstants.D,
-        HangerConstants.MinOutput,
-        HangerConstants.MaxOutput,
-        HangerConstants.FF,
-        HangerConstants.Iz,
+        Constants.HangerConstants.kP,
+        Constants.HangerConstants.kI,
+        Constants.HangerConstants.kD,
+        Constants.HangerConstants.kMinOutput,
+        Constants.HangerConstants.kMaxOutput,
+        Constants.HangerConstants.kS,
+        Constants.HangerConstants.kV,
+        Constants.HangerConstants.kG,
+        1,
+        Constants.HangerConstants.kIz,
         0,
         0,
+        40,
+        false,
+        false,
         false,
         false,
         false);
@@ -42,7 +48,7 @@ public class Hanger extends MaxActuator {
   }
 
   public boolean isAtPosition() {
-    return Math.abs(targetPosition - getPosition()) < HangerConstants.POSITION_TOLERANCE;
+    return Math.abs(targetPosition - getPosition()) < Constants.MotorConstants.HANGER_POS_TOLERANCE;
   }
 
   // Hardware accessors

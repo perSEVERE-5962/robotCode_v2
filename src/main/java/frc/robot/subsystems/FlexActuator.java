@@ -9,9 +9,11 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SoftLimitConfig;
+import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -28,42 +30,60 @@ public abstract class FlexActuator extends SubsystemBase implements Actuator {
       double kD,
       double kMinOutput,
       double kMaxOutput,
-      double kF,
+      double kS,
+      double kV,
+      double kG,
+      double kCosRatio,
       double kIz,
       double kUpperSoftLimit,
       double kLowerSoftLimit,
+      int kStallLimit,
       boolean inverted,
+      boolean coast,
       boolean useThroughBoreEncoder,
-      boolean useSoftLimits) {
+      boolean useSoftLimits,
+      boolean useCos) {
 
     motor = new SparkFlex(kID, SparkLowLevel.MotorType.kBrushless);
     SparkFlexConfig motorConfig = new SparkFlexConfig();
 
     motorConfig.inverted(inverted);
-    motorConfig.idleMode(SparkFlexConfig.IdleMode.kBrake);
-    motorConfig.smartCurrentLimit(40);
+    motorConfig.idleMode(coast ? SparkBaseConfig.IdleMode.kCoast : SparkBaseConfig.IdleMode.kBrake);
+    motorConfig.smartCurrentLimit(kStallLimit);
+    motorConfig.voltageCompensation(12.0);
 
-    FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
-    if (useThroughBoreEncoder == true) {
-      feedBackSensor = FeedbackSensor.kAbsoluteEncoder;
+    FeedbackSensor feedbackSensor = FeedbackSensor.kPrimaryEncoder;
+    if (useThroughBoreEncoder) {
+      feedbackSensor = FeedbackSensor.kAbsoluteEncoder;
     }
     motorConfig
         .closedLoop
-        .feedbackSensor(feedBackSensor)
+        .feedbackSensor(feedbackSensor)
         .p(kP)
         .i(kI)
         .d(kD)
         .outputRange(kMinOutput, kMaxOutput)
         .iZone(kIz);
-    motorConfig.closedLoop.feedForward.kV(12.0 * kF);
-    if (useThroughBoreEncoder == true) {
+    motorConfig.closedLoop.feedForward.kS(kS).kV(kV);
+    // kCos should be used for arms, kG should be used for elevators
+    if (useCos) {
+      motorConfig.closedLoop.feedForward.kCos(kG).kCosRatio(kCosRatio);
+    } else {
+      motorConfig.closedLoop.feedForward.kG(kG);
+    }
+    motorConfig
+        .encoder
+        .quadratureAverageDepth(2)
+        .quadratureMeasurementPeriod(10)
+        .uvwMeasurementPeriod(8);
+    if (useThroughBoreEncoder) {
       absoluteEncoder = motor.getAbsoluteEncoder();
     } else {
       encoder = motor.getEncoder();
       encoder.setPosition(0);
     }
 
-    if (useSoftLimits == true) {
+    if (useSoftLimits) {
 
       SoftLimitConfig softLimitConfig = new SoftLimitConfig();
       softLimitConfig.forwardSoftLimitEnabled(true);
@@ -78,7 +98,7 @@ public abstract class FlexActuator extends SubsystemBase implements Actuator {
   }
 
   public double getPosition() {
-    if (useThroughBoreEncoder == true) {
+    if (useThroughBoreEncoder) {
       if (absoluteEncoder == null) {
         return 0;
       }
@@ -91,8 +111,7 @@ public abstract class FlexActuator extends SubsystemBase implements Actuator {
     }
   }
 
-  /** Returns motor velocity in RPM */
-  public double getMotorVelocity() {
+  public double getVelocity() {
     if (useThroughBoreEncoder) {
       if (absoluteEncoder == null) {
         return 0;
@@ -107,11 +126,11 @@ public abstract class FlexActuator extends SubsystemBase implements Actuator {
   }
 
   public void moveToPositionWithPID(double position) {
-    motor.getClosedLoopController().setSetpoint(position, SparkFlex.ControlType.kPosition);
+    motor.getClosedLoopController().setSetpoint(position, SparkBase.ControlType.kPosition);
   }
 
   public void moveToVelocityWithPID(double rpm) {
-    motor.getClosedLoopController().setSetpoint(rpm, SparkFlex.ControlType.kVelocity);
+    motor.getClosedLoopController().setSetpoint(rpm, SparkBase.ControlType.kVelocity);
   }
 
   /* -1.0 <= speed <= 1.0 */
@@ -133,10 +152,10 @@ public abstract class FlexActuator extends SubsystemBase implements Actuator {
   }
 
   /** Hot-reload PID values. Creates new config, takes a few ms. */
-  public void updatePID(double kP, double kI, double kD, double kF) {
+  public void updatePID(double kP, double kI, double kD, double kV) {
     SparkFlexConfig config = new SparkFlexConfig();
     config.closedLoop.p(kP).i(kI).d(kD);
-    config.closedLoop.feedForward.kV(12.0 * kF);
+    config.closedLoop.feedForward.kV(kV);
     motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 }

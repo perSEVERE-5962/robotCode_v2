@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 public interface Actuator {
   public double getPosition();
 
-  public double getMotorVelocity();
+  public double getVelocity();
 
   public void moveToPositionWithPID(double position);
 
@@ -13,5 +13,5 @@ public interface Actuator {
 
   public int getStickyFaultsRaw();
 
-  public void updatePID(double kP, double kI, double kD, double kF);
+  public void updatePID(double kP, double kI, double kD, double kV);
 }

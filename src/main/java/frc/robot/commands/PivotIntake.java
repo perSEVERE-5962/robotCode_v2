@@ -21,13 +21,12 @@ public class PivotIntake extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    intakePivot.moveToVelocityWithPID(rpm);
+  }
 
   @Override
-  public void execute() {
-    intakePivot.moveToVelocityWithPID(rpm);
-    // System.out.println(intakePivot.getPosition());
-  }
+  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {

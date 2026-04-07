@@ -105,7 +105,7 @@ Run through these with the robot enabled. Check the signals in AdvantageScope as
 | 12 | Live tuning | Load `rebuilt_tuning_session.json` in Elastic, see below | RPM graph updates live, PID changes take effect immediately | Shooter motor |
 
 **Signals that will be zero if hardware isn't installed yet (this is expected, not a bug):**
-- `Intake/*` and `IntakeActuator/*` → zero until intake is assembled
+- `IntakeRoller/*` and `IntakePivot/*` → zero until intake is assembled
 - `Hanger/*` → zero until hanger is mounted
 - `Vision/*` → zero until cameras are on the robot
 - Motor temperatures → zero in the first few seconds, they take time to read

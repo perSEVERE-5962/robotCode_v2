@@ -1,27 +1,23 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
+import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.JamProtectionConstants;
-import frc.robot.Constants.MotorConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
 public class IntakeRoller extends MaxActuator {
   private SparkMax motor;
-  private SparkMaxConfig motorConfig;
   private static IntakeRoller instance;
 
   // Tunable operational value
-  private static final TunableNumber intakeSpeed =
-      new TunableNumber("Intake/Speed", MotorConstants.DESIRED_INTAKE_RPM);
+  private static final TunableNumber intakeRollerSpeed =
+      new TunableNumber("IntakeRoller/Speed", IntakeRollerConstants.TARGET_SPEED);
 
   private final JamProtection jamProtection =
       new JamProtection(
-          "Intake",
+          "IntakeRoller",
           JamProtectionConstants.INTAKE_JAM_CURRENT_AMPS,
           JamProtectionConstants.INTAKE_JAM_VELOCITY_RPM,
           JamProtectionConstants.INTAKE_STARTUP_IGNORE_SEC,
@@ -34,25 +30,25 @@ public class IntakeRoller extends MaxActuator {
   private IntakeRoller() {
     super(
         Constants.CANDeviceIDs.kIntakeRollerID,
-        Constants.IntakeRollerConstants.P,
-        Constants.IntakeRollerConstants.I,
-        Constants.IntakeRollerConstants.D,
-        Constants.IntakeRollerConstants.MinOutput,
-        Constants.IntakeRollerConstants.MaxOutput,
-        Constants.IntakeRollerConstants.FF,
-        Constants.IntakeRollerConstants.Iz,
+        Constants.IntakeRollerConstants.kP,
+        Constants.IntakeRollerConstants.kI,
+        Constants.IntakeRollerConstants.kD,
+        Constants.IntakeRollerConstants.kMinOutput,
+        Constants.IntakeRollerConstants.kMaxOutput,
+        Constants.IntakeRollerConstants.kS,
+        Constants.IntakeRollerConstants.kV,
+        0,
+        1,
+        Constants.IntakeRollerConstants.kIz,
         0,
         0,
+        40,
         true,
+        true,
+        false,
         false,
         false);
     motor = getMotor();
-
-    motorConfig = new SparkMaxConfig();
-
-    motorConfig.idleMode(SparkMaxConfig.IdleMode.kCoast).smartCurrentLimit(40);
-
-    motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
@@ -92,8 +88,8 @@ public class IntakeRoller extends MaxActuator {
   }
 
   // Tunable value accessor
-  public double getTunableSpeed() {
-    return intakeSpeed.get();
+  public static double getTunableSpeed() {
+    return intakeRollerSpeed.get();
   }
 
   /** Sticky faults as raw bits for diagnostics */

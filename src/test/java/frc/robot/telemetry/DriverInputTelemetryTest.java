@@ -40,8 +40,8 @@ class DriverInputTelemetryTest extends TelemetryTestBase {
     driverSim.setBButton(false);
     driverSim.setXButton(false);
     driverSim.setYButton(false);
-    driverSim.setLeftBumper(false);
-    driverSim.setRightBumper(false);
+    driverSim.setLeftBumperButton(false);
+    driverSim.setRightBumperButton(false);
     driverSim.setStartButton(false);
     driverSim.setBackButton(false);
 
@@ -55,8 +55,8 @@ class DriverInputTelemetryTest extends TelemetryTestBase {
     operatorSim.setBButton(false);
     operatorSim.setXButton(false);
     operatorSim.setYButton(false);
-    operatorSim.setLeftBumper(false);
-    operatorSim.setRightBumper(false);
+    operatorSim.setLeftBumperButton(false);
+    operatorSim.setRightBumperButton(false);
     operatorSim.setStartButton(false);
     operatorSim.setBackButton(false);
 

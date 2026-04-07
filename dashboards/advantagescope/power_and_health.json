@@ -265,7 +265,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/Intake/TemperatureCelsius",
+                    "logKey": "/RealOutputs/IntakeRoller/TemperatureCelsius",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -573,14 +573,14 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/PDH/Intake/Current",
+                    "logKey": "/RealOutputs/PDH/IntakeRoller/Current",
                     "logType": "Number",
                     "visible": true,
                     "options": { "color": "#d993aa", "size": "normal" }
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/PDH/IntakeActuator/Current",
+                    "logKey": "/RealOutputs/PDH/IntakePivot/Current",
                     "logType": "Number",
                     "visible": true,
                     "options": { "color": "#858584", "size": "normal" }

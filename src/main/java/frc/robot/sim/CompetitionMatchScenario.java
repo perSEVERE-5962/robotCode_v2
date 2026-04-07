@@ -553,7 +553,7 @@ public class CompetitionMatchScenario implements SimScenario {
   private void stopShooting() {
     if (activeShooterCmd != null) {
       try {
-        activeShooterCmd.cancel();
+        CommandScheduler.getInstance().cancel(activeShooterCmd);
       } catch (RuntimeException ignored) {
       }
       activeShooterCmd = null;

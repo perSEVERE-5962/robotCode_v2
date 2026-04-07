@@ -20,7 +20,7 @@ public abstract class SparkSimTestBase {
 
   protected static SparkSim shooterSim;
   protected static SparkSim indexerSim;
-  protected static SparkSim intakeSim;
+  protected static SparkSim intakeRollerSim;
 
   @BeforeAll
   static void initHardware() {
@@ -36,12 +36,12 @@ public abstract class SparkSimTestBase {
     // Create singletons (each creates a SparkMax on the CAN bus)
     Shooter shooter = Shooter.getInstance();
     Indexer indexer = Indexer.getInstance();
-    IntakeRoller intake = IntakeRoller.getInstance();
+    IntakeRoller intakeRoller = IntakeRoller.getInstance();
 
     // Wrap with SparkSim for physics feedback
     shooterSim = new SparkSim(shooter.getMotor(), DCMotor.getNEO(1));
     indexerSim = new SparkSim(indexer.getMotor(), DCMotor.getNEO(1));
-    intakeSim = new SparkSim(intake.getMotor(), DCMotor.getNEO(1));
+    intakeRollerSim = new SparkSim(intakeRoller.getMotor(), DCMotor.getNEO(1));
   }
 
   @BeforeEach

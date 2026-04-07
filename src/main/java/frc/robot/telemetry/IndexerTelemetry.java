@@ -82,9 +82,9 @@ public class IndexerTelemetry implements SubsystemTelemetry {
       running = indexer.isRunning();
       currentAmps = indexer.getOutputCurrent();
       temperatureCelsius = indexer.getTemperature();
-      velocityRPM = indexer.getVelocityRPM();
+      velocityRPM = indexer.getVelocity();
 
-      targetSpeed = indexer.getTunableTargetSpeed();
+      targetSpeed = Indexer.getTunableTargetSpeed();
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = indexer.getStickyFaultsRaw();
     } catch (Throwable t) {
@@ -120,8 +120,8 @@ public class IndexerTelemetry implements SubsystemTelemetry {
       direction = "STOPPED";
     }
 
-    double jamThreshold = indexer.getJamCurrentThreshold();
-    double jamTimeSec = indexer.getJamTimeThreshold();
+    double jamThreshold = Indexer.getJamCurrentThreshold();
+    double jamTimeSec = Indexer.getJamTimeThreshold();
     boolean highCurrent = running && (currentAmps > jamThreshold);
     boolean wasJammed = jamDetected;
 
@@ -180,10 +180,10 @@ public class IndexerTelemetry implements SubsystemTelemetry {
 
     pidTuningEvent = false;
     try {
-      double curKP = indexer.getTunableKP();
-      double curKI = indexer.getTunableKI();
-      double curKD = indexer.getTunableKD();
-      double curFF = indexer.getTunableFF();
+      double curKP = Indexer.getTunableKP();
+      double curKI = Indexer.getTunableKI();
+      double curKD = Indexer.getTunableKD();
+      double curFF = Indexer.getTunableFF();
       if (prevKP >= 0
           && (curKP != prevKP || curKI != prevKI || curKD != prevKD || curFF != prevFF)) {
         pidTuningEvent = true;

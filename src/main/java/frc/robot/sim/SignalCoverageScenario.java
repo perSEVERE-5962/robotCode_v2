@@ -19,7 +19,8 @@ import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
  *   <li>All mode transitions in one run: disabled -> auto -> disabled -> teleop -> disabled -> test
  *       -> disabled
  *   <li>Motor stall/recovery cycles: all motors at speed, then sudden target zero, then resume
- *       (exercises stall detection in ShooterTelemetry, IndexerTelemetry, IntakeTelemetry, etc.)
+ *       (exercises stall detection in ShooterTelemetry, IndexerTelemetry, IntakeRollerTelemetry,
+ *       etc.)
  * </ul>
  *
  * <p>30s total, 8 phases. Launch: ./gradlew simulateJava -DsimScenario=SignalCoverage

@@ -8,13 +8,13 @@ import frc.robot.util.TunableNumber;
 public class Agitator extends TalonActuator {
   private static Agitator instance;
   private static final TunableNumber kP =
-      new TunableNumber("Agitator/kP", Constants.AgitatorConstants.P);
+      new TunableNumber("Agitator/kP", Constants.AgitatorConstants.kP);
   private static final TunableNumber kI =
-      new TunableNumber("Agitator/kI", Constants.AgitatorConstants.I);
+      new TunableNumber("Agitator/kI", Constants.AgitatorConstants.kI);
   private static final TunableNumber kD =
-      new TunableNumber("Agitator/kD", Constants.AgitatorConstants.D);
+      new TunableNumber("Agitator/kD", Constants.AgitatorConstants.kD);
   private static final TunableNumber kF =
-      new TunableNumber("Agitator/FF", Constants.AgitatorConstants.FF);
+      new TunableNumber("Agitator/FF", Constants.AgitatorConstants.kV);
   private static final TunableNumber targetSpeed =
       new TunableNumber("Agitator/TargetSpeed", Constants.AgitatorConstants.TARGET_RPM);
   private static final TunableNumber jamCurrentThreshold =
@@ -38,15 +38,21 @@ public class Agitator extends TalonActuator {
     // Actuator base class handles motor creation, PID, brake mode, and 40A current limit
     super(
         Constants.CANDeviceIDs.kAgitatorID,
-        Constants.AgitatorConstants.P,
-        Constants.AgitatorConstants.I,
-        Constants.AgitatorConstants.D,
-        Constants.AgitatorConstants.MinOutput,
-        Constants.AgitatorConstants.MaxOutput,
-        Constants.AgitatorConstants.FF,
-        Constants.AgitatorConstants.Iz,
+        Constants.AgitatorConstants.kP,
+        Constants.AgitatorConstants.kI,
+        Constants.AgitatorConstants.kD,
+        Constants.AgitatorConstants.kMinOutput,
+        Constants.AgitatorConstants.kMaxOutput,
+        Constants.AgitatorConstants.kS,
+        Constants.AgitatorConstants.kV,
+        0,
+        1,
+        Constants.AgitatorConstants.kIz,
         0,
         0,
+        40,
+        false,
+        false,
         false,
         false,
         false);
@@ -87,32 +93,32 @@ public class Agitator extends TalonActuator {
     return jamProtection;
   }
 
-  public double getTunableTargetRPM() {
+  public static double getTunableTargetRPM() {
     return targetSpeed.get();
   }
 
-  public double getJamCurrentThreshold() {
+  public static double getJamCurrentThreshold() {
     return jamCurrentThreshold.get();
   }
 
-  public double getJamTimeThreshold() {
+  public static double getJamTimeThreshold() {
     return jamTimeThreshold.get();
   }
 
   // PID gain getters
-  public double getTunableKP() {
+  public static double getTunableKP() {
     return kP.get();
   }
 
-  public double getTunableKI() {
+  public static double getTunableKI() {
     return kI.get();
   }
 
-  public double getTunableKD() {
+  public static double getTunableKD() {
     return kD.get();
   }
 
-  public double getTunableFF() {
+  public static double getTunableFF() {
     return kF.get();
   }
 

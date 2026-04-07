@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -16,18 +15,18 @@ import java.util.function.DoubleSupplier;
 
 // Shoot on the move command, this command has very similar heading control to the hub arc drive
 // command, where error is calculated, time of flight is considered to compenstae for drift
-// and the robot continues to aim to hub, the differe is, the robot is free to move in both the x
+// and the robot continues to aim to hub, the difference is, the robot is free to move in both the x
 // and y directions, this makes time of flight calculations more complicated, and needs to be tuned
 // as explained in the thread below, we made a interpolating double tree map, or essentially a look
-// up table, this helps calculate differnt time of flight at different distances in both x and y
+// up table, this helps calculate different time of flight at different distances in both x and y
 // must find different distances and times for tuning, the heading aim is essentially the same as
-// hub arc drive, the differnce is calculating time of flight, as distance changes, and shooter
-// speed is involved, as ballls now are affected by x and y velocity of robot.
+// hub arc drive, the difference is calculating time of flight, as distance changes, and shooter
+// speed is involved, as balls now are affected by x and y velocity of robot.
 // the command iterates to constantly update shot data, imagine the first shot 5 meters away with
-// the robot moving sideways, the lookup table says it takes 1 sec to get ther for example
+// the robot moving sideways, the lookup table says it takes 1 sec to get there for example
 // but since we are moving, we will actually be 6 meters from the hub, so loop iterates and sees
 // time of flight is now 1.5 seconds, causing more drift, meaning aim more to compensate, and this
-// proccess repeats until the changes are so slight, there is no impact.
+// process repeats until the changes are so slight, there is no impact.
 // https://www.chiefdelphi.com/t/shoot-on-the-move-from-the-code-perspective/511815/27
 public class ShootOnTheMove extends Command {
 
@@ -99,7 +98,6 @@ public class ShootOnTheMove extends Command {
   private final SwerveSubsystem swerve;
   private final Shooter shooter;
   private Translation2d lastDrift;
-  private final double WHEEL_RADIUS_METERS = Units.inchesToMeters(2.0);
   private final DoubleSupplier forwardInput;
   private final DoubleSupplier strafeInput;
   private final Translation2d hubCenter;
@@ -117,11 +115,11 @@ public class ShootOnTheMove extends Command {
     this.strafeInput = strafeInput;
     this.hubCenter = hubCenter;
 
-    addRequirements(swerve);
+    addRequirements(swerve, shooter);
     // distance and time
     timeOfFlightMap.put(1.2, 2.0);
-    // distance and rpm, more effeicent and consistent than physics for testing and tuning
     timeOfFlightMap.put(2.0, 3.0);
+    // distance and rpm, more efficient and consistent than physics for testing and tuning
     RPMMap.put(1.2, 3720.0);
     RPMMap.put(2.0, 4000.0);
   }
@@ -141,12 +139,11 @@ public class ShootOnTheMove extends Command {
         new Translation2d(robotVelocity.vxMetersPerSecond, robotVelocity.vyMetersPerSecond);
 
     double distanceToHub = robotPos.getDistance(hubCenter);
-    System.out.println(distanceToHub);
 
     double timeOfFlight = timeOfFlightMap.get(distanceToHub);
     double shooterRPM = 0;
     Translation2d compensatedTarget = hubCenter; // will be refined each iteration
-    for (int i = 0; i <= 3; i++) {
+    for (int i = 0; i <= 10; i++) {
 
       // how far the piece drifts during flight due to robot motion
       Translation2d drift = robotVel.times(timeOfFlight);
@@ -154,16 +151,16 @@ public class ShootOnTheMove extends Command {
       compensatedTarget = hubCenter.minus(drift);
       double distanceToCompensated = robotPos.getDistance(compensatedTarget);
 
-      // get time of flight and rpm to compenate
+      // get time of flight and rpm to compensate
       timeOfFlight = timeOfFlightMap.get(distanceToCompensated);
       shooterRPM = RPMMap.get(distanceToCompensated);
     }
 
     Rotation2d targetAngle = compensatedTarget.minus(robotPos).getAngle();
     double headingError = MathUtil.angleModulus(targetAngle.minus(currentHeading).getRadians());
-    double headingSpeed = MathUtil.clamp(headingError * 2, -4, 4);
-    double maxV = swerve.getSwerveDrive().getMaximumChassisVelocity();
+    double headingSpeed = headingError * 2.2;
 
+    double maxV = swerve.getSwerveDrive().getMaximumChassisVelocity();
     ChassisSpeeds speeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
             forwardInput.getAsDouble() * maxV * 0.6,
@@ -172,7 +169,6 @@ public class ShootOnTheMove extends Command {
             currentHeading);
     swerve.drive(speeds);
 
-    System.out.println(shooterRPM);
     shooter.moveToVelocityWithPID(shooterRPM);
 
     // Telemetry snapshot

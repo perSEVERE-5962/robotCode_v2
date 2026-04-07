@@ -30,7 +30,7 @@ public class HoldAndIntake extends Command {
 
   @Override
   public void execute() {
-    intakeRoller.moveToVelocityWithPID(intakeRoller.getTunableSpeed());
+    intakeRoller.moveToVelocityWithPID(IntakeRoller.getTunableSpeed());
   }
 
   @Override

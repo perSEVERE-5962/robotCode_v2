@@ -19,6 +19,8 @@ public class MoveAgitator extends Command {
   public MoveAgitator(double rpm) {
     agitator = Agitator.getInstance();
     this.rpm = rpm;
+    arcDriveOn = () -> false;
+
     addRequirements(agitator);
   }
 
@@ -28,10 +30,9 @@ public class MoveAgitator extends Command {
   @Override
   public void execute() {
     if (arcDriveOn != null && arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
-      agitator.moveToVelocityWithPID(0);
+      agitator.move(0);
     } else {
       agitator.moveToVelocityWithPID(rpm);
-      System.out.println(agitator.getMotorVelocity());
     }
   }
 

@@ -14,24 +14,22 @@ public class RetractIntake extends Command {
   }
 
   @Override
-  public void initialize() {}
-
-  @Override
-  public void execute() {
+  public void initialize() {
     intakePivot.moveToPositionWithPID(Constants.MotorConstants.IN_INTAKE_POS);
   }
+
+  @Override
+  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {
-    double currentPos = intakePivot.getPosition();
-    if (currentPos >= (Constants.MotorConstants.IN_INTAKE_POS - .2)
-        && currentPos <= (Constants.MotorConstants.IN_INTAKE_POS + .2)) {
+    if (Math.abs(Constants.MotorConstants.IN_INTAKE_POS - intakePivot.getPosition())
+        < Constants.MotorConstants.INTAKE_POS_TOLERANCE) {
       return true;
-    } else {
-      return false;
     }
+    return false;
   }
 }

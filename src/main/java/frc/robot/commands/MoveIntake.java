@@ -5,20 +5,22 @@ import frc.robot.subsystems.IntakeRoller;
 
 public class MoveIntake extends Command {
   private IntakeRoller intakeRoller;
+  private double rpm;
 
-  public MoveIntake() {
+  public MoveIntake(double rpm) {
     intakeRoller = IntakeRoller.getInstance();
+    this.rpm = rpm;
 
     addRequirements(intakeRoller);
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    intakeRoller.moveToVelocityWithPID(rpm);
+  }
 
   @Override
-  public void execute() {
-    intakeRoller.moveToVelocityWithPID(intakeRoller.getTunableSpeed());
-  }
+  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {

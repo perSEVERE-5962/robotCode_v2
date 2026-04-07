@@ -29,7 +29,7 @@
 **Tabs:**
 1. **Hub Strategy**: HubShiftNumber + TimeToNextShift + TotalShots with HubActive/ReadyToShoot/WonAuto boolean overlays. See exactly when hub windows open and how many shots land in each window.
 2. **Cycle Timing**: Last cycle time vs average + shots per minute + completed cycles. Spot degradation trends.
-3. **Intake-to-Score Pipeline**: Full mechanism timeline: intake actuator position, shooter velocity, shot count with boolean stripes for IsDeployed, Running, AtSpeed, ShotDetected, JamDetected. Visualize the complete intake→index→shoot pipeline as a time-aligned sequence.
+3. **Intake-to-Score Pipeline**: Full mechanism timeline: intake pivot position, shooter velocity, shot count with boolean stripes for IsDeployed, Running, AtSpeed, ShotDetected, JamDetected. Visualize the complete intake→index→shoot pipeline as a time-aligned sequence.
 4. **Hub Effectiveness**: Per-shift shot counts (Shift 1-4) on left axis + ActiveHubShots/InactiveHubShots/HubUtilization on right axis with HubActive boolean overlay. Answers "how many shots per hub window?" and "are we wasting shots on inactive hubs?"
 5. **Scoring Positions**: 3D field view. See where on the field the robot was scoring from and its path between scoring positions.
 
@@ -63,8 +63,8 @@
 1. **Shooter PID**: Target RPM (red) vs actual (green) vs error (amber) vs output (gray). Classic PID response view.
 2. **Shooter Health**: Current draw, temperature, shot detection events, stall detection. Correlate temp spikes with performance drops.
 3. **Indexer**: Target vs actual speed, current draw, jam detection. Jams show as current spike + speed drop.
-4. **Intake**: Velocity RPM + current draw with Running/Stalled boolean overlays. See intake performance and stall events.
-5. **Intake Actuator**: Position (rotations) + current draw with AtTarget/IsDeployed boolean overlays. Verify deploy/retract cycles.
+4. **Intake Roller**: Velocity RPM + current draw with Running/Stalled boolean overlays. See intake performance and stall events.
+5. **Intake Pivot**: Position (rotations) + current draw with AtTarget/IsDeployed boolean overlays. Verify deploy/retract cycles.
 6. **Hanger Position**: Target vs actual position + error + current. Look for sluggish response (needs more P) or overshoot (needs less).
 7. **All Motor Temps**: All 4 mechanism motor temps + total system current on one graph. Spot which motor is heating fastest.
 
