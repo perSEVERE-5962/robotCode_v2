@@ -1,23 +1,15 @@
 package frc.robot.telemetry;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Constants.DeviceHealthConstants;
+import frc.robot.util.HubShiftEngine;
 
 /** Scoring readiness: composite ReadyToShoot from shooter + indexer + vision. */
 public class ScoringTelemetry implements SubsystemTelemetry {
   private final ShooterTelemetry shooterTelemetry;
   private final IndexerTelemetry indexerTelemetry;
   private final VisionTelemetry visionTelemetry;
-
-  // Hub shift boundaries (teleop matchTime counts down from ~135)
-  // Game Manual Section 6.4: 5s transition, 4x25s shifts, 30s endgame
-  private static final double SHIFT_1_START = 130.0;
-  private static final double SHIFT_2_START = 105.0;
-  private static final double SHIFT_3_START = 80.0;
-  private static final double SHIFT_4_START = 55.0;
-  private static final double ENDGAME_START = 30.0;
 
   // ReadyToShoot stays true through brief velocity dips during sustained fire.
   // Manual time-based debounce (not WPILib Debouncer,that has wrong initial baseline).
@@ -82,23 +74,14 @@ public class ScoringTelemetry implements SubsystemTelemetry {
 
       hasBall = true; // Stub: read from hopper sensor when available. Reset in setDefaultValues().
 
-      // Hub active/inactive from match timer (REBUILT Section 6.4)
-      // FMS sends 'R' (Red won) or 'B' (Blue won) via game-specific message
-      wonAuto = parseWonAuto();
-      if (DriverStation.isTeleop()) {
-        double matchTime = DriverStation.getMatchTime();
-        if (matchTime < 0) {
-          hubActive = true; // no FMS in practice, just assume hub is active
-        } else {
-          hubShiftNumber = computeShiftNumber(matchTime);
-          hubActive = computeHubActive(matchTime, wonAuto);
-          timeToNextShiftSec = computeTimeToNextShift(matchTime);
-        }
-      } else {
-        hubActive = true; // auto, disabled, test: all hubs active. Cleared in setDefaultValues().
-        hubShiftNumber = 0;
-        timeToNextShiftSec = 0;
-      }
+      // Hub state from HubShiftEngine (single source of truth for shift timing)
+      HubShiftEngine hubEngine = HubShiftEngine.getInstance();
+      HubShiftEngine.ShiftInfo hubInfo = hubEngine.getOfficialInfo();
+      wonAuto = hubEngine.isWonAuto();
+      wonAutoFromFMS = hubEngine.isWonAutoFromFMS();
+      hubActive = hubInfo.hubActive();
+      hubShiftNumber = hubInfo.phase().ordinal();
+      timeToNextShiftSec = hubInfo.remainingInState();
 
       boolean rawReady = shooterReady && indexerClear && visionLocked && hasBall && hubActive;
       if (rawReady) {
@@ -174,77 +157,30 @@ public class ScoringTelemetry implements SubsystemTelemetry {
     return sb.length() > 0 ? sb.toString() : "Unknown";
   }
 
-  /** Odd shifts (1,3): winner INACTIVE. Even shifts (2,4): winner ACTIVE. */
-  private boolean computeHubActive(double matchTime, boolean wonAuto) {
-    if (matchTime > SHIFT_1_START || matchTime <= ENDGAME_START) {
-      return true; // transition or endgame: both alliances active
-    }
-    int shift = computeShiftNumber(matchTime);
-    boolean oddShift = (shift % 2 == 1);
-    return wonAuto ? !oddShift : oddShift;
-  }
-
-  private int computeShiftNumber(double matchTime) {
-    if (matchTime > SHIFT_1_START) return 0;
-    if (matchTime > SHIFT_2_START) return 1;
-    if (matchTime > SHIFT_3_START) return 2;
-    if (matchTime > SHIFT_4_START) return 3;
-    if (matchTime > ENDGAME_START) return 4;
-    return 0; // endgame
-  }
-
-  private double computeTimeToNextShift(double matchTime) {
-    if (matchTime > SHIFT_1_START) return matchTime - SHIFT_1_START;
-    if (matchTime > SHIFT_2_START) return matchTime - SHIFT_2_START;
-    if (matchTime > SHIFT_3_START) return matchTime - SHIFT_3_START;
-    if (matchTime > SHIFT_4_START) return matchTime - SHIFT_4_START;
-    if (matchTime > ENDGAME_START) return matchTime - ENDGAME_START;
-    return matchTime; // time remaining in match
-  }
-
-  /**
-   * Parse FMS game-specific message for auto winner. FMS sends 'R' or 'B'. Compare against our
-   * alliance to determine if we won. Falls back to dashboard toggle for practice (no FMS).
-   */
-  private boolean parseWonAuto() {
-    String message = DriverStation.getGameSpecificMessage();
-    if (message != null && !message.isEmpty()) {
-      char winner = message.charAt(0);
-      var ourAlliance = DriverStation.getAlliance();
-      if (ourAlliance.isPresent()) {
-        wonAutoFromFMS = true;
-        boolean redWon = (winner == 'R');
-        boolean weAreRed = (ourAlliance.get() == DriverStation.Alliance.Red);
-        return redWon == weAreRed;
-      }
-    }
-    // No FMS or no alliance data: fall back to dashboard for practice
-    wonAutoFromFMS = false;
-    return SmartDashboard.getBoolean("WonAuto", false);
-  }
-
   @Override
   public void log() {
-    SafeLog.put("Scoring/Available", scoringAvailable);
     SafeLog.put("Scoring/ReadyToShoot", readyToShoot);
     SafeLog.put("Scoring/Conditions/ShooterReady", shooterReady);
-    SafeLog.put("Scoring/Conditions/IndexerClear", indexerClear);
     SafeLog.put("Scoring/Conditions/VisionLocked", visionLocked);
     SafeLog.put("Scoring/Conditions/HasBall", hasBall);
     SafeLog.put("Scoring/Conditions/HubActive", hubActive);
-    SafeLog.put("Scoring/TimeSinceReadyMs", timeSinceReadyMs);
-    SafeLog.put("Scoring/HubShiftNumber", hubShiftNumber);
-    SafeLog.put("Scoring/TimeToNextShiftSec", timeToNextShiftSec);
-    SafeLog.put("Scoring/Conditions/WonAuto", wonAuto);
-    SafeLog.put("Scoring/Conditions/WonAutoFromFMS", wonAutoFromFMS);
-
-    SafeLog.put("Scoring/Previous/ShooterReady", previousShooterReady);
-    SafeLog.put("Scoring/Previous/IndexerClear", previousIndexerClear);
-    SafeLog.put("Scoring/Previous/VisionLocked", previousVisionLocked);
-    SafeLog.put("Scoring/Previous/HubActive", previousHubActive);
-    SafeLog.put("Scoring/Previous/ReadyToShoot", previousReadyToShoot);
-    SafeLog.put("Scoring/ReadyStateChanged", readyStateChanged);
+    SafeLog.put("Scoring/Conditions/IndexerClear", indexerClear);
     SafeLog.put("Scoring/ReadyLostReason", readyLostReason);
+    SafeLog.put("Scoring/Conditions/WonAuto", wonAuto);
+    SafeLog.put("Scoring/ReadyStateChanged", readyStateChanged);
+    SafeLog.put("Scoring/TimeSinceReadyMs", timeSinceReadyMs);
+
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("Scoring/Available", scoringAvailable);
+      SafeLog.put("Scoring/Previous/ShooterReady", previousShooterReady);
+      SafeLog.put("Scoring/Previous/IndexerClear", previousIndexerClear);
+      SafeLog.put("Scoring/Previous/VisionLocked", previousVisionLocked);
+      SafeLog.put("Scoring/Previous/HubActive", previousHubActive);
+      SafeLog.put("Scoring/Previous/ReadyToShoot", previousReadyToShoot);
+      SafeLog.put("Scoring/HubShiftNumber", hubShiftNumber);
+      SafeLog.put("Scoring/TimeToNextShiftSec", timeToNextShiftSec);
+      SafeLog.put("Scoring/Conditions/WonAutoFromFMS", wonAutoFromFMS);
+    }
   }
 
   @Override

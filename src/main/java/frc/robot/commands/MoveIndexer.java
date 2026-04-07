@@ -24,7 +24,9 @@ public class MoveIndexer extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    indexer.moveToVelocityWithPID(rpm);
+  }
 
   @Override
   public void execute() {

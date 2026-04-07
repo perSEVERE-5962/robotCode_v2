@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.801213483146068,
-        "y": 0.603
+        "x": 7.331768018018018,
+        "y": 0.7660022522522536
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.804641440063328,
-        "y": 0.12176594489220571
+        "x": 7.335195974935278,
+        "y": 0.28476819714445933
       },
       "isLocked": false,
       "linkedName": "HPSidePickup"
@@ -55,7 +55,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 111.0375110254218
   },
   "useDefaultConstraints": true
 }

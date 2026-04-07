@@ -4,6 +4,7 @@ import edu.wpi.first.hal.can.CANStatus;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants;
 import frc.robot.Constants.PDHChannelMap;
 
 /** System health: battery, CAN bus, roboRIO, loop timing, brownout prediction. */
@@ -176,6 +177,7 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
 
   @Override
   public void log() {
+    // Competition signals (always logged)
     SafeLog.put("SystemHealth/BatteryVoltage", batteryVoltage);
     SafeLog.put("SystemHealth/LoopTimeMs", loopTimeMs);
     SafeLog.put("SystemHealth/LoopOverruns", loopOverrunCount);
@@ -183,32 +185,36 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
     SafeLog.put("SystemHealth/CANTxErrors", canTxErrors);
     SafeLog.put("SystemHealth/CANRxErrors", canRxErrors);
     SafeLog.put("SystemHealth/CANBusOff", canBusOff);
-    SafeLog.put("SystemHealth/RioCPUTemp", rioCPUTemp);
+    SafeLog.put("SystemHealth/BrownedOut", brownedOut);
+    SafeLog.put("SystemHealth/BrownoutRisk", brownoutRisk);
+    SafeLog.put("SystemHealth/BrownoutRiskLevel", brownoutRiskLevel);
+    SafeLog.put("SystemHealth/VoltageSlope", voltageSlope);
+    SafeLog.put("SystemHealth/TotalCurrentAmps", totalCurrentAmps);
+    SafeLog.put("SystemHealth/PeakCurrentAmps", peakCurrentAmps);
     SafeLog.put("SystemHealth/Rio3V3Rail", rio3V3Rail);
     SafeLog.put("SystemHealth/Rio5VRail", rio5VRail);
     SafeLog.put("SystemHealth/Rio6VRail", rio6VRail);
-    SafeLog.put("SystemHealth/BrownedOut", brownedOut);
-    SafeLog.put("SystemHealth/RSLState", rslState);
-
-    SafeLog.put("SystemHealth/BrownoutVoltage", brownoutVoltage);
-    SafeLog.put("SystemHealth/InputVoltage", inputVoltage);
-
-    SafeLog.put("SystemHealth/VoltageSlope", voltageSlope);
-    SafeLog.put("SystemHealth/BrownoutRisk", brownoutRisk);
-    SafeLog.put("SystemHealth/BrownoutRiskLevel", brownoutRiskLevel);
-
-    SafeLog.put("SystemHealth/TotalCurrentAmps", totalCurrentAmps);
-    SafeLog.put("SystemHealth/PeakCurrentAmps", peakCurrentAmps);
 
     for (int i = 0; i < PDHChannelMap.NUM_CHANNELS; i++) {
       String label = PDHChannelMap.getLabel(i);
       SafeLog.put("PDH/" + label + "/Current", channelCurrents[i]);
-      SafeLog.put("PDH/" + label + "/PeakCurrent", channelPeakCurrents[i]);
     }
 
-    SafeLog.put("PDH/OvercurrentAlert", overcurrentAlert);
-    SafeLog.put("PDH/OvercurrentChannel", overcurrentChannel);
-    SafeLog.put("PDH/OvercurrentAmps", overcurrentAmps);
+    // Debug-only signals gated behind TUNING_MODE to reduce log bandwidth in competition
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("SystemHealth/RioCPUTemp", rioCPUTemp);
+      SafeLog.put("SystemHealth/RSLState", rslState);
+      SafeLog.put("SystemHealth/InputVoltage", inputVoltage);
+      SafeLog.put("SystemHealth/BrownoutVoltage", brownoutVoltage);
+      SafeLog.put("PDH/OvercurrentAlert", overcurrentAlert);
+      SafeLog.put("PDH/OvercurrentChannel", overcurrentChannel);
+      SafeLog.put("PDH/OvercurrentAmps", overcurrentAmps);
+
+      for (int i = 0; i < PDHChannelMap.NUM_CHANNELS; i++) {
+        String label = PDHChannelMap.getLabel(i);
+        SafeLog.put("PDH/" + label + "/PeakCurrent", channelPeakCurrents[i]);
+      }
+    }
   }
 
   @Override

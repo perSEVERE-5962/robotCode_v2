@@ -208,9 +208,19 @@ public class Robot extends LoggedRobot {
     safeCall("CommandScheduler", () -> CommandScheduler.getInstance().run());
     safeCall("Tracer", () -> LoggedTracer.record("CommandsMs"));
 
+    safeCall("ShotCalc", () -> frc.robot.util.ShotCalculator.getInstance().calculate());
+
     safeCall("Telemetry", () -> TelemetryManager.getInstance().updateAll());
     safeCall("NaNGuard", () -> checkNaNInfinity());
     safeCall("Tracer", () -> LoggedTracer.record("TelemetryMs"));
+
+    safeCall(
+        "HubShift",
+        () -> {
+          double tof =
+              frc.robot.util.ShotCalculator.getInstance().getParameters().timeOfFlightSec();
+          frc.robot.util.HubShiftEngine.getInstance().update(tof);
+        });
 
     safeCall(
         "ChannelCoordinator",
@@ -283,6 +293,11 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
+    // Auto-lock TUNING_MODE when FMS is connected (competition safety)
+    if (Constants.TUNING_MODE && DriverStation.isFMSAttached()) {
+      Constants.TUNING_MODE = false;
+    }
+
     try {
       if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME)) {
         m_robotContainer.setMotorBrake(false);
@@ -370,6 +385,9 @@ public class Robot extends LoggedRobot {
     try {
       EventMarker.modeChange("TELEOP");
       PostMatchSummary.getInstance().startTracking();
+      frc.robot.util.HubShiftEngine.getInstance().initializeTeleop();
+      frc.robot.util.ShotCalculator.getInstance().resetState();
+      frc.robot.util.DriverFeedback.getInstance().clearProgressiveAim();
     } catch (Throwable t) {
       safeLog("Health/CrashBarrier/TeleopInit", true);
     }
@@ -408,6 +426,9 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void simulationInit() {
+    edu.wpi.first.wpilibj.simulation.DriverStationSim.setAllianceStationId(
+        edu.wpi.first.hal.AllianceStationID.Blue1);
+
     simDeviceManager = new SimDeviceManager();
     simDeviceManager.init();
     simScenarioRunner = new SimScenarioRunner();

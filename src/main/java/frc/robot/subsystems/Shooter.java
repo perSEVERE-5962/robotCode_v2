@@ -18,20 +18,7 @@ public class Shooter extends MaxActuator {
 
   private SparkMax motor;
 
-  // private SparkMax followerMotor;
-  // private RelativeEncoder followerEncoder;
-  // private SparkMaxConfig followerConfig;
-
-  // private SparkMax followerMotor1;
-  // private RelativeEncoder followerEncoder1;
-  // private SparkMaxConfig followerConfig1;
-
-  // private SparkMax followerMotor2;
-  // private RelativeEncoder followerEncoder2;
-  // private SparkMaxConfig followerConfig2;
-
   private double desiredRPM = 0;
-  private double targetRPM = 0;
 
   // Tunable PID values
   private static final TunableNumber kP = new TunableNumber("Shooter/kP", ShooterConstants.kP);
@@ -69,13 +56,6 @@ public class Shooter extends MaxActuator {
         false,
         false);
 
-    // and the constructor becomes:
-    followers =
-        new SparkMax[] {
-          configureFollower(Constants.CANDeviceIDs.kShooterFollower, false), // same direction
-          configureFollower(Constants.CANDeviceIDs.kShooterFollower1, true), // inverted
-          configureFollower(Constants.CANDeviceIDs.kShooterFollower2, true), // inverted
-        };
     motor = getMotor();
 
     // followerConfig = new SparkMaxConfig();
@@ -129,16 +109,18 @@ public class Shooter extends MaxActuator {
 
   @Override
   public void periodic() {
-    TunableNumber.ifChanged(
-        () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+    try {
+      TunableNumber.ifChanged(
+          () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+    } catch (Throwable t) {
+      // CAN fault during PID update must not kill scheduler
+    }
   }
 
   @Override
   public void moveToVelocityWithPID(double rpm) {
     this.desiredRPM = rpm;
-    rpm = limiter.calculate(rpm);
-    this.targetRPM = rpm;
-    super.moveToVelocityWithPID(rpm);
+    motor.getClosedLoopController().setSetpoint(rpm, SparkMax.ControlType.kVelocity);
   }
 
   private SparkMax configureFollower(int canId, boolean inverted) {
@@ -146,7 +128,9 @@ public class Shooter extends MaxActuator {
     SparkMaxConfig config = new SparkMaxConfig();
     config.follow(Constants.CANDeviceIDs.kShooterID, inverted);
     config.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    config.smartCurrentLimit(60);
+    config.smartCurrentLimit(30);
+    config.voltageCompensation(12.0);
+    config.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
     follower.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     return follower;
   }

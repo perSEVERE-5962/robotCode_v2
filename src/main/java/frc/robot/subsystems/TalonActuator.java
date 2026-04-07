@@ -19,6 +19,7 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
 
   protected TalonActuator(
       int kID,
+      double kG,
       double kP,
       double kI,
       double kD,
@@ -47,6 +48,9 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
     config.CurrentLimits.StatorCurrentLimit = kStallLimit;
 
     // useThroughBoreEncoder ignored for now
+
+    config.Slot0.kG = kG;
+    config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     config.Slot0.kP = kP;
     config.Slot0.kI = kI;
     config.Slot0.kD = kD;

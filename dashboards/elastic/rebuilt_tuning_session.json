@@ -3,6 +3,387 @@
   "grid_size": 128,
   "tabs": [
     {
+      "name": "Shooting",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "RPM Override",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 300.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/ShotCalc/RPMOverride",
+              "period": 0.033,
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "Distance to Hub (m)",
+            "x": 300.0,
+            "y": 0.0,
+            "width": 300.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/ShotCalc/Distance",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Effective RPM",
+            "x": 600.0,
+            "y": 0.0,
+            "width": 300.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/ShotCalc/EffectiveRPM",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "RPM Override Active",
+            "x": 900.0,
+            "y": 0.0,
+            "width": 200.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/ShotCalc/RPMOverrideActive",
+              "period": 0.033,
+              "true_color": 4294944000,
+              "false_color": 4284900966
+            }
+          },
+          {
+            "title": "Hub Center X",
+            "x": 1100.0,
+            "y": 0.0,
+            "width": 200.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/ShotCalc/HubCenterX",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Shooter RPM",
+            "x": 0.0,
+            "y": 100.0,
+            "width": 900.0,
+            "height": 250.0,
+            "type": "Graph",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/VelocityRPM",
+              "period": 0.033,
+              "time_displayed": 5.0,
+              "color": 4278238420,
+              "line_width": 2.0
+            }
+          },
+          {
+            "title": "AT SPEED",
+            "x": 900.0,
+            "y": 100.0,
+            "width": 200.0,
+            "height": 125.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/AtSpeed",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4294901760
+            }
+          },
+          {
+            "title": "FEEDING",
+            "x": 1100.0,
+            "y": 100.0,
+            "width": 200.0,
+            "height": 125.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/AimAndShoot/Feeding",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4284900966
+            }
+          },
+          {
+            "title": "AIM ACTIVE",
+            "x": 900.0,
+            "y": 225.0,
+            "width": 200.0,
+            "height": 125.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/AimAndShoot/Active",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4284900966
+            }
+          },
+          {
+            "title": "Valid Solution",
+            "x": 1100.0,
+            "y": 225.0,
+            "width": 200.0,
+            "height": 125.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/ShotCalc/IsValid",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4294901760
+            }
+          },
+          {
+            "title": "Heading Error (deg)",
+            "x": 0.0,
+            "y": 350.0,
+            "width": 600.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/AimAndShoot/HeadingErrorDeg",
+              "period": 0.033,
+              "min_value": -30.0,
+              "max_value": 30.0,
+              "center": 0.0,
+              "num_tick_marks": 7,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Heading kP",
+            "x": 600.0,
+            "y": 350.0,
+            "width": 200.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/HeadingLock/kP",
+              "period": 0.033,
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "Heading kD",
+            "x": 800.0,
+            "y": 350.0,
+            "width": 200.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/HeadingLock/kD",
+              "period": 0.033,
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "RPM Mult Short",
+            "x": 0.0,
+            "y": 450.0,
+            "width": 250.0,
+            "height": 80.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/ShotCalc/RPMMultShort",
+              "period": 0.033,
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "RPM Mult Medium",
+            "x": 250.0,
+            "y": 450.0,
+            "width": 250.0,
+            "height": 80.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/ShotCalc/RPMMultMedium",
+              "period": 0.033,
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "RPM Mult Long",
+            "x": 500.0,
+            "y": 450.0,
+            "width": 250.0,
+            "height": 80.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/ShotCalc/RPMMultLong",
+              "period": 0.033,
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "Fallback RPM",
+            "x": 750.0,
+            "y": 450.0,
+            "width": 250.0,
+            "height": 80.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter/TargetRPM",
+              "period": 0.033,
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "Motor Temp",
+            "x": 1000.0,
+            "y": 450.0,
+            "width": 300.0,
+            "height": 80.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/TemperatureCelsius",
+              "period": 0.033,
+              "min_value": 20.0,
+              "max_value": 80.0,
+              "num_tick_marks": 4,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Hub Phase",
+            "x": 0.0,
+            "y": 530.0,
+            "width": 200.0,
+            "height": 80.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/HubShift/Phase",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "HUB ACTIVE",
+            "x": 200.0,
+            "y": 530.0,
+            "width": 200.0,
+            "height": 80.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/HubShift/OfficialActive",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4294901760
+            }
+          },
+          {
+            "title": "Time Until Deactivation",
+            "x": 400.0,
+            "y": 530.0,
+            "width": 250.0,
+            "height": 80.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/HubShift/TimeUntilDeactivation",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Remaining In State",
+            "x": 650.0,
+            "y": 530.0,
+            "width": 250.0,
+            "height": 80.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/HubShift/RemainingInState",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Won Auto",
+            "x": 900.0,
+            "y": 530.0,
+            "width": 200.0,
+            "height": 80.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/HubShift/WonAuto",
+              "period": 0.033,
+              "true_color": 4278255360,
+              "false_color": 4294901760
+            }
+          },
+          {
+            "title": "Confidence",
+            "x": 1100.0,
+            "y": 530.0,
+            "width": 200.0,
+            "height": 80.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/HubShift/ScheduleConfidence",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "GAME DATA MISSING",
+            "x": 0.0,
+            "y": 610.0,
+            "width": 300.0,
+            "height": 70.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/HubShift/GameDataMissing",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4284900966
+            }
+          },
+          {
+            "title": "WonAuto Override",
+            "x": 300.0,
+            "y": 610.0,
+            "width": 200.0,
+            "height": 70.0,
+            "type": "Toggle Button",
+            "properties": {
+              "topic": "/SmartDashboard/WonAuto",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Reverse Duration (ms)",
+            "x": 500.0,
+            "y": 610.0,
+            "width": 250.0,
+            "height": 70.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/AimAndShoot/ReverseDurationMs",
+              "period": 0.033,
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "Omega Limit",
+            "x": 750.0,
+            "y": 610.0,
+            "width": 250.0,
+            "height": 70.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/AimAndShoot/OmegaLimit",
+              "period": 0.033,
+              "show_submit_button": true
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "Shooter",
       "grid_layout": {
         "layouts": [],

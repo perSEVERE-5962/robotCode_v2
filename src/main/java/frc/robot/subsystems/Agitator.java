@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import frc.robot.Constants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
@@ -7,6 +8,7 @@ import frc.robot.util.TunableNumber;
 
 public class Agitator extends TalonActuator {
   private static Agitator instance;
+  private VelocityVoltage rVelocityVoltageuest;
   private static final TunableNumber kP =
       new TunableNumber("Agitator/kP", Constants.AgitatorConstants.kP);
   private static final TunableNumber kI =
@@ -71,11 +73,18 @@ public class Agitator extends TalonActuator {
   }
 
   public double getVelocityRPM() {
-    return getMotor().getVelocity().getValueAsDouble();
+    return getMotor().getVelocity().getValueAsDouble() * 60.0;
   }
 
   @Override
   public void periodic() {
+    try {
+      TunableNumber.ifChanged(
+          () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+    } catch (Throwable t) {
+      // CAN fault during PID update must not kill scheduler
+    }
+
     // JamProtection detects and reports only. It never overrides the motor.
     // Telemetry reads the state; the driver decides what to do about it.
     try {

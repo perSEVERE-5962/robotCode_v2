@@ -3,6 +3,7 @@ package frc.robot.telemetry;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.subsystems.Agitator;
 import frc.robot.util.JamProtection;
@@ -65,7 +66,7 @@ public class AgitatorTelemetry implements SubsystemTelemetry {
       velocityRPM = agitator.getVelocityRPM();
 
       deviceConnected = connectDebouncer.calculate(true);
-      deviceFaultsRaw = agitator.getStickyFaultsRaw();
+      // deviceFaultsRaw = agitator.getStickyFaultsRaw();
     } catch (Throwable t) {
       deviceConnected = connectDebouncer.calculate(false);
       deviceFaultsRaw = -1;
@@ -122,20 +123,22 @@ public class AgitatorTelemetry implements SubsystemTelemetry {
   @Override
   public void log() {
     SafeLog.put("Agitator/Available", subsystemAvailable);
-    SafeLog.put("Agitator/Running", running);
-    SafeLog.put("Agitator/AppliedOutput", appliedOutput);
-    SafeLog.put("Agitator/CurrentAmps", currentAmps);
-    SafeLog.put("Agitator/TemperatureCelsius", temperatureCelsius);
     SafeLog.put("Agitator/VelocityRPM", velocityRPM);
     SafeLog.put("Agitator/Device/Connected", deviceConnected);
-    SafeLog.put("Agitator/Device/FaultsRaw", deviceFaultsRaw);
+    SafeLog.put("Agitator/CurrentAmps", currentAmps);
     SafeLog.put("Agitator/Stalled", stalled);
-    SafeLog.put("Agitator/StallDurationMs", stallDurationMs);
 
-    SafeLog.put("Agitator/ActiveCommand", activeCommandName);
-    SafeLog.put("Agitator/JamProtection/State", jamProtectionState);
-    SafeLog.put("Agitator/JamProtection/Attempts", jamProtectionAttempts);
-    SafeLog.put("Agitator/JamProtection/Intervening", jamProtectionIntervening);
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("Agitator/Running", running);
+      SafeLog.put("Agitator/AppliedOutput", appliedOutput);
+      SafeLog.put("Agitator/TemperatureCelsius", temperatureCelsius);
+      SafeLog.put("Agitator/Device/FaultsRaw", deviceFaultsRaw);
+      SafeLog.put("Agitator/StallDurationMs", stallDurationMs);
+      SafeLog.put("Agitator/ActiveCommand", activeCommandName);
+      SafeLog.put("Agitator/JamProtection/State", jamProtectionState);
+      SafeLog.put("Agitator/JamProtection/Attempts", jamProtectionAttempts);
+      SafeLog.put("Agitator/JamProtection/Intervening", jamProtectionIntervening);
+    }
   }
 
   @Override

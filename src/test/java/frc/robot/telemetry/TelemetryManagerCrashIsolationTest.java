@@ -41,9 +41,14 @@ class TelemetryManagerCrashIsolationTest {
   }
 
   @Test
-  void testAllNineteenTelemetryClassesRegistered() throws Exception {
-    List<?> list = getField(manager, "telemetryList");
-    assertEquals(20, list.size(), "TelemetryManager should register exactly 20 telemetry classes");
+  void testAllTelemetryClassesRegistered() throws Exception {
+    List<?> competitionList = getField(manager, "telemetryList");
+    List<?> tuningList = getField(manager, "tuningOnlyList");
+    int total = competitionList.size() + tuningList.size();
+    assertEquals(
+        20,
+        total,
+        "TelemetryManager should register exactly 20 telemetry classes (16 competition + 4 tuning)");
   }
 
   @Test

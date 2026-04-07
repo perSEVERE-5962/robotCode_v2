@@ -180,8 +180,8 @@ public class VisionTelemetry implements SubsystemTelemetry {
       try {
         leftCamConnected = vision.isCameraConnected(Cameras.LEFT_CAM);
         rightCamConnected = vision.isCameraConnected(Cameras.RIGHT_CAM);
-        frontLeftCamConnected = vision.isCameraConnected(Cameras.FRONT_LEFT_CAM);
-        frontRightCamConnected = vision.isCameraConnected(Cameras.FRONT_RIGHT_CAM);
+        // frontLeftCamConnected = vision.isCameraConnected(Cameras.FRONT_LEFT_CAM);
+        // frontRightCamConnected = vision.isCameraConnected(Cameras.FRONT_RIGHT_CAM);
       } catch (Throwable t) {
         leftCamConnected = false;
         rightCamConnected = false;
@@ -275,45 +275,47 @@ public class VisionTelemetry implements SubsystemTelemetry {
 
   @Override
   public void log() {
+    // Competition signals (always logged)
     SafeLog.put("Vision/Available", subsystemAvailable);
     SafeLog.put("Vision/Healthy", visionHealthy);
     SafeLog.put("Vision/HasTarget", hasTarget);
     SafeLog.put("Vision/LockedOnTarget", lockedOnTarget);
-    SafeLog.put("Vision/ConsecutiveFrames", consecutiveFrames);
-    SafeLog.put("Vision/TimeSinceLastTargetMs", timeSinceLastTargetMs);
-    SafeLog.put("Vision/LockedTagID", lockedTagID);
-    SafeLog.put("Vision/SameTagFrames", sameTagFrameCount);
-    SafeLog.put("Vision/StableLock", stableLock);
-
     SafeLog.put("Vision/Quality/DistanceM", distanceToTargetM);
     SafeLog.put("Vision/Quality/Confidence", poseConfidence);
-    SafeLog.put("Vision/Quality/LockDurationMs", lockDurationMs);
-    SafeLog.put("Vision/PoseTimestampSec", poseTimestampSec);
-    SafeLog.put("Vision/MeasurementStdDevs", measurementStdDevs);
-    SafeLog.put("Vision/TargetYawDeg", targetYawDeg);
-    SafeLog.put("Vision/TargetPitchDeg", targetPitchDeg);
     SafeLog.put("Vision/LatencyMs", latencyMs);
+    SafeLog.put("Vision/CamerasWithTarget", camerasWithTarget);
     SafeLog.put("Vision/Camera/LeftCam/Connected", leftCamConnected);
     SafeLog.put("Vision/Camera/RightCam/Connected", rightCamConnected);
     SafeLog.put("Vision/Camera/FrontLeftCam/Connected", frontLeftCamConnected);
     SafeLog.put("Vision/Camera/FrontRightCam/Connected", frontRightCamConnected);
-
-    SafeLog.put("Vision/BestCamera", bestCameraName);
-    SafeLog.put("Vision/CamerasWithTarget", camerasWithTarget);
-
-    SafeLog.put("Vision/Filter/AcceptedCount", filterAccepted);
-    SafeLog.put("Vision/Filter/RejectedCount", filterRejected);
     SafeLog.put("Vision/Filter/AcceptRatePct", filterAcceptRatePct);
-    SafeLog.put("Vision/Filter/LastRejection", lastRejectionReason);
     SafeLog.put("Vision/Filter/Reject/Ambiguity", rejectAmbiguity);
     SafeLog.put("Vision/Filter/Reject/ZHeight", rejectZHeight);
     SafeLog.put("Vision/Filter/Reject/RollPitch", rejectRollPitch);
     SafeLog.put("Vision/Filter/Reject/FieldBounds", rejectFieldBounds);
     SafeLog.put("Vision/Filter/Reject/HeadingDivergence", rejectHeadingDivergence);
     SafeLog.put("Vision/Filter/Reject/PoseJump", rejectPoseJump);
-    SafeLog.put("Vision/Blending/Active", blendingActive);
-    SafeLog.put("Vision/Blending/Weight", blendWeight);
-    SafeLog.put("Vision/ManualOverride", manualOverride);
+    SafeLog.put("Vision/TimeSinceLastTargetMs", timeSinceLastTargetMs);
+
+    // Debug signals (tuning only, cuts ~17 signals during competition)
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("Vision/StableLock", stableLock);
+      SafeLog.put("Vision/SameTagFrames", sameTagFrameCount);
+      SafeLog.put("Vision/ConsecutiveFrames", consecutiveFrames);
+      SafeLog.put("Vision/Blending/Active", blendingActive);
+      SafeLog.put("Vision/Blending/Weight", blendWeight);
+      SafeLog.put("Vision/MeasurementStdDevs", measurementStdDevs);
+      SafeLog.put("Vision/TargetYawDeg", targetYawDeg);
+      SafeLog.put("Vision/TargetPitchDeg", targetPitchDeg);
+      SafeLog.put("Vision/PoseTimestampSec", poseTimestampSec);
+      SafeLog.put("Vision/LockedTagID", lockedTagID);
+      SafeLog.put("Vision/BestCamera", bestCameraName);
+      SafeLog.put("Vision/ManualOverride", manualOverride);
+      SafeLog.put("Vision/Quality/LockDurationMs", lockDurationMs);
+      SafeLog.put("Vision/Filter/AcceptedCount", filterAccepted);
+      SafeLog.put("Vision/Filter/RejectedCount", filterRejected);
+      SafeLog.put("Vision/Filter/LastRejection", lastRejectionReason);
+    }
   }
 
   @Override

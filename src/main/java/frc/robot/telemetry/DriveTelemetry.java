@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
@@ -273,39 +274,47 @@ public class DriveTelemetry implements SubsystemTelemetry {
 
     for (int i = 0; i < 4; i++) {
       String name = MODULE_NAMES[i];
-      if (moduleSetpoints[i] != null) {
-        SafeLog.put(
-            "Drive/ModuleSetpoints/" + name + "/Angle", moduleSetpoints[i].angle.getRadians());
-        SafeLog.put(
-            "Drive/ModuleSetpoints/" + name + "/Speed", moduleSetpoints[i].speedMetersPerSecond);
-      }
-    }
-
-    for (int i = 0; i < 4; i++) {
-      String name = MODULE_NAMES[i];
-      SafeLog.put("Drive/Encoder/" + name + "/AbsoluteOk", encoderAbsoluteOk[i]);
-      if (encoderDisagreementRad[i] > ENCODER_DISAGREEMENT_THRESHOLD_RAD) {
-        SafeLog.put("Drive/Encoder/" + name + "/DisagreementRad", encoderDisagreementRad[i]);
-      } else {
-        SafeLog.put("Drive/Encoder/" + name + "/DisagreementRad", 0.0);
-      }
-    }
-
-    for (int i = 0; i < 4; i++) {
-      String name = MODULE_NAMES[i];
       SafeLog.put("Drive/Module/" + name + "/DriveConnected", driveMotorConnected[i]);
       SafeLog.put("Drive/Module/" + name + "/TurnConnected", turnMotorConnected[i]);
-      SafeLog.put("Drive/Module/" + name + "/EncoderIssue", encoderReadIssue[i]);
-      SafeLog.put("Drive/Module/" + name + "/DriveFaultsRaw", driveFaultsRaw[i]);
-      SafeLog.put("Drive/Module/" + name + "/TurnFaultsRaw", turnFaultsRaw[i]);
-      SafeLog.put("Drive/Module/" + name + "/DriveTemperature", driveTemperature[i]);
     }
 
-    SafeLog.put("Drive/Auto/TargetPose", targetPose);
-    SafeLog.put("Drive/Auto/PositionErrorM", positionErrorMeters);
-    SafeLog.put("Drive/Auto/HeadingErrorDeg", headingErrorDegrees);
     SafeLog.put("Drive/Auto/IsFollowing", isFollowingPath);
     SafeLog.put("Drive/Auto/PathName", currentPathName);
+
+    // Debug-only signals gated behind TUNING_MODE to reduce CAN/log bandwidth in competition
+    if (Constants.TUNING_MODE) {
+      for (int i = 0; i < 4; i++) {
+        String name = MODULE_NAMES[i];
+        if (moduleSetpoints[i] != null) {
+          SafeLog.put(
+              "Drive/ModuleSetpoints/" + name + "/Angle", moduleSetpoints[i].angle.getRadians());
+          SafeLog.put(
+              "Drive/ModuleSetpoints/" + name + "/Speed", moduleSetpoints[i].speedMetersPerSecond);
+        }
+      }
+
+      for (int i = 0; i < 4; i++) {
+        String name = MODULE_NAMES[i];
+        SafeLog.put("Drive/Encoder/" + name + "/AbsoluteOk", encoderAbsoluteOk[i]);
+        if (encoderDisagreementRad[i] > ENCODER_DISAGREEMENT_THRESHOLD_RAD) {
+          SafeLog.put("Drive/Encoder/" + name + "/DisagreementRad", encoderDisagreementRad[i]);
+        } else {
+          SafeLog.put("Drive/Encoder/" + name + "/DisagreementRad", 0.0);
+        }
+      }
+
+      for (int i = 0; i < 4; i++) {
+        String name = MODULE_NAMES[i];
+        SafeLog.put("Drive/Module/" + name + "/DriveFaultsRaw", driveFaultsRaw[i]);
+        SafeLog.put("Drive/Module/" + name + "/DriveTemperature", driveTemperature[i]);
+        SafeLog.put("Drive/Module/" + name + "/TurnFaultsRaw", turnFaultsRaw[i]);
+        SafeLog.put("Drive/Module/" + name + "/EncoderIssue", encoderReadIssue[i]);
+      }
+
+      SafeLog.put("Drive/Auto/TargetPose", targetPose);
+      SafeLog.put("Drive/Auto/PositionErrorM", positionErrorMeters);
+      SafeLog.put("Drive/Auto/HeadingErrorDeg", headingErrorDegrees);
+    }
   }
 
   @Override

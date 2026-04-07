@@ -1,5 +1,6 @@
 package frc.robot.sim;
 
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.revrobotics.spark.SparkSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Timer;
@@ -118,9 +119,15 @@ public class SimDeviceManager {
       double intakeRollerTarget = intakeRollerOutput * NEO_FREE_SPEED_RPM;
       intakeRollerRPM = updateMotorToTarget(intakeRollerSim, intakeRollerRPM, intakeRollerTarget);
 
-      // double agitatorOutput = agitatorSim.getAppliedOutput();
-      // double agitatorTarget = agitatorOutput * NEO_FREE_SPEED_RPM;
-      // agitatorRPM = updateMotorToTarget(agitatorSim, agitatorRPM, agitatorTarget);
+      // Agitator: TalonFX sim via TalonFXSimState
+      double agitatorVoltage = agitatorSimState.getMotorVoltage();
+      double agitatorTarget = (agitatorVoltage / 12.0) * NEO_FREE_SPEED_RPM;
+      double agitatorTau =
+          (Math.abs(agitatorTarget) > Math.abs(agitatorRPM)) ? SPINUP_TAU : COASTDOWN_TAU;
+      double agitatorAlpha = 1.0 - Math.exp(-DT / agitatorTau);
+      agitatorRPM += (agitatorTarget - agitatorRPM) * agitatorAlpha;
+      if (Math.abs(agitatorRPM) < 0.5) agitatorRPM = 0;
+      agitatorSimState.setRotorVelocity(agitatorRPM / 60.0); // RPM to RPS
 
       // When indexer is active and shooter is at speed, periodically drop
       // shooter RPM to trigger shot detection in ShooterTelemetry
@@ -223,8 +230,8 @@ public class SimDeviceManager {
     return intakeRollerSim;
   }
 
-  /*public SparkSim getAgitatorSim() {
-    return agitatorSim;
+  public TalonFXSimState getAgitatorSimState() {
+    return agitatorSimState;
   }
 
   public SparkSim getIntakePivotSim() {

@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.Agitator;
 import java.util.function.BooleanSupplier;
 
@@ -9,10 +10,9 @@ public class MoveAgitator extends Command {
   private double rpm;
   private BooleanSupplier arcDriveOn;
 
-  public MoveAgitator(double rpm, BooleanSupplier arcDriveOn) {
-    this.rpm = rpm;
+  public MoveAgitator() {
+
     agitator = Agitator.getInstance();
-    this.arcDriveOn = arcDriveOn;
     addRequirements(agitator);
   }
 
