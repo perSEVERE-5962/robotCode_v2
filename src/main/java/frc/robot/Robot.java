@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -189,6 +190,8 @@ public class Robot extends LoggedRobot {
     // Create a timer to disable motor brake a few seconds after disable. This will
     // let the robot stop immediately when disabled, but then also let it be pushed more
     disabledTimer = new Timer();
+
+    RobotController.setBrownoutVoltage(6.0);
 
     if (isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);
