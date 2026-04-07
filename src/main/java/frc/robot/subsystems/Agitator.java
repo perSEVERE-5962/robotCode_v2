@@ -8,7 +8,6 @@ import frc.robot.util.TunableNumber;
 
 public class Agitator extends TalonActuator {
   private static Agitator instance;
-  private VelocityVoltage rVelocityVoltageuest;
   private static final TunableNumber kP =
       new TunableNumber("Agitator/kP", Constants.AgitatorConstants.kP);
   private static final TunableNumber kI =

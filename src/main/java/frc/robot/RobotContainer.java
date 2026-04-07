@@ -182,6 +182,8 @@ public class RobotContainer {
     new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
     DriverStation.silenceJoystickConnectionWarning(true);
 
+    frc.robot.util.ShotCalculator.getInstance().setSwerve(drivebase);
+
     // Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
     NamedCommands.registerCommand("DeployIntake", new DeployIntake());

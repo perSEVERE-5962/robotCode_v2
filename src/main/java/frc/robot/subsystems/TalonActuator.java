@@ -19,7 +19,6 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
 
   protected TalonActuator(
       int kID,
-      double kG,
       double kP,
       double kI,
       double kD,

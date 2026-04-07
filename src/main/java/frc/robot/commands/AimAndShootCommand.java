@@ -189,7 +189,7 @@ public class AimAndShootCommand extends Command {
 
     // if RPM tanks for too long, stop feeding until it recovers
     if (reachedSpeed) {
-      double velocity = shooter.getVelocityRPM();
+      double velocity = shooter.getVelocity();
       double target = shooter.getTargetRPM();
       double threshold = target * underShootPct.get();
 

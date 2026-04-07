@@ -10,13 +10,13 @@ public class IntakePivot extends TalonActuator {
   private double targetPosition = 0;
 
   private static final TunableNumber kP =
-      new TunableNumber("IntakePivot/kP", IntakePivotConstants.P);
+      new TunableNumber("IntakePivot/kP", IntakePivotConstants.kP);
   private static final TunableNumber kI =
-      new TunableNumber("IntakePivot/kI", IntakePivotConstants.I);
+      new TunableNumber("IntakePivot/kI", IntakePivotConstants.kI);
   private static final TunableNumber kD =
-      new TunableNumber("IntakePivot/kD", IntakePivotConstants.D);
+      new TunableNumber("IntakePivot/kD", IntakePivotConstants.kD);
   private static final TunableNumber kF =
-      new TunableNumber("IntakePivot/FF", IntakePivotConstants.FF);
+      new TunableNumber("IntakePivot/FF", IntakePivotConstants.kV);
 
   private IntakePivot() {
     super(

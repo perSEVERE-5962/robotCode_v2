@@ -89,28 +89,29 @@ public final class Constants {
   }
 
   public static final class MotorConstants {
-    public static final double DESIRED_SHOOTER_RPM = 3730;
+    public static final double DESIRED_SHOOTER_RPM = 2500;
     public static final double SHOOTER_RPM_SLEW_RATE = 1000.0; // max change in RPM per second
-    public static final double DESIRED_INDEXER_RPM = 7833; // 8.4 * 3730/4
+    public static final double SHOOTER_EMERGENCY_DUMP_RPM = 2500.0;
+    public static final double DESIRED_INDEXER_RPM = 6000; // 8.4 * 3730/4
     public static final double BACKWARDS_INDEXER_RPM = 999;
-    public static final double OUT_INTAKE_POS = 38.24;
-    public static final double IN_INTAKE_POS = 11.6;
-    public static final double DESIRED_INTAKE_RPM = 0;
+    public static final double OUT_INTAKE_POS = 0.0;
+    public static final double IN_INTAKE_POS = 0.3;
+    public static final double DESIRED_INTAKE_RPM = 5000;
     public static final double INTAKE_POS_TOLERANCE = .2;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
-    public static final double DESIRED_AGITATOR_RPM = 999;
+    public static final double DESIRED_AGITATOR_RPM = 5990;
     public static final double HANGER_POS_TOLERANCE = 0.1;
   }
 
   public static final class IntakeRollerConstants {
-    public static final double kP = 1.0;
+    public static final double kP = 0.0001;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
-    public static final double kV = 0.0;
+    public static final double kV = 0.24;
     public static final double kIz = 0.0;
 
     // Default tuning targets
@@ -118,44 +119,44 @@ public final class Constants {
   }
 
   public static final class IntakePivotConstants {
-    public static final double kP = 1.0;
+    public static final double kP = 7.8; // 1.0
     public static final double kI = 0.0;
-    public static final double kD = 0.2;
+    public static final double kD = 0.0; // .2
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
     public static final double kV = 0.0;
-    public static final double kG = 0.0;
+    public static final double kG = 0.15;
     public static final double kCosRatio = 83.333;
     public static final double kIz = 0.0;
   }
 
   public static final class ShooterConstants {
-    public static final double kP = 0.00011;
+    public static final double kP = 0.00009;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
-    public static final double kV = 0.002064;
+    public static final double kV = 0.002268; // 0.002064
     public static final double kIz = 0.0;
 
     // Default tuning targets
-    public static final double TARGET_RPM = 3730;
+    public static final double TARGET_RPM = 2500;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
     public static final double TARGET_RECOVERY_MS = 150.0;
-    public static final double SPEED_TOLERANCE_RPM = 120.0;
+    public static final double SPEED_TOLERANCE_RPM = 150.0;
     public static final double SHOT_DETECTION_DROP_RPM = 200.0;
   }
 
   public static final class IndexerConstants {
-    public static final double kP = 0.000;
+    public static final double kP = 0.0001;
     public static final double kI = 0.0;
     public static final double kD = 0.00;
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
-    public static final double kV = 0.0048;
+    public static final double kV = 0.001848; // 0.0048
     public static final double kIz = 0.0;
 
     // Telemetry constants
@@ -165,18 +166,18 @@ public final class Constants {
   }
 
   public static final class AgitatorConstants {
-    public static final double kP = 0.000;
+    public static final double kP = 0.1;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
-    public static final double kV = 0.0024;
+    public static final double kV = 0.192; // 0.0024
     public static final double kIz = 0.0;
 
     // Default tuning targets
-    public static final double TARGET_RPM = 2000;
-    public static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
+    public static final double TARGET_RPM = 5676;
+    public static final double JAM_CURRENT_THRESHOLD_AMPS = 79;
     public static final double JAM_TIME_THRESHOLD_SECONDS = 0.3;
   }
 
