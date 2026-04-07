@@ -281,9 +281,9 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {
     // Auto-lock TUNING_MODE when FMS is connected (competition safety)
-    if (Constants.TUNING_MODE && DriverStation.isFMSAttached()) {
-      Constants.TUNING_MODE = false;
-    }
+    // if (Constants.TUNING_MODE && DriverStation.isFMSAttached()) {
+    //   Constants.TUNING_MODE = false;
+    // }
 
     try {
       if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME)) {

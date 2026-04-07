@@ -29,7 +29,7 @@ public final class Constants {
    *
    * <p>IMPORTANT: Set to FALSE before competition deployment!
    */
-  public static boolean TUNING_MODE = true;
+  public static final boolean TUNING_MODE = false;
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
@@ -127,7 +127,7 @@ public final class Constants {
 
   public static final class IntakePivotConstants {
     public static final double kG = 0.15;
-    public static final double P = 7.8; // 1.0
+    public static final double P = 54; // 1.0
     public static final double I = 0.0;
     public static final double D = 0.00; // .2
     public static final double MinOutput = -1.0;
