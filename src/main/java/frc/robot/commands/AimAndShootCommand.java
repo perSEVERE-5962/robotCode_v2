@@ -210,15 +210,14 @@ public class AimAndShootCommand extends Command {
 
     if (feeding) {
       double targetRpm = shooter.getTargetRPM();
-      double rpmRatio = (targetRpm > 0) ? Math.min(1.0, shooter.getVelocityRPM() / targetRpm) :
-      0;
+      double rpmRatio = (targetRpm > 0) ? Math.min(1.0, shooter.getVelocityRPM() / targetRpm) : 0;
       rpmRatio = Math.max(feedRatioFloor.get(), rpmRatio);
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
       agitator.moveToVelocityWithPID(5990);
-      } else {
-        indexer.move(0);
-        agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM() * 0.1);
-    } 
+    } else {
+      indexer.move(0);
+      agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM() * 0.1);
+    }
 
     // progressive aim haptic: operator feels heading error converge
     try {

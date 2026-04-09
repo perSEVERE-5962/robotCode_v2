@@ -289,7 +289,6 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
 
-
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
 
