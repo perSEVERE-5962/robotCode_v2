@@ -119,7 +119,7 @@ public final class Constants {
   }
 
   public static final class IntakePivotConstants {
-    public static final double kP = 7.8; // 1.0
+    public static final double kP = 54; // 1.0
     public static final double kI = 0.0;
     public static final double kD = 0.0; // .2
     public static final double kMinOutput = -1.0;
@@ -172,7 +172,7 @@ public final class Constants {
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
-    public static final double kV = 0.192; // 0.0024
+    public static final double kV = 0.192;
     public static final double kIz = 0.0;
 
     // Default tuning targets

@@ -32,15 +32,14 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AgitateAndIndex;
 import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.DeployIntake;
-import frc.robot.commands.FeedEject;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
+import frc.robot.commands.MoveAgitator;
 import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.PivotIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.lib.BLine.FollowPath;
-import frc.robot.lib.BLine.Path;
 import frc.robot.sim.SimDriveOverride;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
@@ -64,15 +63,6 @@ import swervelib.SwerveInputStream;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  static {
-    Agitator.getInstance();
-    Hanger.getInstance();
-    Indexer.getInstance();
-    IntakeRoller.getInstance();
-    IntakePivot.getInstance();
-    Shooter.getInstance();
-  }
-
   private final FollowPath.Builder pathBuilder;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -86,6 +76,13 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/neo"));
+  
+  Agitator agitator = Agitator.getInstance();
+  Hanger hanger = Hanger.getInstance();
+  Indexer indexer = Indexer.getInstance();
+  IntakeRoller roller = IntakeRoller.getInstance();
+  IntakePivot pivot = IntakePivot.getInstance();
+  Shooter shooter = Shooter.getInstance();
 
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing
   // selection of desired auto
@@ -190,9 +187,7 @@ public class RobotContainer {
     registerNamedAutoCommands();
 
     autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
-    SmartDashboard.putData("Auto Chooser", autoChooser);
 
-    // drivebase.setupPathPlanner();
     // Another option that allows you to specify the default auto by its name
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
 
@@ -202,7 +197,28 @@ public class RobotContainer {
 
     frc.robot.util.ShotCalculator.getInstance().setSwerve(drivebase);
 
-    // Create the NamedCommands that will be used in PathPlanner
+    // Have the autoChooser pull in all PathPlanner autos as options
+
+    // Set the default auto (do nothing)
+    autoChooser.addOption("Do Nothing", Commands.none());
+
+    // Add a simple auto option to have the robot drive forward for 1 second then stop
+    autoChooser.addOption("Drive Forward", drivebase.driveForward().withTimeout(1));
+
+    // Put the autoChooser on the SmartDashboard
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
+    DriverTuning.initialize();
+
+    // Wire up telemetry references
+    TelemetryManager.getInstance().setVision(drivebase.getVision());
+    TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
+    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
+    DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
+  }
+
+  private void registerNamedAutoCommands() {
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
     NamedCommands.registerCommand("DeployIntake", new DeployIntake());
 
@@ -248,27 +264,6 @@ public class RobotContainer {
                     () -> -driverXbox.getLeftX() * -1,
                     true))
             .withTimeout(3.67));
-
-    // Have the autoChooser pull in all PathPlanner autos as options
-    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
-
-    // Set the default auto (do nothing)
-    autoChooser.addOption("Do Nothing", Commands.none());
-
-    // Add a simple auto option to have the robot drive forward for 1 second then stop
-    autoChooser.addOption("Drive Forward", drivebase.driveForward().withTimeout(1));
-
-    // Put the autoChooser on the SmartDashboard
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-
-    // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
-    DriverTuning.initialize();
-
-    // Wire up telemetry references
-    TelemetryManager.getInstance().setVision(drivebase.getVision());
-    TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
-    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
-    DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
   }
 
   /**
@@ -367,7 +362,7 @@ public class RobotContainer {
       // driverXbox.y().whileTrue(new MoveShooter(1500));
       // driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
       // driverXbox.x().whileTrue(new MoveIndexer(5000));
-      driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
+      driverXbox.rightTrigger().whileTrue(driveFieldOrientedAngularVelocity);
       driverXbox
           .leftTrigger()
           .whileTrue(
@@ -396,21 +391,19 @@ public class RobotContainer {
       // driverXbox.rightTrigger().whileTrue(drivebase.sysIdAngleMotorCommand());
       // driverXbox.leftTrigger().whileTrue(drivebase.sysIdDriveMotorCommand());
 
-      copilotXbox
-          .y()
-          .whileTrue(
-              new AgitateAndIndex(
-                  Constants.MotorConstants.DESIRED_AGITATOR_RPM,
-                  Constants.MotorConstants.DESIRED_INDEXER_RPM,
-                  hubArcDrive::isScheduled));
+      // copilotXbox
+      //    .y()
+      //    .whileTrue(
+      //        new AgitateAndIndex(
+      //            Constants.MotorConstants.DESIRED_AGITATOR_RPM,
+      //            Constants.MotorConstants.DESIRED_INDEXER_RPM,
+      //            hubArcDrive::isScheduled));
       copilotXbox.x().whileTrue(new SetIntakePosition());
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.4));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.4));
       copilotXbox
           .b()
-          .whileTrue(
-              new AgitateAndIndex(
-                  -Constants.MotorConstants.DESIRED_AGITATOR_RPM, -2000, hubArcDrive::isScheduled));
+          .whileTrue(new AgitateAndIndex(-Constants.MotorConstants.DESIRED_AGITATOR_RPM, -2000));
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
       copilotXbox.b().whileTrue(new AgitateAndIndex(-5000, -5000));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.3));

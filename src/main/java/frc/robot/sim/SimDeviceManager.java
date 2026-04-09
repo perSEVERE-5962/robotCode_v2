@@ -27,8 +27,8 @@ public class SimDeviceManager {
   private SparkSim shooterSim;
   private SparkSim indexerSim;
   private SparkSim intakeRollerSim;
-  // private SparkSim agitatorSim;
-  // private SparkSim intakePivotSim;
+  private TalonFXSimState agitatorSimState;
+  private TalonFXSimState intakePivotSimState;
   private SparkSim hangerSim;
   private boolean initialized = false;
 
@@ -39,7 +39,7 @@ public class SimDeviceManager {
   private double agitatorRPM = 0;
 
   // Position motor state with sticky targets (same command-conflict fix as shooter)
-  // private double intakePivotPos = 0;
+  private double intakePivotPos = 0;
   private double hangerPos = 0;
   private static final double POSITION_TAU = 0.300; // 300ms approach
   private double lastPivotTarget = 0;
@@ -80,8 +80,10 @@ public class SimDeviceManager {
       shooterSim = new SparkSim(shooter.getMotor(), DCMotor.getNEO(1));
       indexerSim = new SparkSim(indexer.getMotor(), DCMotor.getNEO(1));
       intakeRollerSim = new SparkSim(intakeRoller.getMotor(), DCMotor.getNEO(1));
-      // agitatorSim = new SparkSim(agitator.getMotor(), DCMotor.getNEO(1));
-      // intakePivotSim = new SparkSim(intakePivot.getMotor(), DCMotor.getNEO(1));
+      agitatorSimState = agitator.getMotor().getSimState();
+      agitatorSimState.setSupplyVoltage(12.0);
+      intakePivotSimState = intakePivot.getMotor().getSimState();
+      intakePivotSimState.setSupplyVoltage(12.0);
       hangerSim = new SparkSim(hanger.getMotor(), DCMotor.getNEO(1));
       initialized = true;
     } catch (RuntimeException e) {
@@ -234,9 +236,9 @@ public class SimDeviceManager {
     return agitatorSimState;
   }
 
-  public SparkSim getIntakePivotSim() {
-    return intakePivotSim;
-  }*/
+  public TalonFXSimState getIntakePivotSimState() {
+    return intakePivotSimState;
+  }
 
   public SparkSim getHangerSim() {
     return hangerSim;

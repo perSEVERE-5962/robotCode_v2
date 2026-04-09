@@ -210,57 +210,48 @@ public class Vision {
                 worstAmbiguity,
                 gyroHeading,
                 currentFusedPose,
-                autoElapsed);
+                autoElapsed,
+                gyroRateDps,
+                speedMps,
+                age,
+                isBlue,
+                estTagIds,
+                avgDist,
+                underDefense);
 
-      RejectionReason reason =
-          VisionFilter.evaluate(
-              est.estimatedPose,
-              tagCount,
-              worstAmbiguity,
-              gyroHeading,
-              currentFusedPose,
-              autoElapsed,
-              gyroRateDps,
-              speedMps,
-              age,
-              isBlue,
-              estTagIds,
-              avgDist,
-              underDefense);
-
-      // If ambiguous, try resolving by picking the PnP solution closer to odometry
-      Pose3d poseToFilter = est.estimatedPose;
-      boolean resolvedAmbiguity = false;
-      if (reason == RejectionReason.AMBIGUITY && tagCount == 1) {
-        Optional<Pose3d> resolved = resolveAmbiguousPose(est, camera, currentFusedPose);
-        if (resolved.isPresent()) {
-          poseToFilter = resolved.get();
-          resolvedAmbiguity = true;
-          // Re-run remaining gates on resolved pose (skip ambiguity check)
-          reason =
-              VisionFilter.evaluate(
-                  poseToFilter,
-                  tagCount,
-                  0.0, // pass ambiguity gate this time
-                  gyroHeading,
-                  currentFusedPose,
-                  autoElapsed,
-                  gyroRateDps,
-                  speedMps,
-                  age,
-                  isBlue,
-                  estTagIds,
-                  avgDist,
-                  underDefense);
+        // If ambiguous, try resolving by picking the PnP solution closer to odometry
+        Pose3d poseToFilter = pose.estimatedPose;
+        boolean resolvedAmbiguity = false;
+        if (reason == RejectionReason.AMBIGUITY && tagCount == 1) {
+          Optional<Pose3d> resolved = resolveAmbiguousPose(pose, camera, currentFusedPose);
+          if (resolved.isPresent()) {
+            poseToFilter = resolved.get();
+            resolvedAmbiguity = true;
+            // Re-run remaining gates on resolved pose (skip ambiguity check)
+            reason =
+                VisionFilter.evaluate(
+                    poseToFilter,
+                    tagCount,
+                    0.0, // pass ambiguity gate this time
+                    gyroHeading,
+                    currentFusedPose,
+                    autoElapsed,
+                    gyroRateDps,
+                    speedMps,
+                    age,
+                    isBlue,
+                    estTagIds,
+                    avgDist,
+                    underDefense);
+          }
         }
-      }
 
-      if (reason != RejectionReason.ACCEPTED) {
-        rejectedCount++;
-        rejectionsByGate[reason.ordinal()]++;
-        lastRejection = reason;
-        continue;
-      }
+        if (reason != RejectionReason.ACCEPTED) {
+          rejectedCount++;
+          rejectionsByGate[reason.ordinal()]++;
+          lastRejection = reason;
+          continue;
+        }
 
         double avgDist = getAverageTagDistance(pose, swerveDrive);
         Matrix<N3, N1> stdDevs =
@@ -281,7 +272,6 @@ public class Vision {
             blendWeight = Math.max(blendWeight, w);
           }
         }
-      }
 
         swerveDrive.addVisionMeasurement(poseToUse, pose.timestampSeconds, stdDevs);
       }
