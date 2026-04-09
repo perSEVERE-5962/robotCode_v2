@@ -9,6 +9,7 @@ import static frc.robot.Constants.HubScoringConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -38,6 +39,8 @@ import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.PivotIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
+import frc.robot.lib.BLine.FollowPath;
+import frc.robot.lib.BLine.Path;
 import frc.robot.sim.SimDriveOverride;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
@@ -69,6 +72,8 @@ public class RobotContainer {
     IntakePivot.getInstance();
     Shooter.getInstance();
   }
+
+  private final FollowPath.Builder pathBuilder;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);
@@ -168,6 +173,19 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   private RobotContainer() {
+
+    pathBuilder =
+        new FollowPath.Builder(
+                drivebase,
+                drivebase::getPose,
+                drivebase::getRobotVelocity,
+                drivebase::setChassisSpeeds, // Consumer to drive the robot
+                new PIDController(5.0, 0.0, 0.0), // Translation PID
+                new PIDController(3.0, 0.0, 0.0), // Rotation PID
+                new PIDController(2.0, 0.0, 0.0) // Cross-track PID
+                )
+            .withDefaultShouldFlip() // Auto-flip for red alliance
+            .withPoseReset(drivebase::resetOdometry); // Reset odometry at path start
     // Configure the trigger bindings
     registerNamedAutoCommands();
 

@@ -61,8 +61,8 @@ public class AimAndShootCommand extends Command {
       new TunableNumber("AimAndShoot/DebounceMs", 400);
   private static final TunableNumber feedRatioFloor =
       new TunableNumber("AimAndShoot/FeedRatioFloor", 0.5);
-  // private static final TunableNumber reverseDurationMs =
-  //     new TunableNumber("AimAndShoot/ReverseDurationMs", 650);
+  private static final TunableNumber reverseDurationMs =
+      new TunableNumber("AimAndShoot/ReverseDurationMs", 650);
   private static final TunableNumber omegaLimit = new TunableNumber("AimAndShoot/OmegaLimit", 0.4);
 
   // X-lock wheels when driver isn't moving to prevent drift while shooting
@@ -177,9 +177,9 @@ public class AimAndShootCommand extends Command {
     shooter.moveToVelocityWithPID(targetRPM);
 
     // still in reverse phase, keep clearing balls while shooter spins up
-    // if (!reverseTimer.hasElapsed(reverseDurationMs.get() / 1000.0)) {
-    //   return;
-    // }
+    if (!reverseTimer.hasElapsed(reverseDurationMs.get() / 1000.0)) {
+      return;
+    }
 
     boolean atSpeed = shooter.isAtSpeed(targetRPM);
     if (atSpeed && !reachedSpeed) {
@@ -210,16 +210,13 @@ public class AimAndShootCommand extends Command {
 
     if (feeding) {
       double targetRpm = shooter.getTargetRPM();
-      // double rpmRatio = (targetRpm > 0) ? Math.min(1.0, shooter.getVelocityRPM() / targetRpm) :
-      // 0;
-      // rpmRatio = Math.max(feedRatioFloor.get(), rpmRatio);
+      double rpmRatio = (targetRpm > 0) ? Math.min(1.0, shooter.getVelocityRPM() / targetRpm) : 0;
+      rpmRatio = Math.max(feedRatioFloor.get(), rpmRatio);
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
       agitator.moveToVelocityWithPID(5990);
-      // } else {
-      //   indexer.move(0);
-      //   agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM() * 0.1);
     } else {
-      agitator.move(0);
+      indexer.move(0);
+      agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM() * 0.1);
     }
 
     // progressive aim haptic: operator feels heading error converge

@@ -26,7 +26,7 @@ public final class Constants {
    *
    * <p>IMPORTANT: Set to FALSE before competition deployment!
    */
-  public static boolean TUNING_MODE = true;
+  public static final boolean TUNING_MODE = false;
 
   public static final boolean REPLAY = false;
 
