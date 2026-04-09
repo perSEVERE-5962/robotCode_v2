@@ -9,6 +9,8 @@ import static frc.robot.Constants.HubScoringConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
+
+import choreo.auto.AutoFactory;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -57,15 +59,15 @@ import frc.robot.util.DriverTuning;
 import java.io.File;
 import java.util.Set;
 import swervelib.SwerveInputStream;
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
-public class RobotContainer {
 
+public class RobotContainer {
+   private final AutoFactory autoFactory;
   private final FollowPath.Builder pathBuilder;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -177,6 +179,13 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   private RobotContainer() {
 
+    autoFactory = new AutoFactory(
+            drivebase::getPose, // A function that returns the current robot pose
+            drivebase::resetOdometry, // A function that resets the current robot pose to the provided Pose2d
+            drivebase::followTrajectory, // The drive subsystem trajectory follower 
+            true, // If alliance flipping should be enabled 
+            drivebase // The drive subsystem
+        );
     pathBuilder =
         new FollowPath.Builder(
                 drivebase,
