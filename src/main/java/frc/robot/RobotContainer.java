@@ -40,6 +40,7 @@ import frc.robot.commands.PivotIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.lib.BLine.FollowPath;
+import frc.robot.lib.BLine.Path;
 import frc.robot.sim.SimDriveOverride;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
@@ -76,7 +77,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/neo"));
-  
+
   Agitator agitator = Agitator.getInstance();
   Hanger hanger = Hanger.getInstance();
   Indexer indexer = Indexer.getInstance();
@@ -186,11 +187,6 @@ public class RobotContainer {
     // Configure the trigger bindings
     registerNamedAutoCommands();
 
-    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
-
-    // Another option that allows you to specify the default auto by its name
-    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
-
     configureBindings();
     new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -198,6 +194,10 @@ public class RobotContainer {
     frc.robot.util.ShotCalculator.getInstance().setSwerve(drivebase);
 
     // Have the autoChooser pull in all PathPlanner autos as options
+    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
+
+    autoChooser.addOption("Example A (BLine)", pathBuilder.build(new Path("example_a")));
+    autoChooser.addOption("Example B (BLine)", pathBuilder.build(new Path("example_b")));
 
     // Set the default auto (do nothing)
     autoChooser.addOption("Do Nothing", Commands.none());
@@ -216,6 +216,30 @@ public class RobotContainer {
     TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
     TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
     DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
+    // autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
+
+    // Fire control init
+
+    // Pre-spin: auto-spin shooter 5s before hub goes active so RPM is ready at window open.
+    // Requires Shooter so it yields to AimAndShootCommand when operator presses RT.
+    // runEnd stops the motor when the trigger goes false.
+    // new Trigger(
+    //         () -> {
+    //           var info = frc.robot.util.HubShiftEngine.getInstance().getOfficialInfo();
+    //           return !info.hubActive()
+    //               && info.timeToNextActive() > 0
+    //               && info.timeToNextActive() < 5.0;
+    //         })
+    //     .whileTrue(
+    //         Commands.runEnd(
+    //             () ->
+    //                 Shooter.getInstance()
+    //                     .moveToVelocityWithPID(Shooter.getInstance().getTunableTargetRPM()),
+    //             () -> Shooter.getInstance().move(0),
+    //             Shooter.getInstance()));
+
+    // Hub deactivation warning is handled inside DriverFeedback.update() so it
+    // doesn't compete with other haptic patterns for HID rumble output.
   }
 
   private void registerNamedAutoCommands() {
@@ -392,18 +416,15 @@ public class RobotContainer {
       // driverXbox.leftTrigger().whileTrue(drivebase.sysIdDriveMotorCommand());
 
       // copilotXbox
-      //    .y()
-      //    .whileTrue(
-      //        new AgitateAndIndex(
-      //            Constants.MotorConstants.DESIRED_AGITATOR_RPM,
-      //            Constants.MotorConstants.DESIRED_INDEXER_RPM,
-      //            hubArcDrive::isScheduled));
-      copilotXbox.x().whileTrue(new SetIntakePosition());
-      copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.4));
-      copilotXbox.leftBumper().whileTrue(new PivotIntake(0.4));
-      copilotXbox
-          .b()
-          .whileTrue(new AgitateAndIndex(-Constants.MotorConstants.DESIRED_AGITATOR_RPM, -2000));
+      //     .y()
+      //     .whileTrue(
+      //         new AgitateAndIndex(
+      //             Constants.MotorConstants.DESIRED_AGITATOR_RPM,
+      //             Constants.MotorConstants.DESIRED_INDEXER_RPM,
+      //             hubArcDrive::isScheduled));
+      // copilotXbox.x().whileTrue(new HoldAndIntake());
+
+      copilotXbox.rightTrigger().whileTrue(new FeedEject());
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
       copilotXbox.b().whileTrue(new AgitateAndIndex(-5000, -5000));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.3));
@@ -480,26 +501,25 @@ public class RobotContainer {
       // ));
 
       //     }
-
-      // Rotation2d current = drivebase.getHeading();
-      // Rotation2d target;
-
-      // if (Math.abs(current.getDegrees()) < 90 || Math.abs(current.getDegrees()) > 270) {
-      //     target = Rotation2d.fromDegrees(0);
-      // } else {
-      //     target = Rotation2d.fromDegrees(180);
-      // }
-      //     ChassisSpeeds speeds = drivebase.getTargetSpeeds(
-      //         driverXbox.getLeftY(),
-      //         driverXbox.getLeftX(),
-      //         target.getSin(),
-      //         target.getCos()
-      //     );
-      //     drivebase.driveFieldOriented(speeds);
-      // }, drivebase));
-
     }
   }
+
+  // Rotation2d current = drivebase.getHeading();
+  // Rotation2d target;
+
+  // if (Math.abs(current.getDegrees()) < 90 || Math.abs(current.getDegrees()) > 270) {
+  //     target = Rotation2d.fromDegrees(0);
+  // } else {
+  //     target = Rotation2d.fromDegrees(180);
+  // }
+  //     ChassisSpeeds speeds = drivebase.getTargetSpeeds(
+  //         driverXbox.getLeftY(),
+  //         driverXbox.getLeftX(),
+  //         target.getSin(),
+  //         target.getCos()
+  //     );
+  //     drivebase.driveFieldOriented(speeds);
+  // }, drivebase));
 
   /*     if (DriverStation.isTest()) {
     drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity); // Overrides drive command above!

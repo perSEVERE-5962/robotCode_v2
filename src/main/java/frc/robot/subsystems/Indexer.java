@@ -52,7 +52,7 @@ public class Indexer extends FlexActuator {
         Constants.IndexerConstants.kIz,
         0,
         0,
-        60,
+        45,
         true,
         true,
         false,

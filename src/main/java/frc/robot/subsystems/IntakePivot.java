@@ -39,6 +39,7 @@ public class IntakePivot extends TalonActuator {
         false,
         true,
         true);
+    setStartingPose();
   }
 
   // @Override
@@ -61,7 +62,7 @@ public class IntakePivot extends TalonActuator {
   }
 
   public void setMotorPositionToScoring() {
-    getMotor().setPosition(Constants.MotorConstants.OUT_INTAKE_POS);
+    getMotor().setPosition(0.0);
   }
 
   public void setStartingPose() {

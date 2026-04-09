@@ -163,7 +163,10 @@ public class SimDeviceManager {
       } else {
         lastPivotTarget = rawPivotTarget;
       }
-      // intakePivotPos = updatePositionToTarget(intakePivotSim, intakePivotPos, lastPivotTarget);
+      // IntakePivot: TalonFX sim via TalonFXSimState
+      double pivotAlpha = 1.0 - Math.exp(-DT / POSITION_TAU);
+      intakePivotPos += (lastPivotTarget - intakePivotPos) * pivotAlpha;
+      intakePivotSimState.setRawRotorPosition(intakePivotPos);
 
       Hanger hangerInst = Hanger.getInstance();
       if (hangerInst == null) return;
@@ -185,9 +188,9 @@ public class SimDeviceManager {
       SafeLog.put("Sim/Debug/IndexerRPM", indexerRPM);
       SafeLog.put("Sim/Debug/IntakeRollerOutput", intakeRollerSim.getAppliedOutput());
       SafeLog.put("Sim/Debug/IntakeRollerRPM", intakeRollerRPM);
-      // SafeLog.put("Sim/Debug/AgitatorOutput", agitatorSim.getAppliedOutput());
-      // SafeLog.put("Sim/Debug/AgitatorRPM", agitatorRPM);
-      // SafeLog.put("Sim/Debug/IntakePivotPos", intakePivotPos);
+      SafeLog.put("Sim/Debug/AgitatorVoltage", agitatorVoltage);
+      SafeLog.put("Sim/Debug/AgitatorRPM", agitatorRPM);
+      SafeLog.put("Sim/Debug/IntakePivotPos", intakePivotPos);
       SafeLog.put("Sim/Debug/IntakePivotTarget", lastPivotTarget);
       SafeLog.put("Sim/Debug/HangerPos", hangerPos);
       SafeLog.put("Sim/Debug/HangerTarget", lastHangerTarget);

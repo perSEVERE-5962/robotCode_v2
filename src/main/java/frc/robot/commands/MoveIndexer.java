@@ -31,13 +31,14 @@ public class MoveIndexer extends Command {
   @Override
   public void execute() {
 
-    if (arcDriveOn.getAsBoolean() && HubArcDrive.checkHeadingError()) {
-      indexer.moveToVelocityWithPID(rpm);
-    } else if (arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
-      indexer.move(0);
-    } else {
-      indexer.moveToVelocityWithPID(rpm);
-    }
+    // if (arcDriveOn.getAsBoolean() && HubArcDrive.checkHeadingError()) {
+    //   indexer.moveToVelocityWithPID(rpm);
+    // } else if (arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
+    //   indexer.moveToVelocityWithPID(0);
+    // } else {
+    //   indexer.moveToVelocityWithPID(rpm);
+    //   System.out.println(rpm);
+    //   System.out.println(indexer.getVelocity());
   }
 
   @Override

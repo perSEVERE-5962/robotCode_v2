@@ -181,7 +181,7 @@ public class AimAndShootCommand extends Command {
       return;
     }
 
-    boolean atSpeed = shooter.getVelocity() >= targetRPM;
+    boolean atSpeed = Math.abs(targetRPM - shooter.getVelocity()) < Shooter.getToleranceRPM();
     if (atSpeed && !reachedSpeed) {
       reachedSpeed = true;
       feeding = true;

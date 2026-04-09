@@ -30,7 +30,8 @@ public class SpeedUpThenIndex extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    agitator.moveToVelocityWithPID(-500);
+    agitator.moveToVelocityWithPID(-5000);
+    indexer.moveToVelocityWithPID(-5000);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
