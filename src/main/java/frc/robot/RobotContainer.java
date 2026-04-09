@@ -73,224 +73,224 @@ public class RobotContainer {
   final CommandXboxController copilotXbox = new CommandXboxController(1);
 
   final CommandJoystick driverJoystick = new CommandJoystick(2);
-  private final SendableChooser<Command> autoChooser;
-  Shooter shooter = Shooter.getInstance();
-  Indexer indexer = Indexer.getInstance();
-  Agitator agitator = Agitator.getInstance();
-  IntakePivot intakePivot = IntakePivot.getInstance();
-  IntakeRoller intakeRoller = IntakeRoller.getInstance();
-  Hanger hanger = Hanger.getInstance();
-  private boolean useLeftOffset = true;
-  private static RobotContainer instance;
-
-  // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem drivebase =
-      new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/neo"));
-
-  private final Field2d field = new Field2d();
-
-  // NOTE: This creates a second Vision instance. SwerveSubsystem already creates one internally.
-  // Both call getAllUnreadResults() on the same Cameras singletons, causing a race condition.
-  // Safe to remove this line and use drivebase.getVision() everywhere instead.
-  // public final Vision visionSubsystem = new Vision(drivebase::getPose, field);
-
-  /**
-   * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular
-   * velocity. In sim, SimDriveOverride values are combined with joystick so scenario playback and
-   * manual SimGUI control both work.
-   */
-  SwerveInputStream driveAngularVelocity =
-      SwerveInputStream.of(
-              drivebase.getSwerveDrive(),
-              () ->
-                  RobotBase.isSimulation()
-                      ? -(driverXbox.getLeftY() + SimDriveOverride.getY())
-                      : driverXbox.getLeftY() * -1,
-              () ->
-                  RobotBase.isSimulation()
-                      ? -(driverXbox.getLeftX() + SimDriveOverride.getX())
-                      : driverXbox.getLeftX() * -1)
-          .withControllerRotationAxis(
-              () ->
-                  RobotBase.isSimulation()
-                      ? -(driverXbox.getRightX() + SimDriveOverride.getOmega())
-                      : driverXbox.getRightX() * -1)
-          .deadband(OperatorConstants.DEADBAND)
-          .scaleTranslation(0.8)
-          .allianceRelativeControl(true);
-
-  /** Clone's the angular velocity input stream and converts it to a fieldRelative input stream. */
-  SwerveInputStream driveDirectAngle =
-      driveAngularVelocity
-          .copy()
-          .withControllerHeadingAxis(driverXbox::getRightX, driverXbox::getRightY)
-          .headingWhile(true);
-
-  /** Clone's the angular velocity input stream and converts it to a robotRelative input stream. */
-  SwerveInputStream driveRobotOriented =
-      driveAngularVelocity.copy().robotRelative(true).allianceRelativeControl(false);
-
-  SwerveInputStream driveAngularVelocityKeyboard =
-      SwerveInputStream.of(
-              drivebase.getSwerveDrive(),
-              () -> -driverXbox.getLeftY(),
-              () -> -driverXbox.getLeftX())
-          .withControllerRotationAxis(() -> driverXbox.getRawAxis(2))
-          .deadband(OperatorConstants.DEADBAND)
-          .scaleTranslation(0.8)
-          .allianceRelativeControl(true);
-  // Derive the heading axis with math!
-  SwerveInputStream driveDirectAngleKeyboard =
-      driveAngularVelocityKeyboard
-          .copy()
-          .withControllerHeadingAxis(
-              () -> Math.sin(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2),
-              () -> Math.cos(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2))
-          .headingWhile(true)
-          .translationHeadingOffset(true)
-          .translationHeadingOffset(Rotation2d.fromDegrees(0));
-
-  //   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-  //   () -> driverJoystick.getY() * -1,
-  //   () -> driverJoystick.getX() * -1)
-  //   .withControllerRotationAxis(driverJoystick::getTwist)
-  //   .deadband(OperatorConstants.DEADBAND)
-  //   .scaleTranslation(0.8)
-  //   .allianceRelativeControl(true);
-
-  // SwerveInputStream driveAngularVelocityKeyboard =
-  // SwerveInputStream.of(drivebase.getSwerveDrive(),
-  //   () -> -driverJoystick.getY(),
-  //   () -> -driverJoystick.getX())
-  //   .withControllerRotationAxis(() -> driverJoystick.getTwist())
-  //   .deadband(OperatorConstants.DEADBAND)
-  //   .scaleTranslation(0.8)
-  //   .allianceRelativeControl(true);
-  // // Derive the heading axis with math!
-  // SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
-  //   .withControllerHeadingAxis(() -> Math.sin(driverJoystick.getTwist() * Math.PI) * (Math.PI *
-  // 2),
-  //       () -> Math.cos(driverJoystick.getTwist() * Math.PI) * (Math.PI * 2))
-  //
-  // .headingWhile(true).translationHeadingOffset(true).translationHeadingOffset(Rotation2d.fromDegrees(0));
-
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  private RobotContainer() {
-
-    pathBuilder =
-        new FollowPath.Builder(
-                drivebase,
-                drivebase::getPose,
-                drivebase::getRobotVelocity,
-                drivebase::setChassisSpeeds, // Consumer to drive the robot
-                new PIDController(5.0, 0.0, 0.0), // Translation PID
-                new PIDController(3.0, 0.0, 0.0), // Rotation PID
-                new PIDController(2.0, 0.0, 0.0) // Cross-track PID
-                )
-            .withDefaultShouldFlip() // Auto-flip for red alliance
-            .withPoseReset(drivebase::resetOdometry); // Reset odometry at path start
-    // Configure the trigger bindings
-    registerNamedAutoCommands();
-
-    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-
-    // drivebase.setupPathPlanner();
-    // Another option that allows you to specify the default auto by its name
-    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
-
-    configureBindings();
-    new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
-    DriverStation.silenceJoystickConnectionWarning(true);
-
-    frc.robot.util.ShotCalculator.getInstance().setSwerve(drivebase);
-
-    // Build an auto chooser. This will use Commands.none() as the default option.
-    // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
-    DriverTuning.initialize();
-
-    // Wire up telemetry references
-    TelemetryManager.getInstance().setVision(drivebase.getVision());
-    TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
-    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
-    DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
-    // autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
-
-    // Fire control init
-
-    // Pre-spin: auto-spin shooter 5s before hub goes active so RPM is ready at window open.
-    // Requires Shooter so it yields to AimAndShootCommand when operator presses RT.
-    // runEnd stops the motor when the trigger goes false.
-    // new Trigger(
-    //         () -> {
-    //           var info = frc.robot.util.HubShiftEngine.getInstance().getOfficialInfo();
-    //           return !info.hubActive()
-    //               && info.timeToNextActive() > 0
-    //               && info.timeToNextActive() < 5.0;
-    //         })
-    //     .whileTrue(
-    //         Commands.runEnd(
-    //             () ->
-    //                 Shooter.getInstance()
-    //                     .moveToVelocityWithPID(Shooter.getInstance().getTunableTargetRPM()),
-    //             () -> Shooter.getInstance().move(0),
-    //             Shooter.getInstance()));
-
-    // Hub deactivation warning is handled inside DriverFeedback.update() so it
-    // doesn't compete with other haptic patterns for HID rumble output.
-  }
-
-  private void registerNamedAutoCommands() {
-    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-    NamedCommands.registerCommand("DeployIntake", new DeployIntake());
-
-    NamedCommands.registerCommand("HoldAndRunIntake", new HoldAndIntake());
-    NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(4));
-
-    NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
-    NamedCommands.registerCommand("TimedShoot", new SpeedUpThenIndex().withTimeout(8));
-
-    NamedCommands.registerCommand(
-        "ShakeIntake",
-        (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
-            .repeatedly());
-    NamedCommands.registerCommand(
-        "ShakeIntake",
-        (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
-            .repeatedly()
-            .withTimeout(8));
-    NamedCommands.registerCommand(
-        "ShakeIntakeAndScore",
-        ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
-                .repeatedly())
-            .alongWith(
-                new AimAndShootCommand(
-                    drivebase,
-                    shooter,
-                    indexer,
-                    agitator,
-                    () -> -driverXbox.getLeftY() * -1,
-                    () -> -driverXbox.getLeftX() * -1,
-                    false)));
-    NamedCommands.registerCommand(
-        "ShakeIntakeAndScoreWithTimeout",
-        ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
-                .repeatedly())
-            .alongWith(
-                new AimAndShootCommand(
-                    drivebase,
-                    shooter,
-                    indexer,
-                    agitator,
-                    () -> -driverXbox.getLeftY() * -1,
-                    () -> -driverXbox.getLeftX() * -1,
-                    true))
-            .withTimeout(3.67));
-
-    NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
-
-    // Build an auto chooser. This will use Commands.none() as the default option.
-    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
+  private SendableChooser<Command> autoChooser;
+    Shooter shooter = Shooter.getInstance();
+    Indexer indexer = Indexer.getInstance();
+    Agitator agitator = Agitator.getInstance();
+    IntakePivot intakePivot = IntakePivot.getInstance();
+    IntakeRoller intakeRoller = IntakeRoller.getInstance();
+    Hanger hanger = Hanger.getInstance();
+    private boolean useLeftOffset = true;
+    private static RobotContainer instance;
+  
+    // The robot's subsystems and commands are defined here...
+    private final SwerveSubsystem drivebase =
+        new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/neo"));
+  
+    private final Field2d field = new Field2d();
+  
+    // NOTE: This creates a second Vision instance. SwerveSubsystem already creates one internally.
+    // Both call getAllUnreadResults() on the same Cameras singletons, causing a race condition.
+    // Safe to remove this line and use drivebase.getVision() everywhere instead.
+    // public final Vision visionSubsystem = new Vision(drivebase::getPose, field);
+  
+    /**
+     * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular
+     * velocity. In sim, SimDriveOverride values are combined with joystick so scenario playback and
+     * manual SimGUI control both work.
+     */
+    SwerveInputStream driveAngularVelocity =
+        SwerveInputStream.of(
+                drivebase.getSwerveDrive(),
+                () ->
+                    RobotBase.isSimulation()
+                        ? -(driverXbox.getLeftY() + SimDriveOverride.getY())
+                        : driverXbox.getLeftY() * -1,
+                () ->
+                    RobotBase.isSimulation()
+                        ? -(driverXbox.getLeftX() + SimDriveOverride.getX())
+                        : driverXbox.getLeftX() * -1)
+            .withControllerRotationAxis(
+                () ->
+                    RobotBase.isSimulation()
+                        ? -(driverXbox.getRightX() + SimDriveOverride.getOmega())
+                        : driverXbox.getRightX() * -1)
+            .deadband(OperatorConstants.DEADBAND)
+            .scaleTranslation(0.8)
+            .allianceRelativeControl(true);
+  
+    /** Clone's the angular velocity input stream and converts it to a fieldRelative input stream. */
+    SwerveInputStream driveDirectAngle =
+        driveAngularVelocity
+            .copy()
+            .withControllerHeadingAxis(driverXbox::getRightX, driverXbox::getRightY)
+            .headingWhile(true);
+  
+    /** Clone's the angular velocity input stream and converts it to a robotRelative input stream. */
+    SwerveInputStream driveRobotOriented =
+        driveAngularVelocity.copy().robotRelative(true).allianceRelativeControl(false);
+  
+    SwerveInputStream driveAngularVelocityKeyboard =
+        SwerveInputStream.of(
+                drivebase.getSwerveDrive(),
+                () -> -driverXbox.getLeftY(),
+                () -> -driverXbox.getLeftX())
+            .withControllerRotationAxis(() -> driverXbox.getRawAxis(2))
+            .deadband(OperatorConstants.DEADBAND)
+            .scaleTranslation(0.8)
+            .allianceRelativeControl(true);
+    // Derive the heading axis with math!
+    SwerveInputStream driveDirectAngleKeyboard =
+        driveAngularVelocityKeyboard
+            .copy()
+            .withControllerHeadingAxis(
+                () -> Math.sin(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2),
+                () -> Math.cos(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2))
+            .headingWhile(true)
+            .translationHeadingOffset(true)
+            .translationHeadingOffset(Rotation2d.fromDegrees(0));
+  
+    //   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
+    //   () -> driverJoystick.getY() * -1,
+    //   () -> driverJoystick.getX() * -1)
+    //   .withControllerRotationAxis(driverJoystick::getTwist)
+    //   .deadband(OperatorConstants.DEADBAND)
+    //   .scaleTranslation(0.8)
+    //   .allianceRelativeControl(true);
+  
+    // SwerveInputStream driveAngularVelocityKeyboard =
+    // SwerveInputStream.of(drivebase.getSwerveDrive(),
+    //   () -> -driverJoystick.getY(),
+    //   () -> -driverJoystick.getX())
+    //   .withControllerRotationAxis(() -> driverJoystick.getTwist())
+    //   .deadband(OperatorConstants.DEADBAND)
+    //   .scaleTranslation(0.8)
+    //   .allianceRelativeControl(true);
+    // // Derive the heading axis with math!
+    // SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
+    //   .withControllerHeadingAxis(() -> Math.sin(driverJoystick.getTwist() * Math.PI) * (Math.PI *
+    // 2),
+    //       () -> Math.cos(driverJoystick.getTwist() * Math.PI) * (Math.PI * 2))
+    //
+    // .headingWhile(true).translationHeadingOffset(true).translationHeadingOffset(Rotation2d.fromDegrees(0));
+  
+    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    private RobotContainer() {
+  
+      pathBuilder =
+          new FollowPath.Builder(
+                  drivebase,
+                  drivebase::getPose,
+                  drivebase::getRobotVelocity,
+                  drivebase::setChassisSpeeds, // Consumer to drive the robot
+                  new PIDController(5.0, 0.0, 0.0), // Translation PID
+                  new PIDController(3.0, 0.0, 0.0), // Rotation PID
+                  new PIDController(2.0, 0.0, 0.0) // Cross-track PID
+                  )
+              .withDefaultShouldFlip() // Auto-flip for red alliance
+              .withPoseReset(drivebase::resetOdometry); // Reset odometry at path start
+      // Configure the trigger bindings
+      registerNamedAutoCommands();
+  
+      autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
+      SmartDashboard.putData("Auto Chooser", autoChooser);
+  
+      // drivebase.setupPathPlanner();
+      // Another option that allows you to specify the default auto by its name
+      // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+  
+      configureBindings();
+      new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
+      DriverStation.silenceJoystickConnectionWarning(true);
+  
+      frc.robot.util.ShotCalculator.getInstance().setSwerve(drivebase);
+  
+      // Build an auto chooser. This will use Commands.none() as the default option.
+      // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
+      DriverTuning.initialize();
+  
+      // Wire up telemetry references
+      TelemetryManager.getInstance().setVision(drivebase.getVision());
+      TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
+      TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
+      DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
+      // autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
+  
+      // Fire control init
+  
+      // Pre-spin: auto-spin shooter 5s before hub goes active so RPM is ready at window open.
+      // Requires Shooter so it yields to AimAndShootCommand when operator presses RT.
+      // runEnd stops the motor when the trigger goes false.
+      // new Trigger(
+      //         () -> {
+      //           var info = frc.robot.util.HubShiftEngine.getInstance().getOfficialInfo();
+      //           return !info.hubActive()
+      //               && info.timeToNextActive() > 0
+      //               && info.timeToNextActive() < 5.0;
+      //         })
+      //     .whileTrue(
+      //         Commands.runEnd(
+      //             () ->
+      //                 Shooter.getInstance()
+      //                     .moveToVelocityWithPID(Shooter.getInstance().getTunableTargetRPM()),
+      //             () -> Shooter.getInstance().move(0),
+      //             Shooter.getInstance()));
+  
+      // Hub deactivation warning is handled inside DriverFeedback.update() so it
+      // doesn't compete with other haptic patterns for HID rumble output.
+    }
+  
+    private void registerNamedAutoCommands() {
+      NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+      NamedCommands.registerCommand("DeployIntake", new DeployIntake());
+  
+      NamedCommands.registerCommand("HoldAndRunIntake", new HoldAndIntake());
+      NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(4));
+  
+      NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
+      NamedCommands.registerCommand("TimedShoot", new SpeedUpThenIndex().withTimeout(8));
+  
+      NamedCommands.registerCommand(
+          "ShakeIntake",
+          (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+              .repeatedly());
+      NamedCommands.registerCommand(
+          "ShakeIntake",
+          (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+              .repeatedly()
+              .withTimeout(8));
+      NamedCommands.registerCommand(
+          "ShakeIntakeAndScore",
+          ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+                  .repeatedly())
+              .alongWith(
+                  new AimAndShootCommand(
+                      drivebase,
+                      shooter,
+                      indexer,
+                      agitator,
+                      () -> -driverXbox.getLeftY() * -1,
+                      () -> -driverXbox.getLeftX() * -1,
+                      false)));
+      NamedCommands.registerCommand(
+          "ShakeIntakeAndScoreWithTimeout",
+          ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+                  .repeatedly())
+              .alongWith(
+                  new AimAndShootCommand(
+                      drivebase,
+                      shooter,
+                      indexer,
+                      agitator,
+                      () -> -driverXbox.getLeftY() * -1,
+                      () -> -driverXbox.getLeftX() * -1,
+                      true))
+              .withTimeout(3.67));
+  
+      NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
+  
+      // Build an auto chooser. This will use Commands.none() as the default option.
+      autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
 
     // Another option that allows you to specify the default auto by its name
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
