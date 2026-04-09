@@ -6,6 +6,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,6 +19,7 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
 
   protected TalonActuator(
       int kID,
+      double kG,
       double kP,
       double kI,
       double kD,
@@ -27,6 +29,7 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
       double kIz,
       double kUpperSoftLimit,
       double kLowerSoftLimit,
+      double gearRatio,
       boolean inverted,
       boolean useThroughBoreEncoder,
       boolean useSoftLimits) {
@@ -40,10 +43,14 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
     config.CurrentLimits.StatorCurrentLimit = 40; // bad default for krakens; 120 is the default
 
     // useThroughBoreEncoder ignored for now
+
+    config.Slot0.kG = kG;
+    config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     config.Slot0.kP = kP;
     config.Slot0.kI = kI;
     config.Slot0.kD = kD;
     config.Slot0.kV = 12.0 * kF;
+    config.Feedback.SensorToMechanismRatio = gearRatio;
     // iZone ignored because it doesn't seem to have it
     config.MotorOutput.PeakForwardDutyCycle = kMaxOutput;
     config.MotorOutput.PeakReverseDutyCycle = kMinOutput;

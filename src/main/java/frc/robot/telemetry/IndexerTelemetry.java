@@ -3,6 +3,7 @@ package frc.robot.telemetry;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.StallDetectionConstants;
 import frc.robot.subsystems.Indexer;
@@ -217,36 +218,37 @@ public class IndexerTelemetry implements SubsystemTelemetry {
   public void log() {
     SafeLog.put("Indexer/Available", subsystemAvailable);
     SafeLog.put("Indexer/Running", running);
-    SafeLog.put("Indexer/Direction", direction);
-    SafeLog.put("Indexer/ReadyToFire", !jamDetected);
     SafeLog.put("Indexer/AppliedOutput", appliedOutput);
-    SafeLog.put("Indexer/TargetSpeed", targetSpeed);
     SafeLog.put("Indexer/CurrentAmps", currentAmps);
     SafeLog.put("Indexer/TemperatureCelsius", temperatureCelsius);
-    SafeLog.put("Indexer/JamDetected", jamDetected);
-    SafeLog.put("Indexer/TotalJamCount", totalJamCount);
-
-    SafeLog.put("Indexer/FeederActive", feederActive);
-    SafeLog.put("Indexer/JamFrequencyPerMin", jamFrequencyPerMin);
-    SafeLog.put("Indexer/PIDTuningEvent", pidTuningEvent);
-    if (pidTuningEvent) {
-      SafeLog.put("Indexer/Config/kP", prevKP);
-      SafeLog.put("Indexer/Config/kI", prevKI);
-      SafeLog.put("Indexer/Config/kD", prevKD);
-      SafeLog.put("Indexer/Config/FF", prevFF);
-    }
-
-    SafeLog.put("Indexer/Device/Connected", deviceConnected);
-    SafeLog.put("Indexer/Device/FaultsRaw", deviceFaultsRaw);
     SafeLog.put("Indexer/VelocityRPM", velocityRPM);
+    SafeLog.put("Indexer/Device/Connected", deviceConnected);
     SafeLog.put("Indexer/Stalled", stalled);
-    SafeLog.put("Indexer/StallDurationMs", stallDurationMs);
-    SafeLog.put("Indexer/ActiveCommand", activeCommandName);
-    SafeLog.put("Indexer/TorqueReversalsPerSec", torqueReversalCount);
-    SafeLog.put("Indexer/TorqueReversalAlert", torqueReversalAlert);
-    SafeLog.put("Indexer/JamProtection/State", jamProtectionState);
-    SafeLog.put("Indexer/JamProtection/Attempts", jamProtectionAttempts);
-    SafeLog.put("Indexer/JamProtection/Intervening", jamProtectionIntervening);
+    SafeLog.put("Indexer/JamDetected", jamDetected);
+
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("Indexer/PIDTuningEvent", pidTuningEvent);
+      if (pidTuningEvent) {
+        SafeLog.put("Indexer/Config/kP", prevKP);
+        SafeLog.put("Indexer/Config/kI", prevKI);
+        SafeLog.put("Indexer/Config/kD", prevKD);
+        SafeLog.put("Indexer/Config/FF", prevFF);
+      }
+      SafeLog.put("Indexer/JamProtection/State", jamProtectionState);
+      SafeLog.put("Indexer/JamProtection/Attempts", jamProtectionAttempts);
+      SafeLog.put("Indexer/JamProtection/Intervening", jamProtectionIntervening);
+      SafeLog.put("Indexer/TorqueReversalsPerSec", torqueReversalCount);
+      SafeLog.put("Indexer/TorqueReversalAlert", torqueReversalAlert);
+      SafeLog.put("Indexer/StallDurationMs", stallDurationMs);
+      SafeLog.put("Indexer/Direction", direction);
+      SafeLog.put("Indexer/FeederActive", feederActive);
+      SafeLog.put("Indexer/ReadyToFire", !jamDetected);
+      SafeLog.put("Indexer/TargetSpeed", targetSpeed);
+      SafeLog.put("Indexer/TotalJamCount", totalJamCount);
+      SafeLog.put("Indexer/JamFrequencyPerMin", jamFrequencyPerMin);
+      SafeLog.put("Indexer/ActiveCommand", activeCommandName);
+      SafeLog.put("Indexer/Device/FaultsRaw", deviceFaultsRaw);
+    }
   }
 
   @Override

@@ -1,5 +1,6 @@
 package frc.robot.sim;
 
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.revrobotics.spark.SparkSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Timer;
@@ -27,8 +28,8 @@ public class SimDeviceManager {
   private SparkSim shooterSim;
   private SparkSim indexerSim;
   private SparkSim intakeSim;
-  // private SparkSim agitatorSim;
-  // private SparkSim intakeActuatorSim;
+  private TalonFXSimState agitatorSimState;
+  private TalonFXSimState intakePivotSimState;
   private SparkSim hangerSim;
   private boolean initialized = false;
 
@@ -36,10 +37,10 @@ public class SimDeviceManager {
   private double shooterRPM = 0;
   private double indexerRPM = 0;
   private double intakeRPM = 0;
-  // private double agitatorRPM = 0;
+  private double agitatorRPM = 0;
 
   // Position motor state with sticky targets (same command-conflict fix as shooter)
-  // private double intakeActuatorPos = 0;
+  private double intakePivotPos = 0;
   private double hangerPos = 0;
   private static final double POSITION_TAU = 0.300; // 300ms approach
   private double lastActuatorTarget = 0;
@@ -80,8 +81,10 @@ public class SimDeviceManager {
       shooterSim = new SparkSim(shooter.getMotor(), DCMotor.getNEO(1));
       indexerSim = new SparkSim(indexer.getMotor(), DCMotor.getNEO(1));
       intakeSim = new SparkSim(intake.getMotor(), DCMotor.getNEO(1));
-      // agitatorSim = new SparkSim(agitator.getMotor(), DCMotor.getNEO(1));
-      // intakeActuatorSim = new SparkSim(intakeActuator.getMotor(), DCMotor.getNEO(1));
+      agitatorSimState = agitator.getMotor().getSimState();
+      agitatorSimState.setSupplyVoltage(12.0);
+      intakePivotSimState = intakeActuator.getMotor().getSimState();
+      intakePivotSimState.setSupplyVoltage(12.0);
       hangerSim = new SparkSim(hanger.getMotor(), DCMotor.getNEO(1));
       initialized = true;
     } catch (RuntimeException e) {
@@ -119,9 +122,15 @@ public class SimDeviceManager {
       double intakeTarget = intakeOutput * NEO_FREE_SPEED_RPM;
       intakeRPM = updateMotorToTarget(intakeSim, intakeRPM, intakeTarget);
 
-      // double agitatorOutput = agitatorSim.getAppliedOutput();
-      // double agitatorTarget = agitatorOutput * NEO_FREE_SPEED_RPM;
-      // agitatorRPM = updateMotorToTarget(agitatorSim, agitatorRPM, agitatorTarget);
+      // Agitator: TalonFX sim via TalonFXSimState
+      double agitatorVoltage = agitatorSimState.getMotorVoltage();
+      double agitatorTarget = (agitatorVoltage / 12.0) * NEO_FREE_SPEED_RPM;
+      double agitatorTau =
+          (Math.abs(agitatorTarget) > Math.abs(agitatorRPM)) ? SPINUP_TAU : COASTDOWN_TAU;
+      double agitatorAlpha = 1.0 - Math.exp(-DT / agitatorTau);
+      agitatorRPM += (agitatorTarget - agitatorRPM) * agitatorAlpha;
+      if (Math.abs(agitatorRPM) < 0.5) agitatorRPM = 0;
+      agitatorSimState.setRotorVelocity(agitatorRPM / 60.0); // RPM to RPS
 
       // When indexer is active and shooter is at speed, periodically drop
       // shooter RPM to trigger shot detection in ShooterTelemetry
@@ -155,8 +164,10 @@ public class SimDeviceManager {
       } else {
         lastActuatorTarget = rawActuatorTarget;
       }
-      // intakeActuatorPos =
-      //    updatePositionToTarget(intakeActuatorSim, intakeActuatorPos, lastActuatorTarget);
+      // IntakePivot: TalonFX sim via TalonFXSimState
+      double pivotAlpha = 1.0 - Math.exp(-DT / POSITION_TAU);
+      intakePivotPos += (lastActuatorTarget - intakePivotPos) * pivotAlpha;
+      intakePivotSimState.setRawRotorPosition(intakePivotPos);
 
       Hanger hangerInst = Hanger.getInstance();
       if (hangerInst == null) return;
@@ -178,9 +189,9 @@ public class SimDeviceManager {
       SafeLog.put("Sim/Debug/IndexerRPM", indexerRPM);
       SafeLog.put("Sim/Debug/IntakeOutput", intakeSim.getAppliedOutput());
       SafeLog.put("Sim/Debug/IntakeRPM", intakeRPM);
-      // SafeLog.put("Sim/Debug/AgitatorOutput", agitatorSim.getAppliedOutput());
-      // SafeLog.put("Sim/Debug/AgitatorRPM", agitatorRPM);
-      // SafeLog.put("Sim/Debug/IntakeActuatorPos", intakeActuatorPos);
+      SafeLog.put("Sim/Debug/AgitatorVoltage", agitatorVoltage);
+      SafeLog.put("Sim/Debug/AgitatorRPM", agitatorRPM);
+      SafeLog.put("Sim/Debug/IntakePivotPos", intakePivotPos);
       SafeLog.put("Sim/Debug/IntakeActuatorTarget", lastActuatorTarget);
       SafeLog.put("Sim/Debug/HangerPos", hangerPos);
       SafeLog.put("Sim/Debug/HangerTarget", lastHangerTarget);
@@ -225,13 +236,13 @@ public class SimDeviceManager {
     return intakeSim;
   }
 
-  /*public SparkSim getAgitatorSim() {
-    return agitatorSim;
+  public TalonFXSimState getAgitatorSimState() {
+    return agitatorSimState;
   }
 
-  public SparkSim getIntakeActuatorSim() {
-    return intakeActuatorSim;
-  }*/
+  public TalonFXSimState getIntakePivotSimState() {
+    return intakePivotSimState;
+  }
 
   public SparkSim getHangerSim() {
     return hangerSim;

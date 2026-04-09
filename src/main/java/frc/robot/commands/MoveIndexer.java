@@ -24,20 +24,22 @@ public class MoveIndexer extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    indexer.moveToVelocityWithPID(rpm);
+  }
 
   @Override
   public void execute() {
 
-    if (arcDriveOn.getAsBoolean() && HubArcDrive.checkHeadingError()) {
-      indexer.moveToVelocityWithPID(rpm);
-    } else if (arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
-      indexer.moveToVelocityWithPID(0);
-    } else {
-      indexer.moveToVelocityWithPID(rpm);
-      System.out.println(rpm);
-      System.out.println(indexer.getMotorVelocity());
-    }
+    // if (arcDriveOn.getAsBoolean() && HubArcDrive.checkHeadingError()) {
+    //   indexer.moveToVelocityWithPID(rpm);
+    // } else if (arcDriveOn.getAsBoolean() && !HubArcDrive.checkHeadingError()) {
+    //   indexer.moveToVelocityWithPID(0);
+    // } else {
+    //   indexer.moveToVelocityWithPID(rpm);
+    //   System.out.println(rpm);
+    //   System.out.println(indexer.getMotorVelocity());
+    // }
   }
 
   @Override

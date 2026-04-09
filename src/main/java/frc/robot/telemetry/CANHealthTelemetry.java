@@ -126,9 +126,11 @@ public class CANHealthTelemetry implements SubsystemTelemetry {
     SafeLog.put("SystemHealth/CAN/AllDevicesConnected", allConnected);
     SafeLog.put("SystemHealth/CAN/ConnectedCount", connectedCount);
     SafeLog.put("SystemHealth/CAN/TotalDevices", TOTAL_DEVICES);
-    SafeLog.put("SystemHealth/CAN/DisconnectedList", disconnectedList);
     SafeLog.put("SystemHealth/CAN/TotalFaults", totalFaults);
     SafeLog.put("SystemHealth/CAN/HasFaults", hasFaults);
+    if (!allConnected) {
+      SafeLog.put("SystemHealth/CAN/DisconnectedList", disconnectedList);
+    }
   }
 
   @Override

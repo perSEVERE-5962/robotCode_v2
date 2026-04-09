@@ -1,0 +1,109 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 6.087376126126127,
+        "y": 0.6672409909909913
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.179898853398853,
+        "y": 0.656934172809174
+      },
+      "isLocked": false,
+      "linkedName": "HPpreintake"
+    },
+    {
+      "anchor": {
+        "x": 7.331768018018018,
+        "y": 0.7660022522522536
+      },
+      "prevControl": {
+        "x": 6.591058558558558,
+        "y": 0.6672409909909914
+      },
+      "nextControl": {
+        "x": 7.957976189267534,
+        "y": 0.8494966750855233
+      },
+      "isLocked": false,
+      "linkedName": "HPSidePickup"
+    },
+    {
+      "anchor": {
+        "x": 7.637927927927928,
+        "y": 2.9881306306306303
+      },
+      "prevControl": {
+        "x": 8.144772424587314,
+        "y": 2.0948372350110414
+      },
+      "nextControl": {
+        "x": 7.320190795177977,
+        "y": 3.5481297706023103
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.862253720765416,
+        "y": 3.1061445783132524
+      },
+      "prevControl": {
+        "x": 6.922887627024499,
+        "y": 3.3486802033495855
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "endFS"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.1163522012578657,
+      "rotationDegrees": 94.34329836804275
+    },
+    {
+      "waypointRelativePos": 1.7500000000000084,
+      "rotationDegrees": 97.53292295427215
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "intaking",
+      "minWaypointRelativePos": 1.4719626168224305,
+      "maxWaypointRelativePos": 3.0,
+      "constraints": {
+        "maxVelocity": 1.234,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 1.0,
+    "rotation": -140.38931175997337
+  },
+  "reversed": false,
+  "folder": "new paths",
+  "idealStartingState": {
+    "velocity": 2.0,
+    "rotation": 45.0
+  },
+  "useDefaultConstraints": true
+}

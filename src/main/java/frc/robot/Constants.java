@@ -29,7 +29,7 @@ public final class Constants {
    *
    * <p>IMPORTANT: Set to FALSE before competition deployment!
    */
-  public static final boolean TUNING_MODE = true;
+  public static final boolean TUNING_MODE = false;
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
@@ -105,30 +105,31 @@ public final class Constants {
   }
 
   public static final class MotorConstants {
-    public static final double DESIRED_SHOOTER_RPM = 3730;
-    public static final double DESIRED_INDEXER_RPM = 7833; // 8.4 * 3730/4
-    public static final double OUT_INTAKE_POS = 38.24;
-    public static final double IN_INTAKE_POS = 11.6;
-    public static final double DESIRED_INTAKE_RPM = 0;
+    public static final double DESIRED_SHOOTER_RPM = 2500;
+    public static final double DESIRED_INDEXER_RPM = 6000; // 8.4 * 3730/4
+    public static final double OUT_INTAKE_POS = 0.0;
+    public static final double IN_INTAKE_POS = 0.3;
+    public static final double DESIRED_INTAKE_RPM = 5000;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
-    public static final double DESIRED_AGITATOR_SPEED = .5;
+    public static final double DESIRED_AGITATOR_SPEED = 5990;
   }
 
   public static final class IntakeRollerConstants {
-    public static final double P = 1.0;
+    public static final double P = 0.0001;
     public static final double I = 0.0;
     public static final double D = 0.0;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0;
+    public static final double FF = 0.02;
     public static final double Iz = 0.0;
   }
 
   public static final class IntakePivotConstants {
-    public static final double P = 1.0;
+    public static final double kG = 0.15;
+    public static final double P = 54; // 1.0
     public static final double I = 0.0;
-    public static final double D = 0.2;
+    public static final double D = 0.00; // .2
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double FF = 0.0;
@@ -137,55 +138,56 @@ public final class Constants {
 
   public static final class ShooterConstants {
     // Velocity PID tuning (from Kfir2026)
-    public static final double P = 0.00011;
+    public static final double P = 0.00009;
     public static final double I = 0.0;
     public static final double D = 0.0;
-    public static final double FF = 0.000172;
+    public static final double FF = 0.000189; // .000172
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double Iz = 0.0;
 
     // Tuning targets
-    public static final double TARGET_RPM = 3730;
+    public static final double TARGET_RPM = 2500;
     public static final double TARGET_FIRE_RATE_PER_SEC = 2.5;
     public static final double TARGET_RECOVERY_MS = 150.0;
     public static final double RPM_SLEW_RATE = 1000.0; // max change in RPM per second
 
     // Telemetry constants
-    public static final double SPEED_TOLERANCE_RPM = 50.0;
+    public static final double SPEED_TOLERANCE_RPM = 150.0;
     public static final double VELOCITY_CONVERSION = 1.0;
     public static final double SHOT_DETECTION_DROP_RPM = 200.0;
     public static final double SHOT_DETECTION_MIN_RPM = 1000.0;
     public static final double TEMP_WARNING_CELSIUS = 65.0;
+    public static final double EMERGENCY_DUMP_RPM = 2500.0;
   }
 
   public static final class IndexerConstants {
     // Velocity PID (from Alden)
-    public static final double P = 0.000;
+    public static final double P = 0.0001;
     public static final double I = 0.0;
     public static final double D = 0.00;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0004;
+    public static final double FF = 0.000154; // .0004
     public static final double Iz = 0.0;
 
     // Telemetry constants
-    public static final double TARGET_SPEED = 7833;
-    public static final double JAM_CURRENT_THRESHOLD_AMPS = 35.0;
+    public static final double TARGET_SPEED = 6000;
+    public static final double JAM_CURRENT_THRESHOLD_AMPS = 70;
     public static final double JAM_TIME_THRESHOLD_SECONDS = 0.3;
   }
 
   public static final class AgitatorConstants {
-    public static final double P = 0.000;
+    public static final double P = 0.1;
     public static final double I = 0.0;
     public static final double D = 0.0;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0002;
+    public static final double FF = 0.016;
     public static final double Iz = 0.0;
 
-    public static final double TARGET_RPM = 2000;
-    public static final double JAM_CURRENT_THRESHOLD_AMPS = 25.0;
+    public static final double TARGET_RPM = 5676;
+    public static final double JAM_CURRENT_THRESHOLD_AMPS = 79;
     public static final double JAM_TIME_THRESHOLD_SECONDS = 0.3;
   }
 
@@ -365,8 +367,103 @@ public final class Constants {
     public static final double BALL_RADIUS_M = 0.0889; // 3.5" radius
   }
 
-  /** Shot calculator constants (launcher geometry) */
+  /** Shot calculator constants (launcher geometry + Newton solver + SOTM) */
   public static final class ShotCalculatorConstants {
-    public static final double FIXED_LAUNCH_ANGLE_DEG = 68.0; // measured from OnShape CAD
+    // Launcher geometry (drum shooter, rear-mounted)
+    public static final double LAUNCHER_OFFSET_X = -0.0577; // behind center (OnShape)
+    public static final double LAUNCHER_OFFSET_Y = 0.0;
+    public static final double FIXED_LAUNCH_ANGLE_DEG = 60.0; // drum shooter angle
+    // rear-mounted shooter: rotate aim by 180 deg so the back faces the hub
+    public static final double SHOOTER_ANGLE_OFFSET_RAD = Math.PI;
+
+    // Newton solver
+    public static final int MAX_ITERATIONS = 25;
+    public static final double CONVERGENCE_TOLERANCE = 0.001;
+    public static final double TOF_MIN = 0.05;
+    public static final double TOF_MAX = 5.0;
+
+    // Velocity filter
+    public static final double MIN_SOTM_SPEED = 0.1;
+
+    // Latency compensation
+    public static final double PHASE_DELAY_MS = 30.0;
+    public static final double MECH_LATENCY_MS = 20.0;
+
+    // Drag compensation
+    public static final double SOTM_DRAG_COEFF = 0.47;
+
+    // Scoring range
+    public static final double MIN_SCORING_DISTANCE = 0.5;
+    public static final double MAX_SCORING_DISTANCE = 5.0;
+
+    // Speed cap while shooting on the move
+    public static final double MAX_SOTM_SPEED = 3.0;
+
+    // Per-distance RPM band boundaries (meters)
+    public static final double RPM_BAND_SHORT_END = 2.2;
+    public static final double RPM_BAND_MEDIUM_END = 3.0;
+
+    // Copilot D-pad RPM trim limits
+    public static final double RPM_OFFSET_MAX = 200.0;
+
+    // Confidence scoring: heading accuracy scaling
+    public static final double HEADING_MAX_ERROR_RAD = Math.toRadians(15);
+    public static final double HEADING_SPEED_SCALAR = 1.0;
+    public static final double HEADING_REFERENCE_DISTANCE = 2.5;
+
+    // Confidence scoring: component weights (geometric mean)
+    public static final double W_CONVERGENCE = 1.0;
+    public static final double W_VELOCITY_STABILITY = 0.8;
+    public static final double W_VISION_CONFIDENCE = 1.2;
+    public static final double W_HEADING_ACCURACY = 1.5;
+    public static final double W_DISTANCE_IN_RANGE = 0.5;
+
+    // Directional polar speed limiting
+    public static final double MAX_POLAR_ANGULAR_RATE_RAD_PER_SEC = 2.0;
+    public static final double POLAR_SPEED_FLOOR_MPS = 0.5;
+
+    // Asymmetric heading tolerance (tight strafing, loose approaching)
+    public static final double CROSS_TRACK_TOLERANCE_DEG = 3.0;
+    public static final double ALONG_TRACK_TOLERANCE_DEG = 8.0;
+  }
+
+  /** Hub shift timing: shift schedule, fuel delay, fire authorization margins */
+  public static final class HubTimingConstants {
+    public static final double FUEL_COUNT_DELAY_MIN_SEC = 1.0;
+    public static final double FUEL_COUNT_DELAY_MAX_SEC = 2.0;
+    public static final double FUEL_COUNT_EXTENSION_SEC = 3.0;
+    public static final double FIRE_SAFE_MARGIN_SEC = 0.5;
+    public static final double PRE_SPIN_WINDOW_SEC = 3.0;
+    public static final double FALLBACK_MARGIN_EXTRA_SEC = 1.0;
+    public static final double GAME_DATA_ALERT_INTERVAL_SEC = 2.0;
+
+    // Game Manual Section 6.4: 10s transition, 4x25s shifts, 30s endgame = 140s total
+    public static final double TRANSITION_END = 10.0;
+    public static final double SHIFT1_END = 35.0;
+    public static final double SHIFT2_END = 60.0;
+    public static final double SHIFT3_END = 85.0;
+    public static final double SHIFT4_END = 110.0;
+    public static final double ENDGAME_END = 140.0;
+
+    public static final double AUTO_DURATION = 20.0;
+  }
+
+  /** Heading lock controller for SOTM: PID + feedforward + lookahead */
+  public static final class HeadingLockConstants {
+    public static final double P = 2.6;
+    public static final double I = 0.0;
+    public static final double D = 0.1;
+
+    // FF gains (layer OFF by default, these just sit ready)
+    public static final double FF_KS = 0.05;
+    public static final double FF_KV = 0.8;
+    public static final double FF_KA = 0.0;
+
+    // Lookahead (disabled by default)
+    public static final double LOOKAHEAD_SEC = 0.0;
+
+    // FF distance scaling
+    public static final double FF_MIN_DIST_M = 0.5;
+    public static final double FF_MAX_DIST_M = 1.5;
   }
 }

@@ -1,5 +1,6 @@
 package frc.robot.telemetry;
 
+import frc.robot.Constants;
 import frc.robot.util.LEDStatusDisplay;
 
 public class LEDTelemetry implements SubsystemTelemetry {
@@ -40,10 +41,13 @@ public class LEDTelemetry implements SubsystemTelemetry {
   @Override
   public void log() {
     SafeLog.put("LED/State", state);
-    SafeLog.put("LED/Description", description);
     SafeLog.put("LED/Device/Connected", hardwareAvailable);
-    SafeLog.put("LED/Brightness", currentBrightness);
     SafeLog.put("LED/StateChangeCount", stateChangeCount);
+
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("LED/Brightness", currentBrightness);
+      SafeLog.put("LED/Description", description);
+    }
   }
 
   @Override

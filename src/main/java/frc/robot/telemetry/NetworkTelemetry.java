@@ -2,6 +2,7 @@ package frc.robot.telemetry;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Constants;
 
 /** Network bandwidth monitoring for R704 compliance (VH-109: 7 Mbps). */
 public class NetworkTelemetry implements SubsystemTelemetry {
@@ -77,11 +78,14 @@ public class NetworkTelemetry implements SubsystemTelemetry {
   @Override
   public void log() {
     SafeLog.put("Network/BandwidthMbps", smoothedBandwidthMbps);
-    SafeLog.put("Network/BandwidthPercent", bandwidthPercent);
     SafeLog.put("Network/BandwidthWarning", bandwidthWarning);
-    SafeLog.put("Network/BandwidthCritical", bandwidthCritical);
-    SafeLog.put("Network/RadioType", "VH-109");
-    SafeLog.put("Network/BandwidthLimitMbps", bandwidthLimitMbps);
+
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("Network/BandwidthPercent", bandwidthPercent);
+      SafeLog.put("Network/RadioType", "VH-109");
+      SafeLog.put("Network/BandwidthLimitMbps", bandwidthLimitMbps);
+      SafeLog.put("Network/BandwidthCritical", bandwidthCritical);
+    }
   }
 
   @Override
