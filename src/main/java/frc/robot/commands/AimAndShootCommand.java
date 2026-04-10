@@ -57,7 +57,6 @@ public class AimAndShootCommand extends Command {
   // cached to avoid GC pressure in execute()
   private ChassisSpeeds reusableSpeeds = new ChassisSpeeds();
 
-
   // blend COR from launcher (precise) to robot center (fast) based on heading error
   private static final double COR_MIN_ERROR_RAD = Math.toRadians(2.0);
   private static final double COR_MAX_ERROR_RAD = Math.toRadians(15.0);
