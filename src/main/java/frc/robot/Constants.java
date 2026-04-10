@@ -81,10 +81,12 @@ public final class Constants {
     public static final double ANGLE_TOLERANCE = 2.0; // degrees
   }
 
-  /** Teleop assist: poses the robot drives to when the copilot holds a button.
-   *  All poses are in BLUE alliance coordinates. pathfindToPoseFlipped handles red auto-flip.
-   *  Rotation = the heading the robot faces on arrival. AimAndShoot overrides it for shooting.
-   *  TUNE THESE on the real field, especially the intake spots. */
+  /**
+   * Teleop assist: poses the robot drives to when the copilot holds a button. All poses are in BLUE
+   * alliance coordinates. pathfindToPoseFlipped handles red auto-flip. Rotation = the heading the
+   * robot faces on arrival. AimAndShoot overrides it for shooting. TUNE THESE on the real field,
+   * especially the intake spots.
+   */
   public static final class TeleopAssistConstants {
     // scoring spots: 2.5m from blue hub center (4.5974, 4.035), 45 deg off the alliance-facing
     // direction. Two spots symmetric about the hub, one toward HP (low Y), one toward depot

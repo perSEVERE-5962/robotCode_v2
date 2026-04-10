@@ -561,47 +561,60 @@ public class RobotContainer {
   } */
 
   /**
-   * Teleop assist: hold a button, robot pathfinds to the nearest scoring or intake spot.
-   * Release the button and you're back to manual control.
+   * Teleop assist: hold a button, robot pathfinds to the nearest scoring or intake spot. Release
+   * the button and you're back to manual control.
    *
-   * The robot knows which side of the field it's on via odometry, so it always picks the
-   * right spot (HP side vs depot side). Only 2 buttons needed.
-   * POV up = go score, POV left = go intake. POV down stays free for emergency dump.
+   * <p>The robot knows which side of the field it's on via odometry, so it always picks the right
+   * spot (HP side vs depot side). Only 2 buttons needed. POV up = go score, POV left = go intake.
+   * POV down stays free for emergency dump.
    *
-   * Uses pathfindToPoseFlipped so blue-alliance poses auto-flip for red.
+   * <p>Uses pathfindToPoseFlipped so blue-alliance poses auto-flip for red.
    */
   private void configureTeleopAssist() {
-    PathConstraints assistConstraints = new PathConstraints(
-        ASSIST_MAX_VEL_MPS,
-        ASSIST_MAX_ACCEL_MPSS,
-        ASSIST_MAX_ANGULAR_VEL_RADPS,
-        ASSIST_MAX_ANGULAR_ACCEL_RADPSS);
+    PathConstraints assistConstraints =
+        new PathConstraints(
+            ASSIST_MAX_VEL_MPS,
+            ASSIST_MAX_ACCEL_MPSS,
+            ASSIST_MAX_ANGULAR_VEL_RADPS,
+            ASSIST_MAX_ANGULAR_ACCEL_RADPSS);
 
-    copilotXbox.povUp().whileTrue(
-        Commands.either(
-            AutoBuilder.pathfindToPoseFlipped(BLUE_HP_SCORING_POSE, assistConstraints)
-                .andThen(Commands.defer(
-                    () -> new AimAndShootCommand(
-                        drivebase, shooter, indexer, agitator, () -> 0, () -> 0, false),
-                    Set.of(drivebase, shooter, indexer, agitator))),
-            AutoBuilder.pathfindToPoseFlipped(BLUE_DEPOT_SCORING_POSE, assistConstraints)
-                .andThen(Commands.defer(
-                    () -> new AimAndShootCommand(
-                        drivebase, shooter, indexer, agitator, () -> 0, () -> 0, false),
-                    Set.of(drivebase, shooter, indexer, agitator))),
-            () -> drivebase.getPose().nearest(
-                    List.of(BLUE_HP_SCORING_POSE, BLUE_DEPOT_SCORING_POSE))
-                .equals(BLUE_HP_SCORING_POSE)));
+    copilotXbox
+        .povUp()
+        .whileTrue(
+            Commands.either(
+                AutoBuilder.pathfindToPoseFlipped(BLUE_HP_SCORING_POSE, assistConstraints)
+                    .andThen(
+                        Commands.defer(
+                            () ->
+                                new AimAndShootCommand(
+                                    drivebase, shooter, indexer, agitator, () -> 0, () -> 0, false),
+                            Set.of(drivebase, shooter, indexer, agitator))),
+                AutoBuilder.pathfindToPoseFlipped(BLUE_DEPOT_SCORING_POSE, assistConstraints)
+                    .andThen(
+                        Commands.defer(
+                            () ->
+                                new AimAndShootCommand(
+                                    drivebase, shooter, indexer, agitator, () -> 0, () -> 0, false),
+                            Set.of(drivebase, shooter, indexer, agitator))),
+                () ->
+                    drivebase
+                        .getPose()
+                        .nearest(List.of(BLUE_HP_SCORING_POSE, BLUE_DEPOT_SCORING_POSE))
+                        .equals(BLUE_HP_SCORING_POSE)));
 
-    copilotXbox.povLeft().whileTrue(
-        Commands.either(
-            AutoBuilder.pathfindToPoseFlipped(BLUE_HP_INTAKE_POSE, assistConstraints)
-                .alongWith(new HoldAndIntake()),
-            AutoBuilder.pathfindToPoseFlipped(BLUE_DEPOT_INTAKE_POSE, assistConstraints)
-                .alongWith(new HoldAndIntake()),
-            () -> drivebase.getPose().nearest(
-                    List.of(BLUE_HP_INTAKE_POSE, BLUE_DEPOT_INTAKE_POSE))
-                .equals(BLUE_HP_INTAKE_POSE)));
+    copilotXbox
+        .povLeft()
+        .whileTrue(
+            Commands.either(
+                AutoBuilder.pathfindToPoseFlipped(BLUE_HP_INTAKE_POSE, assistConstraints)
+                    .alongWith(new HoldAndIntake()),
+                AutoBuilder.pathfindToPoseFlipped(BLUE_DEPOT_INTAKE_POSE, assistConstraints)
+                    .alongWith(new HoldAndIntake()),
+                () ->
+                    drivebase
+                        .getPose()
+                        .nearest(List.of(BLUE_HP_INTAKE_POSE, BLUE_DEPOT_INTAKE_POSE))
+                        .equals(BLUE_HP_INTAKE_POSE)));
   }
 
   /**
