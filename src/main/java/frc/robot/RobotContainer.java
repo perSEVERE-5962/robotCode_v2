@@ -8,7 +8,6 @@ import static frc.robot.Constants.HubScoringConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -40,8 +39,6 @@ import frc.robot.commands.MoveAgitator;
 import frc.robot.commands.PivotIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
-import frc.robot.lib.BLine.FollowPath;
-import frc.robot.lib.BLine.Path;
 import frc.robot.sim.SimDriveOverride;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
@@ -66,14 +63,12 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer {
 
-  private final FollowPath.Builder pathBuilder;
-
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final CommandXboxController copilotXbox = new CommandXboxController(1);
 
   final CommandJoystick driverJoystick = new CommandJoystick(2);
-  private SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
   Shooter shooter = Shooter.getInstance();
   Indexer indexer = Indexer.getInstance();
   Agitator agitator = Agitator.getInstance();
@@ -176,19 +171,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   private RobotContainer() {
-
-    pathBuilder =
-        new FollowPath.Builder(
-                drivebase,
-                drivebase::getPose,
-                drivebase::getRobotVelocity,
-                drivebase::setChassisSpeeds, // Consumer to drive the robot
-                new PIDController(5.0, 0.0, 0.0), // Translation PID
-                new PIDController(3.0, 0.0, 0.0), // Rotation PID
-                new PIDController(2.0, 0.0, 0.0) // Cross-track PID
-                )
-            .withDefaultShouldFlip() // Auto-flip for red alliance
-            .withPoseReset(drivebase::resetOdometry); // Reset odometry at path start
     // Configure the trigger bindings
     registerNamedAutoCommands();
 
@@ -200,7 +182,7 @@ public class RobotContainer {
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
 
     configureBindings();
-    new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
+    //new EventTrigger("HoldAndRunIntake").onTrue(Commands.runOnce(() -> new HoldAndIntake()));
     DriverStation.silenceJoystickConnectionWarning(true);
 
     frc.robot.util.ShotCalculator.getInstance().setSwerve(drivebase);
@@ -288,25 +270,6 @@ public class RobotContainer {
             .withTimeout(3.67));
 
     NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
-
-    // Build an auto chooser. This will use Commands.none() as the default option.
-    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
-
-    // Another option that allows you to specify the default auto by its name
-    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
-
-    autoChooser.addOption("Example A (BLine)", pathBuilder.build(new Path("example_a")));
-    autoChooser.addOption("Example B (BLine)", pathBuilder.build(new Path("example_b")));
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-
-    // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
-    DriverTuning.initialize();
-
-    // Wire up telemetry references
-    TelemetryManager.getInstance().setVision(drivebase.getVision());
-    TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
-    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
-    DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
   }
 
   /**
@@ -563,7 +526,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    // return autoChooser.getSelected()
     return autoChooser.getSelected();
   }
 
