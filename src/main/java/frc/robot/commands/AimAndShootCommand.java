@@ -26,6 +26,17 @@ import java.util.function.DoubleSupplier;
  */
 public class AimAndShootCommand extends Command {
 
+  private static volatile boolean active = false;
+  private static volatile double snapDistanceToHubM = 0;
+  private static volatile double snapTimeOfFlightSec = 0;
+  private static volatile double snapCompTargetX = 0;
+  private static volatile double snapCompTargetY = 0;
+  private static volatile double snapDriftX = 0;
+  private static volatile double snapDriftY = 0;
+  private static volatile double snapComputedRPM = 0;
+  private static volatile double snapHeadingErrorRad = 0;
+  private static volatile double snapHeadingSpeedRadPerSec = 0;
+
   private final SwerveSubsystem swerve;
   private final Shooter shooter;
   private final Indexer indexer;
@@ -45,6 +56,7 @@ public class AimAndShootCommand extends Command {
 
   // cached to avoid GC pressure in execute()
   private ChassisSpeeds reusableSpeeds = new ChassisSpeeds();
+
 
   // blend COR from launcher (precise) to robot center (fast) based on heading error
   private static final double COR_MIN_ERROR_RAD = Math.toRadians(2.0);
@@ -161,6 +173,8 @@ public class AimAndShootCommand extends Command {
       reusableSpeeds.vxMetersPerSecond = fwd;
       reusableSpeeds.vyMetersPerSecond = str;
       reusableSpeeds.omegaRadiansPerSecond = omega;
+
+      reusableSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(reusableSpeeds, targetHeading);
       swerve.drive(reusableSpeeds, cor);
     }
 
@@ -277,5 +291,58 @@ public class AimAndShootCommand extends Command {
       return HubScoringConstants.RED_HUB_CENTER;
     }
     return HubScoringConstants.BLUE_HUB_CENTER;
+  }
+
+  public static boolean isActive() {
+    return active;
+  }
+
+  public static double getSnapDistanceToHubM() {
+    return snapDistanceToHubM;
+  }
+
+  public static double getSnapTimeOfFlightSec() {
+    return snapTimeOfFlightSec;
+  }
+
+  public static double getSnapCompTargetX() {
+    return snapCompTargetX;
+  }
+
+  public static double getSnapCompTargetY() {
+    return snapCompTargetY;
+  }
+
+  public static double getSnapDriftX() {
+    return snapDriftX;
+  }
+
+  public static double getSnapDriftY() {
+    return snapDriftY;
+  }
+
+  public static double getSnapComputedRPM() {
+    return snapComputedRPM;
+  }
+
+  public static double getSnapHeadingErrorRad() {
+    return snapHeadingErrorRad;
+  }
+
+  public static double getSnapHeadingSpeedRadPerSec() {
+    return snapHeadingSpeedRadPerSec;
+  }
+
+  private static void clearSnapshot() {
+    active = false;
+    snapDistanceToHubM = 0;
+    snapTimeOfFlightSec = 0;
+    snapCompTargetX = 0;
+    snapCompTargetY = 0;
+    snapDriftX = 0;
+    snapDriftY = 0;
+    snapComputedRPM = 0;
+    snapHeadingErrorRad = 0;
+    snapHeadingSpeedRadPerSec = 0;
   }
 }

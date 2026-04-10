@@ -1,6 +1,6 @@
 package frc.robot.telemetry;
 
-import frc.robot.commands.ShootOnTheMove;
+import frc.robot.commands.AimAndShootCommand;
 
 /**
  * Logs ShootOnTheMove's intermediate calculations for post-match debugging. Reads static snapshot
@@ -21,20 +21,20 @@ public class ShotPredictorTelemetry implements SubsystemTelemetry {
   @Override
   public void update() {
     try {
-      commandActive = ShootOnTheMove.isActive();
+      commandActive = AimAndShootCommand.isActive();
       if (!commandActive) {
         setDefaultValues();
         return;
       }
-      distanceToHubM = ShootOnTheMove.getSnapDistanceToHubM();
-      timeOfFlightSec = ShootOnTheMove.getSnapTimeOfFlightSec();
-      compTargetX = ShootOnTheMove.getSnapCompTargetX();
-      compTargetY = ShootOnTheMove.getSnapCompTargetY();
-      driftX = ShootOnTheMove.getSnapDriftX();
-      driftY = ShootOnTheMove.getSnapDriftY();
-      computedRPM = ShootOnTheMove.getSnapComputedRPM();
-      headingErrorRad = ShootOnTheMove.getSnapHeadingErrorRad();
-      headingSpeedRadPerSec = ShootOnTheMove.getSnapHeadingSpeedRadPerSec();
+      distanceToHubM = AimAndShootCommand.getSnapDistanceToHubM();
+      timeOfFlightSec = AimAndShootCommand.getSnapTimeOfFlightSec();
+      compTargetX = AimAndShootCommand.getSnapCompTargetX();
+      compTargetY = AimAndShootCommand.getSnapCompTargetY();
+      driftX = AimAndShootCommand.getSnapDriftX();
+      driftY = AimAndShootCommand.getSnapDriftY();
+      computedRPM = AimAndShootCommand.getSnapComputedRPM();
+      headingErrorRad = AimAndShootCommand.getSnapHeadingErrorRad();
+      headingSpeedRadPerSec = AimAndShootCommand.getSnapHeadingSpeedRadPerSec();
     } catch (Throwable t) {
       commandActive = false;
       setDefaultValues();
