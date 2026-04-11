@@ -314,5 +314,5 @@
   "splits":[0]
  },
  "events":[
-   {"name":"HoldAndRunIntake", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0.5 s", "val":0.5}}, "event":{"type":"named", "data":{"name":""}}}]
+   {"name":"HoldAndRunIntake", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0.5 s", "val":0.5}}, "event":{"type":"named", "data":{"name":"HoldAndRunIntake"}}}]
 }
