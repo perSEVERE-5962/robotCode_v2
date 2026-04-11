@@ -248,6 +248,7 @@ public class RobotContainer {
     // autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
 
     // Fire control init
+    
 
     // Pre-spin: auto-spin shooter 5s before hub goes active so RPM is ready at window open.
     // Requires Shooter so it yields to AimAndShootCommand when operator presses RT.
