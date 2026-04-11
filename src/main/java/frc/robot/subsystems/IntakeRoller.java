@@ -51,7 +51,7 @@ public class IntakeRoller extends FlexActuator {
 
     motorConfig = new SparkFlexConfig();
 
-    motorConfig.idleMode(SparkMaxConfig.IdleMode.kCoast).smartCurrentLimit(40);
+    motorConfig.idleMode(SparkMaxConfig.IdleMode.kCoast).smartCurrentLimit(50);
 
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
