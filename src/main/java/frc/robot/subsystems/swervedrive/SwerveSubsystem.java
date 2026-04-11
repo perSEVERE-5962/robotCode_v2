@@ -356,15 +356,23 @@ public class SwerveSubsystem extends SubsystemBase {
   //       3.0);
   // }
 
-  // /**
-  //  * Command to characterize the robot angle motors using SysId
-  //  *
-  //  * @return SysId Angle Command
-  //  */
-  // public Command sysIdAngleMotorCommand() {
-  //   return SwerveDriveTest.generateSysIdCommand(
-  //       SwerveDriveTest.setAngleSysIdRoutine(new Config(), this, swerveDrive), 3.0, 5.0, 3.0);
-  // }
+  public Command sysIdDriveMotorCommandStraight() {
+    return SwerveDriveTest.generateSysIdCommand(
+        SwerveDriveTest.setDriveSysIdRoutine(new Config(), this, swerveDrive, 12, false),
+        3.0,
+        5.0,
+        3.0);
+  }
+
+  /**
+   * Command to characterize the robot angle motors using SysId
+   *
+   * @return SysId Angle Command
+   */
+  public Command sysIdAngleMotorCommand() {
+    return SwerveDriveTest.generateSysIdCommand(
+        SwerveDriveTest.setAngleSysIdRoutine(new Config(), this, swerveDrive), 3.0, 5.0, 3.0);
+  }
 
   /**
    * Returns a Command that centers the modules of the SwerveDrive subsystem.
