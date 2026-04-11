@@ -291,24 +291,10 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
 
+    NamedCommands.registerCommand("DeployAndIntakeEvent", new HoldAndIntake());
+
+
     // Build an auto chooser. This will use Commands.none() as the default option.
-    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
-
-    // Another option that allows you to specify the default auto by its name
-    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
-
-    autoChooser.addOption("Example A (BLine)", pathBuilder.build(new Path("example_a")));
-    autoChooser.addOption("Example B (BLine)", pathBuilder.build(new Path("example_b")));
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-
-    // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
-    DriverTuning.initialize();
-
-    // Wire up telemetry references
-    TelemetryManager.getInstance().setVision(drivebase.getVision());
-    TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
-    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
-    DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
   }
 
   /**

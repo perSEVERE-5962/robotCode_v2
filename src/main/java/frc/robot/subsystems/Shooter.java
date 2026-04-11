@@ -56,7 +56,7 @@ public class Shooter extends MaxActuator {
     motor = getMotor();
     motorConfig = new SparkMaxConfig();
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    motorConfig.smartCurrentLimit(40);
+    motorConfig.smartCurrentLimit(32);
     motorEncoder = motor.getEncoder();
     motorConfig.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
@@ -110,7 +110,7 @@ public class Shooter extends MaxActuator {
     SparkMaxConfig config = new SparkMaxConfig();
     config.follow(Constants.CANDeviceIDs.kShooterID, inverted);
     config.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    config.smartCurrentLimit(30);
+    config.smartCurrentLimit(32);
     config.voltageCompensation(12.0);
     config.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
     follower.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
