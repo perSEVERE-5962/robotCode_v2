@@ -5,28 +5,28 @@
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "test"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "HoldAndRunIntake"
+                  "pathName": "BottomSingleSwipe"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScore"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "New plans test",
+  "folder": "ChoreoTestAutos",
   "choreoAuto": true
 }
