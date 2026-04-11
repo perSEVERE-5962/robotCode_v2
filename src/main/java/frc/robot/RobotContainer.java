@@ -8,7 +8,10 @@ import static frc.robot.Constants.HubScoringConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -34,6 +37,7 @@ import frc.robot.commands.AgitateAndIndex;
 import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.FeedEject;
+import frc.robot.commands.HitResistantFollowPath;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
 import frc.robot.commands.MoveAgitator;
@@ -193,7 +197,31 @@ public class RobotContainer {
     registerNamedAutoCommands();
 
     autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
+
+    RobotConfig config;
+    PathPlannerPath path;
+try {
+    config = RobotConfig.fromGUISettings();
+     path = PathPlannerPath.fromChoreoTrajectory("test");   
+} catch (Exception e) {
+    e.printStackTrace();
+    config = null;
+    path=null;
+}
+
+if(path!=null&&config!=null){
+autoChooser.addOption("Hit Resistant Auto", 
+    new HitResistantFollowPath(drivebase, path, config, true)
+    .deadlineFor(
+          Commands.waitSeconds(3.0).andThen(
+              Commands.runOnce(() -> drivebase.resetOdometry(
+                  new Pose2d(
+                      drivebase.getPose().getX() - 1.5,
+                      drivebase.getPose().getY() - 1.0,
+                      drivebase.getHeading()))))));
+
     SmartDashboard.putData("Auto Chooser", autoChooser);
+}
 
     // drivebase.setupPathPlanner();
     // Another option that allows you to specify the default auto by its name
@@ -217,6 +245,7 @@ public class RobotContainer {
     // autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
 
     // Fire control init
+    
 
     // Pre-spin: auto-spin shooter 5s before hub goes active so RPM is ready at window open.
     // Requires Shooter so it yields to AimAndShootCommand when operator presses RT.
