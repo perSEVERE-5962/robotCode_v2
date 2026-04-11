@@ -26,7 +26,7 @@ public class FeedEject extends Command {
   public void execute() {
     shooter.moveToVelocityWithPID(feedRPM.get());
 
-    if (shooter.isAtSpeed(234)) {
+    if (shooter.isAtSpeed(2500)) {
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
       agitator.moveToVelocityWithPID(5990);
     }

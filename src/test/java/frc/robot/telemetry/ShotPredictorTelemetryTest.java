@@ -11,7 +11,7 @@ class ShotPredictorTelemetryTest extends TelemetryTestBase {
 
   @BeforeEach
   void setUp() throws Exception {
-    Class<?> clazz = Class.forName("frc.robot.commands.ShootOnTheMove");
+    Class<?> clazz = Class.forName("frc.robot.commands.AimAndShootCommand");
     setStaticField(clazz, "active", false);
     setStaticField(clazz, "snapDistanceToHubM", 0.0);
     setStaticField(clazz, "snapTimeOfFlightSec", 0.0);
@@ -42,7 +42,7 @@ class ShotPredictorTelemetryTest extends TelemetryTestBase {
 
   @Test
   void testReadsSnapshotWhenActive() throws Exception {
-    Class<?> clazz = Class.forName("frc.robot.commands.ShootOnTheMove");
+    Class<?> clazz = Class.forName("frc.robot.commands.AimAndShootCommand");
     setStaticField(clazz, "active", true);
     setStaticField(clazz, "snapDistanceToHubM", 4.5);
     setStaticField(clazz, "snapComputedRPM", 3800.0);
@@ -57,7 +57,7 @@ class ShotPredictorTelemetryTest extends TelemetryTestBase {
 
   @Test
   void testClearsWhenDeactivated() throws Exception {
-    Class<?> clazz = Class.forName("frc.robot.commands.ShootOnTheMove");
+    Class<?> clazz = Class.forName("frc.robot.commands.AimAndShootCommand");
     setStaticField(clazz, "active", true);
     setStaticField(clazz, "snapComputedRPM", 3800.0);
     telemetry.update();

@@ -29,7 +29,7 @@ public final class Constants {
    *
    * <p>IMPORTANT: Set to FALSE before competition deployment!
    */
-  public static final boolean TUNING_MODE = false;
+  public static final boolean TUNING_MODE = true;
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
@@ -112,7 +112,7 @@ public final class Constants {
     public static final double DESIRED_INTAKE_RPM = 5000;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
-    public static final double DESIRED_AGITATOR_SPEED = 5990;
+    public static final double DESIRED_AGITATOR_SPEED = 5640;
   }
 
   public static final class IntakeRollerConstants {
@@ -141,7 +141,7 @@ public final class Constants {
     public static final double P = 0.00009;
     public static final double I = 0.0;
     public static final double D = 0.0;
-    public static final double FF = 0.000189; // .000172
+    public static final double FF = 0.000167; // .000172
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
     public static final double Iz = 0.0;
@@ -168,7 +168,7 @@ public final class Constants {
     public static final double D = 0.00;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.000154; // .0004
+    public static final double FF = 0.0002; // .0004, 000154
     public static final double Iz = 0.0;
 
     // Telemetry constants
@@ -324,7 +324,7 @@ public final class Constants {
     public static final double INDEXER_JAM_CONFIRM_SEC = 0.5;
     public static final double INDEXER_REVERSE_SEC = 0.3;
     public static final double INDEXER_COOLDOWN_SEC = 0.15;
-    public static final double INDEXER_REVERSE_POWER = -0.3;
+    public static final double INDEXER_REVERSE_POWER = -1.0;
     public static final int INDEXER_MAX_ATTEMPTS = 3;
 
     // Agitator jam protection (raised current threshold, needs real stall current measurement)

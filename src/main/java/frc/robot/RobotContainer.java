@@ -37,6 +37,8 @@ import frc.robot.commands.FeedEject;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
 import frc.robot.commands.MoveAgitator;
+import frc.robot.commands.MoveIndexer;
+import frc.robot.commands.MoveShooter;
 import frc.robot.commands.PivotIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
@@ -345,7 +347,7 @@ public class RobotContainer {
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     } else {
-      drivebase.setDefaultCommand(driveRobotOrientedAngularVelocity);
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     }
 
     if (Robot.isSimulation()) {
@@ -420,7 +422,7 @@ public class RobotContainer {
                   () -> -driverXbox.getLeftX() * -1,
                   false));
       // driverXbox.y().whileTrue(new RetractIntake());
-      driverXbox.x().whileTrue(new MoveAgitator());
+      driverXbox.x().whileTrue(new MoveIndexer(6700));
       driverXbox.a().whileTrue(new HoldAndIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       // driverXbox.back().whileTrue(drivebase.centerModulesCommand());
@@ -446,8 +448,9 @@ public class RobotContainer {
       // copilotXbox.x().whileTrue(new HoldAndIntake());
 
       copilotXbox.rightTrigger().whileTrue(new FeedEject());
+      
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
-      copilotXbox.b().whileTrue(new AgitateAndIndex(-5000, -5000));
+      driverXbox.b().whileTrue(new MoveShooter(2500));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.3));
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.3));
       // copilotXbox

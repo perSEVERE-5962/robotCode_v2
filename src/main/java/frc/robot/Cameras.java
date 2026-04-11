@@ -56,7 +56,7 @@ public enum Cameras {
       "front-left",
       new Rotation3d(0, Math.toRadians(0), Math.toRadians(90)),
       new Translation3d(
-          Units.inchesToMeters(6.0), Units.inchesToMeters(13.5), Units.inchesToMeters(12)),
+          Units.inchesToMeters(4.72), Units.inchesToMeters(13.5), Units.inchesToMeters(12)),
       VecBuilder.fill(0.3, 0.3, 0.6),
       VecBuilder.fill(0.1, 0.1, 0.2)),
 
@@ -65,7 +65,7 @@ public enum Cameras {
       "front-right",
       new Rotation3d(0, Math.toRadians(0), Math.toRadians(-90)),
       new Translation3d(
-          Units.inchesToMeters(6.0), Units.inchesToMeters(-13.5), Units.inchesToMeters(12)),
+          Units.inchesToMeters(4.3), Units.inchesToMeters(-13.5), Units.inchesToMeters(12)),
       VecBuilder.fill(0.3, 0.3, 0.6),
       VecBuilder.fill(0.1, 0.1, 0.2));
 

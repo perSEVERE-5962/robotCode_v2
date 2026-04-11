@@ -42,6 +42,7 @@ public abstract class MaxActuator extends SubsystemBase implements Actuator {
     motorConfig.inverted(inverted);
     motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
     motorConfig.smartCurrentLimit(40);
+    motorConfig.voltageCompensation(12.0);
 
     FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
     if (useThroughBoreEncoder == true) {
