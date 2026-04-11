@@ -105,7 +105,7 @@ public class AimAndShootCommand extends Command {
     agitator.moveToVelocityWithPID(-5000);
     indexer.moveToVelocityWithPID(-5000);
     reverseTimer.restart();
-
+    active = true;
     headingController.reset();
     reachedSpeed = false;
     feeding = false;
@@ -260,6 +260,8 @@ public class AimAndShootCommand extends Command {
     } catch (Throwable t) {
     }
     SafeLog.put("AimAndShoot/Active", false);
+
+    clearSnapshot();
   }
 
   @Override
