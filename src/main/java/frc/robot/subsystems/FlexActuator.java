@@ -40,8 +40,9 @@ public abstract class FlexActuator extends SubsystemBase implements Actuator {
     SparkFlexConfig motorConfig = new SparkFlexConfig();
 
     motorConfig.inverted(inverted);
-    motorConfig.idleMode(SparkFlexConfig.IdleMode.kBrake);
+    motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast);
     motorConfig.smartCurrentLimit(40);
+    motorConfig.voltageCompensation(12.0);
 
     FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
     if (useThroughBoreEncoder == true) {

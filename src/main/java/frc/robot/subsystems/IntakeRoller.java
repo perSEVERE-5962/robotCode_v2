@@ -2,7 +2,8 @@ package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 import frc.robot.Constants.JamProtectionConstants;
@@ -10,9 +11,9 @@ import frc.robot.Constants.MotorConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
-public class IntakeRoller extends MaxActuator {
-  private SparkMax motor;
-  private SparkMaxConfig motorConfig;
+public class IntakeRoller extends FlexActuator {
+  private SparkFlex motor;
+  private SparkFlexConfig motorConfig;
   private static IntakeRoller instance;
 
   // Tunable operational value
@@ -48,9 +49,9 @@ public class IntakeRoller extends MaxActuator {
         false);
     motor = getMotor();
 
-    motorConfig = new SparkMaxConfig();
+    motorConfig = new SparkFlexConfig();
 
-    motorConfig.idleMode(SparkMaxConfig.IdleMode.kCoast).smartCurrentLimit(40);
+    motorConfig.idleMode(SparkMaxConfig.IdleMode.kCoast).smartCurrentLimit(50);
 
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
