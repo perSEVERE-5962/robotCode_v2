@@ -121,7 +121,7 @@ public final class Constants {
     public static final double D = 0.0;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.02;
+    public static final double FF = 0.000154;
     public static final double Iz = 0.0;
   }
 
@@ -163,12 +163,12 @@ public final class Constants {
 
   public static final class IndexerConstants {
     // Velocity PID (from Alden)
-    public static final double P = 0.0001;
+    public static final double P = 0.0;
     public static final double I = 0.0;
     public static final double D = 0.00;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0002; // .0004, 000154
+    public static final double FF = 0.000147; // .0004, 000154
     public static final double Iz = 0.0;
 
     // Telemetry constants

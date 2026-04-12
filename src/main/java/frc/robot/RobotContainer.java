@@ -36,8 +36,10 @@ import frc.robot.commands.DeployIntake;
 import frc.robot.commands.FeedEject;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
+import frc.robot.commands.IntakeParallel;
 import frc.robot.commands.MoveAgitator;
 import frc.robot.commands.MoveIndexer;
+import frc.robot.commands.MoveIntake;
 import frc.robot.commands.MoveShooter;
 import frc.robot.commands.PivotIntake;
 import frc.robot.commands.SetIntakePosition;
@@ -422,11 +424,15 @@ public class RobotContainer {
                   () -> -driverXbox.getLeftX() * -1,
                   false));
       // driverXbox.y().whileTrue(new RetractIntake());
-      driverXbox.x().whileTrue(new MoveIndexer(6700));
-      driverXbox.a().whileTrue(new HoldAndIntake());
-      driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
+      //driverXbox.x().whileTrue(new MoveIndexer(6000));
+      driverXbox.a().whileTrue(new IntakeParallel());
+      //driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       // driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      driverXbox.back().whileTrue(new SetIntakePosition());
+      //driverXbox.back().whileTrue(new SetIntakePosition());
+      
+      
+      //driverXbox.b().whileTrue(new MoveIntake());
+      //driverXbox.y().whileTrue(new MoveIndexer(6000));
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock,
       // drivebase).repeatedly());
       // driverXbox.povDown().whileTrue(SysId.agitatorSysIdCommand());
@@ -449,8 +455,8 @@ public class RobotContainer {
 
       copilotXbox.rightTrigger().whileTrue(new FeedEject());
       
-      copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
-      driverXbox.b().whileTrue(new MoveShooter(2500));
+      copilotXbox.a().whileTrue(new IntakeParallel());
+      //driverXbox.b().whileTrue(new MoveShooter(2500));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.3));
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.3));
       // copilotXbox
