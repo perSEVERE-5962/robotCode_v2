@@ -257,7 +257,7 @@ public class RobotContainer {
         (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
             .repeatedly());
     NamedCommands.registerCommand(
-        "ShakeIntake",
+        "ShakeIntakeWithTimeout",
         (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
             .repeatedly()
             .withTimeout(8));
