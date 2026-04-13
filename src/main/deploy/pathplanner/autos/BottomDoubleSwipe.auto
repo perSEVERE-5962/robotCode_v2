@@ -7,7 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BottomSingleSwipe"
+            "pathName": "BottomSingleSwipe.0"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScoreWithTimeout"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BottomSecondSwipe"
           }
         },
         {

@@ -4,7 +4,22 @@
  "type":"Swerve",
  "variables":{
   "expressions":{},
-  "poses":{}
+  "poses":{
+   "TrenchShoot":{
+    "x":{
+     "exp":"3.1641199588775635 m",
+     "val":3.1641199588775635
+    },
+    "y":{
+     "exp":"0.7602800130844116 m",
+     "val":0.7602800130844116
+    },
+    "heading":{
+     "exp":"-2.034443996960034 rad",
+     "val":-2.034443996960034
+    }
+   }
+  }
  },
  "config":{
   "frontLeft":{
