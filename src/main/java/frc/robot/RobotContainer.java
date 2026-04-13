@@ -58,7 +58,6 @@ import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.DriverTuning;
-import frc.robot.util.HubScoringUtil;
 import frc.robot.util.SysId;
 import java.io.File;
 import java.util.List;
