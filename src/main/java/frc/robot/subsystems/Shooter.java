@@ -110,8 +110,8 @@ public class Shooter extends MaxActuator {
     SparkMaxConfig config = new SparkMaxConfig();
     config.follow(Constants.CANDeviceIDs.kShooterID, inverted);
     config.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    config.smartCurrentLimit(30);
-    config.voltageCompensation(12.0);
+    config.smartCurrentLimit(40);
+    //config.voltageCompensation(12.0), from actuator
     config.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
     follower.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     return follower;
