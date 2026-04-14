@@ -46,9 +46,9 @@ class TelemetryManagerCrashIsolationTest {
     List<?> tuningList = getField(manager, "tuningOnlyList");
     int total = competitionList.size() + tuningList.size();
     assertEquals(
-        20,
+        21,
         total,
-        "TelemetryManager should register exactly 20 telemetry classes (16 competition + 4 tuning)");
+        "TelemetryManager should register exactly 21 telemetry classes (17 competition + 4 tuning)");
   }
 
   @Test
