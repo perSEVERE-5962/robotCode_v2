@@ -410,7 +410,7 @@ public class RobotContainer {
       driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
        driverXbox.y().whileTrue(new MoveShooter(1700));
       // driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
-      // driverXbox.x().whileTrue(new MoveIndexer(5000));
+      driverXbox.x().whileTrue(new MoveIndexer(6000));
       driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
       driverXbox
           .leftTrigger()
@@ -424,7 +424,8 @@ public class RobotContainer {
                   () -> -driverXbox.getLeftX() * -1,
                   false));
       // driverXbox.y().whileTrue(new RetractIntake());
-      //driverXbox.x().whileTrue(new MoveIndexer(6000));
+     // driverXbox.x().whileTrue(new MoveIndexer(6000));
+      driverXbox.b().whileTrue(new MoveIntake());
       driverXbox.a().whileTrue(new IntakeParallel());
       //driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       // driverXbox.back().whileTrue(drivebase.centerModulesCommand());
