@@ -1,14 +1,14 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeRollerConstants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.util.JamProtection;
 import frc.robot.util.TunableNumber;
 
-public class IntakeRoller extends MaxActuator {
-  private SparkMax motor;
+public class IntakeRoller extends FlexActuator {
+  private SparkFlex motor;
   private static IntakeRoller instance;
 
   // Tunable operational value
