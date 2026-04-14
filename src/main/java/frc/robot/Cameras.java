@@ -40,7 +40,7 @@ public enum Cameras {
   LEFT_CAM(
       "back-left",
       new Rotation3d(0, Math.toRadians(-15), Math.toRadians(135)),
-      //new Translation3d(-0.293, 0.293, 0.229),
+      // new Translation3d(-0.293, 0.293, 0.229),
       new Translation3d(
           Units.inchesToMeters(-11.25), Units.inchesToMeters(11.5), Units.inchesToMeters(8.5)),
       VecBuilder.fill(0.3, 0.3, 0.6),
@@ -50,7 +50,7 @@ public enum Cameras {
   RIGHT_CAM(
       "back-right",
       new Rotation3d(0, Math.toRadians(-15), Math.toRadians(-135)),
-      //new Translation3d(-0.293, -0.293, 0.229),
+      // new Translation3d(-0.293, -0.293, 0.229),
       new Translation3d(
           Units.inchesToMeters(-11.25), Units.inchesToMeters(-11.5), Units.inchesToMeters(8.5)),
       VecBuilder.fill(0.3, 0.3, 0.6),

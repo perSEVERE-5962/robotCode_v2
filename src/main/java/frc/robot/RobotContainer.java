@@ -30,14 +30,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AgitateAndIndex;
 import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.FeedEject;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
 import frc.robot.commands.IntakeParallel;
-import frc.robot.commands.MoveAgitator;
 import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.MoveIntake;
 import frc.robot.commands.MoveShooter;
@@ -408,7 +406,7 @@ public class RobotContainer {
 
       driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
-       driverXbox.y().whileTrue(new MoveShooter(1700));
+      driverXbox.y().whileTrue(new MoveShooter(1700));
       // driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
       driverXbox.x().whileTrue(new MoveIndexer(6000));
       driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
@@ -424,16 +422,15 @@ public class RobotContainer {
                   () -> -driverXbox.getLeftX() * -1,
                   false));
       // driverXbox.y().whileTrue(new RetractIntake());
-     // driverXbox.x().whileTrue(new MoveIndexer(6000));
+      // driverXbox.x().whileTrue(new MoveIndexer(6000));
       driverXbox.b().whileTrue(new MoveIntake());
       driverXbox.a().whileTrue(new IntakeParallel());
-      //driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
+      // driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       // driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      //driverXbox.back().whileTrue(new SetIntakePosition());
-      
-      
-      //driverXbox.b().whileTrue(new MoveIntake());
-      //driverXbox.y().whileTrue(new MoveIndexer(6000));
+      // driverXbox.back().whileTrue(new SetIntakePosition());
+
+      // driverXbox.b().whileTrue(new MoveIntake());
+      // driverXbox.y().whileTrue(new MoveIndexer(6000));
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock,
       // drivebase).repeatedly());
       // driverXbox.povDown().whileTrue(SysId.agitatorSysIdCommand());
@@ -455,9 +452,9 @@ public class RobotContainer {
       // copilotXbox.x().whileTrue(new HoldAndIntake());
 
       copilotXbox.rightTrigger().whileTrue(new FeedEject());
-      
+
       copilotXbox.a().whileTrue(new IntakeParallel());
-      //driverXbox.b().whileTrue(new MoveShooter(2500));
+      // driverXbox.b().whileTrue(new MoveShooter(2500));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.3));
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.3));
       // copilotXbox

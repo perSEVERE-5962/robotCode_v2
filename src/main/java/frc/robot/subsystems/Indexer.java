@@ -4,8 +4,6 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
-
 import frc.robot.Constants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.JamProtectionConstants;
@@ -65,11 +63,13 @@ public class Indexer extends FlexActuator {
     // motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     motor = getMotor();
     SparkFlexConfig motorConfig = new SparkFlexConfig();
-    motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(75).voltageCompensation(12.0);
-    motorConfig.closedLoop.outputRange(Constants.IndexerConstants.MinOutput, Constants.IndexerConstants.MaxOutput);
+    motorConfig
+        .idleMode(SparkFlexConfig.IdleMode.kCoast)
+        .smartCurrentLimit(75)
+        .voltageCompensation(12.0);
+    motorConfig.closedLoop.outputRange(
+        Constants.IndexerConstants.MinOutput, Constants.IndexerConstants.MaxOutput);
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-
-
 
     //  motor = getMotor();
 
@@ -77,8 +77,9 @@ public class Indexer extends FlexActuator {
 
     // motorConfig.idleMode(SparkMaxConfig.IdleMode.kCoast).smartCurrentLimit(40);
 
-    // motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-    
+    // motor.configure(motorConfig, ResetMode.kNoResetSafeParameters,
+    // PersistMode.kPersistParameters);
+
   }
 
   public double getTemperature() {
