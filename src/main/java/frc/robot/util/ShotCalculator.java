@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.HubScoringConstants;
 import frc.robot.Constants.ShotCalculatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -325,7 +326,7 @@ public class ShotCalculator {
     }
 
     // second-order pose prediction
-    double now = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
+    double now = Timer.getFPGATimestamp();
     double cycleDt = (prevTimestamp > 0) ? MathUtil.clamp(now - prevTimestamp, 0.005, 0.1) : 0.02;
     prevTimestamp = now;
     double dt = kPhaseDelayMs.get() / 1000.0;

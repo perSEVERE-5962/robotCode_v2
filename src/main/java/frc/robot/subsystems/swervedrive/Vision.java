@@ -280,7 +280,7 @@ public class Vision {
               speedMps,
               camera.getSingleTagStdDevs(),
               camera.getMultiTagStdDevs());
-      
+
       // Under defense, odometry drifts from wheel slip so we trust vision more
       if (underDefense) {
         stdDevs = stdDevs.times(VisionFilter.DEFENSE_STD_DEV_SCALE);

@@ -74,7 +74,7 @@ public class IntakeRollerTelemetry implements SubsystemTelemetry {
       running = intake.isRunning();
       currentAmps = intake.getOutputCurrent();
       temperatureCelsius = intake.getTemperature();
-      velocityRPM = intake.getVelocityRPM();
+      velocityRPM = intake.getVelocity();
 
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = intake.getStickyFaultsRaw();

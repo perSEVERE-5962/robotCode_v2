@@ -15,6 +15,7 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.telemetry.SafeLog;
+import frc.robot.util.DriverFeedback;
 import frc.robot.util.HeadingController;
 import frc.robot.util.ShotCalculator;
 import frc.robot.util.TunableNumber;
@@ -235,7 +236,7 @@ public class AimAndShootCommand extends Command {
     // progressive aim haptic: operator feels heading error converge
     try {
       double errorDeg = Math.toDegrees(Math.abs(headingController.getPositionError()));
-      frc.robot.util.DriverFeedback.getInstance().setProgressiveAim(errorDeg);
+      DriverFeedback.getInstance().setProgressiveAim(errorDeg);
     } catch (Throwable t) {
     }
 
@@ -256,7 +257,7 @@ public class AimAndShootCommand extends Command {
     indexer.move(0);
     agitator.move(0);
     try {
-      frc.robot.util.DriverFeedback.getInstance().clearProgressiveAim();
+      DriverFeedback.getInstance().clearProgressiveAim();
     } catch (Throwable t) {
     }
     SafeLog.put("AimAndShoot/Active", false);

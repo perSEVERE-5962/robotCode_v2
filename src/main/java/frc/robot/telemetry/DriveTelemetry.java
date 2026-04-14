@@ -199,6 +199,7 @@ public class DriveTelemetry implements SubsystemTelemetry {
         try {
           Object driveMotorObj = mod.getDriveMotor().getMotor();
           if (driveMotorObj instanceof SparkBase) {
+            @SuppressWarnings("resource")
             SparkBase spark = (SparkBase) driveMotorObj;
             SparkBase.Faults faults = spark.getFaults();
             driveMotorConnected[i] = !faults.can;
@@ -213,6 +214,7 @@ public class DriveTelemetry implements SubsystemTelemetry {
         try {
           Object turnMotorObj = mod.getAngleMotor().getMotor();
           if (turnMotorObj instanceof SparkBase) {
+            @SuppressWarnings("resource")
             SparkBase spark = (SparkBase) turnMotorObj;
             SparkBase.Faults faults = spark.getFaults();
             turnMotorConnected[i] = !faults.can;

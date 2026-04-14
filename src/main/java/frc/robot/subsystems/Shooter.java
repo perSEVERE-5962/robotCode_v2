@@ -50,7 +50,7 @@ public class Shooter extends MaxActuator {
         0,
         0,
         30,
-        false,
+        true,
         true,
         false,
         false,

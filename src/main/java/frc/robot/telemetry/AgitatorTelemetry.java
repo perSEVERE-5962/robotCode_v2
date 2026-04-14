@@ -63,7 +63,7 @@ public class AgitatorTelemetry implements SubsystemTelemetry {
       running = agitator.isRunning();
       currentAmps = agitator.getOutputCurrent();
       temperatureCelsius = agitator.getTemperature();
-      velocityRPM = agitator.getVelocityRPM();
+      velocityRPM = agitator.getVelocity();
 
       deviceConnected = connectDebouncer.calculate(true);
       // deviceFaultsRaw = agitator.getStickyFaultsRaw();

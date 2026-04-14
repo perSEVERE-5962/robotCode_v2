@@ -172,8 +172,6 @@ public class AlertManager {
     checkOneMotorTemp("Indexer", indexerTempAlert, () -> Indexer.getInstance().getTemperature());
     checkOneMotorTemp(
         "IntakeRoller", intakeRollerTempAlert, () -> IntakeRoller.getInstance().getTemperature());
-    checkOneMotorTemp(
-        "IntakePivot", intakePivotTempAlert, () -> IntakePivot.getInstance().getTemperature());
   }
 
   //   checkOneMotorTemp(

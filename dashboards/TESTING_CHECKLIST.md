@@ -95,7 +95,7 @@ Run through these with the robot enabled. Check the signals in AdvantageScope as
 | 2 | Deploy | `./gradlew deploy` | Robot boots, no errors in Driver Station | Robot on |
 | 3 | Drive | Drive around for 30 sec | `Drive/Pose` updates, robot feels normal | Drivetrain |
 | 4 | Shooter | Spin up the shooter | `Shooter/VelocityRPM` goes up, `Shooter/AtSpeed` goes true | Shooter motor |
-| 5 | Intake | Run the intake | `Intake/Running` goes true | **Skip if intake not built** |
+| 5 | Intake | Run the intake | `IntakeRoller/Running` goes true | **Skip if intake not built** |
 | 6 | Vision | Point at an AprilTag | `Vision/HasTarget` goes true | **Skip if cameras not mounted** |
 | 7 | Scoring | Do a full shoot cycle | `Scoring/ReadyToShoot` goes true when everything lines up | Shooter + vision + indexer all working |
 | 8 | Battery | Just check | `SystemHealth/BatteryVoltage` reads a reasonable number | Robot on |

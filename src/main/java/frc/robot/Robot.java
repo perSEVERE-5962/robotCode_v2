@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Watchdog;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.sim.SimDeviceManager;
@@ -28,6 +30,7 @@ import frc.robot.util.LoggedTracer;
 import frc.robot.util.PostMatchSummary;
 import frc.robot.util.PreMatchDiagnostics;
 import frc.robot.util.PredictiveAlerts;
+import frc.robot.util.ShotCalculator;
 import java.lang.reflect.Field;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -208,7 +211,7 @@ public class Robot extends LoggedRobot {
     safeCall("CommandScheduler", () -> CommandScheduler.getInstance().run());
     safeCall("Tracer", () -> LoggedTracer.record("CommandsMs"));
 
-    safeCall("ShotCalc", () -> frc.robot.util.ShotCalculator.getInstance().calculate());
+    safeCall("ShotCalc", () -> ShotCalculator.getInstance().calculate());
 
     safeCall("Telemetry", () -> TelemetryManager.getInstance().updateAll());
     safeCall("NaNGuard", () -> checkNaNInfinity());
@@ -426,8 +429,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void simulationInit() {
-    edu.wpi.first.wpilibj.simulation.DriverStationSim.setAllianceStationId(
-        edu.wpi.first.hal.AllianceStationID.Blue1);
+    DriverStationSim.setAllianceStationId(AllianceStationID.Blue1);
 
     simDeviceManager = new SimDeviceManager();
     simDeviceManager.init();

@@ -70,10 +70,6 @@ public class Agitator extends TalonActuator {
     return getMotor().getStatorCurrent().getValueAsDouble();
   }
 
-  public double getVelocityRPM() {
-    return getMotor().getVelocity().getValueAsDouble() * 60.0;
-  }
-
   @Override
   public void periodic() {
     try {
@@ -86,7 +82,7 @@ public class Agitator extends TalonActuator {
     // JamProtection detects and reports only. It never overrides the motor.
     // Telemetry reads the state; the driver decides what to do about it.
     try {
-      jamProtection.update(getOutputCurrent(), getVelocityRPM(), isRunning());
+      jamProtection.update(getOutputCurrent(), getVelocity(), isRunning());
     } catch (Throwable t) {
       // CAN failure degrades jam detection, never kills drive control
     }

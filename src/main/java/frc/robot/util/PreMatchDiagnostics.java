@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -648,7 +649,7 @@ public class PreMatchDiagnostics {
       double startTime = Timer.getFPGATimestamp();
 
       // Command small forward motion (0.1 m/s for safety)
-      swerve.drive(new edu.wpi.first.math.geometry.Translation2d(0.1, 0), 0, false);
+      swerve.drive(new Translation2d(0.1, 0), 0, false);
 
       boolean motionDetected = false;
       double responseTime = 0;
@@ -665,7 +666,7 @@ public class PreMatchDiagnostics {
         }
       }
 
-      swerve.drive(new edu.wpi.first.math.geometry.Translation2d(0, 0), 0, false);
+      swerve.drive(new Translation2d(0, 0), 0, false);
 
       driveResponseMs = responseTime;
       Logger.recordOutput("Diagnostics/DriveResponseMs", driveResponseMs);

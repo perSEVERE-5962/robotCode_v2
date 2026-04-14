@@ -225,7 +225,6 @@ public final class Constants {
    */
   public static final class DeploySafetyCheck {
     /** Returns false if TUNING_MODE is on (unsafe for competition deploy). */
-    @SuppressWarnings("unused")
     public static boolean isSafeForDeploy() {
       return !TUNING_MODE && !REPLAY;
     }

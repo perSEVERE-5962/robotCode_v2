@@ -7,6 +7,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.util.EventMarker;
+import frc.robot.util.HubShiftEngine;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -423,17 +424,14 @@ public class TelemetryManager {
   }
 
   public boolean isHubActive() {
-    return getSafely(
-        () -> frc.robot.util.HubShiftEngine.getInstance().getOfficialInfo().hubActive(), true);
+    return getSafely(() -> HubShiftEngine.getInstance().getOfficialInfo().hubActive(), true);
   }
 
   public double getTimeToNextShiftSec() {
-    return getSafely(
-        () -> frc.robot.util.HubShiftEngine.getInstance().getOfficialInfo().remainingInState(),
-        0.0);
+    return getSafely(() -> HubShiftEngine.getInstance().getOfficialInfo().remainingInState(), 0.0);
   }
 
   public boolean isWonAuto() {
-    return getSafely(() -> frc.robot.util.HubShiftEngine.getInstance().isWonAuto(), false);
+    return getSafely(() -> HubShiftEngine.getInstance().isWonAuto(), false);
   }
 }

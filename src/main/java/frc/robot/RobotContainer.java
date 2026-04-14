@@ -32,10 +32,9 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AgitateAndIndex;
 import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.DeployIntake;
+import frc.robot.commands.FeedEject;
 import frc.robot.commands.HoldAndIntake;
-import frc.robot.commands.HubArcDrive;
 import frc.robot.commands.MoveAgitator;
-import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.PivotIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
@@ -53,8 +52,9 @@ import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.DriverTuning;
+import frc.robot.util.HubShiftEngine;
+import frc.robot.util.ShotCalculator;
 import java.io.File;
-import java.util.Set;
 import swervelib.SwerveInputStream;
 
 /**
@@ -191,7 +191,7 @@ public class RobotContainer {
     new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
     DriverStation.silenceJoystickConnectionWarning(true);
 
-    frc.robot.util.ShotCalculator.getInstance().setSwerve(drivebase);
+    ShotCalculator.getInstance().setSwerve(drivebase);
 
     // Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
@@ -225,7 +225,7 @@ public class RobotContainer {
     // runEnd stops the motor when the trigger goes false.
     // new Trigger(
     //         () -> {
-    //           var info = frc.robot.util.HubShiftEngine.getInstance().getOfficialInfo();
+    //           var info = HubShiftEngine.getInstance().getOfficialInfo();
     //           return !info.hubActive()
     //               && info.timeToNextActive() > 0
     //               && info.timeToNextActive() < 5.0;
@@ -300,18 +300,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-
-    Command hubArcDrive =
-        Commands.defer(
-            () ->
-                new HubArcDrive(
-                    drivebase,
-                    driverXbox::getLeftX,
-                    getHubCenter(),
-                    SCORING_DISTANCE,
-                    getScoringSide(),
-                    SCORING_ARC_WIDTH_DEGREES),
-            Set.of(drivebase));
 
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
@@ -399,7 +387,7 @@ public class RobotContainer {
                   () -> -driverXbox.getLeftX() * -1,
                   false));
       // driverXbox.y().whileTrue(new RetractIntake());
-      driverXbox.x().whileTrue(new MoveAgitator());
+      driverXbox.x().whileTrue(new MoveAgitator(Constants.MotorConstants.DESIRED_AGITATOR_RPM));
       driverXbox.a().whileTrue(new HoldAndIntake());
       driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       // driverXbox.back().whileTrue(drivebase.centerModulesCommand());
@@ -420,8 +408,7 @@ public class RobotContainer {
       //     .whileTrue(
       //         new AgitateAndIndex(
       //             Constants.MotorConstants.DESIRED_AGITATOR_RPM,
-      //             Constants.MotorConstants.DESIRED_INDEXER_RPM,
-      //             hubArcDrive::isScheduled));
+      //             Constants.MotorConstants.DESIRED_INDEXER_RPM);
       // copilotXbox.x().whileTrue(new HoldAndIntake());
 
       copilotXbox.rightTrigger().whileTrue(new FeedEject());
@@ -441,10 +428,6 @@ public class RobotContainer {
       //             () -> -driverXbox.getLeftX(),
       //             false));
       copilotXbox
-          .rightTrigger()
-          .onFalse(
-              new MoveIndexer(-Constants.MotorConstants.BACKWARDS_INDEXER_RPM).withTimeout(0.25));
-      copilotXbox
           .leftTrigger()
           .whileTrue(
               (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
@@ -457,7 +440,7 @@ public class RobotContainer {
           .onTrue(
               Commands.runOnce(
                   () -> {
-                    var engine = frc.robot.util.HubShiftEngine.getInstance();
+                    var engine = HubShiftEngine.getInstance();
                     engine.setWonAutoOverride(!engine.isWonAuto());
                   }));
       copilotXbox.back().onTrue(new SetIntakePosition());

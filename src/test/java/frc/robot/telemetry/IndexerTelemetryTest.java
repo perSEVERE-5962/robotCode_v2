@@ -2,6 +2,7 @@ package frc.robot.telemetry;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import frc.robot.subsystems.Indexer;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +27,7 @@ class IndexerTelemetryTest extends SparkSimTestBase {
   void testStallClearsWhenConditionClears() throws Exception {
     setField(telemetry, "stalled", true);
     setField(telemetry, "inStallCondition", true);
-    setField(telemetry, "stallStartTime", edu.wpi.first.wpilibj.Timer.getFPGATimestamp());
+    setField(telemetry, "stallStartTime", Timer.getFPGATimestamp());
 
     indexer.getMotor().set(1.0);
     setMotorVelocity(indexerSim, 500);
@@ -75,7 +76,7 @@ class IndexerTelemetryTest extends SparkSimTestBase {
   void testJamClearsWhenConditionClears() throws Exception {
     setField(telemetry, "jamDetected", true);
     setField(telemetry, "inJamCondition", true);
-    setField(telemetry, "jamConditionStartTime", edu.wpi.first.wpilibj.Timer.getFPGATimestamp());
+    setField(telemetry, "jamConditionStartTime", Timer.getFPGATimestamp());
 
     indexer.getMotor().set(1.0);
     setMotorVelocity(indexerSim, 500);

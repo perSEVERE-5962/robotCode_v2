@@ -2,6 +2,7 @@ package frc.robot.telemetry;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.subsystems.IntakePivot;
 
@@ -48,9 +49,9 @@ public class IntakePivotTelemetry implements SubsystemTelemetry {
       positionRotations = intakePivot.getPosition();
       targetPosition = intakePivot.getTargetPosition();
       atTarget = intakePivot.isAtTarget();
-      appliedOutput = intakePivot.getAppliedOutput();
-      currentAmps = intakePivot.getOutputCurrent();
-      temperatureCelsius = intakePivot.getTemperature();
+      // appliedOutput = intakePivot.getAppliedOutput();
+      // currentAmps = intakePivot.getOutputCurrent();
+      // temperatureCelsius = intakePivot.getTemperature();
 
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = intakePivot.getStickyFaultsRaw();
@@ -79,17 +80,19 @@ public class IntakePivotTelemetry implements SubsystemTelemetry {
 
   @Override
   public void log() {
-    SafeLog.put("IntakePivot/Available", subsystemAvailable);
-    SafeLog.put("IntakePivot/PositionRotations", positionRotations);
-    SafeLog.put("IntakePivot/TargetPosition", targetPosition);
-    SafeLog.put("IntakePivot/AtTarget", atTarget);
-    SafeLog.put("IntakePivot/AppliedOutput", appliedOutput);
-    SafeLog.put("IntakePivot/CurrentAmps", currentAmps);
-    SafeLog.put("IntakePivot/TemperatureCelsius", temperatureCelsius);
+    SafeLog.put("IntakeActuator/PositionRotations", positionRotations);
+    SafeLog.put("IntakeActuator/AtTarget", atTarget);
+    SafeLog.put("IntakeActuator/Device/Connected", deviceConnected);
+    SafeLog.put("IntakeActuator/CurrentAmps", currentAmps);
+    SafeLog.put("IntakeActuator/AppliedOutput", appliedOutput);
 
-    SafeLog.put("IntakePivot/Device/Connected", deviceConnected);
-    SafeLog.put("IntakePivot/Device/FaultsRaw", deviceFaultsRaw);
-    SafeLog.put("IntakePivot/ActiveCommand", activeCommandName);
+    if (Constants.TUNING_MODE) {
+      SafeLog.put("IntakeActuator/Available", subsystemAvailable);
+      SafeLog.put("IntakeActuator/TargetPosition", targetPosition);
+      SafeLog.put("IntakeActuator/TemperatureCelsius", temperatureCelsius);
+      SafeLog.put("IntakeActuator/Device/FaultsRaw", deviceFaultsRaw);
+      SafeLog.put("IntakeActuator/ActiveCommand", activeCommandName);
+    }
   }
 
   @Override

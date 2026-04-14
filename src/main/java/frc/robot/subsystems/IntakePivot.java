@@ -33,7 +33,7 @@ public class IntakePivot extends TalonActuator {
         Constants.IntakePivotConstants.kIz,
         60f,
         11.5f,
-        40,
+        58,
         false,
         false,
         false,

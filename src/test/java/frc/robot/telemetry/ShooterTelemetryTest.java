@@ -2,6 +2,7 @@ package frc.robot.telemetry;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import frc.robot.subsystems.Shooter;
 import org.junit.jupiter.api.BeforeEach;
@@ -188,7 +189,7 @@ class ShooterTelemetryTest extends SparkSimTestBase {
   void testStallClearsWhenConditionClears() throws Exception {
     setField(telemetry, "stalled", true);
     setField(telemetry, "inStallCondition", true);
-    setField(telemetry, "stallStartTime", edu.wpi.first.wpilibj.Timer.getFPGATimestamp());
+    setField(telemetry, "stallStartTime", Timer.getFPGATimestamp());
 
     shooter.moveToVelocityWithPID(Shooter.getTunableTargetRPM());
     double target = shooter.getTargetRPM();

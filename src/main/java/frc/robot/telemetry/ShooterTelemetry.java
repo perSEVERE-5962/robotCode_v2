@@ -113,7 +113,7 @@ public class ShooterTelemetry implements SubsystemTelemetry {
       // Fallback: if desiredRPM is never set (Tuning4 commented out the setter),
       // use the dashboard TunableNumber as a reasonable approximation
       if (targetRPM == 0 && (Math.abs(appliedOutput) > 0.01 || Math.abs(velocityRPM) > 50)) {
-        targetRPM = shooter.getTunableTargetRPM();
+        targetRPM = Shooter.getTunableTargetRPM();
       }
       appliedOutput = shooter.getAppliedOutput();
       currentAmps = shooter.getOutputCurrent();
@@ -121,7 +121,7 @@ public class ShooterTelemetry implements SubsystemTelemetry {
       busVoltage = shooter.getBusVoltage();
       // Compute atSpeed ourselves because the no-arg isAtSpeed() checks against
       // desiredRPM which may not be set when moveToVelocityWithPID is overridden
-      atSpeed = (targetRPM > 0) && (Math.abs(targetRPM - velocityRPM) < shooter.getToleranceRPM());
+      atSpeed = (targetRPM > 0) && (Math.abs(targetRPM - velocityRPM) < Shooter.getToleranceRPM());
 
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = shooter.getStickyFaultsRaw();
