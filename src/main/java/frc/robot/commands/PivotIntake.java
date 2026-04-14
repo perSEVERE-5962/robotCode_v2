@@ -12,17 +12,17 @@ public class PivotIntake extends Command {
   /** Creates a new PivotIntake. */
   private IntakePivot intakePivot;
 
-  private double rpm;
+  private double speed;
 
-  public PivotIntake(double rpm) {
+  public PivotIntake(double speed) {
     intakePivot = IntakePivot.getInstance();
-    this.rpm = rpm;
+    this.speed = speed;
     addRequirements(intakePivot);
   }
 
   @Override
   public void initialize() {
-    intakePivot.moveToVelocityWithPID(rpm);
+    intakePivot.move(speed);
   }
 
   @Override
