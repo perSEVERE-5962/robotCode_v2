@@ -7,6 +7,9 @@ import frc.robot.Constants;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.StallDetectionConstants;
 import frc.robot.subsystems.IntakeRoller;
+import frc.robot.util.DeviceFaultDecoder;
+import frc.robot.util.DeviceFaultDecoder.DecodedFaults;
+import frc.robot.util.DeviceFaultDecoder.DeviceType;
 import frc.robot.util.EventMarker;
 import frc.robot.util.JamProtection;
 
@@ -30,6 +33,8 @@ public class IntakeTelemetry implements SubsystemTelemetry {
   private double currentAmps = 0;
   private double temperatureCelsius = 0;
   private double velocityRPM = 0;
+  private double busVoltage = 0;
+  private double voltageDropVolts = 0;
 
   private double currentPerSpeedRatio = 0; // drag indicator
 
@@ -37,6 +42,11 @@ public class IntakeTelemetry implements SubsystemTelemetry {
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
   private boolean deviceConnected = false;
   private int deviceFaultsRaw = 0;
+  private int deviceWarningsRaw = 0;
+  private int lastRawFaults = 0;
+  private int lastRawWarnings = 0;
+  private int faultTransitionCount = 0;
+  private DecodedFaults decodedFaults = DeviceFaultDecoder.empty();
 
   private boolean stalled = false;
   private double stallStartTime = 0;
@@ -75,12 +85,27 @@ public class IntakeTelemetry implements SubsystemTelemetry {
       currentAmps = intake.getOutputCurrent();
       temperatureCelsius = intake.getTemperature();
       velocityRPM = intake.getVelocityRPM();
+      busVoltage = intake.getBusVoltage();
+      voltageDropVolts = SystemHealthTelemetry.computeVoltageDrop(busVoltage);
 
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = intake.getStickyFaultsRaw();
+      deviceWarningsRaw = intake.getStickyWarningsRaw();
+
+      if (deviceFaultsRaw != lastRawFaults || deviceWarningsRaw != lastRawWarnings) {
+        decodedFaults =
+            DeviceFaultDecoder.decode(DeviceType.SPARK_MAX, deviceFaultsRaw, deviceWarningsRaw);
+        lastRawFaults = deviceFaultsRaw;
+        lastRawWarnings = deviceWarningsRaw;
+        if (decodedFaults.anyActive()) {
+          faultTransitionCount++;
+        }
+      }
     } catch (Throwable t) {
       deviceConnected = connectDebouncer.calculate(false);
       deviceFaultsRaw = -1;
+      deviceWarningsRaw = -1;
+      decodedFaults = DeviceFaultDecoder.empty();
       setDefaultValues();
       return;
     }
@@ -146,6 +171,8 @@ public class IntakeTelemetry implements SubsystemTelemetry {
     currentAmps = 0;
     temperatureCelsius = 0;
     velocityRPM = 0;
+    busVoltage = 0;
+    voltageDropVolts = 0;
     stalled = false;
     stallDurationMs = 0;
     inStallCondition = false;
@@ -158,7 +185,11 @@ public class IntakeTelemetry implements SubsystemTelemetry {
     SafeLog.put("Intake/Running", running);
     SafeLog.put("Intake/VelocityRPM", velocityRPM);
     SafeLog.put("Intake/CurrentAmps", currentAmps);
+    SafeLog.put("Intake/BusVoltage", busVoltage);
+    SafeLog.put("Intake/VoltageDropVolts", voltageDropVolts);
     SafeLog.put("Intake/Device/Connected", deviceConnected);
+    DeviceFaultDecoder.publish(
+        "Intake", decodedFaults, deviceFaultsRaw, deviceWarningsRaw, faultTransitionCount);
     SafeLog.put("Intake/Stalled", stalled);
     SafeLog.put("Intake/JamDetected", jamDetected);
 
@@ -168,7 +199,6 @@ public class IntakeTelemetry implements SubsystemTelemetry {
       SafeLog.put("Intake/TemperatureCelsius", temperatureCelsius);
       SafeLog.put("Intake/TotalJamCount", totalJamCount);
       SafeLog.put("Intake/CurrentPerSpeedRatio", currentPerSpeedRatio);
-      SafeLog.put("Intake/Device/FaultsRaw", deviceFaultsRaw);
       SafeLog.put("Intake/StallDurationMs", stallDurationMs);
       SafeLog.put("Intake/ActiveCommand", activeCommandName);
       SafeLog.put("Intake/JamProtection/State", jamProtectionState);

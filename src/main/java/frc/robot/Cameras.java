@@ -42,7 +42,8 @@ public enum Cameras {
       new Rotation3d(0, Math.toRadians(-15), Math.toRadians(135)),
       new Translation3d(-0.293, 0.293, 0.229),
       VecBuilder.fill(0.3, 0.3, 0.6),
-      VecBuilder.fill(0.1, 0.1, 0.2)),
+      VecBuilder.fill(0.1, 0.1, 0.2),
+      "OrangePi1"),
 
   /** Right Camera */
   RIGHT_CAM(
@@ -50,7 +51,8 @@ public enum Cameras {
       new Rotation3d(0, Math.toRadians(-15), Math.toRadians(-135)),
       new Translation3d(-0.293, -0.293, 0.229),
       VecBuilder.fill(0.3, 0.3, 0.6),
-      VecBuilder.fill(0.1, 0.1, 0.2)),
+      VecBuilder.fill(0.1, 0.1, 0.2),
+      "OrangePi1"),
   // Front-left camera, angled 45 deg outward */
   FRONT_LEFT_CAM(
       "front-left",
@@ -58,7 +60,8 @@ public enum Cameras {
       new Translation3d(
           Units.inchesToMeters(6.0), Units.inchesToMeters(13.5), Units.inchesToMeters(12)),
       VecBuilder.fill(0.3, 0.3, 0.6),
-      VecBuilder.fill(0.1, 0.1, 0.2)),
+      VecBuilder.fill(0.1, 0.1, 0.2),
+      "OrangePi2"),
 
   /** Front-right camera, angled 45 deg outward (mirrored from front-left) */
   FRONT_RIGHT_CAM(
@@ -67,7 +70,8 @@ public enum Cameras {
       new Translation3d(
           Units.inchesToMeters(6.0), Units.inchesToMeters(-13.5), Units.inchesToMeters(12)),
       VecBuilder.fill(0.3, 0.3, 0.6),
-      VecBuilder.fill(0.1, 0.1, 0.2));
+      VecBuilder.fill(0.1, 0.1, 0.2),
+      "OrangePi2");
 
   /** Latency alert to use when high latency is detected. */
   public final Alert latencyAlert;
@@ -86,6 +90,13 @@ public enum Cameras {
 
   /** Transform of the camera rotation and translation relative to the center of the robot */
   private final Transform3d robotToCamTransform;
+
+  /**
+   * Name of the coprocessor this camera is attached to. Cameras on the same coprocessor share a
+   * power rail and a USB hub, so they fail together. CoprocessorHealth rolls them up into one alive
+   * boolean so the pit crew sees "Orange Pi 1 rebooted" instead of two independent camera flickers.
+   */
+  public final String coprocessorGroup;
 
   /** Current standard deviations used. */
   public Matrix<N3, N1> curStdDevs;
@@ -118,7 +129,9 @@ public enum Cameras {
       Rotation3d robotToCamRotation,
       Translation3d robotToCamTranslation,
       Matrix<N3, N1> singleTagStdDevs,
-      Matrix<N3, N1> multiTagStdDevsMatrix) {
+      Matrix<N3, N1> multiTagStdDevsMatrix,
+      String coprocessorGroup) {
+    this.coprocessorGroup = coprocessorGroup;
     latencyAlert =
         new Alert("'" + name + "' Camera is experiencing high latency.", AlertType.kWarning);
 

@@ -68,6 +68,10 @@ public class Agitator extends TalonActuator {
     return getMotor().getStatorCurrent().getValueAsDouble();
   }
 
+  public double getBusVoltage() {
+    return getMotor().getSupplyVoltage().getValueAsDouble();
+  }
+
   public double getVelocityRPM() {
     return getMotor().getVelocity().getValueAsDouble() * 60.0;
   }
