@@ -1,0 +1,842 @@
+{
+  "version": 1.0,
+  "grid_size": 128,
+  "tabs": [
+    {
+      "name": "Answer",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Status",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1500.0,
+            "height": 180.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/CANHealth/MissingCritical",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Status Message",
+            "x": 0.0,
+            "y": 180.0,
+            "width": 1500.0,
+            "height": 80.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/CANHealth/StatusMessage",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Battery",
+            "x": 0.0,
+            "y": 260.0,
+            "width": 500.0,
+            "height": 140.0,
+            "type": "Voltage View",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/BatteryVoltage",
+              "period": 0.033,
+              "min_value": 8.0,
+              "max_value": 13.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Devices Online",
+            "x": 500.0,
+            "y": 260.0,
+            "width": 400.0,
+            "height": 140.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/CANHealth/ConnectedCount",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 21.0,
+              "divisions": 3,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Coprocessor Reboots",
+            "x": 900.0,
+            "y": 260.0,
+            "width": 300.0,
+            "height": 140.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Vision/Coprocessor/TotalRebootCount",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 10.0,
+              "divisions": 5,
+              "inverted": true,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "CAN TxError Peak",
+            "x": 1200.0,
+            "y": 260.0,
+            "width": 300.0,
+            "height": 140.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/CANHealth/TxErrorPeak",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 150.0,
+              "divisions": 5,
+              "inverted": true,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Shooter",
+            "x": 0.0,
+            "y": 400.0,
+            "width": 500.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/Fault/Summary",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Indexer",
+            "x": 500.0,
+            "y": 400.0,
+            "width": 500.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Indexer/Fault/Summary",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Hanger",
+            "x": 1000.0,
+            "y": 400.0,
+            "width": 500.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Hanger/Fault/Summary",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Intake",
+            "x": 0.0,
+            "y": 500.0,
+            "width": 500.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Intake/Fault/Summary",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "IntakeActuator",
+            "x": 500.0,
+            "y": 500.0,
+            "width": 500.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/Fault/Summary",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Agitator",
+            "x": 1000.0,
+            "y": 500.0,
+            "width": 500.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Agitator/Fault/Summary",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Missing Devices",
+            "x": 0.0,
+            "y": 600.0,
+            "width": 1500.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/CANHealth/MissingNamesJoined",
+              "period": 0.033
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Diagnose",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Shooter OK",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 250.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/Device/Connected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Shooter Current A",
+            "x": 250.0,
+            "y": 0.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/CurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 80.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Shooter V Drop",
+            "x": 625.0,
+            "y": 0.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/VoltageDropVolts",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 3.0,
+              "divisions": 3,
+              "inverted": true,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Shooter Faults",
+            "x": 1000.0,
+            "y": 0.0,
+            "width": 500.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/Fault/Summary",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Indexer OK",
+            "x": 0.0,
+            "y": 100.0,
+            "width": 250.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Indexer/Device/Connected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Indexer Current A",
+            "x": 250.0,
+            "y": 100.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Indexer/CurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 80.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Indexer V Drop",
+            "x": 625.0,
+            "y": 100.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Indexer/VoltageDropVolts",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 3.0,
+              "divisions": 3,
+              "inverted": true,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Indexer Faults",
+            "x": 1000.0,
+            "y": 100.0,
+            "width": 500.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Indexer/Fault/Summary",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Intake OK",
+            "x": 0.0,
+            "y": 200.0,
+            "width": 250.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Intake/Device/Connected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Intake Current A",
+            "x": 250.0,
+            "y": 200.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Intake/CurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 80.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Intake V Drop",
+            "x": 625.0,
+            "y": 200.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Intake/VoltageDropVolts",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 3.0,
+              "divisions": 3,
+              "inverted": true,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Intake Faults",
+            "x": 1000.0,
+            "y": 200.0,
+            "width": 500.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Intake/Fault/Summary",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "IntakeActuator OK",
+            "x": 0.0,
+            "y": 300.0,
+            "width": 250.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/Device/Connected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "IntakeActuator Current A",
+            "x": 250.0,
+            "y": 300.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/CurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 80.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "IntakeActuator V Drop",
+            "x": 625.0,
+            "y": 300.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/VoltageDropVolts",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 3.0,
+              "divisions": 3,
+              "inverted": true,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "IntakeActuator Faults",
+            "x": 1000.0,
+            "y": 300.0,
+            "width": 500.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/IntakeActuator/Fault/Summary",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Hanger OK",
+            "x": 0.0,
+            "y": 400.0,
+            "width": 250.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Hanger/Device/Connected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Hanger Current A",
+            "x": 250.0,
+            "y": 400.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Hanger/CurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 80.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Hanger V Drop",
+            "x": 625.0,
+            "y": 400.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Hanger/VoltageDropVolts",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 3.0,
+              "divisions": 3,
+              "inverted": true,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Hanger Faults",
+            "x": 1000.0,
+            "y": 400.0,
+            "width": 500.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Hanger/Fault/Summary",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Agitator OK",
+            "x": 0.0,
+            "y": 500.0,
+            "width": 250.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Agitator/Device/Connected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Agitator Current A",
+            "x": 250.0,
+            "y": 500.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Agitator/CurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 80.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Agitator V Drop",
+            "x": 625.0,
+            "y": 500.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Agitator/VoltageDropVolts",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 3.0,
+              "divisions": 3,
+              "inverted": true,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Agitator Faults",
+            "x": 1000.0,
+            "y": 500.0,
+            "width": 500.0,
+            "height": 100.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Agitator/Fault/Summary",
+              "period": 0.033
+            }
+          },
+          {
+            "title": "Gyro",
+            "x": 0.0,
+            "y": 600.0,
+            "width": 250.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Drive/Gyro/Connected",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "OrangePi1",
+            "x": 250.0,
+            "y": 600.0,
+            "width": 250.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Vision/Coprocessor/OrangePi1/Alive",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "OrangePi2",
+            "x": 500.0,
+            "y": 600.0,
+            "width": 250.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Vision/Coprocessor/OrangePi2/Alive",
+              "period": 0.033,
+              "true_color": 4278233600,
+              "false_color": 4294901760,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Total Current A",
+            "x": 750.0,
+            "y": 600.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/TotalCurrentAmps",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 250.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Browned Out",
+            "x": 1125.0,
+            "y": 600.0,
+            "width": 375.0,
+            "height": 100.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/BrownedOut",
+              "period": 0.033,
+              "true_color": 4294901760,
+              "false_color": 4278233600,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Evidence",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Battery Voltage",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 750.0,
+            "height": 230.0,
+            "type": "Graph",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/BatteryVoltage",
+              "period": 0.033,
+              "time_displayed": 30.0,
+              "color": 4278238420,
+              "line_width": 2.0
+            }
+          },
+          {
+            "title": "Total Current",
+            "x": 750.0,
+            "y": 0.0,
+            "width": 750.0,
+            "height": 230.0,
+            "type": "Graph",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/TotalCurrentAmps",
+              "period": 0.033,
+              "time_displayed": 30.0,
+              "color": 4294901760,
+              "line_width": 2.0
+            }
+          },
+          {
+            "title": "Voltage Slope V/s",
+            "x": 0.0,
+            "y": 230.0,
+            "width": 750.0,
+            "height": 230.0,
+            "type": "Graph",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/VoltageSlope",
+              "period": 0.033,
+              "time_displayed": 30.0,
+              "color": 4294944000,
+              "line_width": 2.0
+            }
+          },
+          {
+            "title": "Shooter Current",
+            "x": 750.0,
+            "y": 230.0,
+            "width": 750.0,
+            "height": 230.0,
+            "type": "Graph",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Shooter/CurrentAmps",
+              "period": 0.033,
+              "time_displayed": 30.0,
+              "color": 4278238420,
+              "line_width": 2.0
+            }
+          },
+          {
+            "title": "CAN Tx Error Peak",
+            "x": 0.0,
+            "y": 460.0,
+            "width": 375.0,
+            "height": 120.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/CANHealth/TxErrorPeak",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 150.0,
+              "divisions": 5,
+              "inverted": true,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "CAN Rx Error Peak",
+            "x": 375.0,
+            "y": 460.0,
+            "width": 375.0,
+            "height": 120.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/CANHealth/RxErrorPeak",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 150.0,
+              "divisions": 5,
+              "inverted": true,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "TxFull Events",
+            "x": 750.0,
+            "y": 460.0,
+            "width": 375.0,
+            "height": 120.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/CANHealth/TxFullEvents",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 10.0,
+              "divisions": 5,
+              "inverted": true,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Error Passive Events",
+            "x": 1125.0,
+            "y": 460.0,
+            "width": 375.0,
+            "height": 120.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/CANHealth/ErrorPassiveEvents",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 10.0,
+              "divisions": 5,
+              "inverted": true,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Rio CPU Temp",
+            "x": 0.0,
+            "y": 580.0,
+            "width": 500.0,
+            "height": 120.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/RioCPUTemp",
+              "period": 0.033,
+              "min_value": 30.0,
+              "max_value": 90.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Rio 6V Rail",
+            "x": 500.0,
+            "y": 580.0,
+            "width": 500.0,
+            "height": 120.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/Rio6VRail",
+              "period": 0.033,
+              "min_value": 5.0,
+              "max_value": 6.5,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Loop Time Ms",
+            "x": 1000.0,
+            "y": 580.0,
+            "width": 500.0,
+            "height": 120.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/SystemHealth/LoopTimeMs",
+              "period": 0.033,
+              "min_value": 0.0,
+              "max_value": 50.0,
+              "divisions": 5,
+              "inverted": true,
+              "orientation": "horizontal"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

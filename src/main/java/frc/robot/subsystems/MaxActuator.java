@@ -133,6 +133,16 @@ public abstract class MaxActuator extends SubsystemBase implements Actuator {
     }
   }
 
+  /** Sticky warnings as raw bits. Paired with getStickyFaultsRaw for the fault decoder. */
+  @Override
+  public int getStickyWarningsRaw() {
+    try {
+      return (int) motor.getStickyWarnings().rawBits;
+    } catch (Throwable t) {
+      return -1;
+    }
+  }
+
   /** Hot-reload PID values. Creates new config, takes a few ms. */
   public void updatePID(double kP, double kI, double kD, double kF) {
     SparkMaxConfig config = new SparkMaxConfig();
