@@ -7,6 +7,9 @@ import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.HangerConstants;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.subsystems.Hanger;
+import frc.robot.util.DeviceFaultDecoder;
+import frc.robot.util.DeviceFaultDecoder.DecodedFaults;
+import frc.robot.util.DeviceFaultDecoder.DeviceType;
 
 /** Hanger telemetry: position, deploy/climb state, motor health. */
 public class HangerTelemetry implements SubsystemTelemetry {
@@ -19,6 +22,8 @@ public class HangerTelemetry implements SubsystemTelemetry {
   private boolean atPosition = false;
   private double appliedOutput = 0;
   private double currentAmps = 0;
+  private double busVoltage = 0;
+  private double voltageDropVolts = 0;
   private double temperatureCelsius = 0;
   private boolean isDeployed = false;
   private boolean isClimbing = false;
@@ -27,6 +32,11 @@ public class HangerTelemetry implements SubsystemTelemetry {
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
   private boolean deviceConnected = false;
   private int deviceFaultsRaw = 0;
+  private int deviceWarningsRaw = 0;
+  private int lastRawFaults = 0;
+  private int lastRawWarnings = 0;
+  private int faultTransitionCount = 0;
+  private DecodedFaults decodedFaults = DeviceFaultDecoder.empty();
 
   private double climbProgress = 0;
   private String controlMode = "UNKNOWN";
@@ -59,6 +69,8 @@ public class HangerTelemetry implements SubsystemTelemetry {
       atPosition = hanger.isAtPosition();
       appliedOutput = hanger.getAppliedOutput();
       currentAmps = hanger.getOutputCurrent();
+      busVoltage = hanger.getBusVoltage();
+      voltageDropVolts = SystemHealthTelemetry.computeVoltageDrop(busVoltage);
       temperatureCelsius = hanger.getTemperature();
 
       isDeployed =
@@ -73,6 +85,19 @@ public class HangerTelemetry implements SubsystemTelemetry {
 
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = hanger.getStickyFaultsRaw();
+      deviceWarningsRaw = hanger.getStickyWarningsRaw();
+
+      // Only re-decode when the raw integers change so the hot loop stays allocation-light
+      // during a clean match.
+      if (deviceFaultsRaw != lastRawFaults || deviceWarningsRaw != lastRawWarnings) {
+        decodedFaults =
+            DeviceFaultDecoder.decode(DeviceType.SPARK_MAX, deviceFaultsRaw, deviceWarningsRaw);
+        lastRawFaults = deviceFaultsRaw;
+        lastRawWarnings = deviceWarningsRaw;
+        if (decodedFaults.anyActive()) {
+          faultTransitionCount++;
+        }
+      }
 
       controlMode = (targetPosition != 0) ? "POSITION" : "OPEN_LOOP";
       softLimitActive =
@@ -81,6 +106,8 @@ public class HangerTelemetry implements SubsystemTelemetry {
     } catch (Throwable t) {
       deviceConnected = connectDebouncer.calculate(false);
       deviceFaultsRaw = -1;
+      deviceWarningsRaw = -1;
+      decodedFaults = DeviceFaultDecoder.empty();
       setDefaultValues();
     }
 
@@ -99,6 +126,8 @@ public class HangerTelemetry implements SubsystemTelemetry {
     atPosition = false;
     appliedOutput = 0;
     currentAmps = 0;
+    busVoltage = 0;
+    voltageDropVolts = 0;
     temperatureCelsius = 0;
     isDeployed = false;
     isClimbing = false;
@@ -113,12 +142,15 @@ public class HangerTelemetry implements SubsystemTelemetry {
     SafeLog.put("Hanger/AtPosition", atPosition);
     SafeLog.put("Hanger/AppliedOutput", appliedOutput);
     SafeLog.put("Hanger/CurrentAmps", currentAmps);
+    SafeLog.put("Hanger/BusVoltage", busVoltage);
+    SafeLog.put("Hanger/VoltageDropVolts", voltageDropVolts);
     SafeLog.put("Hanger/TemperatureCelsius", temperatureCelsius);
     SafeLog.put("Hanger/IsDeployed", isDeployed);
     SafeLog.put("Hanger/IsClimbing", isClimbing);
 
     SafeLog.put("Hanger/Device/Connected", deviceConnected);
-    SafeLog.put("Hanger/Device/FaultsRaw", deviceFaultsRaw);
+    DeviceFaultDecoder.publish(
+        "Hanger", decodedFaults, deviceFaultsRaw, deviceWarningsRaw, faultTransitionCount);
     SafeLog.put("Hanger/ClimbProgress", climbProgress);
     SafeLog.put("Hanger/ControlMode", controlMode);
     SafeLog.put("Hanger/SoftLimitActive", softLimitActive);

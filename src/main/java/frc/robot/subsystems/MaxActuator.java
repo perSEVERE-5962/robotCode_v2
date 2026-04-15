@@ -43,6 +43,11 @@ public abstract class MaxActuator extends SubsystemBase implements Actuator {
     motorConfig.idleMode(SparkMaxConfig.IdleMode.kBrake);
     motorConfig.smartCurrentLimit(40);
     motorConfig.voltageCompensation(12.0);
+    motorConfig
+        .encoder
+        .quadratureAverageDepth(2)
+        .quadratureMeasurementPeriod(10)
+        .uvwMeasurementPeriod(8);
 
     FeedbackSensor feedBackSensor = FeedbackSensor.kPrimaryEncoder;
     if (useThroughBoreEncoder == true) {
@@ -128,6 +133,16 @@ public abstract class MaxActuator extends SubsystemBase implements Actuator {
   public int getStickyFaultsRaw() {
     try {
       return (int) motor.getStickyFaults().rawBits;
+    } catch (Throwable t) {
+      return -1;
+    }
+  }
+
+  /** Sticky warnings as raw bits. Paired with getStickyFaultsRaw for the fault decoder. */
+  @Override
+  public int getStickyWarningsRaw() {
+    try {
+      return (int) motor.getStickyWarnings().rawBits;
     } catch (Throwable t) {
       return -1;
     }

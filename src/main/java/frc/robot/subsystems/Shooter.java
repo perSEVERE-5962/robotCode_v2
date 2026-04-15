@@ -58,7 +58,6 @@ public class Shooter extends MaxActuator {
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
     motorConfig.smartCurrentLimit(30);
     motorEncoder = motor.getEncoder();
-    motorConfig.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
     followers =
@@ -112,7 +111,11 @@ public class Shooter extends MaxActuator {
     config.idleMode(SparkBaseConfig.IdleMode.kCoast);
     config.smartCurrentLimit(30);
     config.voltageCompensation(12.0);
-    config.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
+    config
+        .encoder
+        .quadratureAverageDepth(2)
+        .quadratureMeasurementPeriod(10)
+        .uvwMeasurementPeriod(8);
     follower.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     return follower;
   }

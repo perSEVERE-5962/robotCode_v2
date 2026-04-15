@@ -16,7 +16,16 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 /** Drive telemetry: pose, module states, chassis speeds, gyro, encoder health. */
 public class DriveTelemetry implements SubsystemTelemetry {
   private static final String[] MODULE_NAMES = {"FL", "FR", "BL", "BR"};
-  private static final double ENCODER_DISAGREEMENT_THRESHOLD_RAD = 0.05;
+
+  // 10 degrees in radians. Picked against the real steady-state noise floor,
+  // where a healthy module sits under 0.05 rad and a settling transient briefly
+  // touches 0.15 rad. The debounce below catches sustained drift while ignoring
+  // the short post-command oscillation.
+  private static final double ENCODER_DISAGREEMENT_THRESHOLD_RAD = 0.175;
+
+  // A real calibration event stays high for seconds, not milliseconds.
+  private static final double ENCODER_FAULT_DEBOUNCE_SEC = 1.0;
+  private static final double LOOP_PERIOD_SEC = 0.02;
 
   private SwerveSubsystem swerveSubsystem;
   private SwerveDrive swerveDrive;
@@ -40,6 +49,8 @@ public class DriveTelemetry implements SubsystemTelemetry {
 
   private boolean[] encoderAbsoluteOk = {true, true, true, true};
   private double[] encoderDisagreementRad = {0, 0, 0, 0};
+  private double[] encoderFaultDebounceSec = {0, 0, 0, 0};
+  private boolean[] encoderFaultLatched = {false, false, false, false};
 
   private static final int SWERVE_HEALTH_DECIMATION = 25;
   private int swerveHealthCounter = 0;
@@ -158,6 +169,23 @@ public class DriveTelemetry implements SubsystemTelemetry {
     }
   }
 
+  /**
+   * Pure math for the encoder disagreement signal. Takes absolute and relative angles in DEGREES
+   * (as YAGSL reports them), returns the short-arc disagreement in radians. NaN on either input
+   * short-circuits to 0 so no garbage values can leak into the log.
+   *
+   * <p>Public-package for unit testing. Do not call from hot paths other than {@link
+   * #updateEncoderHealth()} because it allocates nothing and the test uses it directly.
+   */
+  static double computeDisagreementRad(double absAngleDeg, double relAngleDeg) {
+    if (Double.isNaN(absAngleDeg) || Double.isNaN(relAngleDeg)) {
+      return 0.0;
+    }
+    double absRad = Math.toRadians(absAngleDeg);
+    double relRad = Math.toRadians(relAngleDeg);
+    return Math.abs(MathUtil.angleModulus(absRad - relRad));
+  }
+
   private void updateEncoderHealth() {
     try {
       SwerveModule[] modules = swerveDrive.getModules();
@@ -168,15 +196,28 @@ public class DriveTelemetry implements SubsystemTelemetry {
         if (mod == null) continue;
 
         try {
-          double absAngle = mod.getAbsolutePosition();
-          encoderAbsoluteOk[i] = !Double.isNaN(absAngle);
+          double absAngleDeg = mod.getAbsolutePosition();
+          double relAngleDeg = mod.getRelativePosition();
+          boolean absOk = !Double.isNaN(absAngleDeg);
+          encoderAbsoluteOk[i] = absOk;
 
-          double relAngle = mod.getRelativePosition();
-          double disagreement = Math.abs(MathUtil.angleModulus(absAngle - relAngle));
+          double disagreement = computeDisagreementRad(absAngleDeg, relAngleDeg);
           encoderDisagreementRad[i] = disagreement;
+
+          // Debounce: a real drift stays high across many cycles. A settling
+          // transient clears on the next cycle. Latch only after the fault
+          // window fills up, so short spikes don't fire the alert.
+          if (absOk && disagreement > ENCODER_DISAGREEMENT_THRESHOLD_RAD) {
+            encoderFaultDebounceSec[i] += LOOP_PERIOD_SEC;
+          } else {
+            encoderFaultDebounceSec[i] = 0;
+          }
+          encoderFaultLatched[i] = encoderFaultDebounceSec[i] >= ENCODER_FAULT_DEBOUNCE_SEC;
         } catch (Throwable t) {
           encoderAbsoluteOk[i] = false;
           encoderDisagreementRad[i] = 0;
+          encoderFaultDebounceSec[i] = 0;
+          encoderFaultLatched[i] = false;
         }
       }
     } catch (Throwable t) {
@@ -281,6 +322,16 @@ public class DriveTelemetry implements SubsystemTelemetry {
     SafeLog.put("Drive/Auto/IsFollowing", isFollowingPath);
     SafeLog.put("Drive/Auto/PathName", currentPathName);
 
+    // Always on. These four arrays are tiny and catching a module drift
+    // matters every match, not just when tuning. The log bandwidth cost
+    // is under 0.1 percent of the total stream.
+    for (int i = 0; i < 4; i++) {
+      String name = MODULE_NAMES[i];
+      SafeLog.put("Drive/Encoder/" + name + "/AbsoluteOk", encoderAbsoluteOk[i]);
+      SafeLog.put("Drive/Encoder/" + name + "/DisagreementRad", encoderDisagreementRad[i]);
+      SafeLog.put("Drive/Encoder/" + name + "/EncoderIssue", encoderFaultLatched[i]);
+    }
+
     // Debug-only signals gated behind TUNING_MODE to reduce CAN/log bandwidth in competition
     if (Constants.TUNING_MODE) {
       for (int i = 0; i < 4; i++) {
@@ -290,16 +341,6 @@ public class DriveTelemetry implements SubsystemTelemetry {
               "Drive/ModuleSetpoints/" + name + "/Angle", moduleSetpoints[i].angle.getRadians());
           SafeLog.put(
               "Drive/ModuleSetpoints/" + name + "/Speed", moduleSetpoints[i].speedMetersPerSecond);
-        }
-      }
-
-      for (int i = 0; i < 4; i++) {
-        String name = MODULE_NAMES[i];
-        SafeLog.put("Drive/Encoder/" + name + "/AbsoluteOk", encoderAbsoluteOk[i]);
-        if (encoderDisagreementRad[i] > ENCODER_DISAGREEMENT_THRESHOLD_RAD) {
-          SafeLog.put("Drive/Encoder/" + name + "/DisagreementRad", encoderDisagreementRad[i]);
-        } else {
-          SafeLog.put("Drive/Encoder/" + name + "/DisagreementRad", 0.0);
         }
       }
 

@@ -5,6 +5,9 @@ import frc.robot.Cameras;
 import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.subsystems.swervedrive.VisionFilter.RejectionReason;
+import frc.robot.util.CoprocessorHealth;
+import java.util.HashMap;
+import java.util.Map;
 
 /** Vision telemetry: target lock, tag ID stability, pose confidence. */
 public class VisionTelemetry implements SubsystemTelemetry {
@@ -63,7 +66,17 @@ public class VisionTelemetry implements SubsystemTelemetry {
   private int rejectHeadingDivergence = 0;
   private int rejectPoseJump = 0;
 
-  public VisionTelemetry() {}
+  private final CoprocessorHealth coprocessorHealth = new CoprocessorHealth();
+  private final Map<String, Boolean> cameraConnectivitySnapshot = new HashMap<>();
+
+  public VisionTelemetry() {
+    // Register each expected camera with its coprocessor group so paired-drop
+    // detection works on the first update cycle. The group strings come from
+    // the Cameras enum so any topology change propagates here automatically.
+    for (Cameras cam : Cameras.values()) {
+      coprocessorHealth.register(cam.name(), cam.coprocessorGroup);
+    }
+  }
 
   /** Called from RobotContainer */
   public void setVision(Vision vision) {
@@ -190,6 +203,19 @@ public class VisionTelemetry implements SubsystemTelemetry {
         frontRightCamConnected = false;
       }
 
+      // Feed the coprocessor rollup. The map is reused each cycle so there is
+      // no per-cycle allocation in the hot path.
+      cameraConnectivitySnapshot.clear();
+      cameraConnectivitySnapshot.put(Cameras.LEFT_CAM.name(), leftCamConnected);
+      cameraConnectivitySnapshot.put(Cameras.RIGHT_CAM.name(), rightCamConnected);
+      cameraConnectivitySnapshot.put(Cameras.FRONT_LEFT_CAM.name(), frontLeftCamConnected);
+      cameraConnectivitySnapshot.put(Cameras.FRONT_RIGHT_CAM.name(), frontRightCamConnected);
+      try {
+        coprocessorHealth.update(cameraConnectivitySnapshot);
+      } catch (Throwable t) {
+        // Rollup is a diagnostic; its failure must never stop vision processing.
+      }
+
       visionHealthy = true;
     } catch (Throwable t) {
       visionHealthy = false;
@@ -289,6 +315,7 @@ public class VisionTelemetry implements SubsystemTelemetry {
     SafeLog.put("Vision/Camera/RightCam/Connected", rightCamConnected);
     SafeLog.put("Vision/Camera/FrontLeftCam/Connected", frontLeftCamConnected);
     SafeLog.put("Vision/Camera/FrontRightCam/Connected", frontRightCamConnected);
+    publishCoprocessorHealth();
     SafeLog.put("Vision/Filter/AcceptRatePct", filterAcceptRatePct);
     SafeLog.put("Vision/Filter/Reject/Ambiguity", rejectAmbiguity);
     SafeLog.put("Vision/Filter/Reject/ZHeight", rejectZHeight);
@@ -317,6 +344,30 @@ public class VisionTelemetry implements SubsystemTelemetry {
       SafeLog.put("Vision/Filter/RejectedCount", filterRejected);
       SafeLog.put("Vision/Filter/LastRejection", lastRejectionReason);
     }
+  }
+
+  /**
+   * Publishes per-coprocessor alive, reboot count, and time-since-reboot signals plus a total
+   * reboot counter. The total is the one the Pit Check page reads for its warnings list.
+   */
+  private void publishCoprocessorHealth() {
+    int totalReboots = 0;
+    for (String group : coprocessorHealth.getGroupNames()) {
+      boolean alive = coprocessorHealth.isGroupAlive(group);
+      int reboots = coprocessorHealth.getRebootCount(group);
+      double lastReboot = coprocessorHealth.getLastRebootTimestamp(group);
+      double timeSince = coprocessorHealth.getTimeSinceLastRebootSec(group);
+      SafeLog.put("Vision/Coprocessor/" + group + "/Alive", alive);
+      SafeLog.put("Vision/Coprocessor/" + group + "/RebootCount", reboots);
+      SafeLog.put("Vision/Coprocessor/" + group + "/LastRebootSec", lastReboot);
+      SafeLog.put(
+          "Vision/Coprocessor/" + group + "/TimeSinceRebootSec",
+          Double.isInfinite(timeSince) ? -1.0 : timeSince);
+      totalReboots += reboots;
+    }
+    SafeLog.put("Vision/Coprocessor/TotalRebootCount", totalReboots);
+    SafeLog.put(
+        "Vision/Coprocessor/AnyRebootedRecently", coprocessorHealth.anyRebootedRecently(60.0));
   }
 
   @Override
