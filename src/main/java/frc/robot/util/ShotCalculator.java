@@ -204,7 +204,7 @@ public class ShotCalculator {
     // baseLUT.put(3.350, 2870, angle, 0.97);
     baseLUT.put(3.400, 2820, angle, 0.98);
     // baseLUT.put(3.450, 2940, angle, 0.99);
-    // baseLUT.put(3.500, 2780, angle, 1.00);
+    baseLUT.put(3.500, 2840, angle, 1.00);
     // baseLUT.put(3.550, 2960, angle, 1.01);
     baseLUT.put(3.600, 2885, angle, 1.02);
     // baseLUT.put(3.650, 3000, angle, 1.03);
