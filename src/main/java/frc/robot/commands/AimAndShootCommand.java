@@ -227,7 +227,7 @@ public class AimAndShootCommand extends Command {
       double rpmRatio = (targetRpm > 0) ? Math.min(1.0, shooter.getVelocity() / targetRpm) : 0;
       rpmRatio = Math.max(feedRatioFloor.get(), rpmRatio);
       indexer.moveToVelocityWithPID(Indexer.getTunableTargetSpeed());
-      agitator.moveToVelocityWithPID(5990);
+      agitator.moveToVelocityWithPID(Agitator.getTunableTargetRPM());
     } else {
       indexer.move(0);
       agitator.moveToVelocityWithPID(Agitator.getTunableTargetRPM() * 0.1);
