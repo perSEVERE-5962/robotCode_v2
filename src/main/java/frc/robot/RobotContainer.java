@@ -5,10 +5,12 @@
 package frc.robot;
 
 import static frc.robot.Constants.HubScoringConstants.*;
+import static frc.robot.Constants.TeleopAssistConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -57,6 +59,7 @@ import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.DriverTuning;
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 import swervelib.SwerveInputStream;
 
@@ -202,6 +205,7 @@ public class RobotContainer {
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
 
     configureBindings();
+    configureTeleopAssist();
     new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
     DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -562,6 +566,63 @@ public class RobotContainer {
     driverJoystick.button(1).onTrue(Commands.none());
     driverJoystick.button(6).onTrue(Commands.none());
   } */
+
+  /**
+   * Teleop assist: hold a button, robot pathfinds to the nearest scoring or intake spot. Release
+   * the button and you're back to manual control.
+   *
+   * <p>The robot knows which side of the field it's on via odometry, so it always picks the right
+   * spot (HP side vs depot side). Only 2 buttons needed. POV up = go score, POV left = go intake.
+   * POV down stays free for emergency dump.
+   *
+   * <p>Uses pathfindToPoseFlipped so blue-alliance poses auto-flip for red.
+   */
+  private void configureTeleopAssist() {
+    PathConstraints assistConstraints =
+        new PathConstraints(
+            ASSIST_MAX_VEL_MPS,
+            ASSIST_MAX_ACCEL_MPSS,
+            ASSIST_MAX_ANGULAR_VEL_RADPS,
+            ASSIST_MAX_ANGULAR_ACCEL_RADPSS);
+
+    copilotXbox
+        .povUp()
+        .whileTrue(
+            Commands.either(
+                AutoBuilder.pathfindToPoseFlipped(BLUE_HP_SCORING_POSE, assistConstraints)
+                    .andThen(
+                        Commands.defer(
+                            () ->
+                                new AimAndShootCommand(
+                                    drivebase, shooter, indexer, agitator, () -> 0, () -> 0, false),
+                            Set.of(drivebase, shooter, indexer, agitator))),
+                AutoBuilder.pathfindToPoseFlipped(BLUE_DEPOT_SCORING_POSE, assistConstraints)
+                    .andThen(
+                        Commands.defer(
+                            () ->
+                                new AimAndShootCommand(
+                                    drivebase, shooter, indexer, agitator, () -> 0, () -> 0, false),
+                            Set.of(drivebase, shooter, indexer, agitator))),
+                () ->
+                    drivebase
+                        .getPose()
+                        .nearest(List.of(BLUE_HP_SCORING_POSE, BLUE_DEPOT_SCORING_POSE))
+                        .equals(BLUE_HP_SCORING_POSE)));
+
+    copilotXbox
+        .povLeft()
+        .whileTrue(
+            Commands.either(
+                AutoBuilder.pathfindToPoseFlipped(BLUE_HP_INTAKE_POSE, assistConstraints)
+                    .alongWith(new HoldAndIntake()),
+                AutoBuilder.pathfindToPoseFlipped(BLUE_DEPOT_INTAKE_POSE, assistConstraints)
+                    .alongWith(new HoldAndIntake()),
+                () ->
+                    drivebase
+                        .getPose()
+                        .nearest(List.of(BLUE_HP_INTAKE_POSE, BLUE_DEPOT_INTAKE_POSE))
+                        .equals(BLUE_HP_INTAKE_POSE)));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

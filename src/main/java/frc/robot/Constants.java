@@ -81,6 +81,39 @@ public final class Constants {
     public static final double ANGLE_TOLERANCE = 2.0; // degrees
   }
 
+  /**
+   * Teleop assist: poses the robot drives to when the copilot holds a button. All poses are in BLUE
+   * alliance coordinates. pathfindToPoseFlipped handles red auto-flip. Rotation = the heading the
+   * robot faces on arrival. AimAndShoot overrides it for shooting. TUNE THESE on the real field,
+   * especially the intake spots.
+   */
+  public static final class TeleopAssistConstants {
+    // scoring spots: 2.5m from blue hub center (4.5974, 4.035), 45 deg off the alliance-facing
+    // direction. Two spots symmetric about the hub, one toward HP (low Y), one toward depot
+    // (high Y). Heading points the front away from the hub so the rear shooter faces it.
+    // AimAndShoot corrects the heading after arrival anyway.
+    public static final double SCORING_RADIUS_M = 2.5;
+    public static final Pose2d BLUE_HP_SCORING_POSE =
+        new Pose2d(2.830, 2.267, Rotation2d.fromDegrees(45));
+    public static final Pose2d BLUE_DEPOT_SCORING_POSE =
+        new Pose2d(2.830, 5.803, Rotation2d.fromDegrees(-45));
+
+    // intake spots: near the corral (HP side) and mirrored depot side.
+    // HP corral is at X [1.80, 2.71], Y [0, 0.96]. Robot sits just outside facing in.
+    // Depot side is mirrored across the hub's Y center line.
+    // heading 0 = facing +X (into the field) so the front intake picks up balls
+    public static final Pose2d BLUE_HP_INTAKE_POSE =
+        new Pose2d(2.26, 1.45, Rotation2d.fromDegrees(0));
+    public static final Pose2d BLUE_DEPOT_INTAKE_POSE =
+        new Pose2d(2.26, 6.62, Rotation2d.fromDegrees(0));
+
+    // how fast the robot drives during teleop assist (slower = safer, driver can react)
+    public static final double ASSIST_MAX_VEL_MPS = 3.0;
+    public static final double ASSIST_MAX_ACCEL_MPSS = 2.0;
+    public static final double ASSIST_MAX_ANGULAR_VEL_RADPS = Math.toRadians(540);
+    public static final double ASSIST_MAX_ANGULAR_ACCEL_RADPSS = Math.toRadians(720);
+  }
+
   public static class PhotonvisionConstants {
 
     /*
