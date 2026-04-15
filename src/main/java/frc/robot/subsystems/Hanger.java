@@ -68,6 +68,10 @@ public class Hanger extends MaxActuator {
     return getMotor().getOutputCurrent();
   }
 
+  public double getBusVoltage() {
+    return getMotor().getBusVoltage();
+  }
+
   public double getTemperature() {
     return getMotor().getMotorTemperature();
   }

@@ -52,9 +52,10 @@ public class IntakePivot extends TalonActuator {
     return Math.abs(getPosition() - targetPosition) < Constants.MotorConstants.INTAKE_POS_TOLERANCE;
   }
 
-  // public double getTemperature() {
-  //   return getMotor().getMotorTemperature();
-  // }
+  /** Kraken device temperature in Celsius. */
+  public double getTemperature() {
+    return getMotor().getDeviceTemp().getValueAsDouble();
+  }
 
   // Hardware accessors
   public double getTargetPosition() {
@@ -69,13 +70,20 @@ public class IntakePivot extends TalonActuator {
     getMotor().setPosition(-0.4);
   }
 
-  // public double getAppliedOutput() {
-  //   return getMotor().getAppliedOutput();
-  // }
+  /** Duty-cycle output, normalized -1 to 1, for parity with the Spark-based accessors. */
+  public double getAppliedOutput() {
+    return getMotor().getDutyCycle().getValueAsDouble();
+  }
 
-  // public double getOutputCurrent() {
-  //   return getMotor().getOutputCurrent();
-  // }
+  /** Motor stator current in amps, read directly from the Kraken. */
+  public double getOutputCurrent() {
+    return getMotor().getStatorCurrent().getValueAsDouble();
+  }
+
+  /** Kraken supply voltage in volts. Used by telemetry to compute voltage drop. */
+  public double getBusVoltage() {
+    return getMotor().getSupplyVoltage().getValueAsDouble();
+  }
 
   public double getTunableKP() {
     return kP.get();

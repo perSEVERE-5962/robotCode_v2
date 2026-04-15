@@ -7,6 +7,9 @@ import frc.robot.Constants;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.StallDetectionConstants;
 import frc.robot.subsystems.Indexer;
+import frc.robot.util.DeviceFaultDecoder;
+import frc.robot.util.DeviceFaultDecoder.DecodedFaults;
+import frc.robot.util.DeviceFaultDecoder.DeviceType;
 import frc.robot.util.EventMarker;
 import frc.robot.util.JamProtection;
 
@@ -27,6 +30,8 @@ public class IndexerTelemetry implements SubsystemTelemetry {
   private double currentAmps = 0;
   private double temperatureCelsius = 0;
   private double velocityRPM = 0;
+  private double busVoltage = 0;
+  private double voltageDropVolts = 0;
 
   private boolean feederActive = false;
   private double jamFrequencyPerMin = 0;
@@ -38,6 +43,11 @@ public class IndexerTelemetry implements SubsystemTelemetry {
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
   private boolean deviceConnected = false;
   private int deviceFaultsRaw = 0;
+  private int deviceWarningsRaw = 0;
+  private int lastRawFaults = 0;
+  private int lastRawWarnings = 0;
+  private int faultTransitionCount = 0;
+  private DecodedFaults decodedFaults = DeviceFaultDecoder.empty();
 
   private boolean stalled = false;
   private double stallStartTime = 0;
@@ -84,13 +94,28 @@ public class IndexerTelemetry implements SubsystemTelemetry {
       currentAmps = indexer.getOutputCurrent();
       temperatureCelsius = indexer.getTemperature();
       velocityRPM = indexer.getVelocity();
+      busVoltage = indexer.getBusVoltage();
+      voltageDropVolts = SystemHealthTelemetry.computeVoltageDrop(busVoltage);
 
       targetSpeed = Indexer.getTunableTargetSpeed();
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = indexer.getStickyFaultsRaw();
+      deviceWarningsRaw = indexer.getStickyWarningsRaw();
+
+      if (deviceFaultsRaw != lastRawFaults || deviceWarningsRaw != lastRawWarnings) {
+        decodedFaults =
+            DeviceFaultDecoder.decode(DeviceType.SPARK_FLEX, deviceFaultsRaw, deviceWarningsRaw);
+        lastRawFaults = deviceFaultsRaw;
+        lastRawWarnings = deviceWarningsRaw;
+        if (decodedFaults.anyActive()) {
+          faultTransitionCount++;
+        }
+      }
     } catch (Throwable t) {
       deviceConnected = connectDebouncer.calculate(false);
       deviceFaultsRaw = -1;
+      deviceWarningsRaw = -1;
+      decodedFaults = DeviceFaultDecoder.empty();
       setDefaultValues();
       return;
     }
@@ -205,6 +230,8 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     currentAmps = 0;
     temperatureCelsius = 0;
     velocityRPM = 0;
+    busVoltage = 0;
+    voltageDropVolts = 0;
     stalled = false;
     stallDurationMs = 0;
     inStallCondition = false;
@@ -220,9 +247,13 @@ public class IndexerTelemetry implements SubsystemTelemetry {
     SafeLog.put("Indexer/Running", running);
     SafeLog.put("Indexer/AppliedOutput", appliedOutput);
     SafeLog.put("Indexer/CurrentAmps", currentAmps);
+    SafeLog.put("Indexer/BusVoltage", busVoltage);
+    SafeLog.put("Indexer/VoltageDropVolts", voltageDropVolts);
     SafeLog.put("Indexer/TemperatureCelsius", temperatureCelsius);
     SafeLog.put("Indexer/VelocityRPM", velocityRPM);
     SafeLog.put("Indexer/Device/Connected", deviceConnected);
+    DeviceFaultDecoder.publish(
+        "Indexer", decodedFaults, deviceFaultsRaw, deviceWarningsRaw, faultTransitionCount);
     SafeLog.put("Indexer/Stalled", stalled);
     SafeLog.put("Indexer/JamDetected", jamDetected);
 
@@ -247,7 +278,6 @@ public class IndexerTelemetry implements SubsystemTelemetry {
       SafeLog.put("Indexer/TotalJamCount", totalJamCount);
       SafeLog.put("Indexer/JamFrequencyPerMin", jamFrequencyPerMin);
       SafeLog.put("Indexer/ActiveCommand", activeCommandName);
-      SafeLog.put("Indexer/Device/FaultsRaw", deviceFaultsRaw);
     }
   }
 

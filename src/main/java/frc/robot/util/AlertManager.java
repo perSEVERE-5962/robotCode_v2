@@ -175,8 +175,8 @@ public class AlertManager {
   }
 
   //   checkOneMotorTemp(
-  //       "IntakeActuator",
-  //       intakeActuatorTempAlert,
+  //       "IntakePivot",
+  //       intakePivotTempAlert,
   //       () -> IntakePivot.getInstance().getTemperature());
   // }
 

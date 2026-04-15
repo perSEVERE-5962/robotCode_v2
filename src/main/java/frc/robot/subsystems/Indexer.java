@@ -96,6 +96,10 @@ public class Indexer extends FlexActuator {
     return motor.getOutputCurrent();
   }
 
+  public double getBusVoltage() {
+    return motor.getBusVoltage();
+  }
+
   public boolean isRunning() {
     return Math.abs(motor.getAppliedOutput()) > 0.05;
   }

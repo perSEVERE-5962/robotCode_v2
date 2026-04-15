@@ -70,6 +70,10 @@ public class Agitator extends TalonActuator {
     return getMotor().getStatorCurrent().getValueAsDouble();
   }
 
+  public double getBusVoltage() {
+    return getMotor().getSupplyVoltage().getValueAsDouble();
+  }
+
   @Override
   public void periodic() {
     try {
