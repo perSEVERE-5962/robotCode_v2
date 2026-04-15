@@ -9,6 +9,57 @@ import frc.robot.Constants.PDHChannelMap;
 
 /** System health: battery, CAN bus, roboRIO, loop timing, brownout prediction. */
 public class SystemHealthTelemetry implements SubsystemTelemetry {
+  // Shared snapshot so any subsystem telemetry class can subtract its bus voltage
+  // from the battery voltage without each one re-reading the RoboRIO API.
+  // Volatile because it is written in update() and read from other telemetry
+  // classes' update() on the same thread, but reordering would still produce
+  // a garbage voltage drop for one cycle.
+  private static volatile double sharedBatteryVoltage = Double.NaN;
+
+  // Shared CAN status snapshot used by CANHealthTelemetry for peak tracking.
+  // -1 is "not sampled yet", which callers treat as "skip" rather than "error".
+  private static volatile int sharedCanTxErrors = -1;
+  private static volatile int sharedCanRxErrors = -1;
+  private static volatile int sharedCanTxFull = -1;
+
+  /**
+   * Returns the most recent battery voltage snapshot, or NaN if no update cycle has run yet. Used
+   * by per-subsystem telemetry classes to compute VoltageDropVolts without redundant RoboRIO reads.
+   */
+  public static double getBatteryVoltageSafely() {
+    return sharedBatteryVoltage;
+  }
+
+  /** Returns the latest CAN TxError count, or -1 if no update has run yet. */
+  public static int getCanTxErrorsSafely() {
+    return sharedCanTxErrors;
+  }
+
+  /** Returns the latest CAN RxError count, or -1 if no update has run yet. */
+  public static int getCanRxErrorsSafely() {
+    return sharedCanRxErrors;
+  }
+
+  /** Returns the latest CAN TxFull count, or -1 if no update has run yet. */
+  public static int getCanTxFullSafely() {
+    return sharedCanTxFull;
+  }
+
+  /**
+   * Returns battery minus bus voltage, clamped at 0. A healthy wiring path shows under 0.5 V at
+   * moderate current. Anything consistently above 1.5 V is a bad crimp or an undersized feeder.
+   * Returns 0 if the battery voltage snapshot has not been taken yet (boot race) or if the bus
+   * voltage reading is NaN or garbage.
+   */
+  public static double computeVoltageDrop(double busVoltage) {
+    double battery = sharedBatteryVoltage;
+    if (Double.isNaN(battery) || Double.isNaN(busVoltage)) {
+      return 0.0;
+    }
+    double drop = battery - busVoltage;
+    return Math.max(0.0, drop);
+  }
+
   private static final double LOOP_OVERRUN_THRESHOLD_MS = 25.0;
 
   private static final int CAN_STATUS_DECIMATION = 10;
@@ -54,7 +105,16 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
   private double loopTimeMs = 0;
   private int loopOverrunCount = 0;
 
+  // Elastic cannot iterate Constants.PDHChannelMap.LABELS at render time, so we
+  // publish the labels as a structured signal once. Any future Constants change
+  // propagates to the dashboard on the next boot without a matching dashboard edit.
+  private final String[] pdhLabels = new String[PDHChannelMap.NUM_CHANNELS];
+  private boolean pdhLabelsPublished = false;
+
   public SystemHealthTelemetry() {
+    for (int i = 0; i < PDHChannelMap.NUM_CHANNELS; i++) {
+      pdhLabels[i] = PDHChannelMap.getLabel(i);
+    }
     try {
       pdh = new PowerDistribution();
     } catch (Throwable t) {
@@ -76,6 +136,7 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
       lastLoopTimestamp = currentTimestamp;
 
       batteryVoltage = RobotController.getBatteryVoltage();
+      sharedBatteryVoltage = batteryVoltage;
 
       double now = Timer.getFPGATimestamp();
       if (lastVoltageTimestamp > 0 && lastVoltage > 0) {
@@ -113,6 +174,9 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
         canTxErrors = canStatus.transmitErrorCount;
         canRxErrors = canStatus.receiveErrorCount;
         canBusOff = canStatus.busOffCount;
+        sharedCanTxErrors = canTxErrors;
+        sharedCanRxErrors = canRxErrors;
+        sharedCanTxFull = canStatus.txFullCount;
       }
 
       rioCPUTemp = RobotController.getCPUTemp();
@@ -195,8 +259,13 @@ public class SystemHealthTelemetry implements SubsystemTelemetry {
     SafeLog.put("SystemHealth/Rio5VRail", rio5VRail);
     SafeLog.put("SystemHealth/Rio6VRail", rio6VRail);
 
+    if (!pdhLabelsPublished) {
+      SafeLog.put("SystemHealth/PDH/Labels", pdhLabels);
+      pdhLabelsPublished = true;
+    }
+
     for (int i = 0; i < PDHChannelMap.NUM_CHANNELS; i++) {
-      String label = PDHChannelMap.getLabel(i);
+      String label = pdhLabels[i];
       SafeLog.put("PDH/" + label + "/Current", channelCurrents[i]);
     }
 

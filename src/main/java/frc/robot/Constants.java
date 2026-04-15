@@ -267,28 +267,28 @@ public final class Constants {
     // Channel labels: index = PDH channel number, value = circuit name
     // Update these to match your actual wiring harness
     private static final String[] LABELS = {
-      "FrontLeftDrive", // 0
-      "FrontLeftTurn", // 1
-      "FrontRightDrive", // 2
-      "FrontRightTurn", // 3
-      "BackLeftDrive", // 4
-      "BackLeftTurn", // 5
-      "BackRightDrive", // 6
-      "BackRightTurn", // 7
-      "Shooter", // 8
-      "Indexer", // 9
-      "Agitator", // 10
-      "Intake", // 11
-      "IntakeActuator", // 12
-      "Hanger", // 13
+      "FrontLeftDrive", // 0 not confident
+      "FrontLeftTurn", // 1 not confident
+      "FrontRightDrive", // 2 not confident
+      "FrontRightTurn", // 3 not confident
+      "BackLeftDrive", // 4 not confident
+      "IntakePivot", // 5
+      "Shooter", // 6
+      "Shooter", // 7
+      "Ch8", // 8 unused/unknown
+      "Agitator", // 9
+      "Indexer", // 10
+      "Shooter", // 11
+      "Shooter", // 12
+      "Indexer", // 13
       "Ch14", // 14 - unused/unknown
-      "Ch15", // 15 - unused/unknown
+      "MPM", // 15 -
       "Ch16", // 16 - unused/unknown
       "Ch17", // 17 - unused/unknown
       "Ch18", // 18 - unused/unknown
       "Ch19", // 19 - unused/unknown
-      "Radio", // 20
-      "RoboRIO", // 21
+      "Radio", // 20 not confident
+      "RoboRIO", // 21 not confident
       "Ch22", // 22 - unused/unknown
       "Ch23", // 23 - unused/unknown
     };

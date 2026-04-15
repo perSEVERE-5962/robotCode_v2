@@ -83,6 +83,10 @@ public class IntakeRoller extends FlexActuator {
     return motor.getOutputCurrent();
   }
 
+  public double getBusVoltage() {
+    return motor.getBusVoltage();
+  }
+
   public double getVelocityRPM() {
     return motor.getEncoder().getVelocity();
   }

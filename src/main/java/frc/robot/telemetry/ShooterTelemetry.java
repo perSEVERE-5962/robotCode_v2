@@ -9,6 +9,9 @@ import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StallDetectionConstants;
 import frc.robot.subsystems.Shooter;
+import frc.robot.util.DeviceFaultDecoder;
+import frc.robot.util.DeviceFaultDecoder.DecodedFaults;
+import frc.robot.util.DeviceFaultDecoder.DeviceType;
 import frc.robot.util.EventMarker;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -49,6 +52,7 @@ public class ShooterTelemetry implements SubsystemTelemetry {
   private double currentAmps = 0;
   private double temperatureCelsius = 0;
   private double busVoltage = 0;
+  private double voltageDropVolts = 0;
   private boolean atSpeed = false;
   private double atSpeedPercent = 0;
   private boolean isSpinningUp = false;
@@ -66,6 +70,11 @@ public class ShooterTelemetry implements SubsystemTelemetry {
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
   private boolean deviceConnected = false;
   private int deviceFaultsRaw = 0;
+  private int deviceWarningsRaw = 0;
+  private int lastRawFaults = 0;
+  private int lastRawWarnings = 0;
+  private int faultTransitionCount = 0;
+  private DecodedFaults decodedFaults = DeviceFaultDecoder.empty();
 
   private boolean stalled = false;
   private boolean wasStalled = false;
@@ -119,15 +128,29 @@ public class ShooterTelemetry implements SubsystemTelemetry {
       currentAmps = shooter.getOutputCurrent();
       temperatureCelsius = shooter.getTemperature();
       busVoltage = shooter.getBusVoltage();
+      voltageDropVolts = SystemHealthTelemetry.computeVoltageDrop(busVoltage);
       // Compute atSpeed ourselves because the no-arg isAtSpeed() checks against
       // desiredRPM which may not be set when moveToVelocityWithPID is overridden
       atSpeed = (targetRPM > 0) && (Math.abs(targetRPM - velocityRPM) < shooter.getToleranceRPM());
 
       deviceConnected = connectDebouncer.calculate(true);
       deviceFaultsRaw = shooter.getStickyFaultsRaw();
+      deviceWarningsRaw = shooter.getStickyWarningsRaw();
+
+      if (deviceFaultsRaw != lastRawFaults || deviceWarningsRaw != lastRawWarnings) {
+        decodedFaults =
+            DeviceFaultDecoder.decode(DeviceType.SPARK_FLEX, deviceFaultsRaw, deviceWarningsRaw);
+        lastRawFaults = deviceFaultsRaw;
+        lastRawWarnings = deviceWarningsRaw;
+        if (decodedFaults.anyActive()) {
+          faultTransitionCount++;
+        }
+      }
     } catch (Throwable t) {
       deviceConnected = connectDebouncer.calculate(false);
       deviceFaultsRaw = -1;
+      deviceWarningsRaw = -1;
+      decodedFaults = DeviceFaultDecoder.empty();
       setDefaultValues();
       return;
     }
@@ -281,6 +304,7 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     currentAmps = 0;
     temperatureCelsius = 0;
     busVoltage = 0;
+    voltageDropVolts = 0;
     atSpeed = false;
     atSpeedPercent = 0;
     filteredSpinUpPercent = 0;
@@ -319,12 +343,15 @@ public class ShooterTelemetry implements SubsystemTelemetry {
     SafeLog.put("Shooter/TemperatureCelsius", temperatureCelsius);
     SafeLog.put("Shooter/TemperatureWarning", temperatureWarning);
     SafeLog.put("Shooter/BusVoltage", busVoltage);
+    SafeLog.put("Shooter/VoltageDropVolts", voltageDropVolts);
     SafeLog.put("Shooter/ShotDetected", shotDetected);
     SafeLog.put("Shooter/TotalShots", totalShotCount);
     SafeLog.put("Shooter/LastShotVelocityRPM", lastShotVelocityRPM);
     SafeLog.put("Shooter/SpinUpTimeMs", lastSpinUpDurationMs);
     SafeLog.put("Shooter/Stalled", stalled);
     SafeLog.put("Shooter/Device/Connected", deviceConnected);
+    DeviceFaultDecoder.publish(
+        "Shooter", decodedFaults, deviceFaultsRaw, deviceWarningsRaw, faultTransitionCount);
     SafeLog.put("Shooter/State", shooterState);
 
     // Debug/tuning signals: only logged when tuning to reduce CAN and log bandwidth
@@ -348,7 +375,6 @@ public class ShooterTelemetry implements SubsystemTelemetry {
         SafeLog.put("Shooter/Config/kD", prevKD);
         SafeLog.put("Shooter/Config/FF", prevFF);
       }
-      SafeLog.put("Shooter/Device/FaultsRaw", deviceFaultsRaw);
       SafeLog.put("Shooter/StallDurationMs", stallDurationMs);
       SafeLog.put("Shooter/PreviousState", previousShooterState);
       SafeLog.put("Shooter/StateChanged", stateChangedThisCycle);

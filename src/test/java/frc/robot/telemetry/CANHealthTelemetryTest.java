@@ -120,6 +120,73 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     assertTrue(hasFaults);
   }
 
+  @Test
+  void testMissingCountAndCriticalWhenAllOnline() throws Exception {
+    setField(shooterTelemetry, "deviceConnected", true);
+    setField(indexerTelemetry, "deviceConnected", true);
+    setField(intakeTelemetry, "deviceConnected", true);
+    setField(intakeActuatorTelemetry, "deviceConnected", true);
+    setField(hangerTelemetry, "deviceConnected", true);
+    setField(agitatorTelemetry, "deviceConnected", true);
+    setField(driveTelemetry, "gyroConnected", true);
+    setField(visionTelemetry, "leftCamConnected", true);
+    setField(visionTelemetry, "rightCamConnected", true);
+    setField(driveTelemetry, "driveMotorConnected", new boolean[] {true, true, true, true});
+    setField(driveTelemetry, "turnMotorConnected", new boolean[] {true, true, true, true});
+    setField(driveTelemetry, "encoderReadIssue", new boolean[] {false, false, false, false});
+
+    telemetry.update();
+    assertEquals(0, telemetry.getMissingCount());
+    assertFalse(telemetry.isMissingCritical());
+    assertEquals(0, telemetry.getMissingNames().length);
+    assertEquals(0, telemetry.getMissingIds().length);
+  }
+
+  @Test
+  void testHangerMissingSetsCritical() throws Exception {
+    setField(shooterTelemetry, "deviceConnected", true);
+    setField(indexerTelemetry, "deviceConnected", true);
+    setField(intakeTelemetry, "deviceConnected", true);
+    setField(intakeActuatorTelemetry, "deviceConnected", true);
+    setField(hangerTelemetry, "deviceConnected", false);
+    setField(agitatorTelemetry, "deviceConnected", true);
+    setField(driveTelemetry, "gyroConnected", true);
+    setField(visionTelemetry, "leftCamConnected", true);
+    setField(visionTelemetry, "rightCamConnected", true);
+    setField(driveTelemetry, "driveMotorConnected", new boolean[] {true, true, true, true});
+    setField(driveTelemetry, "turnMotorConnected", new boolean[] {true, true, true, true});
+    setField(driveTelemetry, "encoderReadIssue", new boolean[] {false, false, false, false});
+
+    telemetry.update();
+    assertEquals(1, telemetry.getMissingCount());
+    assertTrue(telemetry.isMissingCritical());
+    String[] names = telemetry.getMissingNames();
+    assertEquals(1, names.length);
+    assertEquals("Hanger", names[0]);
+  }
+
+  @Test
+  void testOnlyCameraMissingIsNotCritical() throws Exception {
+    setField(shooterTelemetry, "deviceConnected", true);
+    setField(indexerTelemetry, "deviceConnected", true);
+    setField(intakeTelemetry, "deviceConnected", true);
+    setField(intakeActuatorTelemetry, "deviceConnected", true);
+    setField(hangerTelemetry, "deviceConnected", true);
+    setField(agitatorTelemetry, "deviceConnected", true);
+    setField(driveTelemetry, "gyroConnected", true);
+    setField(visionTelemetry, "leftCamConnected", false);
+    setField(visionTelemetry, "rightCamConnected", true);
+    setField(driveTelemetry, "driveMotorConnected", new boolean[] {true, true, true, true});
+    setField(driveTelemetry, "turnMotorConnected", new boolean[] {true, true, true, true});
+    setField(driveTelemetry, "encoderReadIssue", new boolean[] {false, false, false, false});
+
+    telemetry.update();
+    assertEquals(1, telemetry.getMissingCount());
+    assertFalse(telemetry.isMissingCritical(), "camera-only drop is not a critical flag");
+    String[] names = telemetry.getMissingNames();
+    assertEquals("LeftCam", names[0]);
+  }
+
   private void setField(Object obj, String fieldName, Object value) throws Exception {
     java.lang.reflect.Field f = obj.getClass().getDeclaredField(fieldName);
     f.setAccessible(true);
