@@ -30,20 +30,17 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AgitateAndIndex;
 import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.FeedEject;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
-import frc.robot.commands.MoveAgitator;
 import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.MoveShooter;
 import frc.robot.commands.PivotIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.lib.BLine.FollowPath;
-import frc.robot.lib.BLine.Path;
 import frc.robot.sim.SimDriveOverride;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
@@ -293,7 +290,6 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("DeployAndIntakeEvent", new HoldAndIntake());
 
-
     // Build an auto chooser. This will use Commands.none() as the default option.
   }
 
@@ -434,7 +430,7 @@ public class RobotContainer {
       // copilotXbox.x().whileTrue(new HoldAndIntake());
 
       copilotXbox.rightTrigger().whileTrue(new FeedEject());
-      
+
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
       driverXbox.b().whileTrue(new MoveShooter(2500));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.3));
