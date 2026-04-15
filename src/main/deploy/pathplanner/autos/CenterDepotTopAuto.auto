@@ -1,0 +1,37 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FirstSwipeDepotAuto"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScoreWithTimeout"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GrabDepotBalls"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScoreWithTimeout"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "ChoreoAutos",
+  "choreoAuto": true
+}
