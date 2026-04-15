@@ -29,7 +29,7 @@ public final class Constants {
    *
    * <p>IMPORTANT: Set to FALSE before competition deployment!
    */
-  public static final boolean TUNING_MODE = true;
+  public static final boolean TUNING_MODE = false;
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
@@ -81,6 +81,39 @@ public final class Constants {
     public static final double ANGLE_TOLERANCE = 2.0; // degrees
   }
 
+  /**
+   * Teleop assist: poses the robot drives to when the copilot holds a button. All poses are in BLUE
+   * alliance coordinates. pathfindToPoseFlipped handles red auto-flip. Rotation = the heading the
+   * robot faces on arrival. AimAndShoot overrides it for shooting. TUNE THESE on the real field,
+   * especially the intake spots.
+   */
+  public static final class TeleopAssistConstants {
+    // scoring spots: 2.5m from blue hub center (4.5974, 4.035), 45 deg off the alliance-facing
+    // direction. Two spots symmetric about the hub, one toward HP (low Y), one toward depot
+    // (high Y). Heading points the front away from the hub so the rear shooter faces it.
+    // AimAndShoot corrects the heading after arrival anyway.
+    public static final double SCORING_RADIUS_M = 2.5;
+    public static final Pose2d BLUE_HP_SCORING_POSE =
+        new Pose2d(2.830, 2.267, Rotation2d.fromDegrees(45));
+    public static final Pose2d BLUE_DEPOT_SCORING_POSE =
+        new Pose2d(2.830, 5.803, Rotation2d.fromDegrees(-45));
+
+    // intake spots: near the corral (HP side) and mirrored depot side.
+    // HP corral is at X [1.80, 2.71], Y [0, 0.96]. Robot sits just outside facing in.
+    // Depot side is mirrored across the hub's Y center line.
+    // heading 0 = facing +X (into the field) so the front intake picks up balls
+    public static final Pose2d BLUE_HP_INTAKE_POSE =
+        new Pose2d(2.26, 1.45, Rotation2d.fromDegrees(0));
+    public static final Pose2d BLUE_DEPOT_INTAKE_POSE =
+        new Pose2d(2.26, 6.62, Rotation2d.fromDegrees(0));
+
+    // how fast the robot drives during teleop assist (slower = safer, driver can react)
+    public static final double ASSIST_MAX_VEL_MPS = 3.0;
+    public static final double ASSIST_MAX_ACCEL_MPSS = 2.0;
+    public static final double ASSIST_MAX_ANGULAR_VEL_RADPS = Math.toRadians(540);
+    public static final double ASSIST_MAX_ANGULAR_ACCEL_RADPSS = Math.toRadians(720);
+  }
+
   public static class PhotonvisionConstants {
 
     /*
@@ -121,7 +154,7 @@ public final class Constants {
     public static final double D = 0.0;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.02;
+    public static final double FF = 0.000154;
     public static final double Iz = 0.0;
   }
 
@@ -163,12 +196,12 @@ public final class Constants {
 
   public static final class IndexerConstants {
     // Velocity PID (from Alden)
-    public static final double P = 0.0001;
+    public static final double P = 0.0;
     public static final double I = 0.0;
     public static final double D = 0.00;
     public static final double MinOutput = -1.0;
     public static final double MaxOutput = 1.0;
-    public static final double FF = 0.0002; // .0004, 000154
+    public static final double FF = 0.000147; // .0004, 000154
     public static final double Iz = 0.0;
 
     // Telemetry constants
@@ -267,28 +300,28 @@ public final class Constants {
     // Channel labels: index = PDH channel number, value = circuit name
     // Update these to match your actual wiring harness
     private static final String[] LABELS = {
-      "FrontLeftDrive", // 0
-      "FrontLeftTurn", // 1
-      "FrontRightDrive", // 2
-      "FrontRightTurn", // 3
-      "BackLeftDrive", // 4
-      "BackLeftTurn", // 5
-      "BackRightDrive", // 6
-      "BackRightTurn", // 7
-      "Shooter", // 8
-      "Indexer", // 9
-      "Agitator", // 10
-      "Intake", // 11
-      "IntakeActuator", // 12
-      "Hanger", // 13
+      "FrontLeftDrive", // 0 not confident
+      "FrontLeftTurn", // 1 not confident
+      "FrontRightDrive", // 2 not confident
+      "FrontRightTurn", // 3 not confident
+      "BackLeftDrive", // 4 not confident
+      "IntakePivot", // 5
+      "Shooter", // 6
+      "Shooter", // 7
+      "Ch8", // 8 unused/unknown
+      "Agitator", // 9
+      "Indexer", // 10
+      "Shooter", // 11
+      "Shooter", // 12
+      "Indexer", // 13
       "Ch14", // 14 - unused/unknown
-      "Ch15", // 15 - unused/unknown
+      "MPM", // 15 -
       "Ch16", // 16 - unused/unknown
       "Ch17", // 17 - unused/unknown
       "Ch18", // 18 - unused/unknown
       "Ch19", // 19 - unused/unknown
-      "Radio", // 20
-      "RoboRIO", // 21
+      "Radio", // 20 not confident
+      "RoboRIO", // 21 not confident
       "Ch22", // 22 - unused/unknown
       "Ch23", // 23 - unused/unknown
     };

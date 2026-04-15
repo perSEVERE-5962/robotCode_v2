@@ -195,13 +195,13 @@ public final class VisionFilter {
 
     // Gate 6: Pose jump (can't teleport, but skip during early auto).
     // Under defense the robot can genuinely be shoved several meters.
-    // if (currentPose != null && autoElapsedSec > AUTO_GRACE_PERIOD_SEC) {
-    //   double jumpM = pose2d.getTranslation().getDistance(currentPose.getTranslation());
-    //   double jumpLimit = underDefense ? MAX_POSE_JUMP_M * 2.0 : MAX_POSE_JUMP_M;
-    //   if (jumpM > jumpLimit) {
-    //     return RejectionReason.POSE_JUMP;
-    //   }
-    // }
+    if (currentPose != null && autoElapsedSec > AUTO_GRACE_PERIOD_SEC) {
+      double jumpM = pose2d.getTranslation().getDistance(currentPose.getTranslation());
+      double jumpLimit = underDefense ? MAX_POSE_JUMP_M * 2.0 : MAX_POSE_JUMP_M;
+      if (jumpM > jumpLimit) {
+        return RejectionReason.POSE_JUMP;
+      }
+    }
 
     // Gate 7: Gyro rate. Skip under defense because wheel slip makes odometry
     // drift worse than any motion blur on the tags.

@@ -5,10 +5,12 @@
 package frc.robot;
 
 import static frc.robot.Constants.HubScoringConstants.*;
+import static frc.robot.Constants.TeleopAssistConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -35,12 +37,15 @@ import frc.robot.commands.DeployIntake;
 import frc.robot.commands.FeedEject;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
+import frc.robot.commands.IntakeParallel;
 import frc.robot.commands.MoveIndexer;
+import frc.robot.commands.MoveIntake;
 import frc.robot.commands.MoveShooter;
 import frc.robot.commands.PivotIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.lib.BLine.FollowPath;
+import frc.robot.lib.BLine.Path;
 import frc.robot.sim.SimDriveOverride;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
@@ -54,6 +59,7 @@ import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.DriverTuning;
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 import swervelib.SwerveInputStream;
 
@@ -199,6 +205,7 @@ public class RobotContainer {
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
 
     configureBindings();
+    configureTeleopAssist();
     new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
     DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -288,9 +295,24 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("shoot", new SpeedUpThenIndex());
 
-    NamedCommands.registerCommand("DeployAndIntakeEvent", new HoldAndIntake());
-
     // Build an auto chooser. This will use Commands.none() as the default option.
+    autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
+
+    // Another option that allows you to specify the default auto by its name
+    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+
+    autoChooser.addOption("Example A (BLine)", pathBuilder.build(new Path("example_a")));
+    autoChooser.addOption("Example B (BLine)", pathBuilder.build(new Path("example_b")));
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    // Initialize tunable values (publishes to NetworkTables/Elastic Dashboard)
+    DriverTuning.initialize();
+
+    // Wire up telemetry references
+    TelemetryManager.getInstance().setVision(drivebase.getVision());
+    TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
+    TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
+    DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
   }
 
   /**
@@ -388,9 +410,9 @@ public class RobotContainer {
 
       driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
-      // driverXbox.y().whileTrue(new MoveShooter(1500));
+      driverXbox.y().whileTrue(new MoveShooter(1700));
       // driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
-      // driverXbox.x().whileTrue(new MoveIndexer(5000));
+      driverXbox.x().whileTrue(new MoveIndexer(6000));
       driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
       driverXbox
           .leftTrigger()
@@ -404,11 +426,15 @@ public class RobotContainer {
                   () -> -driverXbox.getLeftX() * -1,
                   false));
       // driverXbox.y().whileTrue(new RetractIntake());
-      driverXbox.x().whileTrue(new MoveIndexer(6700));
-      driverXbox.a().whileTrue(new HoldAndIntake());
-      driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
+      // driverXbox.x().whileTrue(new MoveIndexer(6000));
+      driverXbox.b().whileTrue(new MoveIntake());
+      driverXbox.a().whileTrue(new IntakeParallel());
+      // driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       // driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      driverXbox.back().whileTrue(new SetIntakePosition());
+      // driverXbox.back().whileTrue(new SetIntakePosition());
+
+      // driverXbox.b().whileTrue(new MoveIntake());
+      // driverXbox.y().whileTrue(new MoveIndexer(6000));
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock,
       // drivebase).repeatedly());
       // driverXbox.povDown().whileTrue(SysId.agitatorSysIdCommand());
@@ -431,8 +457,8 @@ public class RobotContainer {
 
       copilotXbox.rightTrigger().whileTrue(new FeedEject());
 
-      copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
-      driverXbox.b().whileTrue(new MoveShooter(2500));
+      copilotXbox.a().whileTrue(new IntakeParallel());
+      // driverXbox.b().whileTrue(new MoveShooter(2500));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.3));
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.3));
       // copilotXbox
@@ -540,6 +566,63 @@ public class RobotContainer {
     driverJoystick.button(1).onTrue(Commands.none());
     driverJoystick.button(6).onTrue(Commands.none());
   } */
+
+  /**
+   * Teleop assist: hold a button, robot pathfinds to the nearest scoring or intake spot. Release
+   * the button and you're back to manual control.
+   *
+   * <p>The robot knows which side of the field it's on via odometry, so it always picks the right
+   * spot (HP side vs depot side). Only 2 buttons needed. POV up = go score, POV left = go intake.
+   * POV down stays free for emergency dump.
+   *
+   * <p>Uses pathfindToPoseFlipped so blue-alliance poses auto-flip for red.
+   */
+  private void configureTeleopAssist() {
+    PathConstraints assistConstraints =
+        new PathConstraints(
+            ASSIST_MAX_VEL_MPS,
+            ASSIST_MAX_ACCEL_MPSS,
+            ASSIST_MAX_ANGULAR_VEL_RADPS,
+            ASSIST_MAX_ANGULAR_ACCEL_RADPSS);
+
+    copilotXbox
+        .povUp()
+        .whileTrue(
+            Commands.either(
+                AutoBuilder.pathfindToPoseFlipped(BLUE_HP_SCORING_POSE, assistConstraints)
+                    .andThen(
+                        Commands.defer(
+                            () ->
+                                new AimAndShootCommand(
+                                    drivebase, shooter, indexer, agitator, () -> 0, () -> 0, false),
+                            Set.of(drivebase, shooter, indexer, agitator))),
+                AutoBuilder.pathfindToPoseFlipped(BLUE_DEPOT_SCORING_POSE, assistConstraints)
+                    .andThen(
+                        Commands.defer(
+                            () ->
+                                new AimAndShootCommand(
+                                    drivebase, shooter, indexer, agitator, () -> 0, () -> 0, false),
+                            Set.of(drivebase, shooter, indexer, agitator))),
+                () ->
+                    drivebase
+                        .getPose()
+                        .nearest(List.of(BLUE_HP_SCORING_POSE, BLUE_DEPOT_SCORING_POSE))
+                        .equals(BLUE_HP_SCORING_POSE)));
+
+    copilotXbox
+        .povLeft()
+        .whileTrue(
+            Commands.either(
+                AutoBuilder.pathfindToPoseFlipped(BLUE_HP_INTAKE_POSE, assistConstraints)
+                    .alongWith(new HoldAndIntake()),
+                AutoBuilder.pathfindToPoseFlipped(BLUE_DEPOT_INTAKE_POSE, assistConstraints)
+                    .alongWith(new HoldAndIntake()),
+                () ->
+                    drivebase
+                        .getPose()
+                        .nearest(List.of(BLUE_HP_INTAKE_POSE, BLUE_DEPOT_INTAKE_POSE))
+                        .equals(BLUE_HP_INTAKE_POSE)));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
