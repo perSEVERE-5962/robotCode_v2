@@ -269,10 +269,10 @@ public final class Constants {
     private static final String[] LABELS = {
       "FrontLeftDrive", // 0 not confident
       "FrontLeftTurn", // 1 not confident
-      "FrontRightDrive", // 2 not confident 
+      "FrontRightDrive", // 2 not confident
       "FrontRightTurn", // 3 not confident
       "BackLeftDrive", // 4 not confident
-      "IntakePivot", // 5 
+      "IntakePivot", // 5
       "Shooter", // 6
       "Shooter", // 7
       "Ch8", // 8 unused/unknown
@@ -282,7 +282,7 @@ public final class Constants {
       "Shooter", // 12
       "Indexer", // 13
       "Ch14", // 14 - unused/unknown
-      "MPM", // 15 - 
+      "MPM", // 15 -
       "Ch16", // 16 - unused/unknown
       "Ch17", // 17 - unused/unknown
       "Ch18", // 18 - unused/unknown
