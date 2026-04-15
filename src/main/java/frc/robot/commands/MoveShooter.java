@@ -21,7 +21,7 @@ public class MoveShooter extends Command {
 
   @Override
   public void execute() {
-    shooter.moveToVelocityWithPID(rpm);
+    // shooter.moveToVelocityWithPID(rpm);
   }
 
   @Override

@@ -56,11 +56,30 @@ public class Indexer extends FlexActuator {
         false,
         false,
         false);
-    motor = getMotor();
-    motorConfig = new SparkFlexConfig();
+    // motor = getMotor();
+    // motorConfig = new SparkFlexConfig();
 
-    motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(45);
+    // motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(45);
+    // motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    motor = getMotor();
+    SparkFlexConfig motorConfig = new SparkFlexConfig();
+    motorConfig
+        .idleMode(SparkFlexConfig.IdleMode.kCoast)
+        .smartCurrentLimit(75)
+        .voltageCompensation(12.0);
+    motorConfig.closedLoop.outputRange(
+        Constants.IndexerConstants.MinOutput, Constants.IndexerConstants.MaxOutput);
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
+    //  motor = getMotor();
+
+    // motorConfig = new SparkFlexConfig();
+
+    // motorConfig.idleMode(SparkMaxConfig.IdleMode.kCoast).smartCurrentLimit(40);
+
+    // motor.configure(motorConfig, ResetMode.kNoResetSafeParameters,
+    // PersistMode.kPersistParameters);
+
   }
 
   public double getTemperature() {

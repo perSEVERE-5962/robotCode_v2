@@ -4,7 +4,6 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 import frc.robot.Constants.JamProtectionConstants;
 import frc.robot.Constants.MotorConstants;
@@ -51,9 +50,9 @@ public class IntakeRoller extends FlexActuator {
 
     motorConfig = new SparkFlexConfig();
 
-    motorConfig.idleMode(SparkMaxConfig.IdleMode.kCoast).smartCurrentLimit(40);
+    motorConfig.idleMode(SparkFlexConfig.IdleMode.kCoast).smartCurrentLimit(50);
 
-    motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override

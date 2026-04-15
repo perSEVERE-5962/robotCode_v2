@@ -30,6 +30,7 @@ public class MoveIndexer extends Command {
 
   @Override
   public void execute() {
+    indexer.moveToVelocityWithPID(rpm);
 
     // if (arcDriveOn.getAsBoolean() && HubArcDrive.checkHeadingError()) {
     //   indexer.moveToVelocityWithPID(rpm);
