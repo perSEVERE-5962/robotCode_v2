@@ -174,7 +174,7 @@ public class AimAndShootCommand extends Command {
       reusableSpeeds.vyMetersPerSecond = str;
       reusableSpeeds.omegaRadiansPerSecond = omega;
 
-      reusableSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(reusableSpeeds, targetHeading);
+      reusableSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(reusableSpeeds, swerve.getHeading());
       swerve.drive(reusableSpeeds, cor);
     }
 

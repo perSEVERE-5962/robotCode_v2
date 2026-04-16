@@ -159,7 +159,7 @@ public class HeadingController {
   }
 
   public double getPositionError() {
-    return pid.getPositionError();
+    return pid.getError();
   }
 
   public double getPIDOutput() {
@@ -176,7 +176,7 @@ public class HeadingController {
 
   /** Sticky setpoint with 4x hysteresis band so it doesn't flicker near the edge. */
   public boolean atSetpoint() {
-    double errorRad = Math.abs(pid.getPositionError());
+    double errorRad = Math.abs(pid.getError());
     double toleranceRad = Math.toRadians(1.0);
 
     if (!stickyAtSetpoint) {

@@ -9,7 +9,7 @@ import frc.robot.util.TunableNumber;
 // driver points the robot, copilot holds the button, balls come out.
 // constant RPM, no aiming, no zone logic. adjustable from dashboard.
 public class FeedEject extends Command {
-  private static final TunableNumber feedRPM = new TunableNumber("Feed/RPM", 2500);
+  private static final TunableNumber feedRPM = new TunableNumber("Feed/RPM", 4000);
 
   private final Shooter shooter;
   private final Indexer indexer;
@@ -26,7 +26,7 @@ public class FeedEject extends Command {
   public void execute() {
     shooter.moveToVelocityWithPID(feedRPM.get());
 
-    if (Math.abs(234 - shooter.getVelocity()) < Shooter.getToleranceRPM()) {
+    if (Math.abs(4000 - shooter.getVelocity()) < Shooter.getToleranceRPM()) {
       indexer.moveToVelocityWithPID(Indexer.getTunableTargetSpeed());
       agitator.moveToVelocityWithPID(Agitator.getTunableTargetRPM());
     }

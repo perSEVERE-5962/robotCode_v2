@@ -49,7 +49,7 @@ public class Shooter extends MaxActuator {
         Constants.ShooterConstants.kIz,
         0,
         0,
-        30,
+        40,
         true,
         true,
         false,
@@ -94,9 +94,14 @@ public class Shooter extends MaxActuator {
     SparkMaxConfig config = new SparkMaxConfig();
     config.follow(Constants.CANDeviceIDs.kShooterID, inverted);
     config.idleMode(SparkBaseConfig.IdleMode.kCoast);
-    config.smartCurrentLimit(30);
+    config.smartCurrentLimit(40);
     config.voltageCompensation(12.0);
-    config.encoder.uvwMeasurementPeriod(8).uvwAverageDepth(2);
+    config
+        .encoder
+        .quadratureAverageDepth(2)
+        .quadratureMeasurementPeriod(10)
+        .uvwMeasurementPeriod(8)
+        .uvwAverageDepth(2);
     follower.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     return follower;
   }

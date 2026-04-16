@@ -5,10 +5,12 @@
 package frc.robot;
 
 import static frc.robot.Constants.HubScoringConstants.*;
+import static frc.robot.Constants.TeleopAssistConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -29,12 +31,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AgitateAndIndex;
 import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.DeployIntake;
 import frc.robot.commands.FeedEject;
 import frc.robot.commands.HoldAndIntake;
-import frc.robot.commands.MoveAgitator;
+import frc.robot.commands.IntakeParallel;
+import frc.robot.commands.MoveIndexer;
+import frc.robot.commands.MoveIntake;
+import frc.robot.commands.MoveShooter;
 import frc.robot.commands.PivotIntake;
 import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
@@ -55,6 +59,8 @@ import frc.robot.util.DriverTuning;
 import frc.robot.util.HubShiftEngine;
 import frc.robot.util.ShotCalculator;
 import java.io.File;
+import java.util.List;
+import java.util.Set;
 import swervelib.SwerveInputStream;
 
 /**
@@ -188,6 +194,7 @@ public class RobotContainer {
     registerNamedAutoCommands();
 
     configureBindings();
+    configureTeleopAssist();
     new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
     DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -315,7 +322,7 @@ public class RobotContainer {
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
     } else {
-      drivebase.setDefaultCommand(driveRobotOrientedAngularVelocity);
+      drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
     }
 
     if (Robot.isSimulation()) {
@@ -371,9 +378,9 @@ public class RobotContainer {
 
       driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
-      // driverXbox.y().whileTrue(new MoveShooter(1500));
+      driverXbox.y().whileTrue(new MoveShooter(1700));
       // driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
-      // driverXbox.x().whileTrue(new MoveIndexer(5000));
+      driverXbox.x().whileTrue(new MoveIndexer(6000));
       driverXbox.rightTrigger().whileTrue(driveFieldOrientedAngularVelocity);
       driverXbox
           .leftTrigger()
@@ -387,11 +394,15 @@ public class RobotContainer {
                   () -> -driverXbox.getLeftX() * -1,
                   false));
       // driverXbox.y().whileTrue(new RetractIntake());
-      driverXbox.x().whileTrue(new MoveAgitator(Constants.MotorConstants.DESIRED_AGITATOR_RPM));
-      driverXbox.a().whileTrue(new HoldAndIntake());
-      driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
+      // driverXbox.x().whileTrue(new MoveIndexer(6000));
+      driverXbox.b().whileTrue(new MoveIntake(Constants.MotorConstants.DESIRED_INTAKE_RPM));
+      driverXbox.a().whileTrue(new IntakeParallel());
+      // driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
       // driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      driverXbox.back().whileTrue(new SetIntakePosition());
+      // driverXbox.back().whileTrue(new SetIntakePosition());
+
+      // driverXbox.b().whileTrue(new MoveIntake());
+      // driverXbox.y().whileTrue(new MoveIndexer(6000));
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock,
       // drivebase).repeatedly());
       // driverXbox.povDown().whileTrue(SysId.agitatorSysIdCommand());
@@ -412,8 +423,9 @@ public class RobotContainer {
       // copilotXbox.x().whileTrue(new HoldAndIntake());
 
       copilotXbox.rightTrigger().whileTrue(new FeedEject());
-      copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
-      copilotXbox.b().whileTrue(new AgitateAndIndex(-5000, -5000));
+
+      copilotXbox.a().whileTrue(new IntakeParallel());
+      // driverXbox.b().whileTrue(new MoveShooter(2500));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.3));
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.3));
       // copilotXbox
@@ -535,6 +547,63 @@ public class RobotContainer {
     driverJoystick.button(12).whileTrue(new SpeedUpThenIndex());
     driverJoystick.button(12).onFalse(new MoveIndexer(-Constants.MotorConstants.DESIRED_INDEXER_RPM).andThen(Commands.waitSeconds(0.25)).andThen(new MoveIndexer(0)));
   } */
+
+  /**
+   * Teleop assist: hold a button, robot pathfinds to the nearest scoring or intake spot. Release
+   * the button and you're back to manual control.
+   *
+   * <p>The robot knows which side of the field it's on via odometry, so it always picks the right
+   * spot (HP side vs depot side). Only 2 buttons needed. POV up = go score, POV left = go intake.
+   * POV down stays free for emergency dump.
+   *
+   * <p>Uses pathfindToPoseFlipped so blue-alliance poses auto-flip for red.
+   */
+  private void configureTeleopAssist() {
+    PathConstraints assistConstraints =
+        new PathConstraints(
+            ASSIST_MAX_VEL_MPS,
+            ASSIST_MAX_ACCEL_MPSS,
+            ASSIST_MAX_ANGULAR_VEL_RADPS,
+            ASSIST_MAX_ANGULAR_ACCEL_RADPSS);
+
+    copilotXbox
+        .povUp()
+        .whileTrue(
+            Commands.either(
+                AutoBuilder.pathfindToPoseFlipped(BLUE_HP_SCORING_POSE, assistConstraints)
+                    .andThen(
+                        Commands.defer(
+                            () ->
+                                new AimAndShootCommand(
+                                    drivebase, shooter, indexer, agitator, () -> 0, () -> 0, false),
+                            Set.of(drivebase, shooter, indexer, agitator))),
+                AutoBuilder.pathfindToPoseFlipped(BLUE_DEPOT_SCORING_POSE, assistConstraints)
+                    .andThen(
+                        Commands.defer(
+                            () ->
+                                new AimAndShootCommand(
+                                    drivebase, shooter, indexer, agitator, () -> 0, () -> 0, false),
+                            Set.of(drivebase, shooter, indexer, agitator))),
+                () ->
+                    drivebase
+                        .getPose()
+                        .nearest(List.of(BLUE_HP_SCORING_POSE, BLUE_DEPOT_SCORING_POSE))
+                        .equals(BLUE_HP_SCORING_POSE)));
+
+    copilotXbox
+        .povLeft()
+        .whileTrue(
+            Commands.either(
+                AutoBuilder.pathfindToPoseFlipped(BLUE_HP_INTAKE_POSE, assistConstraints)
+                    .alongWith(new HoldAndIntake()),
+                AutoBuilder.pathfindToPoseFlipped(BLUE_DEPOT_INTAKE_POSE, assistConstraints)
+                    .alongWith(new HoldAndIntake()),
+                () ->
+                    drivebase
+                        .getPose()
+                        .nearest(List.of(BLUE_HP_INTAKE_POSE, BLUE_DEPOT_INTAKE_POSE))
+                        .equals(BLUE_HP_INTAKE_POSE)));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

@@ -42,7 +42,7 @@ public class IntakeRoller extends FlexActuator {
         Constants.IntakeRollerConstants.kIz,
         0,
         0,
-        40,
+        50,
         true,
         true,
         false,
