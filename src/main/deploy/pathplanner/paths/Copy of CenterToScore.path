@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "DeployAndIntakeEvent",
+      "name": "HoldAndRunIntake",
       "waypointRelativePos": 0.054072096128169565,
       "endWaypointRelativePos": 0.9659546061415194,
       "command": null
