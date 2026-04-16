@@ -14,8 +14,8 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"ShootDepotAuto.x", "val":2.972402334213257}, "y":{"exp":"ShootDepotAuto.y", "val":6.397265434265137}, "heading":{"exp":"ShootDepotAuto.heading", "val":2.406153052002006}, "intervals":28, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"0.6161724925041199 m", "val":0.6161724925041199}, "y":{"exp":"5.964560508728027 m", "val":5.964560508728027}, "heading":{"exp":"3.141592653589793 rad", "val":3.141592653589793}, "intervals":28, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"ShootDepotAuto.x", "val":2.972402334213257}, "y":{"exp":"ShootDepotAuto.y", "val":6.397265434265137}, "heading":{"exp":"ShootDepotAuto.heading", "val":2.406153052002006}, "intervals":19, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"0.6161724925041199 m", "val":0.6161724925041199}, "y":{"exp":"5.964560508728027 m", "val":5.964560508728027}, "heading":{"exp":"3.141592653589793 rad", "val":3.141592653589793}, "intervals":19, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"ShootDepotAuto.x", "val":2.972402334213257}, "y":{"exp":"ShootDepotAuto.y", "val":6.397265434265137}, "heading":{"exp":"ShootDepotAuto.heading", "val":2.406153052002006}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
