@@ -36,9 +36,9 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 /**
- * Full-field ball physics simulation for FRC 2026 REBUILT: drag, Magnus lift, friction, ball-ball
- * collisions, wall bounces, hub scoring, sleeping, CCD, and robot interaction. Single file, only
- * depends on WPILib (wpimath + ntcore). Drop it into your sim and watch balls fly.
+ * Full-field ball physics simulation for FRC 2026 REBUILT. Handles drag, Magnus lift, friction,
+ * ball-ball collisions, wall bounces, hub scoring, sleeping, CCD, and robot interaction. Single
+ * file, only depends on WPILib (wpimath + ntcore). Drop it into your sim and watch balls fly.
  *
  * <p>Physics: symplectic Euler integration, 3D angular velocity for Magnus (omega x v cross
  * product), Coulomb friction with spin transfer, sequential impulse collision solver with warm
@@ -520,8 +520,7 @@ public class FuelPhysicsSim {
           xEnd - xStart,
           zEnd - zStart,
           Math.hypot(xEnd - xStart, zEnd - zStart),
-          // Normal perpendicular to line in XZ, flipped so nz >= 0 (points away from
-          // ground)
+          // Normal perpendicular to line in XZ, flipped so nz >= 0 (points away from ground)
           (xEnd - xStart) >= 0
               ? -(zEnd - zStart) / Math.hypot(xEnd - xStart, zEnd - zStart)
               : (zEnd - zStart) / Math.hypot(xEnd - xStart, zEnd - zStart),
