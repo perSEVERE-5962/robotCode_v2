@@ -125,7 +125,7 @@ public class AimAndShootCommand extends Command {
     ShotCalculator shotCalc = ShotCalculator.getInstance();
     ShotCalculator.LaunchParameters params = shotCalc.getParameters();
     Rotation2d targetHeading = params.isValid() ? params.driveAngle() : computeFallbackAim();
-
+    
     double maxOmega = swerve.getSwerveDrive().getMaximumChassisAngularVelocity();
     double distToHub = swerve.getPose().getTranslation().getDistance(getHubCenter());
 
@@ -280,10 +280,11 @@ public class AimAndShootCommand extends Command {
       return swerve.getHeading(); // hold current heading if pose is corrupt
     }
     // rear-mounted shooter: aim the back of the robot at the hub
+    
     return robot
         .minus(hub)
-        .getAngle()
-        .plus(new Rotation2d(ShotCalculatorConstants.SHOOTER_ANGLE_OFFSET_RAD));
+        .getAngle();
+        //.plus(new Rotation2d(ShotCalculatorConstants.SHOOTER_ANGLE_OFFSET_RAD));
   }
 
   private Translation2d getHubCenter() {
