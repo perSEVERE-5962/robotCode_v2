@@ -191,9 +191,8 @@ public class RobotContainer {
             .withDefaultShouldFlip() // Auto-flip for red alliance
             .withPoseReset(drivebase::resetOdometry); // Reset odometry at path start
     // Configure the trigger bindings
-    registerNamedAutoCommands();
-
     configureBindings();
+    registerNamedAutoCommands();
     configureTeleopAssist();
     new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -223,7 +222,6 @@ public class RobotContainer {
     TelemetryManager.getInstance().setSwerveSubsystem(drivebase);
     TelemetryManager.getInstance().setControllers(driverXbox.getHID(), copilotXbox.getHID());
     DriverFeedback.getInstance().initialize(driverXbox.getHID(), copilotXbox.getHID());
-    // autoChooser = AutoBuilder.buildAutoChooser("TrenchHumanScore"); // "New New New Auto"
 
     // Fire control init
 
@@ -405,14 +403,6 @@ public class RobotContainer {
       // driverXbox.y().whileTrue(new MoveIndexer(6000));
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock,
       // drivebase).repeatedly());
-      // driverXbox.povDown().whileTrue(SysId.agitatorSysIdCommand());
-      // driverXbox.povLeft().whileTrue(SysId.indexerSysIdCommand());
-      // driverXbox.povUp().whileTrue(SysId.shooterSysIdCommand());
-      // driverXbox.povRight().whileTrue(SysId.intakePivotSysIdCommand());
-      // driverXbox.rightBumper().whileTrue(SysId.intakeRollerSysIdCommand());
-      // driverXbox.leftBumper().whileTrue(SysId.hangerSysIdCommand());
-      // driverXbox.rightTrigger().whileTrue(drivebase.sysIdAngleMotorCommand());
-      // driverXbox.leftTrigger().whileTrue(drivebase.sysIdDriveMotorCommand());
 
       // copilotXbox
       //     .y()

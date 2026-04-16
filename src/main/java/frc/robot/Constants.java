@@ -134,7 +134,7 @@ public final class Constants {
     public static final double INTAKE_POS_TOLERANCE = .2;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
-    public static final double DESIRED_AGITATOR_SPEED = 5640;
+    public static final double DESIRED_AGITATOR_RPM = 5640;
     public static final double HANGER_POS_TOLERANCE = 0.1;
   }
 

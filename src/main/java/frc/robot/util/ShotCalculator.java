@@ -13,6 +13,7 @@ import frc.robot.Constants.HubScoringConstants;
 import frc.robot.Constants.ShotCalculatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.telemetry.SafeLog;
+import java.util.function.DoubleSupplier;
 
 /**
  * Ballistic fire control. Newton-method TOF solver with analytical derivative for shoot-on-the-move
@@ -130,7 +131,7 @@ public class ShotCalculator {
   // copilot aim bias: the copilot can nudge the aim point left/right with their
   // stick to correct for LUT inaccuracy at specific distances without a code change.
   private final TunableNumber kMaxAimBiasDeg = new TunableNumber("ShotCalc/maxAimBiasDeg", 5.0);
-  private java.util.function.DoubleSupplier aimBiasSupplier = () -> 0;
+  private DoubleSupplier aimBiasSupplier = () -> 0;
   private double appliedAimBiasDeg = 0;
 
   private double polarSpeedLimitMps = 0;
