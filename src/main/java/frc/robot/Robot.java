@@ -91,6 +91,7 @@ public class Robot extends LoggedRobot {
       Logger.recordMetadata("GitDirty", BuildConstants.DIRTY == 1 ? "true" : "false");
 
       if (Constants.REPLAY) {
+        setUseTiming(false);
         String inPath = LogFileUtil.findReplayLog();
         String outPath = LogFileUtil.addPathSuffix(inPath, "_sim");
         Logger.setReplaySource(new WPILOGReader(inPath));
