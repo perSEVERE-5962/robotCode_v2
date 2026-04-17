@@ -15,7 +15,18 @@ public class FeedEject extends Command {
   private final Indexer indexer;
   private final Agitator agitator;
 
+  private double targRPM;
+
   public FeedEject() {
+    shooter = Shooter.getInstance();
+    indexer = Indexer.getInstance();
+    agitator = Agitator.getInstance();
+    addRequirements(shooter, indexer, agitator);
+    targRPM = feedRPM.get();
+  }
+
+
+   public FeedEject(int targRPM) {
     shooter = Shooter.getInstance();
     indexer = Indexer.getInstance();
     agitator = Agitator.getInstance();
@@ -24,7 +35,7 @@ public class FeedEject extends Command {
 
   @Override
   public void execute() {
-    shooter.moveToVelocityWithPID(feedRPM.get());
+    shooter.moveToVelocityWithPID(targRPM);
 
     if (shooter.isAtSpeed(4000)) {
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());

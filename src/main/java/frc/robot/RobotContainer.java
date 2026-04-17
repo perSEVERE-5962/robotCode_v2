@@ -457,7 +457,8 @@ public class RobotContainer {
       // copilotXbox.x().whileTrue(new HoldAndIntake());
 
       copilotXbox.rightTrigger().whileTrue(new FeedEject());
-      copilotXbox.leftTrigger().whileTrue(new ManualShoot());
+            copilotXbox.leftTrigger().whileTrue(new FeedEject(5000));
+      copilotXbox.b().whileTrue(new ManualShoot());
       copilotXbox.a().whileTrue(new IntakeParallel());
       // driverXbox.b().whileTrue(new MoveShooter(2500));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.3));
