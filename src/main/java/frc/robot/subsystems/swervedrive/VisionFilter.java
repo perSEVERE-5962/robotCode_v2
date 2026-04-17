@@ -158,84 +158,85 @@ public final class VisionFilter {
 
     // Gate 1: Ambiguity (single-tag only). Between 0.25-0.8 we try to resolve
     // rather than reject, so only hard-reject truly unresolvable estimates.
-    if (tagCount == 1 && worstAmbiguity > AMBIGUITY_HARD_REJECT) {
-      return RejectionReason.AMBIGUITY;
-    }
+  //   if (tagCount == 1 && worstAmbiguity > AMBIGUITY_HARD_REJECT) {
+  //     return RejectionReason.AMBIGUITY;
+  //   }
 
-    // Gate 2: Z-height sanity (robot can't fly or be underground)
-    if (Math.abs(visionPose.getZ()) > MAX_Z_HEIGHT_M) {
-      return RejectionReason.Z_HEIGHT;
-    }
+  //   // Gate 2: Z-height sanity (robot can't fly or be underground)
+  //   if (Math.abs(visionPose.getZ()) > MAX_Z_HEIGHT_M) {
+  //     return RejectionReason.Z_HEIGHT;
+  //   }
 
-    // Gate 3: Roll/pitch sanity (extreme tilt = bad PnP solve)
-    double rollDeg = Math.toDegrees(visionPose.getRotation().getX());
-    double pitchDeg = Math.toDegrees(visionPose.getRotation().getY());
-    if (Math.abs(rollDeg) > MAX_ROLL_PITCH_DEG || Math.abs(pitchDeg) > MAX_ROLL_PITCH_DEG) {
-      return RejectionReason.ROLL_PITCH;
-    }
+  //   // Gate 3: Roll/pitch sanity (extreme tilt = bad PnP solve)
+  //   double rollDeg = Math.toDegrees(visionPose.getRotation().getX());
+  //   double pitchDeg = Math.toDegrees(visionPose.getRotation().getY());
+  //   if (Math.abs(rollDeg) > MAX_ROLL_PITCH_DEG || Math.abs(pitchDeg) > MAX_ROLL_PITCH_DEG) {
+  //     return RejectionReason.ROLL_PITCH;
+  //   }
 
-    // Gate 4: Field bounds (robot can't be outside the walls)
-    Pose2d pose2d = visionPose.toPose2d();
-    double x = pose2d.getX();
-    double y = pose2d.getY();
-    if (x < -FIELD_MARGIN_M
-        || x > FIELD_LENGTH_M + FIELD_MARGIN_M
-        || y < -FIELD_MARGIN_M
-        || y > FIELD_WIDTH_M + FIELD_MARGIN_M) {
-      return RejectionReason.FIELD_BOUNDS;
-    }
+  //   // Gate 4: Field bounds (robot can't be outside the walls)
+  //   Pose2d pose2d = visionPose.toPose2d();
+  //   double x = pose2d.getX();
+  //   double y = pose2d.getY();
+  //   if (x < -FIELD_MARGIN_M
+  //       || x > FIELD_LENGTH_M + FIELD_MARGIN_M
+  //       || y < -FIELD_MARGIN_M
+  //       || y > FIELD_WIDTH_M + FIELD_MARGIN_M) {
+  //     return RejectionReason.FIELD_BOUNDS;
+  //   }
 
-    // Gate 5: Heading divergence (single-tag heading is unreliable, gyro is truth)
-    if (tagCount == 1 && gyroHeading != null) {
-      double headingDiffDeg = Math.abs(pose2d.getRotation().minus(gyroHeading).getDegrees());
-      if (headingDiffDeg > MAX_HEADING_DIVERGENCE_DEG) {
-        return RejectionReason.HEADING_DIVERGENCE;
-      }
-    }
+  //   // Gate 5: Heading divergence (single-tag heading is unreliable, gyro is truth)
+  //   if (tagCount == 1 && gyroHeading != null) {
+  //     double headingDiffDeg = Math.abs(pose2d.getRotation().minus(gyroHeading).getDegrees());
+  //     if (headingDiffDeg > MAX_HEADING_DIVERGENCE_DEG) {
+  //       return RejectionReason.HEADING_DIVERGENCE;
+  //     }
+  //   }
 
-    // Gate 6: Pose jump (can't teleport, but skip during early auto).
-    // Under defense the robot can genuinely be shoved several meters.
-    // if (currentPose != null && autoElapsedSec > AUTO_GRACE_PERIOD_SEC) {
-    //   double jumpM = pose2d.getTranslation().getDistance(currentPose.getTranslation());
-    //   double jumpLimit = underDefense ? MAX_POSE_JUMP_M * 2.0 : MAX_POSE_JUMP_M;
-    //   if (jumpM > jumpLimit) {
-    //     return RejectionReason.POSE_JUMP;
-    //   }
-    // }
+  //   // Gate 6: Pose jump (can't teleport, but skip during early auto).
+  //   // Under defense the robot can genuinely be shoved several meters.
+  //   // if (currentPose != null && autoElapsedSec > AUTO_GRACE_PERIOD_SEC) {
+  //   //   double jumpM = pose2d.getTranslation().getDistance(currentPose.getTranslation());
+  //   //   double jumpLimit = underDefense ? MAX_POSE_JUMP_M * 2.0 : MAX_POSE_JUMP_M;
+  //   //   if (jumpM > jumpLimit) {
+  //   //     return RejectionReason.POSE_JUMP;
+  //   //   }
+  //   // }
 
-    // Gate 7: Gyro rate. Skip under defense because wheel slip makes odometry
-    // drift worse than any motion blur on the tags.
-    if (!underDefense && Math.abs(gyroRateDegPerSec) > MAX_GYRO_RATE_DEG_PER_SEC) {
-      return RejectionReason.GYRO_RATE;
-    }
+  //   // Gate 7: Gyro rate. Skip under defense because wheel slip makes odometry
+  //   // drift worse than any motion blur on the tags.
+  //   if (!underDefense && Math.abs(gyroRateDegPerSec) > MAX_GYRO_RATE_DEG_PER_SEC) {
+  //     return RejectionReason.GYRO_RATE;
+  //   }
 
-    // Gate 8: Opposing alliance single-tag (cross-field single-tag is too noisy)
-    if (tagCount == 1 && tagIds.length > 0) {
-      int id = tagIds[0];
-      boolean tagIsBlue = id <= BLUE_TAG_MAX;
-      if (tagIsBlue != isBlueAlliance) {
-        return RejectionReason.OPPOSING_ALLIANCE;
-      }
-    }
+  //   // Gate 8: Opposing alliance single-tag (cross-field single-tag is too noisy)
+  //   if (tagCount == 1 && tagIds.length > 0) {
+  //     int id = tagIds[0];
+  //     boolean tagIsBlue = id <= BLUE_TAG_MAX;
+  //     if (tagIsBlue != isBlueAlliance) {
+  //       return RejectionReason.OPPOSING_ALLIANCE;
+  //     }
+  //   }
 
-    // Gate 9: Staleness (speed-dependent: tighter when moving fast)
-    if (ageSec > 0) {
-      double speedFraction = Math.min(1.0, robotSpeedMps / STALE_SPEED_CUTOFF_MPS);
-      double staleLimit =
-          STALE_THRESHOLD_STOPPED_SEC
-              + (STALE_THRESHOLD_FAST_SEC - STALE_THRESHOLD_STOPPED_SEC) * speedFraction;
-      if (ageSec > staleLimit) {
-        return RejectionReason.STALE;
-      }
-    }
+  //   // Gate 9: Staleness (speed-dependent: tighter when moving fast)
+  //   if (ageSec > 0) {
+  //     double speedFraction = Math.min(1.0, robotSpeedMps / STALE_SPEED_CUTOFF_MPS);
+  //     double staleLimit =
+  //         STALE_THRESHOLD_STOPPED_SEC
+  //             + (STALE_THRESHOLD_FAST_SEC - STALE_THRESHOLD_STOPPED_SEC) * speedFraction;
+  //     if (ageSec > staleLimit) {
+  //       return RejectionReason.STALE;
+  //     }
+  //   }
 
-    // Gate 10: Distance (single-tag beyond 5m has too much pixel error)
-    if (tagCount == 1 && avgTagDistanceM > MAX_SINGLE_TAG_DISTANCE_M) {
-      return RejectionReason.DISTANCE;
-    }
+  //   // Gate 10: Distance (single-tag beyond 5m has too much pixel error)
+  //   if (tagCount == 1 && avgTagDistanceM > MAX_SINGLE_TAG_DISTANCE_M) {
+  //     return RejectionReason.DISTANCE;
+  //   }
 
     return RejectionReason.ACCEPTED;
-  }
+  // }
+      }
 
   /**
    * Compute final std devs with distance, velocity, and tag-count scaling.
@@ -315,9 +316,10 @@ public final class VisionFilter {
   }
 
   /** High gyro rate + low wheel speed = opponent is spinning us, not us driving fast. */
-  public static boolean isUnderDefense(double gyroRateDps, double speedMps) {
-    return Math.abs(gyroRateDps) > DEFENSE_GYRO_RATE_DPS && speedMps < DEFENSE_MAX_SPEED_MPS;
-  }
+  // public static boolean isUnderDefense(double gyroRateDps, double speedMps) {
+  //   return Math.abs(gyroRateDps) > DEFENSE_GYRO_RATE_DPS && speedMps < DEFENSE_MAX_SPEED_MPS;
+  // }
 
   private VisionFilter() {}
 }
+
