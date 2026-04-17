@@ -44,7 +44,6 @@ import frc.robot.commands.SetIntakePosition;
 import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.lib.BLine.FollowPath;
 import frc.robot.lib.BLine.Path;
-import frc.robot.sim.SimDriveOverride;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
@@ -97,37 +96,26 @@ public class RobotContainer {
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular
-   * velocity. In sim, SimDriveOverride values are combined with joystick so scenario playback and
-   * manual SimGUI control both work.
+   * velocity.
    */
   SwerveInputStream driveAngularVelocity =
       SwerveInputStream.of(
               drivebase.getSwerveDrive(),
-              () ->
-                  RobotBase.isSimulation()
-                      ? -(driverXbox.getLeftY() + SimDriveOverride.getY())
-                      : driverXbox.getLeftY() * -1,
-              () ->
-                  RobotBase.isSimulation()
-                      ? -(driverXbox.getLeftX() + SimDriveOverride.getX())
-                      : driverXbox.getLeftX() * -1)
-          .withControllerRotationAxis(
-              () ->
-                  RobotBase.isSimulation()
-                      ? -(driverXbox.getRightX() + SimDriveOverride.getOmega())
-                      : driverXbox.getRightX() * -1)
+              () -> driverXbox.getLeftY() * -1,
+              () -> driverXbox.getLeftX() * -1)
+          .withControllerRotationAxis(() -> driverXbox.getRightX() * -1)
           .deadband(OperatorConstants.DEADBAND)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);
 
-  /** Clone's the angular velocity input stream and converts it to a fieldRelative input stream. */
+  /** Clones the angular velocity input stream and converts it to a fieldRelative input stream. */
   SwerveInputStream driveDirectAngle =
       driveAngularVelocity
           .copy()
-          .withControllerHeadingAxis(driverXbox::getRightX, driverXbox::getRightY)
+          .withControllerHeadingAxis(() -> -driverXbox.getRightX(), () -> -driverXbox.getRightY())
           .headingWhile(true);
 
-  /** Clone's the angular velocity input stream and converts it to a robotRelative input stream. */
+  /** Clones the angular velocity input stream and converts it to a robotRelative input stream. */
   SwerveInputStream driveRobotOriented =
       driveAngularVelocity.copy().robotRelative(true).allianceRelativeControl(false);
 
@@ -145,8 +133,8 @@ public class RobotContainer {
       driveAngularVelocityKeyboard
           .copy()
           .withControllerHeadingAxis(
-              () -> Math.sin(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2),
-              () -> Math.cos(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2))
+              () -> Math.sin(-driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2),
+              () -> Math.cos(-driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2))
           .headingWhile(true)
           .translationHeadingOffset(true)
           .translationHeadingOffset(Rotation2d.fromDegrees(0));
@@ -318,9 +306,9 @@ public class RobotContainer {
         drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
     if (RobotBase.isSimulation()) {
-      drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
+      drivebase.setDefaultCommand(driveSetpointGen);
     } else {
-      drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
+      drivebase.setDefaultCommand(driveSetpointGen);
     }
 
     if (Robot.isSimulation()) {

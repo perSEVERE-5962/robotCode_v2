@@ -5,8 +5,10 @@
 package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
@@ -220,6 +222,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // Preload PathPlanner Path finding
     // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
+    CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
   }
 
   /**
@@ -278,9 +281,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     // Since AutoBuilder is configured, we can use it to build pathfinding commands
     return AutoBuilder.pathfindToPose(
-        pose,
-        constraints,
-        edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+        pose, constraints, MetersPerSecond.of(0) // Goal end velocity in meters/sec
         );
   }
 
