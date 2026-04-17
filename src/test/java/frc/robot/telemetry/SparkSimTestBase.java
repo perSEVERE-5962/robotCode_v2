@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,18 +71,18 @@ public abstract class SparkSimTestBase {
   protected static void closeSubsystemMotor(String className) {
     try {
       Class<?> clazz = Class.forName(className);
-      java.lang.reflect.Field f = clazz.getDeclaredField("instance");
+      Field f = clazz.getDeclaredField("instance");
       f.setAccessible(true);
       Object instance = f.get(null);
       if (instance != null) {
-        java.lang.reflect.Method getMotor = clazz.getMethod("getMotor");
+        Method getMotor = clazz.getMethod("getMotor");
         Object motor = getMotor.invoke(instance);
         if (motor instanceof AutoCloseable) {
           ((AutoCloseable) motor).close();
         }
         // Close follower motors if present (e.g. Shooter has 3 followers)
         try {
-          java.lang.reflect.Field followersField = clazz.getDeclaredField("followers");
+          Field followersField = clazz.getDeclaredField("followers");
           followersField.setAccessible(true);
           Object[] followers = (Object[]) followersField.get(instance);
           if (followers != null) {
@@ -102,7 +104,7 @@ public abstract class SparkSimTestBase {
   protected static void resetSingleton(String className) {
     try {
       Class<?> clazz = Class.forName(className);
-      java.lang.reflect.Field f = clazz.getDeclaredField("instance");
+      Field f = clazz.getDeclaredField("instance");
       f.setAccessible(true);
       f.set(null, null);
     } catch (Exception e) {
@@ -131,7 +133,7 @@ public abstract class SparkSimTestBase {
   /** Access private field via reflection */
   @SuppressWarnings("unchecked")
   protected <T> T getField(Object obj, String fieldName) throws Exception {
-    java.lang.reflect.Field f = obj.getClass().getDeclaredField(fieldName);
+    Field f = obj.getClass().getDeclaredField(fieldName);
     f.setAccessible(true);
     return (T) f.get(obj);
   }

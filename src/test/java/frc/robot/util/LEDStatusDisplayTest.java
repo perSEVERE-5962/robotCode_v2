@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import frc.robot.telemetry.SafeLog;
 import frc.robot.util.LEDStatusDisplay.LEDState;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -100,7 +101,7 @@ class LEDStatusDisplayTest {
   }
 
   private LEDState resolve(LEDStatusDisplay.StateSnapshot s) throws Exception {
-    java.lang.reflect.Method m =
+    Method m =
         LEDStatusDisplay.class.getDeclaredMethod(
             "resolveState", LEDStatusDisplay.StateSnapshot.class);
     m.setAccessible(true);

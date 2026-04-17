@@ -25,6 +25,7 @@ import frc.robot.util.DiagnosticContext;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.ElasticUtil;
 import frc.robot.util.EventMarker;
+import frc.robot.util.HubShiftEngine;
 import frc.robot.util.LEDStatusDisplay;
 import frc.robot.util.LoggedTracer;
 import frc.robot.util.PostMatchSummary;
@@ -212,18 +213,17 @@ public class Robot extends LoggedRobot {
     safeCall("CommandScheduler", () -> CommandScheduler.getInstance().run());
     safeCall("Tracer", () -> LoggedTracer.record("CommandsMs"));
 
-    safeCall("ShotCalc", () -> ShotCalculator.getInstance().calculate());
-
     safeCall("Telemetry", () -> TelemetryManager.getInstance().updateAll());
     safeCall("NaNGuard", () -> checkNaNInfinity());
     safeCall("Tracer", () -> LoggedTracer.record("TelemetryMs"));
 
+    safeCall("ShotCalc", () -> ShotCalculator.getInstance().calculate(m_robotContainer.getSwerveSubsystem().getPose(), m_robotContainer.getSwerveSubsystem().getFieldVelocity(), m_robotContainer.getSwerveSubsystem().getRobotVelocity()));
+
     safeCall(
         "HubShift",
         () -> {
-          double tof =
-              frc.robot.util.ShotCalculator.getInstance().getParameters().timeOfFlightSec();
-          frc.robot.util.HubShiftEngine.getInstance().update(tof);
+          double tof = ShotCalculator.getInstance().getParameters().timeOfFlightSec();
+          HubShiftEngine.getInstance().update(tof);
         });
 
     safeCall(

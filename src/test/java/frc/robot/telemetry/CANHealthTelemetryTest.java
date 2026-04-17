@@ -2,6 +2,7 @@ package frc.robot.telemetry;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.lang.reflect.Field;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -188,7 +189,7 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
   }
 
   private void setField(Object obj, String fieldName, Object value) throws Exception {
-    java.lang.reflect.Field f = obj.getClass().getDeclaredField(fieldName);
+    Field f = obj.getClass().getDeclaredField(fieldName);
     f.setAccessible(true);
     f.set(obj, value);
   }

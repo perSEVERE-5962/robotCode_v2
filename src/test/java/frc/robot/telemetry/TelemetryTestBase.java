@@ -3,6 +3,7 @@ package frc.robot.telemetry;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -48,7 +49,7 @@ public abstract class TelemetryTestBase {
       f.setAccessible(true);
       Object instance = f.get(null);
       if (instance != null) {
-        java.lang.reflect.Method getMotor = clazz.getMethod("getMotor");
+        Method getMotor = clazz.getMethod("getMotor");
         Object motor = getMotor.invoke(instance);
         if (motor instanceof AutoCloseable) {
           ((AutoCloseable) motor).close();

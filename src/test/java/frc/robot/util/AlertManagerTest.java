@@ -15,6 +15,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.telemetry.SafeLog;
 import frc.robot.telemetry.TelemetryManager;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.AfterAll;
@@ -514,7 +515,7 @@ class AlertManagerTest {
       f.setAccessible(true);
       Object instance = f.get(null);
       if (instance != null) {
-        java.lang.reflect.Method getMotor = clazz.getMethod("getMotor");
+        Method getMotor = clazz.getMethod("getMotor");
         Object motor = getMotor.invoke(instance);
         if (motor instanceof AutoCloseable) {
           ((AutoCloseable) motor).close();

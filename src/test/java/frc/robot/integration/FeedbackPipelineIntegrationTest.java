@@ -414,7 +414,7 @@ class FeedbackPipelineIntegrationTest {
       f.setAccessible(true);
       Object instance = f.get(null);
       if (instance != null) {
-        java.lang.reflect.Method getMotor = clazz.getMethod("getMotor");
+        Method getMotor = clazz.getMethod("getMotor");
         Object motor = getMotor.invoke(instance);
         if (motor instanceof AutoCloseable) {
           ((AutoCloseable) motor).close();

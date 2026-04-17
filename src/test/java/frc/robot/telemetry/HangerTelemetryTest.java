@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.subsystems.Hanger;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,11 +56,11 @@ class HangerTelemetryTest {
   private static void closeMotor(String className) {
     try {
       Class<?> clazz = Class.forName(className);
-      java.lang.reflect.Field f = clazz.getDeclaredField("instance");
+      Field f = clazz.getDeclaredField("instance");
       f.setAccessible(true);
       Object instance = f.get(null);
       if (instance != null) {
-        java.lang.reflect.Method getMotor = clazz.getMethod("getMotor");
+        Method getMotor = clazz.getMethod("getMotor");
         Object motor = getMotor.invoke(instance);
         if (motor instanceof AutoCloseable) {
           ((AutoCloseable) motor).close();
@@ -71,7 +73,7 @@ class HangerTelemetryTest {
   private static void resetSingleton(String className) {
     try {
       Class<?> clazz = Class.forName(className);
-      java.lang.reflect.Field f = clazz.getDeclaredField("instance");
+      Field f = clazz.getDeclaredField("instance");
       f.setAccessible(true);
       f.set(null, null);
     } catch (Exception e) {
@@ -80,7 +82,7 @@ class HangerTelemetryTest {
 
   @SuppressWarnings("unchecked")
   private <T> T getField(Object obj, String fieldName) throws Exception {
-    java.lang.reflect.Field f = obj.getClass().getDeclaredField(fieldName);
+    Field f = obj.getClass().getDeclaredField(fieldName);
     f.setAccessible(true);
     return (T) f.get(obj);
   }

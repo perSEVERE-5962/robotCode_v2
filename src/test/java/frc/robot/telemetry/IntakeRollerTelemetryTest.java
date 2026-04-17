@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import frc.robot.subsystems.IntakeRoller;
+import java.lang.reflect.Field;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -129,7 +130,7 @@ class IntakeRollerTelemetryTest extends SparkSimTestBase {
   }
 
   private void setField(Object obj, String fieldName, Object value) throws Exception {
-    java.lang.reflect.Field f = obj.getClass().getDeclaredField(fieldName);
+    Field f = obj.getClass().getDeclaredField(fieldName);
     f.setAccessible(true);
     f.set(obj, value);
   }

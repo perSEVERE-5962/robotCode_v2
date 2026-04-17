@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 /**
@@ -180,8 +181,7 @@ public class AlertManager {
   //       () -> IntakePivot.getInstance().getTemperature());
   // }
 
-  private void checkOneMotorTemp(
-      String name, Alert alert, java.util.function.DoubleSupplier tempFn) {
+  private void checkOneMotorTemp(String name, Alert alert, DoubleSupplier tempFn) {
     try {
       double temp = tempFn.getAsDouble();
       if (temp > MOTOR_TEMP_WARNING_C) {

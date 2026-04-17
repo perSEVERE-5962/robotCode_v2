@@ -23,6 +23,9 @@ public class FeedEject extends Command {
   }
 
   @Override
+  public void initialize() {}
+
+  @Override
   public void execute() {
     shooter.moveToVelocityWithPID(feedRPM.get());
 
