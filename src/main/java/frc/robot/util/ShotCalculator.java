@@ -184,12 +184,12 @@ public class ShotCalculator {
     // baseLUT.put(2.350, 2423, angle, 0.76);
     // baseLUT.put(2.400, 2438, angle, 0.77);
     // baseLUT.put(2.450, 2454, angle, 0.78);
-    baseLUT.put(2.3, 2605, angle, 0.80);
+    baseLUT.put(2.3, 2680, angle, 0.80);
     // baseLUT.put(2.550, 2485, angle, 0.81);
     // baseLUT.put(2.600, 2500, angle, 0.82);
-    baseLUT.put(2.47, 2645, angle, 1); // real robot
+    baseLUT.put(2.47, 2640, angle, 1); // real robot
     // baseLUT.put(2.700, 2600, angle, 01);
-    baseLUT.put(2.65, 2662, angle, 01);
+    baseLUT.put(2.65, 2650, angle, 01);
     // baseLUT.put(2.800, 2640, angle, 01);
     // baseLUT.put(2.850, 2640, angle, 001);
     baseLUT.put(2.8, 2695, angle, 01); // real robot
@@ -210,7 +210,7 @@ public class ShotCalculator {
     // baseLUT.put(3.650, 3000, angle, 1.03);
     // baseLUT.put(3.700, 2800, angle, 1.04);
     // baseLUT.put(3.750, 2850, angle, 1.05);
-    baseLUT.put(3.800, 2330, angle, 1.06);
+    baseLUT.put(3.800, 2910, angle, 1.06);
     // baseLUT.put(3.850, 3000, angle, 1.06);
     // baseLUT.put(3.900, 2870, angle, 1.07);
     // baseLUT.put(3.950, 3000, angle, 1.08);
@@ -218,10 +218,10 @@ public class ShotCalculator {
     // baseLUT.put(4.050, 3000, angle, 1.10);
     // baseLUT.put(4.100, 2800, angle, 1.11);
     // baseLUT.put(4.150, 2800, angle, 1.12);
-    baseLUT.put(4.200, 2990, angle, 1.12);
-    baseLUT.put(4.250, 2840, angle, 1.13);
-    baseLUT.put(4.300, 2840, angle, 1.14);
-    baseLUT.put(4.350, 2840, angle, 1.15);
+    baseLUT.put(4.200, 3060, angle, 1.12);
+    baseLUT.put(4.250, 3060, angle, 1.13);
+    baseLUT.put(4.300, 3060, angle, 1.14);
+    baseLUT.put(4.350, 3060, angle, 1.15);
     baseLUT.put(4.400, 2860, angle, 1.16);
     baseLUT.put(4.450, 2860, angle, 1.17);
     baseLUT.put(4.500, 2900, angle, 1.17);
