@@ -217,7 +217,7 @@ public class Robot extends LoggedRobot {
     safeCall("NaNGuard", () -> checkNaNInfinity());
     safeCall("Tracer", () -> LoggedTracer.record("TelemetryMs"));
 
-    safeCall("ShotCalc", () -> ShotCalculator.getInstance().calculate(m_robotContainer.getSwerveSubsystem().getPose(), m_robotContainer.getSwerveSubsystem().getFieldVelocity(), m_robotContainer.getSwerveSubsystem().getRobotVelocity()));
+    safeCall("ShotCalc", () -> ShotCalculator.getInstance().calculate());
 
     safeCall(
         "HubShift",
