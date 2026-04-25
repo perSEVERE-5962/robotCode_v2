@@ -5,12 +5,13 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.util.SafeLog;
 
 /**
  * Logs Pose3d[] trajectories for AdvantageScope 3D field visualization. When a shot fires, computes
  * a parabolic arc from robot to hub.
  */
-public class ShotVisualizerTelemetry implements SubsystemTelemetry {
+class ShotVisualizerTelemetry implements SubsystemTelemetry {
   // Red Hub field position (2026 REBUILT)
   private static final double HUB_X = 11.90;
   private static final double HUB_Y = 4.0;

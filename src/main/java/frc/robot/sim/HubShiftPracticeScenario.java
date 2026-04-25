@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.telemetry.SafeLog;
+import frc.robot.util.SafeLog;
 import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
 
 /**
@@ -48,7 +48,7 @@ import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
  *
  * <p>Launch: ./gradlew simulateJava -DsimScenario=HubShiftPractice
  */
-public class HubShiftPracticeScenario implements SimScenario {
+class HubShiftPracticeScenario implements SimScenario {
   private double startTime;
   private double lastUpdateTime;
   private double simMatchTime; // counts down from 140

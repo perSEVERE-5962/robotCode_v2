@@ -5,12 +5,13 @@ import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import frc.robot.util.CoprocessorHealth;
+import frc.robot.util.SafeLog;
 import frc.robot.util.VisionFilter.RejectionReason;
 import java.util.HashMap;
 import java.util.Map;
 
 /** Vision telemetry: target lock, tag ID stability, pose confidence. */
-public class VisionTelemetry implements SubsystemTelemetry {
+class VisionTelemetry implements SubsystemTelemetry {
   private Vision vision;
   private boolean subsystemAvailable = false;
   private boolean visionHealthy = true;

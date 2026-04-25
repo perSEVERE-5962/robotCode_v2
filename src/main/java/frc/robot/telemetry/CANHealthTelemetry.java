@@ -1,6 +1,7 @@
 package frc.robot.telemetry;
 
 import frc.robot.Constants;
+import frc.robot.util.SafeLog;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * arrays so a dashboard can render "17 of 18 devices online, missing CAN 42 (IntakePivot)" without
  * any source side lookup.
  */
-public class CANHealthTelemetry implements SubsystemTelemetry {
+class CANHealthTelemetry implements SubsystemTelemetry {
 
   /** Coarse grouping for the dashboard. Motor controllers are "critical", cameras are not. */
   public enum DeviceClass {

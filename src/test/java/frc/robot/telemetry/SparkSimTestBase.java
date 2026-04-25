@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
+import frc.robot.util.SafeLog;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.AfterAll;

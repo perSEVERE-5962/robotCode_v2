@@ -12,9 +12,10 @@ import frc.robot.util.DeviceFaultDecoder.DecodedFaults;
 import frc.robot.util.DeviceFaultDecoder.DeviceType;
 import frc.robot.util.EventMarker;
 import frc.robot.util.JamProtection;
+import frc.robot.util.SafeLog;
 
 /** Indexer telemetry: jam detection, stall tracking, PID audit. */
-public class IndexerTelemetry implements SubsystemTelemetry {
+class IndexerTelemetry implements SubsystemTelemetry {
   private Indexer indexer; // grabbed again in update() if not ready yet
   private boolean subsystemAvailable = false;
 

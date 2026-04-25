@@ -2,7 +2,7 @@ package frc.robot.sim;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.telemetry.SafeLog;
+import frc.robot.util.SafeLog;
 import java.util.HashMap;
 import java.util.Map;
 

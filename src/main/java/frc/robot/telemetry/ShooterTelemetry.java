@@ -13,11 +13,12 @@ import frc.robot.util.DeviceFaultDecoder;
 import frc.robot.util.DeviceFaultDecoder.DecodedFaults;
 import frc.robot.util.DeviceFaultDecoder.DeviceType;
 import frc.robot.util.EventMarker;
+import frc.robot.util.SafeLog;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
 /** Shooter telemetry: shot detection, spin-up tracking, fire rate. */
-public class ShooterTelemetry implements SubsystemTelemetry {
+class ShooterTelemetry implements SubsystemTelemetry {
   private Shooter shooter; // grabbed again in update() if not ready yet
   private boolean subsystemAvailable = false;
 

@@ -12,7 +12,6 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
-import frc.robot.telemetry.SafeLog;
 import frc.robot.telemetry.TelemetryManager;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

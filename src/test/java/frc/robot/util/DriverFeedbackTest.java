@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.GenericHIDSim;
 import edu.wpi.first.wpilibj.simulation.SimHooks;
-import frc.robot.telemetry.SafeLog;
 import frc.robot.util.DriverFeedback.HapticPattern;
 import frc.robot.util.DriverFeedback.HapticTarget;
 import frc.robot.util.DriverFeedback.Priority;

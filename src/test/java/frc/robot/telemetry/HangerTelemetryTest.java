@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.subsystems.Hanger;
+import frc.robot.util.SafeLog;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.AfterAll;

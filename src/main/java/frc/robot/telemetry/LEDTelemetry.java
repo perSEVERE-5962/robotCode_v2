@@ -2,8 +2,9 @@ package frc.robot.telemetry;
 
 import frc.robot.Constants;
 import frc.robot.util.LEDStatusDisplay;
+import frc.robot.util.SafeLog;
 
-public class LEDTelemetry implements SubsystemTelemetry {
+class LEDTelemetry implements SubsystemTelemetry {
   private LEDStatusDisplay ledDisplay;
 
   private String state = "DISABLED";

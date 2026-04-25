@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotContainer;
 import frc.robot.commands.SpeedUpThenIndex;
-import frc.robot.telemetry.SafeLog;
+import frc.robot.util.SafeLog;
 import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
 
 /**
@@ -39,7 +39,7 @@ import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
  * <p>Scoring: X-only (SpeedUpThenIndex). NEVER A+X,command conflict. 169s scenario, 11 phases
  * (0-10), ~75-110 shots. Launch: ./gradlew simulateJava -DsimScenario=CompetitionMatch
  */
-public class CompetitionMatchScenario implements SimScenario {
+class CompetitionMatchScenario implements SimScenario {
   private double startTime;
   private boolean finished = false;
   private final SimInputPlayback input = new SimInputPlayback();

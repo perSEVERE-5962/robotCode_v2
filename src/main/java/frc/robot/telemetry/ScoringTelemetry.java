@@ -4,9 +4,10 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.Constants.DeviceHealthConstants;
 import frc.robot.util.HubShiftEngine;
+import frc.robot.util.SafeLog;
 
 /** Scoring readiness: composite ReadyToShoot from shooter + indexer + vision. */
-public class ScoringTelemetry implements SubsystemTelemetry {
+class ScoringTelemetry implements SubsystemTelemetry {
   private final ShooterTelemetry shooterTelemetry;
   private final IndexerTelemetry indexerTelemetry;
   private final VisionTelemetry visionTelemetry;

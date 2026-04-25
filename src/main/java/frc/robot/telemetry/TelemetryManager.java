@@ -8,6 +8,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.util.EventMarker;
 import frc.robot.util.HubShiftEngine;
+import frc.robot.util.SafeLog;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

@@ -1,7 +1,7 @@
 package frc.robot.sim;
 
 /** Simulation scenario interface for SimGUI testing. */
-public interface SimScenario {
+interface SimScenario {
   /** Called once when scenario starts */
   void init();
 

@@ -1,7 +1,5 @@
 package frc.robot.util;
 
-import frc.robot.telemetry.SafeLog;
-
 /**
  * The pit crew and the electrical team cannot memorize a fault bit table under match pressure. A
  * raw fault integer like {@code 0x0024} tells them nothing in the five minutes they have between

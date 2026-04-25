@@ -10,9 +10,10 @@ import frc.robot.util.DeviceFaultDecoder;
 import frc.robot.util.DeviceFaultDecoder.DecodedFaults;
 import frc.robot.util.DeviceFaultDecoder.DeviceType;
 import frc.robot.util.JamProtection;
+import frc.robot.util.SafeLog;
 
 /** Agitator telemetry: device health, stall detection, running state. */
-public class AgitatorTelemetry implements SubsystemTelemetry {
+class AgitatorTelemetry implements SubsystemTelemetry {
   private Agitator agitator;
   private boolean subsystemAvailable = false;
 

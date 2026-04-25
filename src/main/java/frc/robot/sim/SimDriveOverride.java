@@ -2,8 +2,7 @@ package frc.robot.sim;
 
 /**
  * Static volatile fields for sim drive input,bypasses HAL joystick port 0 which halsim_gui
- * continuously zeros. RobotContainer reads these via method references as SwerveInputStream
- * suppliers in sim mode.
+ * continuously zeros.
  */
 public final class SimDriveOverride {
 

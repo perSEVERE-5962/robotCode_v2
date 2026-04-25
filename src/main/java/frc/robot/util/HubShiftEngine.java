@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HubTimingConstants;
-import frc.robot.telemetry.SafeLog;
 
 /**
  * Tracks which hub is active based on the shift schedule, auto winner, and TOF-shifted boundaries.

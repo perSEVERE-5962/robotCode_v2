@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
+import frc.robot.util.SafeLog;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;

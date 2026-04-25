@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
+import frc.robot.util.SafeLog;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /** Command scheduler telemetry: active commands, execution counts, durations, ghost detection. */
-public class CommandsTelemetry implements SubsystemTelemetry {
+class CommandsTelemetry implements SubsystemTelemetry {
   private final Map<String, Integer> activeCommandCounts = new HashMap<>();
   private String activeList = "none";
   private int activeCount = 0;

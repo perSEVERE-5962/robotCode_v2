@@ -1,7 +1,6 @@
 package frc.robot.util;
 
 import frc.robot.Constants;
-import frc.robot.telemetry.SafeLog;
 import frc.robot.telemetry.TelemetryManager;
 
 /**

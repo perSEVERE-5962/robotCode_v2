@@ -8,9 +8,10 @@ import frc.robot.subsystems.IntakePivot;
 import frc.robot.util.DeviceFaultDecoder;
 import frc.robot.util.DeviceFaultDecoder.DecodedFaults;
 import frc.robot.util.DeviceFaultDecoder.DeviceType;
+import frc.robot.util.SafeLog;
 
 /** IntakePivot telemetry: position and motor health. */
-public class IntakePivotTelemetry implements SubsystemTelemetry {
+class IntakePivotTelemetry implements SubsystemTelemetry {
   private IntakePivot intakePivot; // grabbed again in update() if not ready yet
   private boolean subsystemAvailable = false;
 

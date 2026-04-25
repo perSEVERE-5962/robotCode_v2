@@ -4,7 +4,7 @@ import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
-import frc.robot.telemetry.SafeLog;
+import frc.robot.util.SafeLog;
 import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
 
 /**
@@ -15,7 +15,7 @@ import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
  *
  * <p>Launch: ./gradlew simulateJava -DsimScenario=RapidFire
  */
-public class RapidFireScenario implements SimScenario {
+class RapidFireScenario implements SimScenario {
   private double startTime;
   private boolean finished = false;
   private final SimInputPlayback input = new SimInputPlayback();

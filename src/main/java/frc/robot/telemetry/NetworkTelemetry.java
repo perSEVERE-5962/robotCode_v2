@@ -3,9 +3,10 @@ package frc.robot.telemetry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
+import frc.robot.util.SafeLog;
 
 /** Network bandwidth monitoring for R704 compliance (VH-109: 7 Mbps). */
-public class NetworkTelemetry implements SubsystemTelemetry {
+class NetworkTelemetry implements SubsystemTelemetry {
   private static final double VH109_LIMIT_MBPS = 7.0;
   private static final double WARNING_THRESHOLD = 0.70;
   private static final double CRITICAL_THRESHOLD = 0.90;

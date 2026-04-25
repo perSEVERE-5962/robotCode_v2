@@ -1,12 +1,13 @@
 package frc.robot.telemetry;
 
 import frc.robot.commands.AimAndShootCommand;
+import frc.robot.util.SafeLog;
 
 /**
  * Logs ShootOnTheMove's intermediate calculations for post-match debugging. Reads static snapshot
  * fields from the command each cycle.
  */
-public class ShotPredictorTelemetry implements SubsystemTelemetry {
+class ShotPredictorTelemetry implements SubsystemTelemetry {
   private boolean commandActive = false;
   private double distanceToHubM = 0;
   private double timeOfFlightSec = 0;

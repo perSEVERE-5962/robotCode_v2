@@ -9,12 +9,13 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.util.SafeLog;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import swervelib.telemetry.SwerveDriveTelemetry;
 
 /** Drive telemetry: pose, module states, chassis speeds, gyro, encoder health. */
-public class DriveTelemetry implements SubsystemTelemetry {
+class DriveTelemetry implements SubsystemTelemetry {
   private static final String[] MODULE_NAMES = {"FL", "FR", "BL", "BR"};
 
   // 10 degrees in radians. Picked against the real steady-state noise floor,

@@ -6,9 +6,10 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.Constants.PDHChannelMap;
+import frc.robot.util.SafeLog;
 
 /** System health: battery, CAN bus, roboRIO, loop timing, brownout prediction. */
-public class SystemHealthTelemetry implements SubsystemTelemetry {
+class SystemHealthTelemetry implements SubsystemTelemetry {
   // Shared snapshot so any subsystem telemetry class can subtract its bus voltage
   // from the battery voltage without each one re-reading the RoboRIO API.
   // Volatile because it is written in update() and read from other telemetry

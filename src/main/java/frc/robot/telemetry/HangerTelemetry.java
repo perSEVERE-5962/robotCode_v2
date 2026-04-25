@@ -9,9 +9,10 @@ import frc.robot.subsystems.Hanger;
 import frc.robot.util.DeviceFaultDecoder;
 import frc.robot.util.DeviceFaultDecoder.DecodedFaults;
 import frc.robot.util.DeviceFaultDecoder.DeviceType;
+import frc.robot.util.SafeLog;
 
 /** Hanger telemetry: position, deploy/climb state, motor health. */
-public class HangerTelemetry implements SubsystemTelemetry {
+class HangerTelemetry implements SubsystemTelemetry {
   private Hanger hanger; // grabbed again in update() if not ready yet
   private boolean subsystemAvailable = false;
 

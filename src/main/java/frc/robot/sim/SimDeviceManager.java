@@ -12,7 +12,7 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.Shooter;
-import frc.robot.telemetry.SafeLog;
+import frc.robot.util.SafeLog;
 
 /**
  * SparkSim wiring for motor subsystems. Call update() each simulationPeriodic(). First-order

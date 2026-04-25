@@ -2,8 +2,9 @@ package frc.robot.telemetry;
 
 import frc.robot.Constants;
 import frc.robot.util.DriverFeedback;
+import frc.robot.util.SafeLog;
 
-public class DriverFeedbackTelemetry implements SubsystemTelemetry {
+class DriverFeedbackTelemetry implements SubsystemTelemetry {
   private DriverFeedback driverFeedback;
 
   private String activePattern = "none";

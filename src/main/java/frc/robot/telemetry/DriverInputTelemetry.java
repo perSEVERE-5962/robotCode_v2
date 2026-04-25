@@ -3,9 +3,10 @@ package frc.robot.telemetry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
+import frc.robot.util.SafeLog;
 
 /** Driver/operator controller input logging and idle tracking. */
-public class DriverInputTelemetry implements SubsystemTelemetry {
+class DriverInputTelemetry implements SubsystemTelemetry {
   private XboxController driver;
   private XboxController operator;
 

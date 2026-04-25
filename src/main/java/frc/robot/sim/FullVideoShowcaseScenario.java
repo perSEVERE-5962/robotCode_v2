@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotContainer;
 import frc.robot.commands.HubArcDrive;
 import frc.robot.commands.SpeedUpThenIndex;
-import frc.robot.telemetry.SafeLog;
+import frc.robot.util.SafeLog;
 import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
 
 /**
@@ -41,7 +41,7 @@ import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
  *
  * <p>Launch: ./gradlew simulateJava -DsimScenario=FullVideoShowcase
  */
-public class FullVideoShowcaseScenario implements SimScenario {
+class FullVideoShowcaseScenario implements SimScenario {
   private double startTime;
   private boolean finished = false;
   private final SimInputPlayback input = new SimInputPlayback();

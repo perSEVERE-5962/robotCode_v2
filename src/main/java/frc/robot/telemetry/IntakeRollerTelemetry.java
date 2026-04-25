@@ -12,9 +12,10 @@ import frc.robot.util.DeviceFaultDecoder.DecodedFaults;
 import frc.robot.util.DeviceFaultDecoder.DeviceType;
 import frc.robot.util.EventMarker;
 import frc.robot.util.JamProtection;
+import frc.robot.util.SafeLog;
 
 /** Intake roller telemetry: jam detection, stall tracking. */
-public class IntakeRollerTelemetry implements SubsystemTelemetry {
+class IntakeRollerTelemetry implements SubsystemTelemetry {
   private IntakeRoller intake; // grabbed again in update() if not ready yet
   private boolean subsystemAvailable = false;
 

@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.Constants.ProjectileSimConstants;
 import frc.robot.Constants.ShotCalculatorConstants;
-import frc.robot.telemetry.SafeLog;
+import frc.robot.util.SafeLog;
 import frc.robot.util.TunableNumber;
 import java.util.List;
 import java.util.function.BooleanSupplier;

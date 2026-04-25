@@ -2,9 +2,10 @@ package frc.robot.telemetry;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.util.SafeLog;
 
 /** Match-level stats: shots by phase, time allocation, efficiency. */
-public class MatchStatsTelemetry implements SubsystemTelemetry {
+class MatchStatsTelemetry implements SubsystemTelemetry {
   private final ShooterTelemetry shooterTelemetry;
   private final VisionTelemetry visionTelemetry;
   private final ScoringTelemetry scoringTelemetry; // nullable

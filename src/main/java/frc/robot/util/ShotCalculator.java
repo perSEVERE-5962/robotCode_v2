@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.HubScoringConstants;
 import frc.robot.Constants.ShotCalculatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.telemetry.SafeLog;
 import java.util.function.DoubleSupplier;
 
 /**

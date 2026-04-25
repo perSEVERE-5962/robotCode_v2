@@ -1,9 +1,10 @@
 package frc.robot.telemetry;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.util.SafeLog;
 
 /** Match state: time, mode, FMS, alliance. */
-public class MatchTelemetry implements SubsystemTelemetry {
+class MatchTelemetry implements SubsystemTelemetry {
 
   private double matchTime = 0;
   private String mode = "DISABLED";
