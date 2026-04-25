@@ -98,7 +98,7 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
 
   public void move(double speed) {
     // Needed to do it like this because there is no voltage compensation
-    motor.setControl(m_voltageOut.withOutput(speed * 12.0)); // TODO: test negative speeds
+    motor.setControl(m_voltageOut.withOutput(speed * 12.0));
   }
 
   public TalonFX getMotor() {
