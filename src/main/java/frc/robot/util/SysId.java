@@ -1,7 +1,8 @@
 package frc.robot.util;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -36,8 +37,9 @@ public class SysId {
                 (SysIdRoutineLog log) -> {
                   log.motor("agitator")
                       .voltage(inst.getMotor().getMotorVoltage().getValue())
-                      .linearPosition(Meters.of(inst.getPosition()))
-                      .linearVelocity(MetersPerSecond.of(inst.getMotorVelocity()));
+                      .current(Amps.of(inst.getOutputCurrent()))
+                      .angularPosition(Rotations.of(inst.getPosition()))
+                      .angularVelocity(RotationsPerSecond.of(inst.getMotorVelocity() / 60.0));
                 },
                 inst));
     return routine
@@ -61,8 +63,9 @@ public class SysId {
                 (SysIdRoutineLog log) -> {
                   log.motor("hanger")
                       .voltage(Volts.of(inst.getAppliedOutput() * inst.getBusVoltage()))
-                      .linearPosition(Meters.of(inst.getPosition()))
-                      .linearVelocity(MetersPerSecond.of(inst.getMotorVelocity()));
+                      .current(Amps.of(inst.getOutputCurrent()))
+                      .angularPosition(Rotations.of(inst.getPosition()))
+                      .angularVelocity(RotationsPerSecond.of(inst.getMotorVelocity() / 60.0));
                 },
                 inst));
     return routine
@@ -86,8 +89,9 @@ public class SysId {
                 (SysIdRoutineLog log) -> {
                   log.motor("indexer")
                       .voltage(Volts.of(inst.getAppliedOutput() * inst.getBusVoltage()))
-                      .linearPosition(Meters.of(inst.getPosition()))
-                      .linearVelocity(MetersPerSecond.of(inst.getMotorVelocity()));
+                      .current(Amps.of(inst.getOutputCurrent()))
+                      .angularPosition(Rotations.of(inst.getPosition()))
+                      .angularVelocity(RotationsPerSecond.of(inst.getMotorVelocity() / 60.0));
                 },
                 inst));
     return routine
@@ -111,8 +115,9 @@ public class SysId {
                 (SysIdRoutineLog log) -> {
                   log.motor("intakeRoller")
                       .voltage(Volts.of(inst.getAppliedOutput() * inst.getBusVoltage()))
-                      .linearPosition(Meters.of(inst.getPosition()))
-                      .linearVelocity(MetersPerSecond.of(inst.getMotorVelocity()));
+                      .current(Amps.of(inst.getOutputCurrent()))
+                      .angularPosition(Rotations.of(inst.getPosition()))
+                      .angularVelocity(RotationsPerSecond.of(inst.getMotorVelocity() / 60.0));
                 },
                 inst));
     return routine
@@ -138,8 +143,9 @@ public class SysId {
                 (SysIdRoutineLog log) -> {
                   log.motor("intakePivot")
                       .voltage(inst.getMotor().getMotorVoltage().getValue())
-                      .linearPosition(Meters.of(inst.getPosition()))
-                      .linearVelocity(MetersPerSecond.of(inst.getMotorVelocity()));
+                      .current(Amps.of(inst.getOutputCurrent()))
+                      .angularPosition(Rotations.of(inst.getPosition()))
+                      .angularVelocity(RotationsPerSecond.of(inst.getMotorVelocity() / 60.0));
                 },
                 inst));
     return routine
@@ -163,8 +169,9 @@ public class SysId {
                 (SysIdRoutineLog log) -> {
                   log.motor("shooter")
                       .voltage(Volts.of(inst.getAppliedOutput() * inst.getBusVoltage()))
-                      .linearPosition(Meters.of(inst.getPosition()))
-                      .linearVelocity(MetersPerSecond.of(inst.getMotorVelocity()));
+                      .current(Amps.of(inst.getOutputCurrent()))
+                      .angularPosition(Rotations.of(inst.getPosition()))
+                      .angularVelocity(RotationsPerSecond.of(inst.getMotorVelocity() / 60.0));
                 },
                 inst));
     return routine
