@@ -29,7 +29,7 @@ public class SysId {
     final VoltageOut m_voltReq = new VoltageOut(0.0);
     SysIdRoutine routine =
         new SysIdRoutine(
-            new Config(Volts.of(0.5).per(Seconds), Volts.of(3.0), Seconds.of(15.0)),
+            new Config(Volts.of(0.5).per(Seconds), Volts.of(3.0), Seconds.of(6.0)),
             new Mechanism(
                 (Voltage voltage) ->
                     inst.getMotor().setControl(m_voltReq.withOutput(voltage.in(Volts))),
@@ -55,7 +55,7 @@ public class SysId {
     Hanger inst = Hanger.getInstance();
     SysIdRoutine routine =
         new SysIdRoutine(
-            new Config(Volts.of(0.5).per(Seconds), Volts.of(3.0), Seconds.of(15.0)),
+            new Config(Volts.of(0.5).per(Seconds), Volts.of(3.0), Seconds.of(6.0)),
             new Mechanism(
                 (Voltage voltage) -> inst.getMotor().setVoltage(voltage),
                 (SysIdRoutineLog log) -> {
@@ -80,7 +80,7 @@ public class SysId {
     Indexer inst = Indexer.getInstance();
     SysIdRoutine routine =
         new SysIdRoutine(
-            new Config(Volts.of(0.5).per(Seconds), Volts.of(3.0), Seconds.of(15.0)),
+            new Config(Volts.of(0.5).per(Seconds), Volts.of(3.0), Seconds.of(6.0)),
             new Mechanism(
                 (Voltage voltage) -> inst.getMotor().setVoltage(voltage),
                 (SysIdRoutineLog log) -> {
@@ -105,7 +105,7 @@ public class SysId {
     IntakeRoller inst = IntakeRoller.getInstance();
     SysIdRoutine routine =
         new SysIdRoutine(
-            new Config(Volts.of(0.5).per(Seconds), Volts.of(3.0), Seconds.of(15.0)),
+            new Config(Volts.of(0.5).per(Seconds), Volts.of(3.0), Seconds.of(6.0)),
             new Mechanism(
                 (Voltage voltage) -> inst.getMotor().setVoltage(voltage),
                 (SysIdRoutineLog log) -> {
@@ -131,7 +131,7 @@ public class SysId {
     final VoltageOut m_voltReq = new VoltageOut(0.0);
     SysIdRoutine routine =
         new SysIdRoutine(
-            new Config(Volts.of(0.5).per(Seconds), Volts.of(3.0), Seconds.of(15.0)),
+            new Config(Volts.of(0.5).per(Seconds), Volts.of(3.0), Seconds.of(6.0)),
             new Mechanism(
                 (Voltage voltage) ->
                     inst.getMotor().setControl(m_voltReq.withOutput(voltage.in(Volts))),
@@ -157,7 +157,7 @@ public class SysId {
     Shooter inst = Shooter.getInstance();
     SysIdRoutine routine =
         new SysIdRoutine(
-            new Config(Volts.of(0.5).per(Seconds), Volts.of(3.0), Seconds.of(15.0)),
+            new Config(Volts.of(0.5).per(Seconds), Volts.of(3.0), Seconds.of(6.0)),
             new Mechanism(
                 (Voltage voltage) -> inst.getMotor().setVoltage(voltage),
                 (SysIdRoutineLog log) -> {
