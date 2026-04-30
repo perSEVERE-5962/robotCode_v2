@@ -36,10 +36,10 @@ deploy {
 
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
                     jvmArgs.add("-XX:+UnlockExperimentalVMOptions")
-                    jvmArgs.add("-XX:+UseG1GC")
+                    //jvmArgs.add("-XX:+UseG1GC")
                     jvmArgs.add("-XX:MaxGCPauseMillis=20")
 
-                    final JAVA_HEAP_SIZE_MB = 400;
+                    final JAVA_HEAP_SIZE_MB = 200;
                     jvmArgs.add("-Xmx" + JAVA_HEAP_SIZE_MB + "M")
                     jvmArgs.add("-Xms" + JAVA_HEAP_SIZE_MB + "M")
                     jvmArgs.add("-XX:+AlwaysPreTouch")
