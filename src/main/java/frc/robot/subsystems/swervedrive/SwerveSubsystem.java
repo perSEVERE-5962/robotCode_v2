@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
@@ -47,6 +48,7 @@ import org.json.simple.parser.ParseException;
 import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
+import swervelib.SwerveDriveTest;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -92,10 +94,10 @@ public class SwerveSubsystem extends SubsystemBase {
       throw new RuntimeException(e);
     }
     swerveDrive.setHeadingCorrection(
-        false); // Heading correction should only be used while controlling the robot via
+        true); // Heading correction should only be used while controlling the robot via
     // angle.
     swerveDrive.setCosineCompensator(
-        false); // !SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for
+        true); // !SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for
     // simulations since it causes discrepancies not seen in real life.
     swerveDrive.setAngularVelocityCompensation(
         true, true,
@@ -134,7 +136,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   /** Setup the photon vision class. */
-  public void setupPhotonVision() {
+  private void setupPhotonVision() {
     vision = new Vision(swerveDrive::getPose, swerveDrive.field);
   }
 
@@ -160,7 +162,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public void simulationPeriodic() {}
 
   /** Setup AutoBuilder for PathPlanner. */
-  public void setupPathPlanner() {
+  private void setupPathPlanner() {
     // Load the RobotConfig from the GUI settings. You should probably
     // store this in your Constants file
     RobotConfig config;
@@ -348,23 +350,23 @@ public class SwerveSubsystem extends SubsystemBase {
    *
    * @return SysId Drive Command
    */
-  // public Command sysIdDriveMotorCommand() {
-  //   return SwerveDriveTest.generateSysIdCommand(
-  //       SwerveDriveTest.setDriveSysIdRoutine(new Config(), this, swerveDrive, 12, true),
-  //       3.0,
-  //       5.0,
-  //       3.0);
-  // }
+  public Command sysIdDriveMotorCommand() {
+    return SwerveDriveTest.generateSysIdCommand(
+        SwerveDriveTest.setDriveSysIdRoutine(new Config(), this, swerveDrive, 12, true),
+        3.0,
+        5.0,
+        3.0);
+  }
 
-  // /**
-  //  * Command to characterize the robot angle motors using SysId
-  //  *
-  //  * @return SysId Angle Command
-  //  */
-  // public Command sysIdAngleMotorCommand() {
-  //   return SwerveDriveTest.generateSysIdCommand(
-  //       SwerveDriveTest.setAngleSysIdRoutine(new Config(), this, swerveDrive), 3.0, 5.0, 3.0);
-  // }
+  /**
+   * Command to characterize the robot angle motors using SysId
+   *
+   * @return SysId Angle Command
+   */
+  public Command sysIdAngleMotorCommand() {
+    return SwerveDriveTest.generateSysIdCommand(
+        SwerveDriveTest.setAngleSysIdRoutine(new Config(), this, swerveDrive), 3.0, 5.0, 3.0);
+  }
 
   /**
    * Returns a Command that centers the modules of the SwerveDrive subsystem.
