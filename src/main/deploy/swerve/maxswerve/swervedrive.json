@@ -1,0 +1,14 @@
+{
+  "imu": {
+    "type": "pigeon2",
+    "id": 13,
+    "canbus": "null"
+  },
+  "invertedIMU": false,
+  "modules": [
+    "tcfl.json",
+    "tcfr.json",
+    "tcbl.json",
+    "tcbr.json"
+  ]
+}
