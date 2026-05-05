@@ -457,7 +457,7 @@ public class RobotContainer {
       // copilotXbox.x().whileTrue(new HoldAndIntake());
 
       copilotXbox.rightTrigger().whileTrue(new FeedEject());
-            copilotXbox.leftTrigger().whileTrue(new FeedEject(5000));
+      copilotXbox.leftTrigger().whileTrue(new FeedEject(5000));
       copilotXbox.b().whileTrue(new ManualShoot());
       copilotXbox.a().whileTrue(new IntakeParallel());
       // driverXbox.b().whileTrue(new MoveShooter(2500));
@@ -477,7 +477,8 @@ public class RobotContainer {
       // copilotXbox
       //     .leftTrigger()
       //     .whileTrue(
-      //         (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
+      //         (new PivotIntake(-0.3).withTimeout(.89).andThen(new
+      // PivotIntake(0.2).withTimeout(.7)))
       //             .repeatedly());
 
       // second controller Start toggles wonAuto override (fixes bad FMS data mid-match)

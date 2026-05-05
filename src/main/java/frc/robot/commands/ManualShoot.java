@@ -9,7 +9,8 @@ import frc.robot.util.TunableNumber;
 // driver points the robot, copilot holds the button, balls come out.
 // constant RPM, no aiming, no zone logic. adjustable from dashboard.
 public class ManualShoot extends Command {
-  private static final TunableNumber manualShootRPM = new TunableNumber("ManualShoot/RPM", 2640); // 3.2 m calculated distance
+  private static final TunableNumber manualShootRPM =
+      new TunableNumber("ManualShoot/RPM", 2640); // 3.2 m calculated distance
 
   private final Shooter shooter;
   private final Indexer indexer;

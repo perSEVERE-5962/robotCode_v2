@@ -25,8 +25,7 @@ public class FeedEject extends Command {
     targRPM = feedRPM.get();
   }
 
-
-   public FeedEject(int targRPM) {
+  public FeedEject(int targRPM) {
     shooter = Shooter.getInstance();
     indexer = Indexer.getInstance();
     agitator = Agitator.getInstance();
