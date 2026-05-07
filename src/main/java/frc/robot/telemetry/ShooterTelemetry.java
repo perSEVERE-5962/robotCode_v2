@@ -65,7 +65,7 @@ class ShooterTelemetry implements SubsystemTelemetry {
   private double lastShotVelocityRPM = 0;
   private boolean temperatureWarning = false;
   private boolean pidTuningEvent = false;
-  private double prevKP = -1, prevKI = -1, prevKD = -1, prevFF = -1;
+  private double prevKP = -1, prevKI = -1, prevKD = -1, prevKV = -1;
 
   private final Debouncer connectDebouncer =
       new Debouncer(DeviceHealthConstants.DISCONNECT_DEBOUNCE_SEC, Debouncer.DebounceType.kFalling);
@@ -237,15 +237,15 @@ class ShooterTelemetry implements SubsystemTelemetry {
       double curKP = Shooter.getTunableKP();
       double curKI = Shooter.getTunableKI();
       double curKD = Shooter.getTunableKD();
-      double curFF = Shooter.getTunableFF();
+      double curKV = Shooter.getTunableKV();
       if (prevKP >= 0
-          && (curKP != prevKP || curKI != prevKI || curKD != prevKD || curFF != prevFF)) {
+          && (curKP != prevKP || curKI != prevKI || curKD != prevKD || curKV != prevKV)) {
         pidTuningEvent = true;
       }
       prevKP = curKP;
       prevKI = curKI;
       prevKD = curKD;
-      prevFF = curFF;
+      prevKV = curKV;
     } catch (Throwable t) {
       pidTuningEvent = false;
     }
@@ -374,7 +374,7 @@ class ShooterTelemetry implements SubsystemTelemetry {
         SafeLog.put("Shooter/Config/kP", prevKP);
         SafeLog.put("Shooter/Config/kI", prevKI);
         SafeLog.put("Shooter/Config/kD", prevKD);
-        SafeLog.put("Shooter/Config/FF", prevFF);
+        SafeLog.put("Shooter/Config/FF", prevKV);
       }
       SafeLog.put("Shooter/StallDurationMs", stallDurationMs);
       SafeLog.put("Shooter/PreviousState", previousShooterState);

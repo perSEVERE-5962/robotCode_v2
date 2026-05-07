@@ -44,10 +44,8 @@ public class AimAndShootCommand extends Command {
   private final Agitator agitator;
   private final DoubleSupplier forwardInput;
   private final DoubleSupplier strafeInput;
-  private final boolean autoFinish;
 
   private final HeadingController headingController = new HeadingController();
-  private final Timer autoTimer = new Timer();
   private final Timer reverseTimer = new Timer();
 
   // Firing hysteresis state
@@ -65,8 +63,6 @@ public class AimAndShootCommand extends Command {
       new Translation2d(ShotCalculatorConstants.LAUNCHER_OFFSET_X, 0);
 
   // Tunable thresholds matching SpeedUpThenIndex
-  private static final TunableNumber autoTimeoutSec =
-      new TunableNumber("AimAndShoot/AutoTimeoutSec", 4.5);
   private static final TunableNumber underShootPct =
       new TunableNumber("AimAndShoot/UnderShootPct", 0.85);
   private static final TunableNumber underShootDebounceMs =
@@ -87,15 +83,13 @@ public class AimAndShootCommand extends Command {
       Indexer indexer,
       Agitator agitator,
       DoubleSupplier forwardInput,
-      DoubleSupplier strafeInput,
-      boolean autoFinish) {
+      DoubleSupplier strafeInput) {
     this.swerve = swerve;
     this.shooter = shooter;
     this.indexer = indexer;
     this.agitator = agitator;
     this.forwardInput = forwardInput;
     this.strafeInput = strafeInput;
-    this.autoFinish = autoFinish;
 
     addRequirements(swerve, shooter, indexer, agitator);
   }
@@ -114,10 +108,6 @@ public class AimAndShootCommand extends Command {
 
     // start spinning early with flat RPM, execute() will switch to LUT RPM
     shooter.moveToVelocityWithPID(1000);
-
-    if (autoFinish) {
-      autoTimer.restart();
-    }
   }
 
   @Override
@@ -246,9 +236,6 @@ public class AimAndShootCommand extends Command {
         "AimAndShoot/HeadingErrorDeg", Math.toDegrees(headingController.getPositionError()));
     SafeLog.put("AimAndShoot/Feeding", feeding);
     SafeLog.put("AimAndShoot/ShooterAtSpeed", reachedSpeed);
-    if (autoFinish) {
-      SafeLog.put("AimAndShoot/AutoTimerSec", autoTimer.get());
-    }
   }
 
   @Override
@@ -267,9 +254,6 @@ public class AimAndShootCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    if (autoFinish) {
-      return autoTimer.hasElapsed(autoTimeoutSec.get());
-    }
     return false;
   }
 

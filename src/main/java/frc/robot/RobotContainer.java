@@ -103,7 +103,6 @@ public class RobotContainer {
               () -> driverXbox.getLeftX() * -1)
           .withControllerRotationAxis(() -> driverXbox.getRightX() * -1)
           .deadband(OperatorConstants.DEADBAND)
-          .scaleTranslation(0.8)
           .allianceRelativeControl(true);
 
   /** Clones the angular velocity input stream and converts it to a fieldRelative input stream. */
@@ -124,7 +123,6 @@ public class RobotContainer {
               () -> -driverXbox.getLeftX())
           .withControllerRotationAxis(() -> -driverXbox.getRawAxis(2))
           .deadband(OperatorConstants.DEADBAND)
-          .scaleTranslation(0.8)
           .allianceRelativeControl(true);
   // Derive the heading axis with math!
   SwerveInputStream driveDirectAngleKeyboard =
@@ -142,7 +140,6 @@ public class RobotContainer {
   //   () -> driverJoystick.getX() * -1)
   //   .withControllerRotationAxis(driverJoystick::getTwist)
   //   .deadband(OperatorConstants.DEADBAND)
-  //   .scaleTranslation(0.8)
   //   .allianceRelativeControl(true);
 
   // SwerveInputStream driveAngularVelocityKeyboard =
@@ -151,7 +148,6 @@ public class RobotContainer {
   //   () -> -driverJoystick.getX())
   //   .withControllerRotationAxis(() -> driverJoystick.getTwist())
   //   .deadband(OperatorConstants.DEADBAND)
-  //   .scaleTranslation(0.8)
   //   .allianceRelativeControl(true);
   // // Derive the heading axis with math!
   // SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
@@ -263,8 +259,7 @@ public class RobotContainer {
                     indexer,
                     agitator,
                     () -> -driverXbox.getLeftY() * -1,
-                    () -> -driverXbox.getLeftX() * -1,
-                    false)));
+                    () -> -driverXbox.getLeftX() * -1)));
     NamedCommands.registerCommand(
         "ShakeIntakeAndScoreWithTimeout",
         ((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
@@ -276,8 +271,7 @@ public class RobotContainer {
                     indexer,
                     agitator,
                     () -> -driverXbox.getLeftY() * -1,
-                    () -> -driverXbox.getLeftX() * -1,
-                    true))
+                    () -> -driverXbox.getLeftX() * -1))
             .withTimeout(3.67));
   }
 
@@ -375,8 +369,7 @@ public class RobotContainer {
                   indexer,
                   agitator,
                   () -> -driverXbox.getLeftY() * -1,
-                  () -> -driverXbox.getLeftX() * -1,
-                  false));
+                  () -> -driverXbox.getLeftX() * -1));
       // driverXbox.y().whileTrue(new RetractIntake());
       // driverXbox.x().whileTrue(new MoveIndexer(6000));
       driverXbox.b().whileTrue(new MoveIntake(Constants.MotorConstants.DESIRED_INTAKE_RPM));
@@ -551,14 +544,14 @@ public class RobotContainer {
                         Commands.defer(
                             () ->
                                 new AimAndShootCommand(
-                                    drivebase, shooter, indexer, agitator, () -> 0, () -> 0, false),
+                                    drivebase, shooter, indexer, agitator, () -> 0, () -> 0),
                             Set.of(drivebase, shooter, indexer, agitator))),
                 AutoBuilder.pathfindToPoseFlipped(BLUE_DEPOT_SCORING_POSE, assistConstraints)
                     .andThen(
                         Commands.defer(
                             () ->
                                 new AimAndShootCommand(
-                                    drivebase, shooter, indexer, agitator, () -> 0, () -> 0, false),
+                                    drivebase, shooter, indexer, agitator, () -> 0, () -> 0),
                             Set.of(drivebase, shooter, indexer, agitator))),
                 () ->
                     drivebase

@@ -6,14 +6,13 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.util.TunableNumber;
 
 public class Shooter extends MaxActuator {
   private static Shooter instance;
-  private SlewRateLimiter limiter;
+  // private SlewRateLimiter limiter;
   private SparkMax[] followers;
 
   private SparkMax motor;
@@ -24,7 +23,7 @@ public class Shooter extends MaxActuator {
   private static final TunableNumber kP = new TunableNumber("Shooter/kP", ShooterConstants.kP);
   private static final TunableNumber kI = new TunableNumber("Shooter/kI", ShooterConstants.kI);
   private static final TunableNumber kD = new TunableNumber("Shooter/kD", ShooterConstants.kD);
-  private static final TunableNumber kF = new TunableNumber("Shooter/FF", ShooterConstants.kV);
+  private static final TunableNumber kV = new TunableNumber("Shooter/FF", ShooterConstants.kV);
 
   // Tunable setpoints and thresholds
   private static final TunableNumber targetRPMTunable =
@@ -77,7 +76,7 @@ public class Shooter extends MaxActuator {
   public void periodic() {
     try {
       TunableNumber.ifChanged(
-          () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+          () -> updatePID(kP.get(), kI.get(), kD.get(), kV.get()), kP, kI, kD, kV);
     } catch (Throwable t) {
       // CAN fault during PID update must not kill scheduler
     }
@@ -86,7 +85,7 @@ public class Shooter extends MaxActuator {
   @Override
   public void moveToVelocityWithPID(double rpm) {
     this.desiredRPM = rpm;
-    motor.getClosedLoopController().setSetpoint(rpm, SparkMax.ControlType.kVelocity);
+    super.moveToVelocityWithPID(rpm);
   }
 
   private SparkMax configureFollower(int canId, boolean inverted) {
@@ -102,7 +101,7 @@ public class Shooter extends MaxActuator {
         .quadratureMeasurementPeriod(10)
         .uvwMeasurementPeriod(8)
         .uvwAverageDepth(2);
-    follower.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    follower.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     return follower;
   }
 
@@ -153,8 +152,8 @@ public class Shooter extends MaxActuator {
     return kD.get();
   }
 
-  public static double getTunableFF() {
-    return kF.get();
+  public static double getTunableKV() {
+    return kV.get();
   }
 
   public static Shooter getInstance() {
