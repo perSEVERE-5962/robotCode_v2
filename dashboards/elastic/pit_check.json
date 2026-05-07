@@ -199,34 +199,6 @@
             }
           },
           {
-            "title": "Hanger",
-            "x": 0.0,
-            "y": 600.0,
-            "width": 250.0,
-            "height": 80.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Hanger/Device/Connected",
-              "period": 0.033,
-              "true_color": 4278233600,
-              "false_color": 4294901760,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "Hanger Fault",
-            "x": 250.0,
-            "y": 600.0,
-            "width": 500.0,
-            "height": 80.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Hanger/Fault/Summary",
-              "period": 0.033
-            }
-          },
-          {
             "title": "Agitator",
             "x": 750.0,
             "y": 600.0,

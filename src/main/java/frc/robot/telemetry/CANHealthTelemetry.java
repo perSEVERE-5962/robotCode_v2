@@ -42,8 +42,6 @@ class CANHealthTelemetry implements SubsystemTelemetry {
           new ExpectedDevice(
               "IntakePivot", Constants.CANDeviceIDs.kIntakePivotID, DeviceClass.MOTOR_CONTROLLER),
           new ExpectedDevice(
-              "Hanger", Constants.CANDeviceIDs.kHangerID, DeviceClass.MOTOR_CONTROLLER),
-          new ExpectedDevice(
               "Agitator", Constants.CANDeviceIDs.kAgitatorID, DeviceClass.MOTOR_CONTROLLER),
           new ExpectedDevice("Gyro", -1, DeviceClass.SENSOR),
           new ExpectedDevice("LeftCam", -1, DeviceClass.CAMERA),
@@ -74,7 +72,6 @@ class CANHealthTelemetry implements SubsystemTelemetry {
   private final IndexerTelemetry indexerTelemetry;
   private final IntakeRollerTelemetry intakeRollerTelemetry;
   private final IntakePivotTelemetry intakePivotTelemetry;
-  private final HangerTelemetry hangerTelemetry;
   private final AgitatorTelemetry agitatorTelemetry;
   private final VisionTelemetry visionTelemetry;
   private final DriveTelemetry driveTelemetry;
@@ -104,7 +101,6 @@ class CANHealthTelemetry implements SubsystemTelemetry {
       IndexerTelemetry indexerTelemetry,
       IntakeRollerTelemetry intakeRollerTelemetry,
       IntakePivotTelemetry intakePivotTelemetry,
-      HangerTelemetry hangerTelemetry,
       AgitatorTelemetry agitatorTelemetry,
       VisionTelemetry visionTelemetry,
       DriveTelemetry driveTelemetry) {
@@ -112,7 +108,6 @@ class CANHealthTelemetry implements SubsystemTelemetry {
     this.indexerTelemetry = indexerTelemetry;
     this.intakeRollerTelemetry = intakeRollerTelemetry;
     this.intakePivotTelemetry = intakePivotTelemetry;
-    this.hangerTelemetry = hangerTelemetry;
     this.agitatorTelemetry = agitatorTelemetry;
     this.visionTelemetry = visionTelemetry;
     this.driveTelemetry = driveTelemetry;
@@ -124,14 +119,13 @@ class CANHealthTelemetry implements SubsystemTelemetry {
     connected[1] = indexerTelemetry != null && indexerTelemetry.isDeviceConnected();
     connected[2] = intakeRollerTelemetry != null && intakeRollerTelemetry.isDeviceConnected();
     connected[3] = intakePivotTelemetry != null && intakePivotTelemetry.isDeviceConnected();
-    connected[4] = hangerTelemetry != null && hangerTelemetry.isDeviceConnected();
-    connected[5] = agitatorTelemetry != null && agitatorTelemetry.isDeviceConnected();
-    connected[6] = driveTelemetry != null && driveTelemetry.isGyroConnected();
-    connected[7] = visionTelemetry != null && visionTelemetry.isLeftCamConnected();
-    connected[8] = visionTelemetry != null && visionTelemetry.isRightCamConnected();
+    connected[4] = agitatorTelemetry != null && agitatorTelemetry.isDeviceConnected();
+    connected[5] = driveTelemetry != null && driveTelemetry.isGyroConnected();
+    connected[6] = visionTelemetry != null && visionTelemetry.isLeftCamConnected();
+    connected[7] = visionTelemetry != null && visionTelemetry.isRightCamConnected();
 
     for (int m = 0; m < 4; m++) {
-      int base = 9 + m * 3;
+      int base = 8 + m * 3;
       connected[base] = driveTelemetry != null && driveTelemetry.isDriveMotorConnected(m);
       connected[base + 1] = driveTelemetry != null && driveTelemetry.isTurnMotorConnected(m);
       connected[base + 2] = driveTelemetry != null && driveTelemetry.isEncoderOk(m);
@@ -189,7 +183,6 @@ class CANHealthTelemetry implements SubsystemTelemetry {
       faults += Math.max(0, intakeRollerTelemetry.getDeviceFaultsRaw());
     if (intakePivotTelemetry != null)
       faults += Math.max(0, intakePivotTelemetry.getDeviceFaultsRaw());
-    if (hangerTelemetry != null) faults += Math.max(0, hangerTelemetry.getDeviceFaultsRaw());
     if (agitatorTelemetry != null) faults += Math.max(0, agitatorTelemetry.getDeviceFaultsRaw());
     if (driveTelemetry != null) {
       for (int m = 0; m < 4; m++) {

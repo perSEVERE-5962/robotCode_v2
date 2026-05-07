@@ -322,16 +322,6 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/Hanger/TemperatureCelsius",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#80588e",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "stepped",
                     "logKey": "/RealOutputs/SystemHealth/RioCPUTemp",
                     "logType": "Number",
                     "visible": true,

@@ -142,23 +142,6 @@
             }
           },
           {
-            "title": "Hanger Temp",
-            "x": 1241.4,
-            "y": 99.7,
-            "width": 258.6,
-            "height": 99.7,
-            "type": "Number Bar",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Hanger/TemperatureCelsius",
-              "period": 0.033,
-              "min_value": 0.0,
-              "max_value": 100.0,
-              "divisions": 5,
-              "inverted": false,
-              "orientation": "horizontal"
-            }
-          },
-          {
             "title": "Gyro",
             "x": 0.0,
             "y": 200.4,
@@ -1036,23 +1019,6 @@
               "period": 0.033,
               "min_value": 0.0,
               "max_value": 30.0,
-              "divisions": 5,
-              "inverted": false,
-              "orientation": "horizontal"
-            }
-          },
-          {
-            "title": "Hanger Current",
-            "x": 517.2,
-            "y": 350.0,
-            "width": 517.1,
-            "height": 116.3,
-            "type": "Number Bar",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Hanger/CurrentAmps",
-              "period": 0.033,
-              "min_value": 0.0,
-              "max_value": 60.0,
               "divisions": 5,
               "inverted": false,
               "orientation": "horizontal"

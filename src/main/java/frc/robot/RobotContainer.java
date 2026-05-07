@@ -45,7 +45,6 @@ import frc.robot.commands.SpeedUpThenIndex;
 import frc.robot.lib.BLine.FollowPath;
 import frc.robot.lib.BLine.Path;
 import frc.robot.subsystems.Agitator;
-import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.IntakeRoller;
@@ -84,7 +83,6 @@ public class RobotContainer {
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/neo"));
 
   Agitator agitator = Agitator.getInstance();
-  Hanger hanger = Hanger.getInstance();
   Indexer indexer = Indexer.getInstance();
   IntakeRoller roller = IntakeRoller.getInstance();
   IntakePivot pivot = IntakePivot.getInstance();

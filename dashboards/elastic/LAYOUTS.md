@@ -76,7 +76,6 @@ Go/no-go verdict in 30 seconds. Top = health, middle = motor temps, bottom = sen
 | Indexer Temp | Number Bar | 3x1 | Indexer/TemperatureCelsius |
 | IntakeRoller Temp | Number Bar | 3x1 | IntakeRoller/TemperatureCelsius |
 | IntakePivot Temp | Number Bar | 3x1 | IntakePivot/TemperatureCelsius |
-| Hanger Temp | Number Bar | 3x1 | Hanger/TemperatureCelsius |
 | Gyro | Boolean Box | 2x1 | Drive/Gyro/Connected |
 | Left Cam | Boolean Box | 2x1 | Vision/Camera/LeftCam/Connected |
 | Right Cam | Boolean Box | 2x1 | Vision/Camera/RightCam/Connected |
@@ -158,7 +157,7 @@ Shooter PID tuning with **Graph widget centerpiece** (8x3 RPM time-series).
 
 ### Tab "Subsystems" (19 widgets, 5 rows)
 
-Indexer (with current graph), Hanger, Intake, and Driver tuning parameters.
+Indexer (with current graph), Intake, and Driver tuning parameters.
 
 | Widget | Type | Size | Signal |
 |--------|------|------|--------|
@@ -167,7 +166,6 @@ Indexer (with current graph), Hanger, Intake, and Driver tuning parameters.
 | Idx TgtSpd/JamAmps/JamSec | 3x Text Display (submit) | 2-3x1 | SmartDashboard Indexer params |
 | Indexer Jam | Boolean Box | 4x1 | Indexer/JamDetected |
 | Idx Actual/Target/Jam Count | 3x Text Display | 3/3/2x1 | Indexer telemetry |
-| Hanger kP/kD | 2x Text Display (submit) | 2x1 | SmartDashboard Hanger gains |
 | Intake Speed | Text Display (submit) | 2x1 | SmartDashboard Intake speed |
 | Vision Yaw/Pitch | 2x Text Display | 3x1 | Vision target angles |
 | Deadband / Turn Constant | 2x Text Display (submit) | 3x1 | SmartDashboard Driver params |

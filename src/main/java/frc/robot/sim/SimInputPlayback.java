@@ -82,7 +82,6 @@ public class SimInputPlayback {
     notifyDS();
   }
 
-  /** Hold right bumper for DeployHanger / release for ClimbHanger */
   public void holdRightBumper(boolean pressed) {
     xbox.setRightBumperButton(pressed);
     notifyDS();

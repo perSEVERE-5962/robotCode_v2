@@ -15,7 +15,6 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
   private IndexerTelemetry indexerTelemetry;
   private IntakeRollerTelemetry intakeRollerTelemetry;
   private IntakePivotTelemetry intakePivotTelemetry;
-  private HangerTelemetry hangerTelemetry;
   private AgitatorTelemetry agitatorTelemetry;
   private VisionTelemetry visionTelemetry;
   private DriveTelemetry driveTelemetry;
@@ -27,7 +26,6 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     indexerTelemetry = new IndexerTelemetry();
     intakeRollerTelemetry = new IntakeRollerTelemetry();
     intakePivotTelemetry = new IntakePivotTelemetry();
-    hangerTelemetry = new HangerTelemetry();
     agitatorTelemetry = new AgitatorTelemetry();
     visionTelemetry = new VisionTelemetry();
     driveTelemetry = new DriveTelemetry();
@@ -37,7 +35,6 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
             indexerTelemetry,
             intakeRollerTelemetry,
             intakePivotTelemetry,
-            hangerTelemetry,
             agitatorTelemetry,
             visionTelemetry,
             driveTelemetry);
@@ -53,7 +50,6 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     assertTrue(list.contains("Indexer"));
     assertTrue(list.contains("IntakeRoller"));
     assertTrue(list.contains("IntakePivot"));
-    assertTrue(list.contains("Hanger"));
     assertTrue(list.contains("Agitator"));
     assertTrue(list.contains("Gyro"));
     assertTrue(list.contains("LeftCam"));
@@ -68,7 +64,6 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     setField(indexerTelemetry, "deviceConnected", true);
     setField(intakeRollerTelemetry, "deviceConnected", true);
     setField(intakePivotTelemetry, "deviceConnected", true);
-    setField(hangerTelemetry, "deviceConnected", true);
     setField(agitatorTelemetry, "deviceConnected", true);
     setField(driveTelemetry, "gyroConnected", true);
     setField(visionTelemetry, "leftCamConnected", true);
@@ -80,7 +75,7 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
 
     telemetry.update();
     assertTrue(telemetry.isAllConnected());
-    assertEquals(21, telemetry.getConnectedCount());
+    assertEquals(20, telemetry.getConnectedCount());
     assertEquals("", telemetry.getDisconnectedList());
   }
 
@@ -91,7 +86,6 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     setField(indexerTelemetry, "deviceConnected", true);
     setField(intakeRollerTelemetry, "deviceConnected", true);
     setField(intakePivotTelemetry, "deviceConnected", true);
-    setField(hangerTelemetry, "deviceConnected", true);
     setField(agitatorTelemetry, "deviceConnected", true);
     setField(driveTelemetry, "gyroConnected", true);
     setField(visionTelemetry, "leftCamConnected", true);
@@ -103,7 +97,7 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
 
     telemetry.update();
     assertFalse(telemetry.isAllConnected());
-    assertEquals(20, telemetry.getConnectedCount());
+    assertEquals(19, telemetry.getConnectedCount());
     String list = telemetry.getDisconnectedList();
     assertTrue(list.contains("FR-Drive"), "Should name the specific disconnected module");
     assertFalse(list.contains("Shooter"));
@@ -127,7 +121,6 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     setField(indexerTelemetry, "deviceConnected", true);
     setField(intakeRollerTelemetry, "deviceConnected", true);
     setField(intakePivotTelemetry, "deviceConnected", true);
-    setField(hangerTelemetry, "deviceConnected", true);
     setField(agitatorTelemetry, "deviceConnected", true);
     setField(driveTelemetry, "gyroConnected", true);
     setField(visionTelemetry, "leftCamConnected", true);
@@ -144,12 +137,11 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
   }
 
   @Test
-  void testHangerMissingSetsCritical() throws Exception {
+  void testPivotMissingSetsCritical() throws Exception {
     setField(shooterTelemetry, "deviceConnected", true);
     setField(indexerTelemetry, "deviceConnected", true);
     setField(intakeRollerTelemetry, "deviceConnected", true);
-    setField(intakePivotTelemetry, "deviceConnected", true);
-    setField(hangerTelemetry, "deviceConnected", false);
+    setField(intakePivotTelemetry, "deviceConnected", false);
     setField(agitatorTelemetry, "deviceConnected", true);
     setField(driveTelemetry, "gyroConnected", true);
     setField(visionTelemetry, "leftCamConnected", true);
@@ -163,7 +155,7 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     assertTrue(telemetry.isMissingCritical());
     String[] names = telemetry.getMissingNames();
     assertEquals(1, names.length);
-    assertEquals("Hanger", names[0]);
+    assertEquals("IntakePivot", names[0]);
   }
 
   @Test
@@ -172,7 +164,6 @@ class CANHealthTelemetryTest extends TelemetryTestBase {
     setField(indexerTelemetry, "deviceConnected", true);
     setField(intakeRollerTelemetry, "deviceConnected", true);
     setField(intakePivotTelemetry, "deviceConnected", true);
-    setField(hangerTelemetry, "deviceConnected", true);
     setField(agitatorTelemetry, "deviceConnected", true);
     setField(driveTelemetry, "gyroConnected", true);
     setField(visionTelemetry, "leftCamConnected", false);

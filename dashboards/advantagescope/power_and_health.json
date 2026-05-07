@@ -275,16 +275,6 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/RealOutputs/Hanger/TemperatureCelsius",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#80588e",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "stepped",
                     "logKey": "/RealOutputs/SystemHealth/RioCPUTemp",
                     "logType": "Number",
                     "visible": true,
@@ -584,13 +574,6 @@
                     "logType": "Number",
                     "visible": true,
                     "options": { "color": "#858584", "size": "normal" }
-                  },
-                  {
-                    "type": "stepped",
-                    "logKey": "/RealOutputs/PDH/Hanger/Current",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": { "color": "#7d7461", "size": "normal" }
                   }
                 ],
                 "discreteSources": [],

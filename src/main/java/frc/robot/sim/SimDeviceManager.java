@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import frc.robot.Constants;
 import frc.robot.subsystems.Agitator;
-import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.IntakeRoller;
@@ -29,7 +28,6 @@ public class SimDeviceManager {
   private SparkSim intakeRollerSim;
   private TalonFXSimState agitatorSimState;
   private TalonFXSimState intakePivotSimState;
-  private SparkSim hangerSim;
   private boolean initialized = false;
 
   // Per-motor RPM state for first-order dynamics
@@ -40,12 +38,9 @@ public class SimDeviceManager {
 
   // Position motor state with sticky targets (same command-conflict fix as shooter)
   private double intakePivotPos = 0;
-  private double hangerPos = 0;
   private static final double POSITION_TAU = 0.300; // 300ms approach
   private double lastPivotTarget = 0;
   private int pivotHoldCycles = 0;
-  private double lastHangerTarget = 0;
-  private int hangerHoldCycles = 0;
 
   // Sticky target: holds last nonzero target for a brief grace period,
   // avoiding brief 0s from command scheduler transitions
@@ -66,13 +61,11 @@ public class SimDeviceManager {
       IntakeRoller intakeRoller = IntakeRoller.getInstance();
       Agitator agitator = Agitator.getInstance();
       IntakePivot intakePivot = IntakePivot.getInstance();
-      Hanger hanger = Hanger.getInstance();
       if (shooter == null
           || indexer == null
           || intakeRoller == null
           || agitator == null
-          || intakePivot == null
-          || hanger == null) {
+          || intakePivot == null) {
         SafeLog.put("Sim/DeviceManager/InitError", "NullSubsystem");
         initialized = false;
         return;
@@ -84,7 +77,6 @@ public class SimDeviceManager {
       agitatorSimState.setSupplyVoltage(12.0);
       intakePivotSimState = intakePivot.getMotor().getSimState();
       intakePivotSimState.setSupplyVoltage(12.0);
-      hangerSim = new SparkSim(hanger.getMotor(), DCMotor.getNEO(1));
       initialized = true;
     } catch (RuntimeException e) {
       SafeLog.put("Sim/DeviceManager/InitError", e.getClass().getSimpleName());
@@ -168,19 +160,6 @@ public class SimDeviceManager {
       intakePivotPos += (lastPivotTarget - intakePivotPos) * pivotAlpha;
       intakePivotSimState.setRawRotorPosition(intakePivotPos);
 
-      Hanger hangerInst = Hanger.getInstance();
-      if (hangerInst == null) return;
-      double rawHangerTarget = hangerInst.getTargetPosition();
-      if (rawHangerTarget != 0 && Math.abs(rawHangerTarget) >= Math.abs(lastHangerTarget)) {
-        lastHangerTarget = rawHangerTarget;
-        hangerHoldCycles = TARGET_HOLD_COUNT;
-      } else if (hangerHoldCycles > 0) {
-        hangerHoldCycles--;
-      } else {
-        lastHangerTarget = rawHangerTarget;
-      }
-      hangerPos = updatePositionToTarget(hangerSim, hangerPos, lastHangerTarget);
-
       SafeLog.put("Sim/Debug/ShooterOutput", shooterSim.getAppliedOutput());
       SafeLog.put("Sim/Debug/ShooterRPM", shooterRPM);
       SafeLog.put("Sim/Debug/ShooterTarget", shooterTarget);
@@ -192,8 +171,6 @@ public class SimDeviceManager {
       SafeLog.put("Sim/Debug/AgitatorRPM", agitatorRPM);
       SafeLog.put("Sim/Debug/IntakePivotPos", intakePivotPos);
       SafeLog.put("Sim/Debug/IntakePivotTarget", lastPivotTarget);
-      SafeLog.put("Sim/Debug/HangerPos", hangerPos);
-      SafeLog.put("Sim/Debug/HangerTarget", lastHangerTarget);
     } catch (RuntimeException e) {
       SafeLog.put("Sim/DeviceManager/UpdateError", e.getClass().getSimpleName());
     }
@@ -241,10 +218,6 @@ public class SimDeviceManager {
 
   public TalonFXSimState getIntakePivotSimState() {
     return intakePivotSimState;
-  }
-
-  public SparkSim getHangerSim() {
-    return hangerSim;
   }
 
   public boolean isInitialized() {

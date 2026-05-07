@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.BatteryThresholds;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.IntakeRoller;
@@ -323,12 +322,6 @@ public class PreMatchDiagnostics {
       if (IntakePivot.getInstance() == null) missing.append("IntakePivot,");
     } catch (Exception e) {
       missing.append("IntakePivot,");
-    }
-
-    try {
-      if (Hanger.getInstance() == null) missing.append("Hanger,");
-    } catch (Exception e) {
-      missing.append("Hanger,");
     }
 
     String missingStr = missing.length() > 0 ? missing.substring(0, missing.length() - 1) : "none";

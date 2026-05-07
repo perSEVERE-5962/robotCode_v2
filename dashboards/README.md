@@ -23,7 +23,7 @@ ref/dashboards/
     ├── match_review.json                  <- Post-match debrief (scoring, cycles, field position)
     ├── cycle_and_strategy.json            <- Hub strategy, cycle timing, intake pipeline
     ├── pit_triage.json                    <- Quick pit health check between matches
-    ├── mechanism_debug.json               <- Mechanism PID debugging (shooter/indexer/hanger)
+    ├── mechanism_debug.json               <- Mechanism PID debugging (shooter/indexer)
     ├── power_and_health.json              <- Brownout/CAN/loop analysis
     ├── drive_and_auto.json                <- Swerve drive + auto path analysis
     ├── shooter_tuning.json                <- Shooter PID tuning (11 tabs)
@@ -66,7 +66,7 @@ See [advantagescope/LAYOUTS.md](advantagescope/LAYOUTS.md) for details and troub
 | Match Review | [match_review.json](advantagescope/match_review.json) | 7 | After every match -- scoring timeline (heading error + prediction active), 3D field with shot arc, cycles, driver inputs |
 | Cycle & Strategy | [cycle_and_strategy.json](advantagescope/cycle_and_strategy.json) | 5 | Hub shift analysis, cycle timing, intake-to-score pipeline, scoring positions |
 | Pit Triage | [pit_triage.json](advantagescope/pit_triage.json) | 5 | Quick pit health check -- battery, faults, performance, field replay |
-| Mechanism Debug | [mechanism_debug.json](advantagescope/mechanism_debug.json) | 8 | Shooter/indexer/intake/hanger PID response, jams, temps |
+| Mechanism Debug | [mechanism_debug.json](advantagescope/mechanism_debug.json) | 8 | Shooter/indexer/intake PID response, jams, temps |
 | Power & Health | [power_and_health.json](advantagescope/power_and_health.json) | 6 | Brownout, CAN errors, loop overruns, thermals, crash barriers |
 
 ### Utility Layouts (focused debugging)

@@ -106,7 +106,6 @@ Run through these with the robot enabled. Check the signals in AdvantageScope as
 
 **Signals that will be zero if hardware isn't installed yet (this is expected, not a bug):**
 - `IntakeRoller/*` and `IntakePivot/*` → zero until intake is assembled
-- `Hanger/*` → zero until hanger is mounted
 - `Vision/*` → zero until cameras are on the robot
 - Motor temperatures → zero in the first few seconds, they take time to read
 
@@ -121,7 +120,7 @@ The Tuning layout in Elastic lets you change PID gains on the fly without re-dep
 3. The RPM Graph in the middle shows shooter velocity in real time (5-second rolling window)
 4. The kP/kI/kD/FF text fields next to it are **editable**. Type a new value and hit Enter.
 5. The gain updates instantly on the robot through NetworkTables. You'll see the response change on the graph right away.
-6. Same thing works on the **Subsystems** tab for indexer gains, hanger gains, intake speed, and driver deadband
+6. Same thing works on the **Subsystems** tab for indexer gains, intake speed, and driver deadband
 
 This is way faster than the old edit-build-deploy loop for tuning. Just spin up the shooter, tweak a gain, watch the graph, repeat.
 

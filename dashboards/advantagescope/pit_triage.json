@@ -428,13 +428,6 @@
                     "logType": "String",
                     "visible": true,
                     "options": { "color": "#e5b31b" }
-                  },
-                  {
-                    "type": "text",
-                    "logKey": "/RealOutputs/Hanger/ActiveCommand",
-                    "logType": "String",
-                    "visible": true,
-                    "options": { "color": "#80588e" }
                   }
                 ],
                 "leftLockedRange": null, "rightLockedRange": null,

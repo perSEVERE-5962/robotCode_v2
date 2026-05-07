@@ -44,7 +44,6 @@ public class TelemetryManager {
   private IndexerTelemetry indexerTelemetry;
   private IntakeRollerTelemetry intakeRollerTelemetry;
   private IntakePivotTelemetry intakePivotTelemetry;
-  private HangerTelemetry hangerTelemetry;
   private VisionTelemetry visionTelemetry;
   private ScoringTelemetry scoringTelemetry;
   private DriveTelemetry driveTelemetry;
@@ -73,7 +72,6 @@ public class TelemetryManager {
     indexerTelemetry = new IndexerTelemetry();
     intakeRollerTelemetry = new IntakeRollerTelemetry();
     intakePivotTelemetry = new IntakePivotTelemetry();
-    hangerTelemetry = new HangerTelemetry();
     visionTelemetry = new VisionTelemetry();
     scoringTelemetry = new ScoringTelemetry(shooterTelemetry, indexerTelemetry, visionTelemetry);
     driveTelemetry = new DriveTelemetry();
@@ -93,7 +91,6 @@ public class TelemetryManager {
             indexerTelemetry,
             intakeRollerTelemetry,
             intakePivotTelemetry,
-            hangerTelemetry,
             agitatorTelemetry,
             visionTelemetry,
             driveTelemetry);
@@ -108,7 +105,6 @@ public class TelemetryManager {
     telemetryList.add(indexerTelemetry);
     telemetryList.add(intakeRollerTelemetry);
     telemetryList.add(intakePivotTelemetry);
-    telemetryList.add(hangerTelemetry);
     telemetryList.add(visionTelemetry);
     telemetryList.add(scoringTelemetry);
     telemetryList.add(matchTelemetry);
@@ -120,7 +116,6 @@ public class TelemetryManager {
     telemetryList.add(agitatorTelemetry);
 
     // Debug only: skipped in competition updateAll() to cut ~119 signals + LoggedTracer overhead
-    tuningOnlyList.add(hangerTelemetry);
     tuningOnlyList.add(matchStatsTelemetry);
     tuningOnlyList.add(shotVisualizerTelemetry);
     tuningOnlyList.add(shotPredictorTelemetry);

@@ -118,7 +118,6 @@ public final class Constants {
     public static final int kShooterFollower2 = 55;
     public static final int kIntakePivotID = 56;
     public static final int kIntakeRollerID = 57;
-    public static final int kHangerID = 60;
     public static final int kAgitatorID = 51;
   }
 
@@ -132,10 +131,7 @@ public final class Constants {
     public static final double IN_INTAKE_POS = 0.3;
     public static final double DESIRED_INTAKE_RPM = 5000;
     public static final double INTAKE_POS_TOLERANCE = .2;
-    public static final double UP_HANGER_POS = 0;
-    public static final double DOWN_HANGER_POS = 0;
     public static final double DESIRED_AGITATOR_RPM = 5640;
-    public static final double HANGER_POS_TOLERANCE = 0.1;
   }
 
   public static final class IntakeRollerConstants {
@@ -213,18 +209,6 @@ public final class Constants {
     public static final double TARGET_RPM = 5676;
     public static final double JAM_CURRENT_THRESHOLD_AMPS = 79;
     public static final double JAM_TIME_THRESHOLD_SECONDS = 0.3;
-  }
-
-  public static final class HangerConstants {
-    public static final double kP = 1.0;
-    public static final double kI = 0.0;
-    public static final double kD = 0.0;
-    public static final double kMinOutput = -1.0;
-    public static final double kMaxOutput = 1.0;
-    public static final double kS = 0.0;
-    public static final double kV = 0.0;
-    public static final double kG = 0.0;
-    public static final double kIz = 0.0;
   }
 
   public static final class HopperConstants {

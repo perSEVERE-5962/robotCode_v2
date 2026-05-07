@@ -57,7 +57,7 @@
 
 ---
 
-### mechanism_debug.json: "Why did the shooter/indexer/hanger fail?"
+### mechanism_debug.json: "Why did the shooter/indexer fail?"
 **When:** A mechanism misbehaved during the match (missed shots, jams, climb failed).
 **Tabs:**
 1. **Shooter PID**: Target RPM (red) vs actual (green) vs error (amber) vs output (gray). Classic PID response view.
@@ -65,7 +65,6 @@
 3. **Indexer**: Target vs actual speed, current draw, jam detection. Jams show as current spike + speed drop.
 4. **Intake Roller**: Velocity RPM + current draw with Running/Stalled boolean overlays. See intake performance and stall events.
 5. **Intake Pivot**: Position (rotations) + current draw with AtTarget/IsDeployed boolean overlays. Verify deploy/retract cycles.
-6. **Hanger Position**: Target vs actual position + error + current. Look for sluggish response (needs more P) or overshoot (needs less).
 7. **All Motor Temps**: All 4 mechanism motor temps + total system current on one graph. Spot which motor is heating fastest.
 
 **What to look for:**
