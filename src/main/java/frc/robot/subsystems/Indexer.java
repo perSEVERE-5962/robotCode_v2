@@ -15,6 +15,8 @@ public class Indexer extends FlexActuator {
   private SparkFlexConfig motorConfig;
   private static Indexer instance;
 
+  private double targetRPM;
+
   // Tunable PID values
   private static final TunableNumber kP = new TunableNumber("Indexer/kP", IndexerConstants.P);
   private static final TunableNumber kI = new TunableNumber("Indexer/kI", IndexerConstants.I);
@@ -102,6 +104,16 @@ public class Indexer extends FlexActuator {
     } catch (Throwable t) {
       // CAN failure degrades jam detection, never kills drive control
     }
+  }
+
+  @Override
+  public void moveToVelocityWithPID(double rpm) {
+    targetRPM = rpm;
+    super.moveToVelocityWithPID(rpm);
+  }
+
+  public double getTargetRPM() {
+    return targetRPM;
   }
 
   public JamProtection getJamProtection() {
