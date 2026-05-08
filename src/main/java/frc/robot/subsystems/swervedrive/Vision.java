@@ -172,7 +172,8 @@ public class Vision {
 
     double now = Timer.getFPGATimestamp();
 
-    boolean underDefense = VisionFilter.isUnderDefense(gyroRateDps, speedMps);
+    // boolean underDefense = VisionFilter.isUnderDefense(gyroRateDps, speedMps);
+    boolean underDefense = false;
 
     // Find freshest frame across all cameras so we can skip stale ones
     double freshestTimestamp = 0;

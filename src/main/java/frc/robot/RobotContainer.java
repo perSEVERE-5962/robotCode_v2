@@ -38,6 +38,7 @@ import frc.robot.commands.FeedEject;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
 import frc.robot.commands.IntakeParallel;
+import frc.robot.commands.ManualShoot;
 import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.MoveIntake;
 import frc.robot.commands.MoveShooter;
@@ -206,7 +207,7 @@ public class RobotContainer {
 
     configureBindings();
     configureTeleopAssist();
-    new EventTrigger("DeployAndIntakeEvent").whileTrue(new HoldAndIntake());
+    new EventTrigger("DeployAndIntakeEvent").whileTrue(new IntakeParallel());
     DriverStation.silenceJoystickConnectionWarning(true);
 
     frc.robot.util.ShotCalculator.getInstance().setSwerve(drivebase);
@@ -250,7 +251,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
     NamedCommands.registerCommand("DeployIntake", new DeployIntake());
 
-    NamedCommands.registerCommand("HoldAndRunIntake", new HoldAndIntake());
+    NamedCommands.registerCommand("HoldAndRunIntake", new IntakeParallel());
     NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(4));
 
     NamedCommands.registerCommand("SpeedUpThenShoot", new SpeedUpThenIndex());
@@ -456,7 +457,8 @@ public class RobotContainer {
       // copilotXbox.x().whileTrue(new HoldAndIntake());
 
       copilotXbox.rightTrigger().whileTrue(new FeedEject());
-
+      copilotXbox.leftTrigger().whileTrue(new FeedEject(5000));
+      copilotXbox.b().whileTrue(new ManualShoot());
       copilotXbox.a().whileTrue(new IntakeParallel());
       // driverXbox.b().whileTrue(new MoveShooter(2500));
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.3));
@@ -472,11 +474,12 @@ public class RobotContainer {
       //             () -> -driverXbox.getLeftY(),
       //             () -> -driverXbox.getLeftX(),
       //             false));
-      copilotXbox
-          .leftTrigger()
-          .whileTrue(
-              (new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7)))
-                  .repeatedly());
+      // copilotXbox
+      //     .leftTrigger()
+      //     .whileTrue(
+      //         (new PivotIntake(-0.3).withTimeout(.89).andThen(new
+      // PivotIntake(0.2).withTimeout(.7)))
+      //             .repeatedly());
 
       // second controller Start toggles wonAuto override (fixes bad FMS data mid-match)
       // second controller Back clears override and returns to FMS-derived schedule

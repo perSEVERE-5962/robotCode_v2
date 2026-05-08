@@ -280,10 +280,9 @@ public class AimAndShootCommand extends Command {
       return swerve.getHeading(); // hold current heading if pose is corrupt
     }
     // rear-mounted shooter: aim the back of the robot at the hub
-    return robot
-        .minus(hub)
-        .getAngle()
-        .plus(new Rotation2d(ShotCalculatorConstants.SHOOTER_ANGLE_OFFSET_RAD));
+
+    return robot.minus(hub).getAngle();
+    // .plus(new Rotation2d(ShotCalculatorConstants.SHOOTER_ANGLE_OFFSET_RAD));
   }
 
   private Translation2d getHubCenter() {

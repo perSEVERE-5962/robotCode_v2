@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HumanPlayerSwipe"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScoreWithTimeout"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ShootToHuman"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HumanToShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShakeIntakeAndScore"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "ChoreoAutos",
+  "choreoAuto": true
+}
