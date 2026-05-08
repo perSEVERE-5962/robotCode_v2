@@ -2,3 +2,7 @@
 
 # Robot Code v2
 This is the code that will be used from the 2026 season and beyond.  In this repo we have rewritten the swerve drive using YAGSL.
+
+---
+
+📘 Our docs are proudly hosted with support from GitBook.
