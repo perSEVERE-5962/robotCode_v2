@@ -52,6 +52,7 @@ import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.IntakeRoller;
+import frc.robot.subsystems.OrchestraSubsystem;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
@@ -87,7 +88,8 @@ public class RobotContainer {
   Hanger hanger = Hanger.getInstance();
   private boolean useLeftOffset = true;
   private static RobotContainer instance;
-
+  private final OrchestraSubsystem m_orchestra = new OrchestraSubsystem(agitator.getMotor());
+  
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/neo"));
@@ -411,6 +413,7 @@ public class RobotContainer {
       driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
       driverXbox.y().whileTrue(new MoveShooter(1700));
+      driverXbox.back().onTrue(Commands.runOnce(() -> m_orchestra.togglePlayPause(), m_orchestra));
       // driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
       driverXbox.x().whileTrue(new MoveIndexer(6000));
       driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
