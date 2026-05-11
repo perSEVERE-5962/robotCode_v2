@@ -14,7 +14,7 @@ public class OrchestraSubsystem extends SubsystemBase {
             m_orchestra.addInstrument(motor);
         }
 
-        var status = m_orchestra.loadMusic("FromTheStart.chrp");
+        var status = m_orchestra.loadMusic("CrazyTrain.chrp");
         if (!status.isOK()) {
             System.out.println("Orchestra failed to load music: " + status.toString());
         }

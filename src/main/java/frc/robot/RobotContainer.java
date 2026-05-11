@@ -88,7 +88,7 @@ public class RobotContainer {
   Hanger hanger = Hanger.getInstance();
   private boolean useLeftOffset = true;
   private static RobotContainer instance;
-  private final OrchestraSubsystem m_orchestra = new OrchestraSubsystem(agitator.getMotor());
+  private final OrchestraSubsystem m_orchestra = new OrchestraSubsystem(agitator.getMotor(),intakePivot.getMotor());
   
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase =
