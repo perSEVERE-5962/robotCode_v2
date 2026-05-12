@@ -860,7 +860,7 @@ public class ShotCalculator {
     return kRpmOverride.get();
   }
 
-  public void setAimBiasSupplier(java.util.function.DoubleSupplier supplier) {
+  public void setAimBiasSupplier(DoubleSupplier supplier) {
     this.aimBiasSupplier = supplier;
   }
 

@@ -48,14 +48,13 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
 
     // useThroughBoreEncoder ignored for now
 
-    config.Slot0.kG = kG;
-    config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     config.Slot0.kP = kP;
     config.Slot0.kI = kI;
     config.Slot0.kD = kD;
     config.Slot0.kS = kS;
     config.Slot0.kV = kV;
     config.Slot0.kG = kG;
+
     // kCos should be used for arms, kG should be used for elevators
     if (useCos) {
       config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
@@ -111,10 +110,11 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
 
   public void updatePID(double kP, double kI, double kD, double kV) {
     Slot0Configs config = new Slot0Configs();
+    motor.getConfigurator().refresh(config);
     config.kP = kP;
     config.kI = kI;
     config.kD = kD;
     config.kV = kV;
-    motor.getConfigurator().apply(config); // Note: Overrides all Slot0 config values already there
+    motor.getConfigurator().apply(config);
   }
 }
