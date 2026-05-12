@@ -430,7 +430,7 @@ public class RobotContainer {
       driverXbox.b().whileTrue(new MoveIntake());
       driverXbox.a().whileTrue(new IntakeParallel());
       // driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroGyro));
-      // driverXbox.back().whileTrue(drivebase.centerModulesCommand());
+      driverXbox.back().whileTrue(drivebase.centerModulesCommand());
       // driverXbox.back().whileTrue(new SetIntakePosition());
 
       // driverXbox.b().whileTrue(new MoveIntake());
