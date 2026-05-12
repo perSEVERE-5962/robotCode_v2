@@ -22,7 +22,9 @@ public class RetractIntake extends Command {
   public void execute() {}
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    intakePivot.move(0);
+  }
 
   @Override
   public boolean isFinished() {

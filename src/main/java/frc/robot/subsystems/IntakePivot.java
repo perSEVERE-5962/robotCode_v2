@@ -42,11 +42,11 @@ public class IntakePivot extends TalonActuator {
     setStartingPose();
   }
 
-  // @Override
-  // public void moveToPositionWithPID(double position) {
-  //   targetPosition = position;
-  //   super.moveToPositionWithPID(position);
-  // }
+  @Override
+  public void moveToPositionWithPID(double position) {
+    targetPosition = position;
+    super.moveToPositionWithPID(position);
+  }
 
   public boolean isAtTarget() {
     return Math.abs(getPosition() - targetPosition) < Constants.MotorConstants.INTAKE_POS_TOLERANCE;
