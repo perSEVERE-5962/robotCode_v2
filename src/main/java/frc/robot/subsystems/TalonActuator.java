@@ -6,16 +6,25 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.trajectory.ExponentialProfile;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class TalonActuator extends SubsystemBase implements Actuator {
   private TalonFX motor;
   private final VoltageOut m_voltageOut = new VoltageOut(0.0);
   private final PositionVoltage m_posVoltage = new PositionVoltage(0.0);
   private final VelocityVoltage m_velVoltage = new VelocityVoltage(0.0);
+
+  private boolean isArm;
+  private ExponentialProfile profile;
+  private ArmFeedforward armFF;
+  private ElevatorFeedforward elevatorFF;
 
   protected TalonActuator(
       int kID,
@@ -26,17 +35,18 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
       double kMaxOutput,
       double kS,
       double kV,
+      double kA,
       double kG,
-      double kCosRatio,
       double kIz,
       double kUpperSoftLimit,
       double kLowerSoftLimit,
+      double kGearRatio,
       int kStallLimit,
       boolean inverted,
       boolean coast,
       boolean useThroughBoreEncoder,
       boolean useSoftLimits,
-      boolean useCos) {
+      boolean isArm) {
     motor = new TalonFX(kID);
     TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -51,17 +61,9 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
     config.Slot0.kP = kP;
     config.Slot0.kI = kI;
     config.Slot0.kD = kD;
-    config.Slot0.kS = kS;
-    config.Slot0.kV = kV;
-    config.Slot0.kG = kG;
 
-    // kCos should be used for arms, kG should be used for elevators
-    if (useCos) {
-      config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-      config.Feedback.SensorToMechanismRatio = kCosRatio;
-    } else {
-      config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-    }
+    config.Feedback.SensorToMechanismRatio = kGearRatio;
+
     // iZone ignored because it doesn't seem to have it
     config.MotorOutput.PeakForwardDutyCycle = kMaxOutput;
     config.MotorOutput.PeakReverseDutyCycle = kMinOutput;
@@ -76,6 +78,17 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
       config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
       config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = kLowerSoftLimit;
     }
+    this.isArm = isArm;
+    if (kA <= 0)
+      kA = 0.00001; // 0 breaks the exponential profile because of internal division by zero
+    profile =
+        new ExponentialProfile(ExponentialProfile.Constraints.fromCharacteristics(12.0, kV, kA));
+    if (isArm) {
+      armFF = new ArmFeedforward(kS, kG, kV, kA);
+    } else {
+      elevatorFF = new ElevatorFeedforward(kS, kG, kV, kA);
+    }
+
     motor.getConfigurator().apply(config);
   }
 
@@ -88,11 +101,45 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
   }
 
   public void moveToPositionWithPID(double position) {
-    motor.setControl(m_posVoltage.withPosition(position));
+    motor.setControl(
+        m_posVoltage
+            .withPosition(position)
+            .withFeedForward(isArm ? armFF.calculate(position, 0) : elevatorFF.calculate(0)));
   }
 
   public void moveToVelocityWithPID(double rpm) {
-    motor.setControl(m_velVoltage.withVelocity(rpm / 60.0)); // convert from RPM to RPS
+    motor.setControl(
+        m_velVoltage
+            .withVelocity(rpm / 60.0)
+            .withFeedForward(
+                isArm
+                    ? armFF.calculate(Math.PI / 2, rpm / 60.0) // disable kG
+                    : elevatorFF.calculate(rpm / 60.0))); // convert from RPM to RPS
+  }
+
+  public Command moveToGoalPosition(double goalPos) {
+    AtomicReference<ExponentialProfile.State> currentState =
+        new AtomicReference<>(new ExponentialProfile.State());
+    final var goalState = new ExponentialProfile.State(goalPos, 0);
+    return runEnd(
+        () -> {
+          var nextState = profile.calculate(0.02, currentState.get(), goalState);
+          motor.setControl(
+              m_posVoltage
+                  .withPosition(nextState.position)
+                  .withFeedForward(
+                      isArm
+                          ? armFF.calculateWithVelocities(
+                              currentState.get().position,
+                              currentState.get().velocity,
+                              nextState.velocity)
+                          : elevatorFF.calculateWithVelocities(
+                              currentState.get().velocity, nextState.velocity)));
+          currentState.set(nextState);
+        },
+        () -> {
+          motor.set(0);
+        });
   }
 
   public void move(double speed) {
@@ -114,7 +161,11 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
     config.kP = kP;
     config.kI = kI;
     config.kD = kD;
-    config.kV = kV;
     motor.getConfigurator().apply(config);
+    if (isArm) {
+      armFF.setKv(kV);
+    } else {
+      elevatorFF.setKv(kV);
+    }
   }
 }

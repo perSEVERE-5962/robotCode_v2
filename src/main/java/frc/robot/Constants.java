@@ -142,7 +142,9 @@ public final class Constants {
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
     public static final double kV = 0.001848;
+    public static final double kA = 0.0;
     public static final double kIz = 0.0;
+    public static final double kGearRatio = 1.0;
 
     // Default tuning targets
     public static final double TARGET_SPEED = -1;
@@ -156,9 +158,10 @@ public final class Constants {
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
     public static final double kV = 0.0;
+    public static final double kA = 0.0;
     public static final double kG = 0.15;
-    public static final double kCosRatio = 83.333;
     public static final double kIz = 0.0;
+    public static final double kGearRatio = 83.333;
   }
 
   public static final class ShooterConstants {
@@ -169,7 +172,9 @@ public final class Constants {
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
     public static final double kV = 0.002004; // .002064
+    public static final double kA = 0.001;
     public static final double kIz = 0.0;
+    public static final double kGearRatio = 1.0;
 
     // Default tuning targets
     public static final double TARGET_RPM = 2500;
@@ -187,7 +192,9 @@ public final class Constants {
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
     public static final double kV = 0.001764; // .0048, .001848
+    public static final double kA = 0.0;
     public static final double kIz = 0.0;
+    public static final double kGearRatio = 1.0;
 
     // Telemetry constants
     public static final double TARGET_SPEED = 6000;
@@ -203,7 +210,9 @@ public final class Constants {
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
     public static final double kV = 0.192;
+    public static final double kA = 0.0;
     public static final double kIz = 0.0;
+    public static final double kGearRatio = 1.0;
 
     // Default tuning targets
     public static final double TARGET_RPM = 5676;
