@@ -72,6 +72,9 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
 
     motor.setPosition(0);
 
+    config.Audio.BeepOnBoot = false;
+    config.Audio.BeepOnConfig = false;
+
     if (useSoftLimits) {
       config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = kUpperSoftLimit;
