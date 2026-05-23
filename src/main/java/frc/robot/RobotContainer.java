@@ -110,16 +110,16 @@ public class RobotContainer {
               () ->
                   RobotBase.isSimulation()
                       ? -(driverXbox.getLeftY() + SimDriveOverride.getY())
-                      : driverXbox.getLeftY() * -1,
+                      : driverXbox.getLeftY(),
               () ->
                   RobotBase.isSimulation()
                       ? -(driverXbox.getLeftX() + SimDriveOverride.getX())
-                      : driverXbox.getLeftX() * -1)
+                      : driverXbox.getLeftX())
           .withControllerRotationAxis(
               () ->
                   RobotBase.isSimulation()
                       ? -(driverXbox.getRightX() + SimDriveOverride.getOmega())
-                      : driverXbox.getRightX() * -1)
+                      : driverXbox.getRightX())
           .deadband(OperatorConstants.DEADBAND)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);
