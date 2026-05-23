@@ -42,7 +42,7 @@ private static final TunableNumber targetSpeed =
         Constants.AgitatorConstants.Iz,
         0,
         0,
-        false,
+        true,
         false,
         false);
   }

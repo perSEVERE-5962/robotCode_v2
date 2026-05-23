@@ -419,7 +419,52 @@ public class RobotContainer {
     boolean isRedAlliance = isRedAlliance();
 
     if (isRedAlliance) {
-      return RED_HUB_CENTER;
+      return RED_HUB_CENTER
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      ;
     } else {
       return BLUE_HUB_CENTER;
     }
