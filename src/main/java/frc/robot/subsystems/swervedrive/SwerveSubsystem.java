@@ -107,10 +107,11 @@ public class SwerveSubsystem extends SubsystemBase {
     // possible
     if (visionDriveTest) {
       setupPhotonVision();
-      // Stop the odometry thread if we are using vision that way we can synchronize
-      // updates better.
-      swerveDrive.stopOdometryThread();
     }
+    //   // Stop the odometry thread if we are using vision that way we can synchronize
+    //   // updates better.
+    //   swerveDrive.stopOdometryThread();
+    // }
     setupPathPlanner();
     // RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
   }

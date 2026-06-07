@@ -411,7 +411,8 @@ public class RobotContainer {
 
       driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
-      driverXbox.y().whileTrue(new MoveShooter(1700));
+      //driverXbox.y().whileTrue(new MoveShooter(1700));
+      driverXbox.y().whileTrue(new ManualShoot());
       // driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
       driverXbox.x().whileTrue(new MoveIndexer(6000));
       driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
