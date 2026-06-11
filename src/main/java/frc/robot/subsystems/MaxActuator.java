@@ -150,7 +150,7 @@ public abstract class MaxActuator extends SubsystemBase implements Actuator {
             position,
             SparkBase.ControlType.kPosition,
             ClosedLoopSlot.kSlot0,
-            isArm ? armFF.calculate(position, 0) : elevatorFF.calculate(0));
+            isArm ? 0 : elevatorFF.calculate(0));
   }
 
   public void moveToVelocityWithPID(double rpm) {

@@ -105,9 +105,7 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
 
   public void moveToPositionWithPID(double position) {
     motor.setControl(
-        m_posVoltage
-            .withPosition(position)
-            .withFeedForward(isArm ? armFF.calculate(position, 0) : elevatorFF.calculate(0)));
+        m_posVoltage.withPosition(position).withFeedForward(isArm ? 0 : elevatorFF.calculate(0)));
   }
 
   public void moveToVelocityWithPID(double rpm) {
