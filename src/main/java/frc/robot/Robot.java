@@ -251,34 +251,34 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledInit() {
-    try {
-      m_robotContainer.setMotorBrake(true);
-    } catch (Throwable t) {
-      safeLog("Health/CrashBarrier/DisabledInit", true);
-    }
-    disabledTimer.reset();
-    disabledTimer.start();
+    // try {
+    //   m_robotContainer.setMotorBrake(true);
+    // } catch (Throwable t) {
+    //   safeLog("Health/CrashBarrier/DisabledInit", true);
+    // }
+    // disabledTimer.reset();
+    // disabledTimer.start();
 
-    try {
-      EventMarker.modeChange("DISABLED");
-    } catch (Throwable t) {
-      // Event marker failure not critical
-    }
+    // try {
+    //   EventMarker.modeChange("DISABLED");
+    // } catch (Throwable t) {
+    //   // Event marker failure not critical
+    // }
 
-    try {
-      DriverFeedback.getInstance().stopAll();
-    } catch (Throwable t) {
-      // Not critical
-    }
+    // try {
+    //   DriverFeedback.getInstance().stopAll();
+    // } catch (Throwable t) {
+    //   // Not critical
+    // }
 
-    // Generate post-match summary if we were tracking
-    try {
-      PostMatchSummary.getInstance().generateSummary();
-    } catch (Throwable t) {
-      safeLog("Health/CrashBarrier/PostMatchSummary", true);
-    }
+    // // Generate post-match summary if we were tracking
+    // try {
+    //   PostMatchSummary.getInstance().generateSummary();
+    // } catch (Throwable t) {
+    //   safeLog("Health/CrashBarrier/PostMatchSummary", true);
+    // }
 
-    hasRunDiagnostics = false;
+    // hasRunDiagnostics = false;
   }
 
   @Override
@@ -288,46 +288,46 @@ public class Robot extends LoggedRobot {
     //   Constants.TUNING_MODE = false;
     // }
 
-    try {
-      if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME)) {
-        m_robotContainer.setMotorBrake(false);
-        disabledTimer.stop();
-        disabledTimer.reset();
-      }
-    } catch (Throwable t) {
-      safeLog("Health/CrashBarrier/DisabledPeriodic", true);
-    }
+    // try {
+    //   if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME)) {
+    //     m_robotContainer.setMotorBrake(false);
+    //     disabledTimer.stop();
+    //     disabledTimer.reset();
+    //   }
+    // } catch (Throwable t) {
+    //   safeLog("Health/CrashBarrier/DisabledPeriodic", true);
+    // }
 
-    // Run safe diagnostics once after 0.5s delay (let readings stabilize)
-    if (!hasRunDiagnostics && disabledTimer.hasElapsed(0.5)) {
-      try {
-        PreMatchDiagnostics.getInstance().runSafeChecks();
-      } catch (Throwable t) {
-        safeLog("Health/CrashBarrier/Diagnostics", true);
-        DriverStation.reportWarning("Pre-match diagnostics failed: " + t.getMessage(), false);
-      }
-      hasRunDiagnostics = true;
-    }
+    // // Run safe diagnostics once after 0.5s delay (let readings stabilize)
+    // if (!hasRunDiagnostics && disabledTimer.hasElapsed(0.5)) {
+    //   try {
+    //     PreMatchDiagnostics.getInstance().runSafeChecks();
+    //   } catch (Throwable t) {
+    //     safeLog("Health/CrashBarrier/Diagnostics", true);
+    //     DriverStation.reportWarning("Pre-match diagnostics failed: " + t.getMessage(), false);
+    //   }
+    //   hasRunDiagnostics = true;
+    // }
 
-    // Manual safe trigger from dashboard (sensor-only, works while disabled)
-    try {
-      if (PreMatchDiagnostics.getInstance().checkAndClearSafeTrigger()
-          && !PreMatchDiagnostics.getInstance().isRunning()) {
-        PreMatchDiagnostics.getInstance().runSafeChecks();
-      }
-    } catch (Throwable t) {
-      safeLog("Health/CrashBarrier/DiagnosticsTrigger", true);
-    }
+    // // Manual safe trigger from dashboard (sensor-only, works while disabled)
+    // try {
+    //   if (PreMatchDiagnostics.getInstance().checkAndClearSafeTrigger()
+    //       && !PreMatchDiagnostics.getInstance().isRunning()) {
+    //     PreMatchDiagnostics.getInstance().runSafeChecks();
+    //   }
+    // } catch (Throwable t) {
+    //   safeLog("Health/CrashBarrier/DiagnosticsTrigger", true);
+    // }
 
-    // Full trigger pressed while disabled - warn user
-    try {
-      if (PreMatchDiagnostics.getInstance().checkAndClearFullTrigger()) {
-        safeLog("Diagnostics/FullCheckBlocked", true);
-        // Notification sent by PreMatchDiagnostics.runFullChecks() when it rejects
-      }
-    } catch (Throwable t) {
-      // Ignore
-    }
+    // // Full trigger pressed while disabled - warn user
+    // try {
+    //   if (PreMatchDiagnostics.getInstance().checkAndClearFullTrigger()) {
+    //     safeLog("Diagnostics/FullCheckBlocked", true);
+    //     // Notification sent by PreMatchDiagnostics.runFullChecks() when it rejects
+    //   }
+    // } catch (Throwable t) {
+    //   // Ignore
+    // }
   }
 
   @Override

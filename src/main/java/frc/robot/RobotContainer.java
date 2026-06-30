@@ -248,8 +248,10 @@ public class RobotContainer {
   }
 
   private void registerNamedAutoCommands() {
+
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
     NamedCommands.registerCommand("DeployIntake", new DeployIntake());
+    NamedCommands.registerCommand("LockWheels", Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
     NamedCommands.registerCommand("HoldAndRunIntake", new IntakeParallel());
     NamedCommands.registerCommand("HoldAndRunIntakeTimed", new HoldAndIntake().withTimeout(4));
@@ -411,11 +413,13 @@ public class RobotContainer {
 
       driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
+      driverXbox.back().onTrue(new SetIntakePosition());
       //driverXbox.y().whileTrue(new MoveShooter(1700));
       driverXbox.y().whileTrue(new ManualShoot());
+      driverXbox.rightTrigger().whileTrue(new FeedEject());
       // driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
       driverXbox.x().whileTrue(new MoveIndexer(6000));
-      driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
+      //driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
       driverXbox
           .leftTrigger()
           .whileTrue(
