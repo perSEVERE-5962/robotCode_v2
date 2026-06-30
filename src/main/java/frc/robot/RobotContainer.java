@@ -38,6 +38,7 @@ import frc.robot.commands.FeedEject;
 import frc.robot.commands.HoldAndIntake;
 import frc.robot.commands.HubArcDrive;
 import frc.robot.commands.IntakeParallel;
+import frc.robot.commands.MoveAgitator;
 import frc.robot.commands.MoveIndexer;
 import frc.robot.commands.MoveIntake;
 import frc.robot.commands.MoveShooter;
@@ -351,7 +352,7 @@ public class RobotContainer {
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     } else {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+      drivebase.setDefaultCommand(driveRobotOrientedAngularVelocity);
     }
 
     if (Robot.isSimulation()) {
@@ -410,10 +411,13 @@ public class RobotContainer {
 
       driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
-      driverXbox.y().whileTrue(new MoveShooter(1700));
+      driverXbox.rightTrigger().whileTrue(new MoveShooter(3000).alongWith(new MoveIndexer(6000))); //3000 is default RPM, Elastic override takes priority
+      driverXbox.y().whileTrue(new MoveAgitator(6000));
+      driverXbox.back().onTrue(new SetIntakePosition());
+      //driverXbox.y().whileTrue(new MoveShooter(1700));
       // driverXbox.b().whileTrue(new InstantCommand(()->agitator.runVelocity(),(agitator)));
-      driverXbox.x().whileTrue(new MoveIndexer(6000));
-      driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
+      //driverXbox.x().whileTrue(new MoveIndexer(6000));
+      //driverXbox.rightTrigger().whileTrue(driveFieldOrientedAnglularVelocity);
       driverXbox
           .leftTrigger()
           .whileTrue(

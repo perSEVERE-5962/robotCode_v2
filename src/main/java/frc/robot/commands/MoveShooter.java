@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
+import frc.robot.util.ShotCalculator;
+
 
 public class MoveShooter extends Command {
   private Shooter shooter;
@@ -16,7 +18,14 @@ public class MoveShooter extends Command {
 
   @Override
   public void initialize() {
-    shooter.moveToVelocityWithPID(rpm);
+    double override = ShotCalculator.getInstance().getRpmOverride();
+    double targetRPM;
+    if (override > 0){
+      targetRPM = override;
+    }else{
+      targetRPM = rpm;
+    }
+    shooter.moveToVelocityWithPID(targetRPM);
   }
 
   @Override
