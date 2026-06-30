@@ -48,6 +48,7 @@ public class AimAndShootCommand extends Command {
   private final HeadingController headingController = new HeadingController();
   private final Timer autoTimer = new Timer();
   private final Timer reverseTimer = new Timer();
+  private final Timer noBallsTimer = new Timer();
 
   // Firing hysteresis state
   private boolean reachedSpeed = false;
@@ -66,6 +67,10 @@ public class AimAndShootCommand extends Command {
   // Tunable thresholds matching SpeedUpThenIndex
   private static final TunableNumber autoTimeoutSec =
       new TunableNumber("AimAndShoot/AutoTimeoutSec", 4.5);
+  private static final TunableNumber noBallsTimeout =
+      new TunableNumber("AimAndShoot/NoBallsTimeout", 1.5);
+  private static final TunableNumber noBallsRPMThreshold =
+      new TunableNumber("AimAndShoot/NoBallsIndexerRPMThreshold", 200);
   private static final TunableNumber underShootPct =
       new TunableNumber("AimAndShoot/UnderShootPct", 0.85);
   private static final TunableNumber underShootDebounceMs =
@@ -117,6 +122,8 @@ public class AimAndShootCommand extends Command {
     if (autoFinish) {
       autoTimer.restart();
     }
+
+    noBallsTimer.restart();
   }
 
   @Override
@@ -227,6 +234,9 @@ public class AimAndShootCommand extends Command {
       rpmRatio = Math.max(feedRatioFloor.get(), rpmRatio);
       indexer.moveToVelocityWithPID(indexer.getTunableTargetSpeed());
       agitator.moveToVelocityWithPID(5990);
+      if (indexer.getVelocityRPM() < indexer.getTargetRPM() - noBallsRPMThreshold.get()) {
+        noBallsTimer.restart();
+      }
     } else {
       indexer.move(0);
       agitator.moveToVelocityWithPID(agitator.getTunableTargetRPM() * 0.1);
@@ -268,6 +278,9 @@ public class AimAndShootCommand extends Command {
   public boolean isFinished() {
     if (autoFinish) {
       return autoTimer.hasElapsed(autoTimeoutSec.get());
+    }
+    if (feeding && noBallsTimer.hasElapsed(noBallsTimeout.get())) {
+      return true;
     }
     return false;
   }
