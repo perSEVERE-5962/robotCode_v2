@@ -29,7 +29,7 @@ public final class Constants {
    *
    * <p>IMPORTANT: Set to FALSE before competition deployment!
    */
-  public static final boolean TUNING_MODE = true;
+  public static final boolean TUNING_MODE = false;
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
@@ -142,7 +142,7 @@ public final class Constants {
     public static final double DESIRED_INDEXER_RPM = 6000; // 8.4 * 3730/4
     public static final double OUT_INTAKE_POS = 0.0;
     public static final double IN_INTAKE_POS = 0.3;
-    public static final double DESIRED_INTAKE_RPM = 5000;
+    public static final double DESIRED_INTAKE_RPM = 6000;
     public static final double UP_HANGER_POS = 0;
     public static final double DOWN_HANGER_POS = 0;
     public static final double DESIRED_AGITATOR_SPEED = 5640;
@@ -286,7 +286,7 @@ public final class Constants {
 
   public static final class LEDConstants {
     public static final int PWM_PORT = 0;
-    public static final int STRIP_LENGTH = 19;
+    public static final int STRIP_LENGTH = 25;
     public static final double DIM_DISABLED = 0.15;
   }
 

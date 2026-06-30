@@ -29,12 +29,12 @@ public class IntakePivot extends TalonActuator {
         Constants.IntakePivotConstants.MaxOutput,
         Constants.IntakePivotConstants.FF,
         Constants.IntakePivotConstants.Iz,
-        60f,
-        11.5F,
+        0.1,
+        -0.3,
         58.33,
         true,
         false,
-        false);
+        true);
     setStartingPose();
   }
 
