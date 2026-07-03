@@ -411,7 +411,7 @@ public class RobotContainer {
 
       driverXbox.rightBumper().whileTrue(new PivotIntake(-0.2));
       driverXbox.leftBumper().whileTrue(new PivotIntake(0.2));
-      driverXbox.rightTrigger().whileTrue(new MoveShooter(3000).alongWith(new MoveIndexer(6000))); //3000 is default RPM, Elastic override takes priority
+      driverXbox.rightTrigger().whileTrue(new MoveShooter(1000).alongWith(new MoveIndexer(6000))); //3000 is default RPM, Elastic override takes priority
       driverXbox.y().whileTrue(new MoveAgitator(6000));
       driverXbox.back().onTrue(new SetIntakePosition());
       //driverXbox.y().whileTrue(new MoveShooter(1700));
