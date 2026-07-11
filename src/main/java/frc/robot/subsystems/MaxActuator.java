@@ -219,14 +219,23 @@ public abstract class MaxActuator extends SubsystemBase implements Actuator {
   }
 
   /** Hot-reload PID values. Creates new config, takes a few ms. */
-  public void updatePID(double kP, double kI, double kD, double kV) {
+  public void updatePID(
+      double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
     SparkMaxConfig config = new SparkMaxConfig();
     config.closedLoop.p(kP).i(kI).d(kD);
     motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     if (isArm) {
+      armFF.setKs(kS);
       armFF.setKv(kV);
+      armFF.setKa(kA);
+      armFF.setKg(kG);
     } else {
+      elevatorFF.setKs(kS);
       elevatorFF.setKv(kV);
+      elevatorFF.setKa(kA);
+      elevatorFF.setKg(kG);
     }
+    profile =
+        new ExponentialProfile(ExponentialProfile.Constraints.fromCharacteristics(12.0, kV, kA));
   }
 }

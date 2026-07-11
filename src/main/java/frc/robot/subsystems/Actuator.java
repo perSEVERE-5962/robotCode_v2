@@ -21,5 +21,6 @@ public interface Actuator {
     return 0;
   }
 
-  public void updatePID(double kP, double kI, double kD, double kV);
+  public void updatePID(
+      double kP, double kI, double kD, double kS, double kV, double kA, double kG);
 }

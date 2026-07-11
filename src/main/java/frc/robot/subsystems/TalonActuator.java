@@ -156,7 +156,8 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
     return motor.getFaultField().getValue();
   }
 
-  public void updatePID(double kP, double kI, double kD, double kV) {
+  public void updatePID(
+      double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
     Slot0Configs config = new Slot0Configs();
     motor.getConfigurator().refresh(config);
     config.kP = kP;
@@ -164,9 +165,17 @@ public abstract class TalonActuator extends SubsystemBase implements Actuator {
     config.kD = kD;
     motor.getConfigurator().apply(config);
     if (isArm) {
+      armFF.setKs(kS);
       armFF.setKv(kV);
+      armFF.setKa(kA);
+      armFF.setKg(kG);
     } else {
+      elevatorFF.setKs(kS);
       elevatorFF.setKv(kV);
+      elevatorFF.setKa(kA);
+      elevatorFF.setKg(kG);
     }
+    profile =
+        new ExponentialProfile(ExponentialProfile.Constraints.fromCharacteristics(12.0, kV, kA));
   }
 }

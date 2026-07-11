@@ -15,7 +15,8 @@ public class Indexer extends FlexActuator {
   private static final TunableNumber kP = new TunableNumber("Indexer/kP", IndexerConstants.kP);
   private static final TunableNumber kI = new TunableNumber("Indexer/kI", IndexerConstants.kI);
   private static final TunableNumber kD = new TunableNumber("Indexer/kD", IndexerConstants.kD);
-  private static final TunableNumber kF = new TunableNumber("Indexer/FF", IndexerConstants.kV);
+  private static final TunableNumber kV = new TunableNumber("Indexer/FF", IndexerConstants.kV);
+  private static final TunableNumber kS = new TunableNumber("Indexer/kS", IndexerConstants.kS);
 
   private final JamProtection jamProtection =
       new JamProtection(
@@ -75,7 +76,20 @@ public class Indexer extends FlexActuator {
   public void periodic() {
     try {
       TunableNumber.ifChanged(
-          () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+          () ->
+              updatePID(
+                  kP.get(),
+                  kI.get(),
+                  kD.get(),
+                  kS.get(),
+                  kV.get(),
+                  Constants.IndexerConstants.kA,
+                  0),
+          kP,
+          kI,
+          kD,
+          kS,
+          kV);
     } catch (Throwable t) {
       // CAN fault during PID update must not kill scheduler
     }
@@ -137,7 +151,7 @@ public class Indexer extends FlexActuator {
   }
 
   public static double getTunableFF() {
-    return kF.get();
+    return kV.get();
   }
 
   public static Indexer getInstance() {

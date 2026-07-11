@@ -15,8 +15,12 @@ public class IntakePivot extends TalonActuator {
       new TunableNumber("IntakePivot/kI", IntakePivotConstants.kI);
   private static final TunableNumber kD =
       new TunableNumber("IntakePivot/kD", IntakePivotConstants.kD);
-  private static final TunableNumber kF =
+  private static final TunableNumber kV =
       new TunableNumber("IntakePivot/FF", IntakePivotConstants.kV);
+  private static final TunableNumber kG =
+      new TunableNumber("IntakePivot/kG", IntakePivotConstants.kG);
+  private static final TunableNumber kS =
+      new TunableNumber("IntakePivot/kS", IntakePivotConstants.kS);
 
   private IntakePivot() {
     super(
@@ -31,8 +35,8 @@ public class IntakePivot extends TalonActuator {
         Constants.IntakePivotConstants.kA,
         Constants.IntakePivotConstants.kG,
         Constants.IntakePivotConstants.kIz,
-        60f,
-        11.5f,
+        Constants.MotorConstants.IN_INTAKE_POS,
+        Constants.MotorConstants.OUT_INTAKE_POS,
         Constants.IntakePivotConstants.kGearRatio,
         58,
         false,
@@ -40,7 +44,6 @@ public class IntakePivot extends TalonActuator {
         false,
         true,
         true);
-    setStartingPose();
   }
 
   @Override
@@ -65,10 +68,6 @@ public class IntakePivot extends TalonActuator {
 
   public void setMotorPositionToScoring() {
     getMotor().setPosition(0.0);
-  }
-
-  public void setStartingPose() {
-    getMotor().setPosition(-0.4);
   }
 
   /** Duty-cycle output, normalized -1 to 1, for parity with the Spark-based accessors. */
@@ -99,13 +98,28 @@ public class IntakePivot extends TalonActuator {
   }
 
   public double getTunableFF() {
-    return kF.get();
+    return kV.get();
   }
 
+  @Override
   public void periodic() {
     try {
       TunableNumber.ifChanged(
-          () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+          () ->
+              updatePID(
+                  kP.get(),
+                  kI.get(),
+                  kD.get(),
+                  kS.get(),
+                  kV.get(),
+                  Constants.IntakePivotConstants.kA,
+                  kG.get()),
+          kP,
+          kI,
+          kD,
+          kS,
+          kV,
+          kG);
     } catch (Throwable t) {
       // CAN fault during PID update must not kill scheduler
     }

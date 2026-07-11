@@ -24,6 +24,7 @@ public class Shooter extends MaxActuator {
   private static final TunableNumber kI = new TunableNumber("Shooter/kI", ShooterConstants.kI);
   private static final TunableNumber kD = new TunableNumber("Shooter/kD", ShooterConstants.kD);
   private static final TunableNumber kV = new TunableNumber("Shooter/FF", ShooterConstants.kV);
+  private static final TunableNumber kS = new TunableNumber("Shooter/kS", ShooterConstants.kS);
 
   // Tunable setpoints and thresholds
   private static final TunableNumber targetRPMTunable =
@@ -77,7 +78,20 @@ public class Shooter extends MaxActuator {
   public void periodic() {
     try {
       TunableNumber.ifChanged(
-          () -> updatePID(kP.get(), kI.get(), kD.get(), kV.get()), kP, kI, kD, kV);
+          () ->
+              updatePID(
+                  kP.get(),
+                  kI.get(),
+                  kD.get(),
+                  kS.get(),
+                  kV.get(),
+                  Constants.ShooterConstants.kA,
+                  0),
+          kP,
+          kI,
+          kD,
+          kS,
+          kV);
     } catch (Throwable t) {
       // CAN fault during PID update must not kill scheduler
     }

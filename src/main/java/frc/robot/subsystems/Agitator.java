@@ -13,8 +13,10 @@ public class Agitator extends TalonActuator {
       new TunableNumber("Agitator/kI", Constants.AgitatorConstants.kI);
   private static final TunableNumber kD =
       new TunableNumber("Agitator/kD", Constants.AgitatorConstants.kD);
-  private static final TunableNumber kF =
+  private static final TunableNumber kV =
       new TunableNumber("Agitator/FF", Constants.AgitatorConstants.kV);
+  private static final TunableNumber kS =
+      new TunableNumber("Agitator/kS", Constants.AgitatorConstants.kS);
   private static final TunableNumber targetSpeed =
       new TunableNumber("Agitator/TargetSpeed", Constants.AgitatorConstants.TARGET_RPM);
   private static final TunableNumber jamCurrentThreshold =
@@ -79,7 +81,20 @@ public class Agitator extends TalonActuator {
   public void periodic() {
     try {
       TunableNumber.ifChanged(
-          () -> updatePID(kP.get(), kI.get(), kD.get(), kF.get()), kP, kI, kD, kF);
+          () ->
+              updatePID(
+                  kP.get(),
+                  kI.get(),
+                  kD.get(),
+                  kS.get(),
+                  kV.get(),
+                  Constants.AgitatorConstants.kA,
+                  0),
+          kP,
+          kI,
+          kD,
+          kS,
+          kV);
     } catch (Throwable t) {
       // CAN fault during PID update must not kill scheduler
     }
@@ -127,7 +142,7 @@ public class Agitator extends TalonActuator {
   }
 
   public static double getTunableFF() {
-    return kF.get();
+    return kV.get();
   }
 
   public static Agitator getInstance() {

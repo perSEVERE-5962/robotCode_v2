@@ -128,9 +128,9 @@ public final class Constants {
     public static final double DESIRED_INDEXER_RPM = 6000; // 8.4 * 3730/4
     public static final double BACKWARDS_INDEXER_RPM = 999;
     public static final double OUT_INTAKE_POS = 0.0;
-    public static final double IN_INTAKE_POS = 0.3;
+    public static final double IN_INTAKE_POS = 0.246;
     public static final double DESIRED_INTAKE_RPM = 5000;
-    public static final double INTAKE_POS_TOLERANCE = .2;
+    public static final double INTAKE_POS_TOLERANCE = 0.01;
     public static final double DESIRED_AGITATOR_RPM = 5640;
   }
 
@@ -157,7 +157,7 @@ public final class Constants {
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
-    public static final double kV = 0.0;
+    public static final double kV = 0.0021;
     public static final double kA = 0.0;
     public static final double kG = 0.15;
     public static final double kIz = 0.0;
@@ -209,7 +209,7 @@ public final class Constants {
     public static final double kMinOutput = -1.0;
     public static final double kMaxOutput = 1.0;
     public static final double kS = 0.0;
-    public static final double kV = 0.192;
+    public static final double kV = 0.0021;
     public static final double kA = 0.0;
     public static final double kIz = 0.0;
     public static final double kGearRatio = 1.0;
