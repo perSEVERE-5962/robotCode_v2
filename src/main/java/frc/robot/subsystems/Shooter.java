@@ -23,7 +23,7 @@ public class Shooter extends MaxActuator {
   private static final TunableNumber kP = new TunableNumber("Shooter/kP", ShooterConstants.kP);
   private static final TunableNumber kI = new TunableNumber("Shooter/kI", ShooterConstants.kI);
   private static final TunableNumber kD = new TunableNumber("Shooter/kD", ShooterConstants.kD);
-  private static final TunableNumber kV = new TunableNumber("Shooter/FF", ShooterConstants.kV);
+  private static final TunableNumber kV = new TunableNumber("Shooter/kV", ShooterConstants.kV);
   private static final TunableNumber kS = new TunableNumber("Shooter/kS", ShooterConstants.kS);
 
   // Tunable setpoints and thresholds

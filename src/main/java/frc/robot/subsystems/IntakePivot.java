@@ -16,7 +16,7 @@ public class IntakePivot extends TalonActuator {
   private static final TunableNumber kD =
       new TunableNumber("IntakePivot/kD", IntakePivotConstants.kD);
   private static final TunableNumber kV =
-      new TunableNumber("IntakePivot/FF", IntakePivotConstants.kV);
+      new TunableNumber("IntakePivot/kV", IntakePivotConstants.kV);
   private static final TunableNumber kG =
       new TunableNumber("IntakePivot/kG", IntakePivotConstants.kG);
   private static final TunableNumber kS =
@@ -97,7 +97,7 @@ public class IntakePivot extends TalonActuator {
     return kD.get();
   }
 
-  public double getTunableFF() {
+  public double getTunableKV() {
     return kV.get();
   }
 

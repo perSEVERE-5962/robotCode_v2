@@ -14,7 +14,7 @@ public class Agitator extends TalonActuator {
   private static final TunableNumber kD =
       new TunableNumber("Agitator/kD", Constants.AgitatorConstants.kD);
   private static final TunableNumber kV =
-      new TunableNumber("Agitator/FF", Constants.AgitatorConstants.kV);
+      new TunableNumber("Agitator/kV", Constants.AgitatorConstants.kV);
   private static final TunableNumber kS =
       new TunableNumber("Agitator/kS", Constants.AgitatorConstants.kS);
   private static final TunableNumber targetSpeed =
@@ -141,7 +141,7 @@ public class Agitator extends TalonActuator {
     return kD.get();
   }
 
-  public static double getTunableFF() {
+  public static double getTunableKV() {
     return kV.get();
   }
 

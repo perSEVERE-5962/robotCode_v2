@@ -15,7 +15,7 @@ public class Indexer extends FlexActuator {
   private static final TunableNumber kP = new TunableNumber("Indexer/kP", IndexerConstants.kP);
   private static final TunableNumber kI = new TunableNumber("Indexer/kI", IndexerConstants.kI);
   private static final TunableNumber kD = new TunableNumber("Indexer/kD", IndexerConstants.kD);
-  private static final TunableNumber kV = new TunableNumber("Indexer/FF", IndexerConstants.kV);
+  private static final TunableNumber kV = new TunableNumber("Indexer/kV", IndexerConstants.kV);
   private static final TunableNumber kS = new TunableNumber("Indexer/kS", IndexerConstants.kS);
 
   private final JamProtection jamProtection =
@@ -150,7 +150,7 @@ public class Indexer extends FlexActuator {
     return kD.get();
   }
 
-  public static double getTunableFF() {
+  public static double getTunableKV() {
     return kV.get();
   }
 

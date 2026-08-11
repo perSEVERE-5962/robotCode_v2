@@ -210,7 +210,7 @@ class IndexerTelemetry implements SubsystemTelemetry {
       double curKP = Indexer.getTunableKP();
       double curKI = Indexer.getTunableKI();
       double curKD = Indexer.getTunableKD();
-      double curFF = Indexer.getTunableFF();
+      double curFF = Indexer.getTunableKV();
       if (prevKP >= 0
           && (curKP != prevKP || curKI != prevKI || curKD != prevKD || curFF != prevFF)) {
         pidTuningEvent = true;

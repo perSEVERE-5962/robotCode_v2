@@ -450,7 +450,7 @@
             "height": 99.7,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/Shooter/FF",
+              "topic": "/SmartDashboard/Shooter/kV",
               "period": 0.033,
               "show_submit_button": true
             }
@@ -914,7 +914,7 @@
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/IntakePivot/FF",
+              "topic": "/SmartDashboard/IntakePivot/kV",
               "period": 0.033,
               "show_submit_button": true
             }
@@ -1284,14 +1284,14 @@
             }
           },
           {
-            "title": "Idx FF",
+            "title": "Idx kV",
             "x": 1396.0,
             "y": 0.0,
             "width": 103.0,
             "height": 116.3,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/Indexer/FF",
+              "topic": "/SmartDashboard/Indexer/kV",
               "period": 0.033,
               "show_submit_button": true
             }
