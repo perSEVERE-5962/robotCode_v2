@@ -53,7 +53,7 @@ public class Indexer extends Actuator {
         Constants.IndexerConstants.Iz,
         0,
         0,
-        true,
+        false,
         false,
         false);
     motor = getMotor();

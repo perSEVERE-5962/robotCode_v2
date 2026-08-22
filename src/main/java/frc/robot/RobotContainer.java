@@ -288,12 +288,17 @@ public class RobotContainer {
       //driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
       copilotXbox.y().whileTrue(new AgitateAndIndex(Constants.AgitatorConstants.TARGET_RPM, Constants.IndexerConstants.TARGET_SPEED, hubArcDrive::isScheduled));
-      copilotXbox.x().whileTrue(new SetIntakePosition());
+      
+      
+      copilotXbox .x().whileTrue(new SetIntakePosition());
+                    // upward
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.4));
+                  // downward
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.4));
+      copilotXbox.rightTrigger().whileTrue(new MoveShooter(200));
       copilotXbox.b().whileTrue(new AgitateAndIndex(-Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
-      copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
+      //copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
       copilotXbox.leftTrigger().whileTrue((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly());
 
 //       Trigger crossingZone = new Trigger(()->{

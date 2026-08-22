@@ -45,7 +45,7 @@ public class Shooter extends Actuator {
         ShooterConstants.Iz,
         0,
         0,
-        false,
+        true,
         false,
         false);
     motor = getMotor();

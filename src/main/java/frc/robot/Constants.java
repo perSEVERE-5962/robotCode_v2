@@ -104,7 +104,7 @@ public final class Constants {
   public static final class MotorConstants {
     public static final double DESIRED_SHOOTER_RPM = 3730;
     public static final double DESIRED_INDEXER_RPM = 7833; // 8.4 * 3730/4
-    public static final double OUT_INTAKE_POS = 38.24;
+    public static final double OUT_INTAKE_POS = 34.309;
     public static final double IN_INTAKE_POS = 11.6;
     public static final double DESIRED_INTAKE_SPEED = -.99;
     public static final double UP_HANGER_POS = 0;
