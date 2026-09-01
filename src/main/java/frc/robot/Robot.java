@@ -42,6 +42,8 @@ public class Robot extends LoggedRobot {
   private Timer disabledTimer;
   private SimScenarioRunner simScenarioRunner;
   private SimDeviceManager simDeviceManager;
+  
+    
 
   // Diagnostics
   private boolean hasRunDiagnostics = false;

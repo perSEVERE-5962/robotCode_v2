@@ -75,7 +75,10 @@ public class RobotContainer {
   final CommandXboxController driverXbox = new CommandXboxController(0);
     final CommandXboxController copilotXbox = new CommandXboxController(1);
 
+
+
   final CommandJoystick driverJoystick = new CommandJoystick(2);
+
   private final SendableChooser<Command> autoChooser;
 
   private boolean useLeftOffset = true;
@@ -139,7 +142,8 @@ public class RobotContainer {
           .copy()
           .withControllerHeadingAxis(
               () -> Math.sin(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2),
-              () -> Math.cos(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2))
+              () -> Math.cos(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2)
+          )
           .headingWhile(true)
           .translationHeadingOffset(true)
           .translationHeadingOffset(Rotation2d.fromDegrees(0));
@@ -265,11 +269,13 @@ public class RobotContainer {
       // drivebase.driveToPose(
       // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
       // );
-
+    //Dpad
     }
+    
+    
+
     if (DriverStation.isTest()) {
-      drivebase.setDefaultCommand(
-          driveFieldOrientedAnglularVelocity); // Overrides drive command above!
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
@@ -290,16 +296,21 @@ public class RobotContainer {
       copilotXbox.y().whileTrue(new AgitateAndIndex(Constants.AgitatorConstants.TARGET_RPM, Constants.IndexerConstants.TARGET_SPEED, hubArcDrive::isScheduled));
       
       
-      copilotXbox .x().whileTrue(new SetIntakePosition());
+      copilotXbox.x().whileTrue(new SetIntakePosition());
                     // upward
       copilotXbox.rightBumper().whileTrue(new PivotIntake(-0.4));
                   // downward
       copilotXbox.leftBumper().whileTrue(new PivotIntake(0.4));
-      copilotXbox.rightTrigger().whileTrue(new MoveShooter(200));
-      copilotXbox.b().whileTrue(new AgitateAndIndex(-Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
+      //copilotXbox.b().whileTrue(new MoveShooter(200));
+      //copilotXbox.b().whileTrue(new AgitateAndIndex(-Constants.AgitatorConstants.TARGET_RPM, -2000, hubArcDrive::isScheduled));
       copilotXbox.a().whileTrue(new DeployIntake().andThen(new HoldAndIntake()));
-      //copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
+      copilotXbox.rightTrigger().whileTrue(new SpeedUpThenIndex());
       copilotXbox.leftTrigger().whileTrue((new PivotIntake(-0.3).withTimeout(.89).andThen(new PivotIntake(0.2).withTimeout(.7))).repeatedly());
+      if (copilotXbox.pov(0).getAsBoolean() == true) {
+        Integer DESIRED_SHOOTER_RPM = 3730;
+      }
+      
+    }}
 
 //       Trigger crossingZone = new Trigger(()->{
 //     Pose2d pose = drivebase.getPose();
@@ -317,7 +328,7 @@ public class RobotContainer {
 // ));
 
 //     }
-  }}
+  
   
   // Rotation2d current = drivebase.getHeading();
   // Rotation2d target;
