@@ -144,7 +144,8 @@ public class Vision {
     // Skip POSE_JUMP gate until we've accepted at least one pose, otherwise
     // the first vision correction after boot gets rejected and vision locks out forever
     double autoElapsed =
-        (acceptedCount == 0) ? 0
+        (acceptedCount == 0)
+            ? 0
             : (autoStartTimestamp > 0) ? Timer.getFPGATimestamp() - autoStartTimestamp : 999;
 
     if (manualOverride) {
@@ -163,66 +164,67 @@ public class Vision {
 
     for (Cameras camera : Cameras.values()) {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
-            if (poseEst.isPresent()) {
+      if (poseEst.isPresent()) {
         var pose = poseEst.get();
         swerveDrive.addVisionMeasurement(
             pose.estimatedPose.toPose2d(), pose.timestampSeconds, camera.curStdDevs);
 
-      if (poseEst.isEmpty()) {
-        continue;
-      }
-
-      EstimatedRobotPose est = poseEst.get();
-
-      // Reject stale (>1s old) or future timestamps
-      double age = now - est.timestampSeconds;
-      if (age < 0 || age > 1.0) {
-        continue;
-      }
-
-      int tagCount = est.targetsUsed.size();
-      double worstAmbiguity = getWorstAmbiguity(est);
-
-      RejectionReason reason =
-          VisionFilter.evaluate(
-              est.estimatedPose,
-              tagCount,
-              worstAmbiguity,
-              gyroHeading,
-              currentFusedPose,
-              autoElapsed);
-
-      if (reason != RejectionReason.ACCEPTED) {
-        rejectedCount++;
-        rejectionsByGate[reason.ordinal()]++;
-        lastRejection = reason;
-        continue;
-      }
-
-      acceptedCount++;
-
-      double avgDist = getAverageTagDistance(est, swerveDrive);
-      Matrix<N3, N1> stdDevs =
-          VisionFilter.computeStdDevs(
-              tagCount,
-              avgDist,
-              speedMps,
-              camera.getSingleTagStdDevs(),
-              camera.getMultiTagStdDevs());
-
-      // Pose blending for single-tag close estimates
-      Pose2d poseToUse = est.estimatedPose.toPose2d();
-      if (tagCount == 1 && avgDist < VisionFilter.BLEND_DISTANCE_THRESHOLD_M) {
-        double w = VisionFilter.computeBlendWeight(avgDist);
-        if (w > 0) {
-          poseToUse = VisionFilter.blendPose(currentFusedPose, poseToUse, w);
-          blendingActive = true;
-          blendWeight = Math.max(blendWeight, w);
+        if (poseEst.isEmpty()) {
+          continue;
         }
-      }
 
-      swerveDrive.addVisionMeasurement(poseToUse, est.timestampSeconds, stdDevs);
-            }}
+        EstimatedRobotPose est = poseEst.get();
+
+        // Reject stale (>1s old) or future timestamps
+        double age = now - est.timestampSeconds;
+        if (age < 0 || age > 1.0) {
+          continue;
+        }
+
+        int tagCount = est.targetsUsed.size();
+        double worstAmbiguity = getWorstAmbiguity(est);
+
+        RejectionReason reason =
+            VisionFilter.evaluate(
+                est.estimatedPose,
+                tagCount,
+                worstAmbiguity,
+                gyroHeading,
+                currentFusedPose,
+                autoElapsed);
+
+        if (reason != RejectionReason.ACCEPTED) {
+          rejectedCount++;
+          rejectionsByGate[reason.ordinal()]++;
+          lastRejection = reason;
+          continue;
+        }
+
+        acceptedCount++;
+
+        double avgDist = getAverageTagDistance(est, swerveDrive);
+        Matrix<N3, N1> stdDevs =
+            VisionFilter.computeStdDevs(
+                tagCount,
+                avgDist,
+                speedMps,
+                camera.getSingleTagStdDevs(),
+                camera.getMultiTagStdDevs());
+
+        // Pose blending for single-tag close estimates
+        Pose2d poseToUse = est.estimatedPose.toPose2d();
+        if (tagCount == 1 && avgDist < VisionFilter.BLEND_DISTANCE_THRESHOLD_M) {
+          double w = VisionFilter.computeBlendWeight(avgDist);
+          if (w > 0) {
+            poseToUse = VisionFilter.blendPose(currentFusedPose, poseToUse, w);
+            blendingActive = true;
+            blendWeight = Math.max(blendWeight, w);
+          }
+        }
+
+        swerveDrive.addVisionMeasurement(poseToUse, est.timestampSeconds, stdDevs);
+      }
+    }
   }
 
   /** Get the worst (highest) ambiguity across all targets in an estimate. */

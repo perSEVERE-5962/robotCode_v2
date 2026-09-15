@@ -91,5 +91,4 @@ class DriveTelemetryTest extends TelemetryTestBase {
     assertEquals(0, telemetry.getTurnFaultsRaw(-1));
     assertEquals(0, telemetry.getTurnFaultsRaw(4));
   }
-
 }

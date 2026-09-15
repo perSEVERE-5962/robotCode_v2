@@ -24,10 +24,11 @@ public class Shooter extends Actuator {
   private static final TunableNumber kI = new TunableNumber("Shooter/kI", ShooterConstants.I);
   private static final TunableNumber kD = new TunableNumber("Shooter/kD", ShooterConstants.D);
   private static final TunableNumber kF = new TunableNumber("Shooter/FF", ShooterConstants.FF);
+  private static double shooter_RPM = Constants.ShooterConstants.TARGET_RPM;
 
   // Tunable setpoints and thresholds
   private static final TunableNumber targetRPMTunable =
-      new TunableNumber("Shooter/TargetRPM", ShooterConstants.TARGET_RPM);
+      new TunableNumber("Shooter/TargetRPM", shooter_RPM);
   private static final TunableNumber toleranceRPM =
       new TunableNumber("Shooter/ToleranceRPM", ShooterConstants.SPEED_TOLERANCE_RPM);
   private static final TunableNumber shotDropRPM =
@@ -54,7 +55,7 @@ public class Shooter extends Actuator {
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
     motorConfig.smartCurrentLimit(40);
     motorEncoder = motor.getEncoder();
-    
+
     motor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
@@ -75,7 +76,7 @@ public class Shooter extends Actuator {
 
   public void move(double speed) {
     motor.set(speed);
-    //targetRPM = speed * 5700;
+    // targetRPM = speed * 5700;
   }
 
   @Override
@@ -111,6 +112,7 @@ public class Shooter extends Actuator {
 
   // Tunable accessors
   public double getTunableTargetRPM() {
+    targetRPMTunable.setDefault(shooter_RPM);
     return targetRPMTunable.get();
   }
 
@@ -144,5 +146,9 @@ public class Shooter extends Actuator {
       instance = new Shooter();
     }
     return instance;
+  }
+
+  public void setShooter_RPM(double speed) {
+    shooter_RPM = speed;
   }
 }

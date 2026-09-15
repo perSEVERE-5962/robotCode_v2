@@ -47,5 +47,4 @@ class SystemHealthTelemetryTest extends TelemetryTestBase {
     assertEquals(0, telemetry.getBrownoutRiskLevel(), "Brownout risk should be 0 at 12.5V");
     assertFalse(telemetry.isBrownoutRisk(), "Brownout risk flag should be false at 12.5V");
   }
-
 }

@@ -125,7 +125,8 @@ class HangerTelemetryTest {
     assertTrue(deployed, "Should be deployed at UP_HANGER_POS");
   }
 
-  // Disabled: hanger not installed this season, UP_HANGER_POS == DOWN_HANGER_POS == 999 (placeholder).
+  // Disabled: hanger not installed this season, UP_HANGER_POS == DOWN_HANGER_POS == 999
+  // (placeholder).
   // Re-enable when real hanger constants are set.
   // @Test
   // void testIsClimbingWhenTargetedDown() throws Exception {

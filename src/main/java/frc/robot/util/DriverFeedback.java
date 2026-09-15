@@ -52,11 +52,7 @@ public class DriverFeedback {
   public static final HapticPattern AUTO_LOST =
       new HapticPattern(
           "AUTO_LOST",
-          new Step[] {
-            new Step(1.0, 1.0, 0.2),
-            new Step(0, 0, 0.1),
-            new Step(0.7, 0, 0.3)
-          },
+          new Step[] {new Step(1.0, 1.0, 0.2), new Step(0, 0, 0.1), new Step(0.7, 0, 0.3)},
           Priority.CRITICAL,
           HapticTarget.BOTH);
 
@@ -95,7 +91,8 @@ public class DriverFeedback {
           HapticTarget.COPILOT);
 
   // HIGH: jam protection intervening -> COPILOT
-  // Left-right-left alternating feels "stuck/rocking", distinct from GAME_DATA_MISSING's symmetric pulses
+  // Left-right-left alternating feels "stuck/rocking", distinct from GAME_DATA_MISSING's symmetric
+  // pulses
   public static final HapticPattern JAM_DETECTED =
       new HapticPattern(
           "JAM_DETECTED",
@@ -127,28 +124,38 @@ public class DriverFeedback {
   // MEDIUM: graduated hub countdown (5s to 1s before shift, intensity ramps up)
   public static final HapticPattern HUB_COUNTDOWN_5 =
       new HapticPattern(
-          "HUB_COUNTDOWN_5", new Step[] {new Step(0.25, 0.25, 0.1)},
-          Priority.MEDIUM, HapticTarget.BOTH);
+          "HUB_COUNTDOWN_5",
+          new Step[] {new Step(0.25, 0.25, 0.1)},
+          Priority.MEDIUM,
+          HapticTarget.BOTH);
 
   public static final HapticPattern HUB_COUNTDOWN_4 =
       new HapticPattern(
-          "HUB_COUNTDOWN_4", new Step[] {new Step(0.25, 0.25, 0.1)},
-          Priority.MEDIUM, HapticTarget.BOTH);
+          "HUB_COUNTDOWN_4",
+          new Step[] {new Step(0.25, 0.25, 0.1)},
+          Priority.MEDIUM,
+          HapticTarget.BOTH);
 
   public static final HapticPattern HUB_COUNTDOWN_3 =
       new HapticPattern(
-          "HUB_COUNTDOWN_3", new Step[] {new Step(0.40, 0.40, 0.12)},
-          Priority.MEDIUM, HapticTarget.BOTH);
+          "HUB_COUNTDOWN_3",
+          new Step[] {new Step(0.40, 0.40, 0.12)},
+          Priority.MEDIUM,
+          HapticTarget.BOTH);
 
   public static final HapticPattern HUB_COUNTDOWN_2 =
       new HapticPattern(
-          "HUB_COUNTDOWN_2", new Step[] {new Step(0.60, 0.60, 0.15)},
-          Priority.MEDIUM, HapticTarget.BOTH);
+          "HUB_COUNTDOWN_2",
+          new Step[] {new Step(0.60, 0.60, 0.15)},
+          Priority.MEDIUM,
+          HapticTarget.BOTH);
 
   public static final HapticPattern HUB_COUNTDOWN_1 =
       new HapticPattern(
-          "HUB_COUNTDOWN_1", new Step[] {new Step(0.85, 0.85, 0.2)},
-          Priority.MEDIUM, HapticTarget.BOTH);
+          "HUB_COUNTDOWN_1",
+          new Step[] {new Step(0.85, 0.85, 0.2)},
+          Priority.MEDIUM,
+          HapticTarget.BOTH);
 
   // Array for indexed access: index 0 = 5s, index 4 = 1s
   static final HapticPattern[] HUB_COUNTDOWN = {
@@ -157,8 +164,15 @@ public class DriverFeedback {
 
   // --- Test pattern table (indexed 1-9 from Elastic slider) ---
   private static final HapticPattern[] TEST_PATTERNS = {
-    AUTO_WON, AUTO_LOST, ENDGAME_WARNING, READY_TO_SHOOT, HUB_ACTIVATED,
-    HUB_DEACTIVATED, HUB_COUNTDOWN_3, JAM_DETECTED, GAME_DATA_MISSING
+    AUTO_WON,
+    AUTO_LOST,
+    ENDGAME_WARNING,
+    READY_TO_SHOOT,
+    HUB_ACTIVATED,
+    HUB_DEACTIVATED,
+    HUB_COUNTDOWN_3,
+    JAM_DETECTED,
+    GAME_DATA_MISSING
   };
 
   private static final String[] TEST_DESCRIPTIONS = {
@@ -330,9 +344,10 @@ public class DriverFeedback {
     if (isEnabled && !isAutonomous && teleopStartTime > 0) {
       double teleopElapsed = now - teleopStartTime;
       String gameMsg = DriverStation.getGameSpecificMessage();
-      boolean gameDataMissing = DriverStation.isFMSAttached()
-          && (gameMsg == null || gameMsg.isEmpty())
-          && teleopElapsed < GAME_DATA_TRANSITION_SEC;
+      boolean gameDataMissing =
+          DriverStation.isFMSAttached()
+              && (gameMsg == null || gameMsg.isEmpty())
+              && teleopElapsed < GAME_DATA_TRANSITION_SEC;
       if (gameDataMissing && (now - lastGameDataAlertTime) >= GAME_DATA_ALERT_INTERVAL_SEC) {
         playPattern(GAME_DATA_MISSING);
         lastGameDataAlertTime = now;
@@ -351,8 +366,8 @@ public class DriverFeedback {
     }
 
     // --- Graduated hub countdown (5s to 1s, MEDIUM -> BOTH) ---
-    int countdownSec = (timeToNextShift > 0 && timeToNextShift <= 5.5)
-        ? (int) Math.ceil(timeToNextShift) : -1;
+    int countdownSec =
+        (timeToNextShift > 0 && timeToNextShift <= 5.5) ? (int) Math.ceil(timeToNextShift) : -1;
     if (countdownSec >= 1 && countdownSec <= 5 && countdownSec != prevCountdownSecond) {
       playPattern(HUB_COUNTDOWN[countdownSec - 1]);
     }
@@ -442,8 +457,9 @@ public class DriverFeedback {
     // Null check + physical connection check: WPILib creates the object even if no
     // controller is plugged in, so we need isConnected() to detect the real hardware.
     boolean hasCopilot = (copilotController != null && copilotController.isConnected());
-    boolean driverRumble = (rumbleTarget == HapticTarget.DRIVER || rumbleTarget == HapticTarget.BOTH)
-        || (rumbleTarget == HapticTarget.COPILOT && !hasCopilot);
+    boolean driverRumble =
+        (rumbleTarget == HapticTarget.DRIVER || rumbleTarget == HapticTarget.BOTH)
+            || (rumbleTarget == HapticTarget.COPILOT && !hasCopilot);
     boolean copilotRumble =
         (rumbleTarget == HapticTarget.COPILOT || rumbleTarget == HapticTarget.BOTH);
     applyRumble(controller, driverRumble ? left : 0, driverRumble ? right : 0);
@@ -451,8 +467,8 @@ public class DriverFeedback {
 
     // Diagnostic signals so pit crew can verify copilot is actually connected
     SafeLog.put("DriverFeedback/CopilotConnected", hasCopilot);
-    SafeLog.put("DriverFeedback/CopilotPort",
-        copilotController != null ? copilotController.getPort() : -1);
+    SafeLog.put(
+        "DriverFeedback/CopilotPort", copilotController != null ? copilotController.getPort() : -1);
     SafeLog.put("DriverFeedback/JamSource", lastJamSource);
   }
 

@@ -1,11 +1,8 @@
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Agitator;
+import java.util.function.BooleanSupplier;
 
 public class MoveAgitator extends Command {
   private Agitator agitator;

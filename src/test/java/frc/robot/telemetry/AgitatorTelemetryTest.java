@@ -50,7 +50,6 @@ class AgitatorTelemetryTest {
     }
     resetSingleton("frc.robot.subsystems.Agitator");
     resetSingleton("frc.robot.telemetry.TelemetryManager");
-
   }
 
   private static void resetSingleton(String className) {
@@ -138,5 +137,4 @@ class AgitatorTelemetryTest {
     String state = getField("jamProtectionState");
     assertEquals("MONITORING", state, "JamProtection should default to MONITORING");
   }
-
 }

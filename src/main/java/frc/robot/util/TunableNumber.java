@@ -8,7 +8,7 @@ import java.util.function.DoubleSupplier;
 /** Dashboard-tunable number. Returns compile-time default when TUNING_MODE is off. */
 public class TunableNumber implements DoubleSupplier {
   private final String key;
-  private final double defaultValue;
+  private double defaultValue;
   private double lastValue;
   private boolean initialized = false;
 
@@ -62,7 +62,9 @@ public class TunableNumber implements DoubleSupplier {
   public double getDefault() {
     return defaultValue;
   }
-
+  public void setDefault(double defaultValue){
+    this.defaultValue = defaultValue;
+  }
   public void reset() {
     if (Constants.TUNING_MODE) {
       SmartDashboard.putNumber(key, defaultValue);

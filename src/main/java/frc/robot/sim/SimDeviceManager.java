@@ -71,8 +71,12 @@ public class SimDeviceManager {
       Agitator agitator = Agitator.getInstance();
       IntakeActuator intakeActuator = IntakeActuator.getInstance();
       Hanger hanger = Hanger.getInstance();
-      if (shooter == null || indexer == null || intake == null
-          || agitator == null || intakeActuator == null || hanger == null) {
+      if (shooter == null
+          || indexer == null
+          || intake == null
+          || agitator == null
+          || intakeActuator == null
+          || hanger == null) {
         SafeLog.put("Sim/DeviceManager/InitError", "NullSubsystem");
         initialized = false;
         return;

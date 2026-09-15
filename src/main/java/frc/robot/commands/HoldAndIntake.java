@@ -13,31 +13,30 @@ import frc.robot.subsystems.IntakeActuator;
 public class HoldAndIntake extends Command {
   /** Creates a new HoldPivotWhileIntaking. */
   private Intake intake;
+
   private IntakeActuator intakeActuator;
 
   public HoldAndIntake() {
     intake = Intake.getInstance();
     intakeActuator = IntakeActuator.getInstance();
 
-    addRequirements(intake,intakeActuator);
+    addRequirements(intake, intakeActuator);
   }
 
   @Override
   public void initialize() {
-    intakeActuator.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS); 
+    intakeActuator.moveToPositionWithPID(Constants.MotorConstants.OUT_INTAKE_POS);
   }
 
   @Override
   public void execute() {
     intake.move(intake.getTunableSpeed());
-
   }
 
   @Override
   public void end(boolean interrupted) {
     intake.move(0);
     intakeActuator.move(0);
-
   }
 
   @Override
@@ -45,5 +44,3 @@ public class HoldAndIntake extends Command {
     return false;
   }
 }
-
-

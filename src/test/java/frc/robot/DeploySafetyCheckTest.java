@@ -19,5 +19,4 @@ class DeploySafetyCheckTest {
     // When set to false for competition, flip this assertion and the one above.
     assertTrue(Constants.TUNING_MODE, "TUNING_MODE should be true during development");
   }
-
 }

@@ -14,6 +14,6 @@ public class UpAndDownIntake extends SequentialCommandGroup {
   public UpAndDownIntake() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new PivotIntake(-0.2),(new PivotIntake(0.2)));
+    addCommands(new PivotIntake(-0.2), (new PivotIntake(0.2)));
   }
 }

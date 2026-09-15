@@ -8,16 +8,18 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.sim.SimDeviceManager;
+import frc.robot.sim.SimScenarioRunner;
+import frc.robot.subsystems.Shooter;
 import frc.robot.telemetry.TelemetryManager;
 import frc.robot.util.AlertManager;
 import frc.robot.util.ChannelCoordinator;
 import frc.robot.util.DiagnosticContext;
 import frc.robot.util.DriverFeedback;
 import frc.robot.util.ElasticUtil;
-import frc.robot.util.LEDStatusDisplay;
-import frc.robot.sim.SimDeviceManager;
-import frc.robot.sim.SimScenarioRunner;
 import frc.robot.util.EventMarker;
+import frc.robot.util.LEDStatusDisplay;
 import frc.robot.util.LoggedTracer;
 import frc.robot.util.PostMatchSummary;
 import frc.robot.util.PreMatchDiagnostics;
@@ -42,8 +44,6 @@ public class Robot extends LoggedRobot {
   private Timer disabledTimer;
   private SimScenarioRunner simScenarioRunner;
   private SimDeviceManager simDeviceManager;
-  
-    
 
   // Diagnostics
   private boolean hasRunDiagnostics = false;
@@ -211,31 +211,39 @@ public class Robot extends LoggedRobot {
     safeCall("NaNGuard", () -> checkNaNInfinity());
     safeCall("Tracer", () -> LoggedTracer.record("TelemetryMs"));
 
-    safeCall("ChannelCoordinator", () -> {
-      ChannelCoordinator.getInstance().update();
-      ChannelCoordinator.getInstance().log();
-    });
+    safeCall(
+        "ChannelCoordinator",
+        () -> {
+          ChannelCoordinator.getInstance().update();
+          ChannelCoordinator.getInstance().log();
+        });
 
     safeCall("DriverFeedback", () -> DriverFeedback.getInstance().update());
     safeCall("LEDStatus", () -> LEDStatusDisplay.getInstance().update());
 
-    safeCall("Alerts", () -> {
-      AlertManager.getInstance().checkAll();
-      AlertManager.getInstance().checkLoopTime(TelemetryManager.getInstance().getLoopTimeMs());
-      AlertManager.getInstance().logActiveAlerts();
-    });
+    safeCall(
+        "Alerts",
+        () -> {
+          AlertManager.getInstance().checkAll();
+          AlertManager.getInstance().checkLoopTime(TelemetryManager.getInstance().getLoopTimeMs());
+          AlertManager.getInstance().logActiveAlerts();
+        });
 
-    safeCall("Predictive", () -> {
-      PredictiveAlerts.getInstance().update();
-      PredictiveAlerts.getInstance().log();
-    });
+    safeCall(
+        "Predictive",
+        () -> {
+          PredictiveAlerts.getInstance().update();
+          PredictiveAlerts.getInstance().log();
+        });
 
-    safeCall("PostMatch", () -> {
-      if (DriverStation.isEnabled()) {
-        PostMatchSummary.getInstance()
-            .updateTracking(TelemetryManager.getInstance().getLoopTimeMs());
-      }
-    });
+    safeCall(
+        "PostMatch",
+        () -> {
+          if (DriverStation.isEnabled()) {
+            PostMatchSummary.getInstance()
+                .updateTracking(TelemetryManager.getInstance().getLoopTimeMs());
+          }
+        });
 
     safeCall("Tracer", () -> LoggedTracer.record("AlertsMs"));
   }
@@ -364,7 +372,16 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    CommandXboxController copilotXboxController = m_robotContainer.getCopilotXboxController();
+    if (copilotXboxController.pov(0).getAsBoolean() == true) {
+      Shooter.getInstance().setShooter_RPM(Constants.ShooterConstants.HIGH_RPM);
+    } else if (copilotXboxController.pov(90).getAsBoolean() == true) {
+      Shooter.getInstance().setShooter_RPM(Constants.ShooterConstants.TARGET_RPM);
+    } else if (copilotXboxController.pov(180).getAsBoolean() == true) {
+      Shooter.getInstance().setShooter_RPM(Constants.ShooterConstants.LOW_RPM);
+    } else{}
+  }
 
   @Override
   public void testInit() {

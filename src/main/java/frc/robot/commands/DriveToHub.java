@@ -65,4 +65,3 @@ public class DriveToHub extends Command {
     return driveCommand != null && !driveCommand.isScheduled();
   }
 }
-  

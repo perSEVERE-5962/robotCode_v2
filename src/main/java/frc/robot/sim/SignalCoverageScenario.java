@@ -14,8 +14,8 @@ import swervelib.simulation.ironmaple.simulation.motorsims.SimulatedBattery;
  * <p>Focus areas (no overlap with other scenarios):
  *
  * <ul>
- *   <li>Systematic voltage sweep through all 4 thresholds (WARNING 11.5V, predicted shutdown
- *       10.5V, CRITICAL 10.0V, deep brownout 7.0V) with recovery
+ *   <li>Systematic voltage sweep through all 4 thresholds (WARNING 11.5V, predicted shutdown 10.5V,
+ *       CRITICAL 10.0V, deep brownout 7.0V) with recovery
  *   <li>All mode transitions in one run: disabled -> auto -> disabled -> teleop -> disabled -> test
  *       -> disabled
  *   <li>Motor stall/recovery cycles: all motors at speed, then sudden target zero, then resume
@@ -216,9 +216,9 @@ public class SignalCoverageScenario implements SimScenario {
   }
 
   /**
-   * Rapid mode cycling: disabled -> auto(1.5s) -> disabled(0.5s) -> teleop(2s) -> disabled(0.5s)
-   * -> test(2s) -> disabled(1s). Exercises EventMarker.modeChange(),
-   * PostMatchSummary.startTracking(), and all mode-dependent telemetry paths.
+   * Rapid mode cycling: disabled -> auto(1.5s) -> disabled(0.5s) -> teleop(2s) -> disabled(0.5s) ->
+   * test(2s) -> disabled(1s). Exercises EventMarker.modeChange(), PostMatchSummary.startTracking(),
+   * and all mode-dependent telemetry paths.
    */
   private void modeCycle(double t) {
     if (t < 0.5) {

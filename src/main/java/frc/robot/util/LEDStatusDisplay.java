@@ -268,7 +268,10 @@ public class LEDStatusDisplay {
     if (s.shooterSpinningUp()) return LEDState.SHOOTER_SPINUP;
 
     // Priority 6: Warning (jam, stall, low battery, CAN error, low vision confidence)
-    if (s.jamDetected() || s.anyStalled() || s.batteryWarning() || s.canError()
+    if (s.jamDetected()
+        || s.anyStalled()
+        || s.batteryWarning()
+        || s.canError()
         || s.lowConfidence()) {
       return LEDState.WARNING;
     }
@@ -391,10 +394,7 @@ public class LEDStatusDisplay {
 
   /** Two colors in alternating chunks that scroll together like a barber pole. */
   private void renderDualChase(
-      double now, double period,
-      int r1, int g1, int b1,
-      int r2, int g2, int b2,
-      double bright) {
+      double now, double period, int r1, int g1, int b1, int r2, int g2, int b2, double bright) {
     // Shift the pattern over time so it looks like it's moving
     int offset = (int) (now / period * CHASE_SEGMENT_SIZE) % (CHASE_SEGMENT_SIZE * 2);
 

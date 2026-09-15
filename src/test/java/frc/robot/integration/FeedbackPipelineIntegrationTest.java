@@ -21,11 +21,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * End-to-end integration test for the feedback pipeline:
- * TelemetryManager -> DriverFeedback -> LEDStatusDisplay
+ * End-to-end integration test for the feedback pipeline: TelemetryManager -> DriverFeedback ->
+ * LEDStatusDisplay
  *
- * Verifies that subsystem conditions flow through telemetry into
- * both haptic and LED feedback channels correctly.
+ * <p>Verifies that subsystem conditions flow through telemetry into both haptic and LED feedback
+ * channels correctly.
  */
 class FeedbackPipelineIntegrationTest {
 
@@ -90,11 +90,10 @@ class FeedbackPipelineIntegrationTest {
   }
 
   /**
-   * Run one full pipeline cycle in production order:
-   * 1. TelemetryManager.updateAll() - reads subsystem state, logs signals
-   * 2. ChannelCoordinator.update() - processes vision confidence
-   * 3. DriverFeedback.update() - reads TelemetryManager, plays haptics
-   * 4. LEDStatusDisplay.update() - reads TelemetryManager + DriverFeedback, sets LEDs
+   * Run one full pipeline cycle in production order: 1. TelemetryManager.updateAll() - reads
+   * subsystem state, logs signals 2. ChannelCoordinator.update() - processes vision confidence 3.
+   * DriverFeedback.update() - reads TelemetryManager, plays haptics 4. LEDStatusDisplay.update() -
+   * reads TelemetryManager + DriverFeedback, sets LEDs
    */
   private void pipelineCycle() {
     telemetry.updateAll();
@@ -115,21 +114,25 @@ class FeedbackPipelineIntegrationTest {
     RoboRioSim.setVInVoltage(12.5);
     pipelineCycle();
     LEDState normalState = resolveLEDState();
-    assertNotEquals(LEDState.CRITICAL_ALERT, normalState,
-        "LED should not be CRITICAL at normal voltage");
+    assertNotEquals(
+        LEDState.CRITICAL_ALERT, normalState, "LED should not be CRITICAL at normal voltage");
 
     // Drop voltage below critical threshold (10.0V)
     RoboRioSim.setVInVoltage(9.5);
     pipelineCycle();
     LEDState criticalState = resolveLEDState();
-    assertEquals(LEDState.CRITICAL_ALERT, criticalState,
+    assertEquals(
+        LEDState.CRITICAL_ALERT,
+        criticalState,
         "LED should show CRITICAL_ALERT when battery drops below 10V");
 
     // Recover voltage
     RoboRioSim.setVInVoltage(12.5);
     pipelineCycle();
     LEDState recoveredState = resolveLEDState();
-    assertNotEquals(LEDState.CRITICAL_ALERT, recoveredState,
+    assertNotEquals(
+        LEDState.CRITICAL_ALERT,
+        recoveredState,
         "LED should recover from CRITICAL_ALERT when voltage returns to normal");
   }
 
@@ -141,13 +144,25 @@ class FeedbackPipelineIntegrationTest {
     pipelineCycle();
 
     // No rumble should be active when disabled
-    assertEquals(0, driverSim.getRumble(GenericHID.RumbleType.kLeftRumble), 0.02,
+    assertEquals(
+        0,
+        driverSim.getRumble(GenericHID.RumbleType.kLeftRumble),
+        0.02,
         "Driver left rumble should be zero when disabled");
-    assertEquals(0, driverSim.getRumble(GenericHID.RumbleType.kRightRumble), 0.02,
+    assertEquals(
+        0,
+        driverSim.getRumble(GenericHID.RumbleType.kRightRumble),
+        0.02,
         "Driver right rumble should be zero when disabled");
-    assertEquals(0, copilotSim.getRumble(GenericHID.RumbleType.kLeftRumble), 0.02,
+    assertEquals(
+        0,
+        copilotSim.getRumble(GenericHID.RumbleType.kLeftRumble),
+        0.02,
         "Copilot left rumble should be zero when disabled");
-    assertEquals(0, copilotSim.getRumble(GenericHID.RumbleType.kRightRumble), 0.02,
+    assertEquals(
+        0,
+        copilotSim.getRumble(GenericHID.RumbleType.kRightRumble),
+        0.02,
         "Copilot right rumble should be zero when disabled");
   }
 
@@ -156,8 +171,8 @@ class FeedbackPipelineIntegrationTest {
     setEnabled(false);
     pipelineCycle();
 
-    assertEquals(LEDState.DISABLED, resolveLEDState(),
-        "LED should show DISABLED when robot is disabled");
+    assertEquals(
+        LEDState.DISABLED, resolveLEDState(), "LED should show DISABLED when robot is disabled");
   }
 
   // ==================== ENABLED IDLE STATE ====================
@@ -169,16 +184,14 @@ class FeedbackPipelineIntegrationTest {
     pipelineCycle();
 
     // No active pattern
-    assertEquals("none", feedback.getActivePatternName(),
-        "No haptic pattern should be active at idle");
+    assertEquals(
+        "none", feedback.getActivePatternName(), "No haptic pattern should be active at idle");
 
     // LED should be IDLE (assuming no warnings)
     LEDState state = resolveLEDState();
     // Could be IDLE or WARNING depending on subsystem state, but NOT CRITICAL
-    assertNotEquals(LEDState.CRITICAL_ALERT, state,
-        "LED should not be CRITICAL at normal idle");
-    assertNotEquals(LEDState.DISABLED, state,
-        "LED should not be DISABLED when robot is enabled");
+    assertNotEquals(LEDState.CRITICAL_ALERT, state, "LED should not be CRITICAL at normal idle");
+    assertNotEquals(LEDState.DISABLED, state, "LED should not be DISABLED when robot is enabled");
   }
 
   // ==================== TELEOP TRANSITION -> HAPTIC ====================
@@ -200,7 +213,9 @@ class FeedbackPipelineIntegrationTest {
     DriverStationSim.notifyNewData();
     pipelineCycle();
 
-    assertEquals("AUTO_LOST", feedback.getActivePatternName(),
+    assertEquals(
+        "AUTO_LOST",
+        feedback.getActivePatternName(),
         "AUTO_LOST haptic should fire on auto-to-teleop transition (default wonAuto=false)");
     assertTrue(feedback.getLeftMotor() > 0, "Left rumble should be active");
     assertTrue(feedback.getRightMotor() > 0, "Right rumble should be active");
@@ -217,8 +232,8 @@ class FeedbackPipelineIntegrationTest {
     pipelineCycle();
 
     LEDState state = resolveLEDState();
-    assertEquals(LEDState.WARNING, state,
-        "LED should show WARNING when battery is between 10.0V and 11.5V");
+    assertEquals(
+        LEDState.WARNING, state, "LED should show WARNING when battery is between 10.0V and 11.5V");
   }
 
   // ==================== PROGRESSIVE AIM -> LED AIM_PROGRESS ====================
@@ -233,7 +248,9 @@ class FeedbackPipelineIntegrationTest {
     pipelineCycle();
 
     LEDState state = resolveLEDState();
-    assertEquals(LEDState.AIM_PROGRESS, state,
+    assertEquals(
+        LEDState.AIM_PROGRESS,
+        state,
         "LED should show AIM_PROGRESS when progressive aim is active");
   }
 
@@ -251,7 +268,9 @@ class FeedbackPipelineIntegrationTest {
     pipelineCycle();
 
     LEDState state = resolveLEDState();
-    assertNotEquals(LEDState.AIM_PROGRESS, state,
+    assertNotEquals(
+        LEDState.AIM_PROGRESS,
+        state,
         "LED should not show AIM_PROGRESS after clearing progressive aim");
   }
 
@@ -266,7 +285,8 @@ class FeedbackPipelineIntegrationTest {
     pipelineCycle();
 
     assertTrue(feedback.isProgressiveAimActive(), "Progressive aim should be active");
-    assertTrue(copilotSim.getRumble(GenericHID.RumbleType.kRightRumble) > 0,
+    assertTrue(
+        copilotSim.getRumble(GenericHID.RumbleType.kRightRumble) > 0,
         "Copilot right rumble should be active for progressive aim");
     assertEquals(LEDState.AIM_PROGRESS, resolveLEDState());
 
@@ -274,11 +294,16 @@ class FeedbackPipelineIntegrationTest {
     SimHooks.stepTiming(0.30);
     pipelineCycle();
 
-    assertFalse(feedback.isProgressiveAimActive(),
-        "Progressive aim should auto-clear after stale timeout");
-    assertEquals(0, copilotSim.getRumble(GenericHID.RumbleType.kRightRumble), 0.02,
+    assertFalse(
+        feedback.isProgressiveAimActive(), "Progressive aim should auto-clear after stale timeout");
+    assertEquals(
+        0,
+        copilotSim.getRumble(GenericHID.RumbleType.kRightRumble),
+        0.02,
         "Copilot rumble should clear after stale timeout");
-    assertNotEquals(LEDState.AIM_PROGRESS, resolveLEDState(),
+    assertNotEquals(
+        LEDState.AIM_PROGRESS,
+        resolveLEDState(),
         "LED should not show AIM_PROGRESS after stale timeout");
   }
 
@@ -300,8 +325,8 @@ class FeedbackPipelineIntegrationTest {
     if (isLow) {
       pipelineCycle();
       LEDState state = resolveLEDState();
-      assertEquals(LEDState.WARNING, state,
-          "LED should show WARNING when vision confidence is low");
+      assertEquals(
+          LEDState.WARNING, state, "LED should show WARNING when vision confidence is low");
     }
     // If not low (e.g., confidence never set), that's still a valid pipeline state
   }

@@ -164,11 +164,14 @@ public class AlertManager {
     checkOneMotorTemp("Shooter", shooterTempAlert, () -> Shooter.getInstance().getTemperature());
     checkOneMotorTemp("Indexer", indexerTempAlert, () -> Indexer.getInstance().getTemperature());
     checkOneMotorTemp("Intake", intakeTempAlert, () -> Intake.getInstance().getTemperature());
-    checkOneMotorTemp("IntakeActuator", intakeActuatorTempAlert,
+    checkOneMotorTemp(
+        "IntakeActuator",
+        intakeActuatorTempAlert,
         () -> IntakeActuator.getInstance().getTemperature());
   }
 
-  private void checkOneMotorTemp(String name, Alert alert, java.util.function.DoubleSupplier tempFn) {
+  private void checkOneMotorTemp(
+      String name, Alert alert, java.util.function.DoubleSupplier tempFn) {
     try {
       double temp = tempFn.getAsDouble();
       if (temp > MOTOR_TEMP_WARNING_C) {
